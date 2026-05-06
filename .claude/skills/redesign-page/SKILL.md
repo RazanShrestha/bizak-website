@@ -6,8 +6,28 @@ description: Migrate a legacy Bizak marketing page to the new design system (tok
 # Skill: redesign-page
 
 This skill is the canonical workflow for converting a marketing page to the
-project's design system. Read `/CLAUDE.md` and `/docs/DESIGN_SYSTEM.md` first
-if you haven't loaded them in this session.
+project's design system. Three reference docs anchor the work — load them
+before you start (or recall them if already loaded this session):
+
+| Doc | Why you need it |
+|---|---|
+| **`docs/BIZAK_PRODUCT_OVERVIEW.md`** | **What Bizak is** — modules, audience, product narratives (real-time, single source of truth, no manual coding, audit trail, multi-entity, replaces-spreadsheets), brand voice, canonical statistics, section conventions. **Read this *first*** so the section copy, data points and section structure reinforce the rest of the site. Without it the redesign is technically correct but generically SaaS. |
+| **`/CLAUDE.md`** | Hard rules + page-design checklist (always loaded). |
+| **`/docs/DESIGN_SYSTEM.md`** | Long-form design reference — tokens, primitive APIs, scopes, hero pattern, CTA tone convention. |
+
+## Product brief first
+
+The very first step of any redesign is **"what is this page selling, and to
+whom?"** — answered from `BIZAK_PRODUCT_OVERVIEW.md`:
+
+1. Which module / industry / capability does this page cover? (See §3 of the overview.)
+2. Which 2–3 product narratives (§4) should the page lean on?
+3. Which canonical statistics (§5.4) should it reuse?
+4. What's the section rhythm appropriate for this kind of page (§7.3)?
+5. Does the closing CTA follow §7.1 (`tone="dark"`, accent + ghostDark buttons)?
+
+If you're about to write copy that could equally describe Salesforce,
+NetSuite or HubSpot, you skipped this step. Go back and re-anchor.
 
 ## Scope first
 
@@ -40,6 +60,8 @@ This is the non-negotiable preflight. Walk through every item; whatever is
 7. **Animations / motion.** Reuse the existing global keyframe classes (`biz-pulse-glow`, `biz-float`, `biz-particle`, `biz-flow`, `biz-radar-ping`, …) — don't redeclare keyframes per page.
 8. **className over inline `style`.** Static values in className. Inline `style` only for dynamic values. No `onMouseEnter`/`onMouseLeave` style mutations — use Tailwind `hover:`.
 9. **Promotion check.** A JSX pattern that appears in this page **and** in another nav group's pages with the same shape belongs in `marketing/`, not duplicated. Promote it.
+10. **Delegate-to-atom check.** Walk every `<button>`, `<a>` styled as a button, and styled `<div>`/`<span>` in the file (and inside any scoped section primitive the page composes). If its shape mirrors a global primitive (`<Button>`, `<Card>`, `<IconBadge>`, `<PillBadge>`, `<Stat>`, `<HeroBadge>`, `<Eyebrow>`), replace it with that primitive. If the needed variant doesn't exist yet (e.g., the by-industry "shimmer" CTA), **add the variant on the global primitive first** (`marketing/Button.tsx` etc.), update its prop docs in `/CLAUDE.md` + `/docs/DESIGN_SYSTEM.md`, then delegate. *This applies inside scoped primitives too:* `IndustryHero` should compose `<Button>`, not roll its own `HeroCtaButton`. Known offenders: `IndustryHero.tsx` (local `HeroCtaButton`) and `IndustryCta.tsx` (local `CtaButton`) — when you touch either, fix both.
+11. **Closing-CTA tone.** If the page has a closing CTA section (the "Take full control of …" / "Run your factory floor with …" moment, typically directly above the footer), it MUST sit on `<Section tone="dark">` — the olive-tinted `bg-bz-deep` (`#1A1D19`). **Not** `tone="deeper"` (`bg-bz-deep-2` = `#121212` pure black). Pure black flattens the lime accent CTA button; the olive surface lets it glow. Action pair: `<Button variant="accent" size="lg" withArrow>` + `<Button variant="ghostDark" size="lg">`. This matches what the by-industry pages' `IndustryCta` already renders. The closing CTA isn't always literally the final section — but **whenever a page has one, it lives on `tone="dark"`**. See `/docs/BIZAK_PRODUCT_OVERVIEW.md` §7.1.
 
 If any item fails, the redesign is the work to bring it into compliance.
 The end state of any page edit is "all items pass for the parts of the
@@ -57,6 +79,7 @@ file you touched."
   - a per-file `function Icon({ name }) { const icons = {...} }` SVG dictionary (legacy industry-page pattern — replace with the global `marketing/Icon`)
   - `<svg>` with hardcoded path strings where a lucide equivalent exists
   - `<span className="material-symbols-outlined">`
+  - a local `function FooButton(...)` / `function FooCard(...)` / `function FooBadge(...)` that returns a raw `<button>`/`<a>`/styled `<div>` mirroring the shape of a global primitive (`<Button>`/`<Card>`/`<PillBadge>`/etc.) — even when it's inside a scoped section primitive in `solutions/by-industry/`. Delegate to the global primitive (adding a variant first if needed); don't fork.
 
 If any signal is present and you're touching the file, run this skill before
 making other changes — don't bandaid the legacy pattern.

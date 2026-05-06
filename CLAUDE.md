@@ -1,8 +1,15 @@
 # Bizak Website — Project Instructions
 
 This file is the always-loaded rule set for this repository. Read it before
-touching any page, component, or styling. The full design system reference
-lives in `docs/DESIGN_SYSTEM.md`.
+touching any page, component, or styling.
+
+Three reference docs work together. Load whichever fits the task:
+
+| Doc | Use when |
+|---|---|
+| **`docs/BIZAK_PRODUCT_OVERVIEW.md`** | You're about to write copy, choose a story, decide what a section *says*, or pick stats. Tells you **what Bizak is** — modules, audience, product narratives, brand voice, copy patterns. **Read this whenever the user asks to "redesign", "design a new page", or "rewrite a section."** |
+| **`docs/DESIGN_SYSTEM.md`** | You're choosing primitives, tokens, or layouts. Tells you **what Bizak looks like** — primitive APIs, tokens, scopes, hero pattern. |
+| **This file (`CLAUDE.md`)** | Always loaded. The hard rules + the page-design checklist. |
 
 ## What this project is
 
@@ -11,6 +18,11 @@ React 18 + Vite 6 + Tailwind 4 + react-router 7. Deploys to GitHub Pages
 (`bizakerp.com`). Built originally from a Figma export — the page-by-page
 export style is why every page used to redeclare its own colors. **That is no
 longer how we work.**
+
+For the full product brief — modules, audience, narratives, brand voice,
+canonical statistics — see **`docs/BIZAK_PRODUCT_OVERVIEW.md`**. Read it
+before any redesign so the copy, sections and data points reinforce the
+product story (and don't drift into generic SaaS).
 
 ## The single most important rule
 
@@ -78,6 +90,8 @@ Never deep-import from another scope's folder (`solutions/by-industry/IndustryHe
 6. **Keep page files small.** Pages should be composition + data arrays. If a section grows past ~80 lines of JSX, extract it into a sibling component or a primitive.
 7. **No new files in `src/styles/style.css`.** That file is reserved for the homepage's bespoke dashboard/iso/floating-card animations and the legacy `biz-*` classes the by-industry primitives consume. New page-level styles go in component className.
 8. **Scope before write.** Before creating a new component, decide which scope it belongs in (global `marketing/` vs scoped `solutions/by-industry/` vs a future `solutions/by-function/` etc.). When in doubt, start narrow — the promotion rule (above) handles the upgrade later.
+9. **Delegate to global atoms — don't reinvent.** Whenever any component (a page, a scoped section primitive, *anything*) renders a raw `<button>` / `<a>` / styled `<div>` whose shape mirrors a global primitive (`<Button>`, `<Card>`, `<IconBadge>`, `<PillBadge>`, `<Stat>`, …), it MUST delegate to the global primitive. If the visual shape isn't expressible by an existing variant, **add a variant on the global primitive first**, then delegate — never fork. This is the same promotion logic as rule 8, applied to atoms instead of layouts: a CTA button shouldn't be reinvented inside `IndustryHero`, a card shouldn't be reinvented inside a scoped grid, a stat shouldn't be reinvented inside a hero. *Known debt:* `solutions/by-industry/IndustryHero.tsx` (`HeroCtaButton`) and `solutions/by-industry/IndustryCta.tsx` (`CtaButton`) currently render bespoke `.biz-shimmer-btn` / `.biz-btn-outline` / `.biz-btn-ghost` instead of `<Button>`. The shimmer treatment is the missing variant — when those files get touched, add a `shimmer` variant on `<Button>` and refactor the local wrappers to delegate.
+10. **Closing-CTA section uses `tone="dark"`.** The bottom-of-page CTA (the "Take full control of …" / "Run your factory floor with …" moment) must use `<Section tone="dark">` — the olive-tinted `bg-bz-deep` (`#1A1D19`) — **not** `tone="deeper"` (`bg-bz-deep-2` = `#121212` pure black). This matches what the by-industry pages' `IndustryCta` already renders (`.biz-cta-section` → `var(--bz-deep)`). The olive undertone is what lets the lime accent CTA button glow against the surface; pure black flattens it. Action pair: `<Button variant="accent">` + `<Button variant="ghostDark">`. The closing CTA isn't always literally the last section, but **whenever a page has one, it lives on `tone="dark"`**. Full pattern in `docs/BIZAK_PRODUCT_OVERVIEW.md` §7.1.
 
 ## Available primitives
 
@@ -280,6 +294,7 @@ export function MyPage() {
 
 Before editing **any** page file, walk through this checklist. If any item is "no", that's part of the work — bring the page into compliance with the items you touch (don't bandaid around them, don't silently leave them inconsistent).
 
+0. **Product context.** Skim `docs/BIZAK_PRODUCT_OVERVIEW.md` (or, if already loaded this session, recall it). Confirm which module / industry / capability this page sits under, which **product narratives** (real-time, single source of truth, no manual coding, audit trail, multi-entity, replaces-spreadsheets) it should lean on, and which **canonical statistics** to reuse so the page reinforces the rest of the site instead of drifting into generic SaaS copy. **Required before any redesign or new page.** Skip only for cosmetic / token-only edits.
 1. **Scope.** Open `src/app/components/Header.tsx` and find this page in the `megaMenus` data structure. Which top-level group + sub-heading does it sit under? Does a corresponding scope folder exist (e.g., `solutions/by-industry/`)?
 2. **Section primitives.** If the page belongs to a family with a scope folder, is it composing those scoped section primitives (`IndustryHero`, `ChallengesGrid`, etc.)? Or is it duplicating their JSX inline? If duplicated → migrate to the primitives. If a sibling page in the same family has invented a section the primitive doesn't cover yet → promote that pattern into the scope folder before using it.
 3. **Global primitives.** Is the page using `marketing/` for atoms (`Container`, `Section`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `HeroBadge`, `Eyebrow`)? Hand-rolled wrappers around those shapes are red flags.
@@ -290,6 +305,8 @@ Before editing **any** page file, walk through this checklist. If any item is "n
 7. **Animations / motion.** Reuse the global keyframe classes from `style.css` (`biz-pulse-glow`, `biz-float`, `biz-particle`, `biz-flow`, etc.) — don't redeclare keyframes per page.
 8. **className over inline `style`.** Static values (colors, padding, fonts) live in className. Inline `style` is reserved for genuinely dynamic values (computed `width: ${pct}%`, prop-derived `maxWidth`). No `onMouseEnter`/`onMouseLeave` style mutations — use Tailwind `hover:`.
 9. **Promotion check.** If a JSX pattern in this page also exists in another nav group's pages with the same shape, the pattern belongs in `marketing/`, not duplicated. Promote it.
+10. **Delegate-to-atom check.** Walk every `<button>`, `<a>`-styled-as-button, and styled `<div>`/`<span>` in the file. If its shape mirrors a global primitive (`<Button>`, `<Card>`, `<IconBadge>`, `<PillBadge>`, `<Stat>`, `<HeroBadge>`, `<Eyebrow>`), replace it with that primitive. If a needed variant doesn't exist yet (e.g., the by-industry "shimmer" CTA isn't a `<Button>` variant), **add the variant on the global primitive first**, then delegate. This applies equally inside scoped section primitives — `IndustryHero` should compose `<Button>`, not roll its own `HeroCtaButton`.
+11. **Closing-CTA tone.** If the page has a closing CTA section (the "Take full control of …" / "Run your factory floor with …" moment, usually right above the footer), it MUST sit on `<Section tone="dark">` — not `tone="deeper"`. Action pair: `<Button variant="accent">` + `<Button variant="ghostDark">`. See hard rule 10 and `docs/BIZAK_PRODUCT_OVERVIEW.md` §7.1.
 
 When in doubt, mirror the canonical reference for the page's family — currently `src/app/components/ManufacturingPage.tsx` for the by-industry family.
 
@@ -316,10 +333,16 @@ When in doubt, mirror the canonical reference for the page's family — currentl
 
 ## Memory & docs
 
-The full reference (token names, values, rationale, migration checklist) is at
-`docs/DESIGN_SYSTEM.md`. The `/redesign-page` skill at
-`.claude/skills/redesign-page/SKILL.md` is the canonical workflow when
-converting a page to the new system.
+Three docs to keep in sync:
 
-When something about the design system changes, update both this file and
-`docs/DESIGN_SYSTEM.md`. Keep them in sync.
+- **`docs/BIZAK_PRODUCT_OVERVIEW.md`** — what Bizak *is* (modules, audience, narratives, brand voice, canonical stats, section conventions). The product brief; consulted before any redesign or new page.
+- **`docs/DESIGN_SYSTEM.md`** — what Bizak *looks like* (tokens, primitives, scopes, hero pattern). The long-form design reference.
+- **This file (`CLAUDE.md`)** — hard rules + the page-design checklist. Always loaded.
+
+The `/redesign-page` skill at `.claude/skills/redesign-page/SKILL.md` is the
+canonical workflow when converting a page to the new system; it cross-refs
+all three docs above.
+
+When the **product** changes (new module, new positioning, new canonical
+statistic) → update `BIZAK_PRODUCT_OVERVIEW.md`. When the **design system**
+changes → update both this file and `DESIGN_SYSTEM.md`. Keep them in sync.

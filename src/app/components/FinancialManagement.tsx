@@ -1,342 +1,196 @@
-// ─── Brand tokens ─────────────────────────────────────────────────────────────
-const C = {
-    deep: "#1A1D19",
-  dark: "#0a0a0a",
-  cardDark: "#1a1a1a",
-  accent: "#d4f24d",
-  accentDim: "rgba(212,242,77,0.15)",
-  white: "#ffffff",
-  fcfcfc: "#fcfcfc",
-  f9: "#f9f9f9",
-  gray100: "#f3f4f6",
-  gray200: "#e5e7eb",
-  gray300: "#d1d5db",
-  gray400: "#9ca3af",
-  gray500: "#6b7280",
-  gray600: "#4b5563",
-  gray800: "#1f2937",
-  border: "#e5e7eb",
-    bgDark: "#1a1d19",
-  borderDark: "rgba(255,255,255,0.08)",
-};
+import {
+  Container,
+  Section,
+  SectionHeading,
+  Card,
+  Button,
+  IconBadge,
+  PillBadge,
+  HeroBadge,
+  Eyebrow,
+} from "./marketing";
+import {
+  ClipboardList,
+  DollarSign,
+  CheckCircle2,
+  Building2,
+  Package,
+  LineChart,
+  ShieldCheck,
+  FileText,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  Sparkles,
+  AlertTriangle,
+  ChevronRight,
+  ShoppingCart,
+  Factory,
+  FolderKanban,
+  Landmark,
+  Activity,
+  Scale,
+  ArrowUpRight,
+  Database,
+  CircleDollarSign,
+  BookOpen,
+} from "lucide-react";
 
-// ─── SVG Icons ────────────────────────────────────────────────────────────────
-function IconClipboard({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-    </svg>
-  );
-}
-function IconDollar({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  );
-}
-function IconCheck({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  );
-}
-function IconBuilding({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-    </svg>
-  );
-}
-function IconBox({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-    </svg>
-  );
-}
-function IconChart({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-    </svg>
-  );
-}
-function IconShield({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-    </svg>
-  );
-}
-function IconFile({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-    </svg>
-  );
-}
-function IconClock({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  );
-}
-function IconBar({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-    </svg>
-  );
-}
-function IconTrend({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-    </svg>
-  );
-}
-function IconCart({ size = 24, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-    </svg>
-  );
-}
-function IconDoc({ size = 16, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-    </svg>
-  );
-}
-function IconFinHub({ size = 32, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z" />
-      <path d="M9 12l2 2 4-4" />
-    </svg>
-  );
-}
-
-// ─── 1. HERO SECTION ─────────────────────────────────────────────────────────
+// ─── 1. HERO ──────────────────────────────────────────────────────────────────
 function HeroSection() {
   return (
-    <section style={{ paddingTop: 80, paddingBottom: 80, paddingLeft: 24, paddingRight: 24, background: C.fcfcfc }}>
-      {/* Heading block */}
-      <div style={{ maxWidth: 800, margin: "0 auto", textAlign: "center", marginBottom: 64 }}>
-        <span style={{
-          display: "inline-block",
-          padding: "4px 14px",
-          background: "rgba(212,242,77,0.1)",
-          border: "1px solid rgba(212,242,77,0.35)",
-          borderRadius: 999,
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: "1.6px",
-          textTransform: "uppercase",
-          color: C.gray600,
-          marginBottom: 28,
-        }}>Financial Module</span>
-
-        <h1 style={{
-          fontSize: "clamp(32px, 5vw, 56px)",
-          fontWeight: 700,
-          color: C.dark,
-          lineHeight: 1.15,
-          marginBottom: 24,
-          letterSpacing: "-0.02em",
-        }}>
-          Control your finances with<br />clarity and confidence
-        </h1>
-
-        <p style={{ fontSize: 17, color: C.gray500, maxWidth: 560, margin: "0 auto 36px", lineHeight: 1.7 }}>
-          Streamline your financial operations from ledger to report. Centralize cash flow, automate reconciliation, and manage vendor payments in one high-fidelity interface.
-        </p>
-
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
-          <a href="/contact" style={{
-            padding: "14px 32px",
-            background: C.dark,
-            color: "#fff",
-            borderRadius: 8,
-            fontWeight: 500,
-            fontSize: 14,
-            textDecoration: "none",
-            boxShadow: "0 4px 14px rgba(0,0,0,0.18)",
-            transition: "background 0.15s",
-          }}>Request Demo</a>
-          <button style={{
-            padding: "14px 32px",
-            background: C.white,
-            border: `1px solid ${C.border}`,
-            borderRadius: 8,
-            fontWeight: 500,
-            fontSize: 14,
-            color: C.dark,
-            cursor: "pointer",
-            transition: "background 0.15s",
-          }}>View features</button>
+    <Section pad="hero" className="biz-mesh">
+      <Container width="narrow">
+        <div className="flex flex-col items-center text-center">
+          <HeroBadge>Financial Module</HeroBadge>
+          <h1
+            className="mt-4 font-bold text-bz-text leading-[1.1] tracking-[-0.03em]
+                       text-[clamp(36px,5.4vw,60px)] max-w-[820px]"
+          >
+            Control your finances with
+            <br />
+            <span className="text-bz-sage">clarity</span> and confidence
+          </h1>
+          <p className="mt-6 text-[17px] leading-[1.7] text-bz-text-muted max-w-[600px]">
+            Streamline financial operations from ledger to report. Centralise cash flow, automate
+            reconciliation and manage vendor payments in one high-fidelity interface.
+          </p>
+          <div className="mt-9 flex flex-wrap justify-center gap-3">
+            <Button variant="primary" size="lg" href="/contact" withArrow>
+              Request Demo
+            </Button>
+            <Button variant="outline" size="lg" href="#features">
+              View features
+            </Button>
+          </div>
         </div>
-      </div>
 
-      {/* Dashboard mockup */}
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{
-          background: C.white,
-          borderRadius: 20,
-          boxShadow: "0 25px 60px -15px rgba(0,0,0,0.12)",
-          border: `1px solid ${C.border}`,
-          overflow: "hidden",
-          padding: 8,
-        }}>
-          <div style={{
-            background: C.f9,
-            borderRadius: 14,
-            border: `1px solid ${C.border}`,
-            padding: 32,
-            display: "flex",
-            gap: 32,
-            flexWrap: "wrap",
-          }}>
-            {/* Sidebar mockup */}
-            <div style={{ width: 200, flexShrink: 0, display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ height: 40, background: C.gray200, borderRadius: 8 }} />
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {[0.75, 0.5, 0.65].map((w, i) => (
-                  <div key={i} style={{ height: 14, background: C.gray100, borderRadius: 4, width: `${w * 100}%` }} />
-                ))}
+        <HeroDashboard />
+      </Container>
+    </Section>
+  );
+}
+
+function HeroDashboard() {
+  const stats = [
+    { label: "Cash Position", value: "$1.24M" },
+    { label: "Total Liabilities", value: "$482.4k" },
+    { label: "Avg. DPO", value: "34.2 Days" },
+  ];
+  const nodes: Array<{ label: string; sub: string; active: boolean }> = [
+    { label: "JE", sub: "Entry", active: false },
+    { label: "AP", sub: "Approval", active: false },
+    { label: "RECO", sub: "Reconciliation", active: true },
+    { label: "BS", sub: "Reporting", active: false },
+  ];
+
+  return (
+    <div className="mt-16 max-w-[1100px] mx-auto rounded-bz-2xl bg-bz-surface border border-bz-border
+                    shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] p-2">
+      <div className="rounded-bz-xl bg-bz-bg border border-bz-border p-6 md:p-8 flex gap-8 flex-wrap">
+        {/* Sidebar mock */}
+        <div className="w-[200px] shrink-0 flex flex-col gap-4">
+          <div className="h-10 rounded-bz-md bg-bz-border" />
+          <div className="flex flex-col gap-2">
+            <div className="h-3 rounded bg-bz-border-soft w-[75%]" />
+            <div className="h-3 rounded bg-bz-border-soft w-[50%]" />
+            <div className="h-3 rounded bg-bz-border-soft w-[65%]" />
+          </div>
+          <div className="pt-2 flex flex-col gap-2">
+            <div className="h-8 rounded-bz-sm bg-bz-border-soft" />
+            <div className="h-8 rounded-bz-sm bg-bz-border-soft" />
+          </div>
+        </div>
+
+        {/* Content mock */}
+        <div className="flex-1 min-w-[280px]">
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            {stats.map((s) => (
+              <div
+                key={s.label}
+                className="px-5 py-4 rounded-bz-lg bg-bz-surface border border-bz-border"
+              >
+                <p className="text-[9px] font-bold text-bz-text-soft uppercase tracking-[0.08em] mb-1.5">
+                  {s.label}
+                </p>
+                <p className="text-[22px] font-bold text-bz-text">{s.value}</p>
               </div>
-              <div style={{ paddingTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ height: 32, background: C.gray100, borderRadius: 6 }} />
-                <div style={{ height: 32, background: C.gray100, borderRadius: 6 }} />
-              </div>
+            ))}
+          </div>
+
+          <div className="px-7 py-7 rounded-bz-lg bg-bz-surface border border-bz-border">
+            <div className="flex justify-between items-center mb-8">
+              <h4 className="font-bold text-bz-text text-[14px]">Financial Workflow</h4>
+              <PillBadge tone="accent" dot>
+                LIVE
+              </PillBadge>
             </div>
 
-            {/* Content mockup */}
-            <div style={{ flex: 1, minWidth: 280 }}>
-              {/* Stat cards */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 }}>
-                {[
-                  { label: "CASH POSITION", value: "$1.24M" },
-                  { label: "TOTAL LIABILITIES", value: "$482.4k" },
-                  { label: "AVG. DPO", value: "34.2 Days" },
-                ].map((stat) => (
-                  <div key={stat.label} style={{
-                    padding: "20px 24px",
-                    background: C.white,
-                    borderRadius: 12,
-                    border: `1px solid ${C.border}`,
-                  }}>
-                    <p style={{ fontSize: 9, fontWeight: 700, color: C.gray400, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 6 }}>{stat.label}</p>
-                    <p style={{ fontSize: 22, fontWeight: 700, color: C.dark }}>{stat.value}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Workflow diagram */}
-              <div style={{ padding: "28px 32px", background: C.white, borderRadius: 12, border: `1px solid ${C.border}` }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-                  <h4 style={{ fontWeight: 700, color: C.gray800, fontSize: 14 }}>Financial Workflow</h4>
-                  <span style={{
-                    fontSize: 9,
-                    fontWeight: 700,
-                    background: C.accent,
-                    color: C.dark,
-                    padding: "2px 8px",
-                    borderRadius: 4,
-                    letterSpacing: "0.5px",
-                  }}>LIVE</span>
+            <div className="relative flex justify-between items-center px-4">
+              <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-px bg-bz-border" />
+              {nodes.map((n) => (
+                <div
+                  key={n.label}
+                  className={[
+                    "relative z-10 size-11 rounded-full flex items-center justify-center text-[9px] font-bold",
+                    n.active
+                      ? "bg-bz-deep text-white shadow-[0_4px_12px_rgba(0,0,0,0.2)] ring-4 ring-white"
+                      : "bg-bz-bg text-bz-text-soft border border-bz-border",
+                  ].join(" ")}
+                >
+                  {n.label}
                 </div>
-
-                {/* Nodes */}
-                <div style={{ position: "relative", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 16px" }}>
-                  {/* connector line */}
-                  <div style={{
-                    position: "absolute",
-                    height: 2,
-                    background: C.gray100,
-                    left: 16,
-                    right: 16,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    zIndex: 0,
-                  }} />
-                  {[
-                    { label: "JE", active: false },
-                    { label: "AP", active: false },
-                    { label: "RECO", active: true },
-                    { label: "BS", active: false },
-                  ].map((node) => (
-                    <div key={node.label} style={{
-                      position: "relative",
-                      zIndex: 1,
-                      width: 44,
-                      height: 44,
-                      borderRadius: "50%",
-                      background: node.active ? C.gray800 : C.f9,
-                      border: node.active ? `4px solid ${C.white}` : `1px solid ${C.gray200}`,
-                      boxShadow: node.active ? "0 4px 12px rgba(0,0,0,0.2)" : "none",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 9,
-                      fontWeight: 700,
-                      color: node.active ? C.white : C.gray400,
-                    }}>{node.label}</div>
-                  ))}
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, padding: "0 8px" }}>
-                  {["Entry", "Approval", "Reconciliation", "Reporting"].map((lbl, i) => (
-                    <span key={lbl} style={{
-                      fontSize: 9,
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      color: i === 2 ? C.gray800 : C.gray400,
-                    }}>{lbl}</span>
-                  ))}
-                </div>
-              </div>
+              ))}
+            </div>
+            <div className="flex justify-between mt-3 px-2">
+              {nodes.map((n) => (
+                <span
+                  key={n.sub}
+                  className={[
+                    "text-[9px] font-bold uppercase tracking-[0.08em]",
+                    n.active ? "text-bz-text" : "text-bz-text-soft",
+                  ].join(" ")}
+                >
+                  {n.sub}
+                </span>
+              ))}
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
-// ─── 2. FEATURE GRID ─────────────────────────────────────────────────────────
-const features = [
+// ─── 2. FEATURE GRID ──────────────────────────────────────────────────────────
+const FEATURES = [
   {
-    icon: <IconClipboard size={18} color={C.gray600} />,
+    icon: ClipboardList,
     title: "General Ledger",
-    desc: "Centralize journal entries, chart of accounts, and financial periods with high-fidelity accuracy.",
+    desc: "Centralise journal entries, chart of accounts and financial periods with high-fidelity accuracy.",
   },
   {
-    icon: <IconDollar size={18} color={C.gray600} />,
+    icon: DollarSign,
     title: "Accounts Payable",
     desc: "Automate invoice processing and vendor payments with dynamic multi-level approval chains.",
   },
   {
-    icon: <IconCheck size={18} color={C.gray600} />,
+    icon: CheckCircle2,
     title: "Smart Reconciliation",
     desc: "AI-driven bank statement matching that instantly reconciles ledger accounts with real-world bank data.",
   },
   {
-    icon: <IconBuilding size={18} color={C.gray600} />,
+    icon: Building2,
     title: "Multi-Entity Sync",
     desc: "Effortlessly manage global subsidiaries with automated intercompany eliminations and consolidations.",
   },
   {
-    icon: <IconBox size={18} color={C.gray600} />,
+    icon: Package,
     title: "Fixed Assets",
-    desc: "Track depreciation, maintenance, and asset lifecycle events automatically within the ledger.",
+    desc: "Track depreciation, maintenance and asset lifecycle events automatically within the ledger.",
   },
   {
-    icon: <IconChart size={18} color={C.gray600} />,
+    icon: LineChart,
     title: "Real-time Reporting",
     desc: "Generate GAAP and IFRS compliant financial statements instantly at the click of a button.",
   },
@@ -344,782 +198,1007 @@ const features = [
 
 function FeatureGridSection() {
   return (
-    <section style={{ padding: "96px 24px", background: C.white }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ marginBottom: 56 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.6px", color: C.gray400 }}>Overview</span>
-          <h2 style={{
-            fontSize: "clamp(26px, 3.5vw, 38px)",
-            fontWeight: 700,
-            color: C.dark,
-            marginTop: 14,
-            letterSpacing: "-0.02em",
-            lineHeight: 1.2,
-          }}>
-            A structured financial system<br />built for operational control
-          </h2>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 50 }}>
-          {features.map((f) => (
-            <div key={f.title} style={{
-              padding: "32px",
-              background: C.f9,
-              borderRadius: 14,
-              border: `1px solid ${C.border}`,
-              transition: "border-color 0.2s",
-            }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = C.gray300}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = C.border}
-            >
-              <div style={{
-                width: 40,
-                height: 40,
-                background: C.white,
-                borderRadius: 8,
-                border: `1px solid ${C.border}`,
-                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 20,
-              }}>
-                {f.icon}
-              </div>
-              <h3 style={{ fontWeight: 700, fontSize: 15, color: C.dark, marginBottom: 10 }}>{f.title}</h3>
-              <p style={{ fontSize: 13, color: C.gray500, lineHeight: 1.65 }}>{f.desc}</p>
-            </div>
+    <Section tone="white" id="features">
+      <Container>
+        <SectionHeading
+          eyebrow="Overview"
+          title={
+            <>
+              A structured financial system
+              <br />
+              built for operational control
+            </>
+          }
+          maxWidth={680}
+          className="mb-14"
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {FEATURES.map(({ icon: Icon, title, desc }) => (
+            <Card key={title} tone="soft" pad="lg" hover="lift">
+              <IconBadge tone="sage" size="md" className="mb-5">
+                <Icon className="size-5" strokeWidth={1.8} />
+              </IconBadge>
+              <h3 className="font-bold text-[15px] text-bz-text mb-2">{title}</h3>
+              <p className="text-[13px] text-bz-text-muted leading-[1.65]">{desc}</p>
+            </Card>
           ))}
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
 // ─── 3. TECHNICAL SHOWCASE (dark) ─────────────────────────────────────────────
 function TechnicalShowcaseSection() {
   return (
-    <section style={{ padding: "96px 24px", background: C.dark, color: C.white }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ marginBottom: 56 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.6px", color: C.gray500 }}>Technical Showcase</span>
-          <h2 style={{
-            fontSize: "clamp(26px, 3.5vw, 38px)",
-            fontWeight: 700,
-            color: C.white,
-            marginTop: 14,
-            letterSpacing: "-0.02em",
-            lineHeight: 1.2,
-          }}>
-            High-fidelity tools for the<br />modern finance team
-          </h2>
+    <Section tone="dark">
+      <Container>
+        <SectionHeading
+          eyebrow="Technical Showcase"
+          eyebrowTone="accent"
+          title={
+            <>
+              High-fidelity tools for the
+              <br />
+              modern finance team
+            </>
+          }
+          tone="light"
+          maxWidth={680}
+          className="mb-14"
+        />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <MultiEntityCard />
+          <FinancialControlCard />
+          <CashFlowCard />
+          <FinancialIntegrationCard />
         </div>
+      </Container>
+    </Section>
+  );
+}
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(480px, 1fr))", gap: 24 }}>
-
-          {/* Card 1: Multi-Entity */}
-          <div style={{
-            background: C.cardDark,
-            borderRadius: 20,
-            padding: 32,
-            border: `1px solid ${C.borderDark}`,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            minHeight: 420,
-          }}>
-            <div>
-              <div style={{
-                width: 34, height: 34, borderRadius: 8,
-                border: `1px solid rgba(255,255,255,0.1)`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: C.accent, marginBottom: 20,
-              }}>
-                <IconBuilding size={16} color={C.accent} />
-              </div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: C.white, marginBottom: 12 }}>Multi-Entity Management</h3>
-              <p style={{ fontSize: 13, color: C.gray400, lineHeight: 1.65, marginBottom: 40 }}>
-                Consolidate multiple subsidiaries with varying currencies into a single source of truth in seconds.
-              </p>
-            </div>
-            <div style={{
-              background: "rgba(255,255,255,0.05)",
-              borderRadius: 14,
-              border: `1px solid rgba(255,255,255,0.1)`,
-              padding: 24,
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
-                <div style={{
-                  width: 40, height: 40, borderRadius: "50%",
-                  background: "rgba(255,255,255,0.08)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontWeight: 700, fontSize: 12, color: C.accent,
-                }}>GL</div>
-                <div>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: C.white }}>Global Entities</p>
-                  <p style={{ fontSize: 10, color: C.gray500, textTransform: "uppercase", letterSpacing: "0.5px" }}>4 Active Markets</p>
-                </div>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, textAlign: "center" }}>
-                {[
-                  { label: "CONSOLIDATED", value: "99.8%", color: C.accent },
-                  { label: "TAX COMPL.", value: "A+", color: C.white },
-                  { label: "ELIMINATIONS", value: "100%", color: C.white },
-                ].map((m) => (
-                  <div key={m.label}>
-                    <p style={{ fontSize: 9, color: C.gray500, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 4 }}>{m.label}</p>
-                    <p style={{ fontSize: 17, fontWeight: 700, color: m.color }}>{m.value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+function MultiEntityCard() {
+  const m = [
+    { label: "Consolidated", value: "99.8%", accent: true },
+    { label: "Tax Compl.", value: "A+" },
+    { label: "Eliminations", value: "100%" },
+  ];
+  return (
+    <Card tone="dark" pad="lg" className="min-h-[420px] flex flex-col justify-between">
+      <div>
+        <IconBadge tone="darkSurface" size="sm" className="mb-5">
+          <Building2 className="size-4 text-bz-accent" strokeWidth={1.8} />
+        </IconBadge>
+        <h3 className="text-[18px] font-bold mb-2.5">Multi-Entity Management</h3>
+        <p className="text-[13px] text-white/60 leading-[1.65] mb-9">
+          Consolidate multiple subsidiaries with varying currencies into a single source of truth in
+          seconds.
+        </p>
+      </div>
+      <div className="bg-white/[0.04] rounded-bz-xl border border-white/10 p-5">
+        <div className="flex items-center gap-3.5 mb-5">
+          <div className="size-10 rounded-full bg-white/[0.06] flex items-center justify-center text-bz-accent font-bold text-[12px]">
+            GL
           </div>
-
-          {/* Card 2: Financial Control */}
-          <div style={{
-            background: C.cardDark,
-            borderRadius: 20,
-            padding: 32,
-            border: `1px solid ${C.borderDark}`,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            minHeight: 420,
-          }}>
-            <div>
-              <div style={{
-                width: 34, height: 34, borderRadius: 8,
-                border: `1px solid rgba(255,255,255,0.1)`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                marginBottom: 20,
-              }}>
-                <IconShield size={16} color={C.accent} />
-              </div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: C.white, marginBottom: 12 }}>Financial Control</h3>
-              <p style={{ fontSize: 13, color: C.gray400, lineHeight: 1.65, marginBottom: 28 }}>
-                Maintain strict fiscal hygiene with intelligent conditional routing and budget checks.
-              </p>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {[
-                { abbr: "M", label: "Manager Approval", color: "#3b82f6", bg: "rgba(59,130,246,0.2)", status: "green", pulse: false },
-                { abbr: "CF", label: "CFO Review > $50k", color: C.accent, bg: `rgba(212,242,77,0.2)`, status: "yellow", pulse: true },
-                { abbr: "L", label: "Compliance Log", color: C.gray500, bg: "rgba(107,114,128,0.2)", status: null, pulse: false },
-              ].map((row) => (
-                <div key={row.label} style={{
-                  padding: "14px 16px",
-                  background: "rgba(255,255,255,0.05)",
-                  borderRadius: 10,
-                  border: `1px solid rgba(255,255,255,0.08)`,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  opacity: row.status === null ? 0.5 : 1,
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{
-                      width: 26, height: 26, borderRadius: 6,
-                      background: row.bg,
-                      color: row.color,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 9, fontWeight: 700,
-                    }}>{row.abbr}</div>
-                    <span style={{ fontSize: 12, fontWeight: 500, color: C.white }}>{row.label}</span>
-                  </div>
-                  {row.status && (
-                    <div style={{
-                      width: 16, height: 16, borderRadius: "50%",
-                      background: row.status === "green" ? "rgba(34,197,94,0.2)" : "rgba(234,179,8,0.2)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <div style={{
-                        width: 6, height: 6, borderRadius: "50%",
-                        background: row.status === "green" ? "#22c55e" : "#eab308",
-                      }} />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Card 3: Cash Flow */}
-          <div style={{
-            background: C.cardDark,
-            borderRadius: 20,
-            padding: 32,
-            border: `1px solid ${C.borderDark}`,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            minHeight: 360,
-          }}>
-            <div>
-              <div style={{
-                width: 34, height: 34, borderRadius: 8,
-                border: `1px solid rgba(255,255,255,0.1)`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                marginBottom: 20,
-              }}>
-                <IconFile size={16} color={C.accent} />
-              </div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: C.white, marginBottom: 12 }}>Cash Flow Management</h3>
-              <p style={{ fontSize: 13, color: C.gray400, lineHeight: 1.65, marginBottom: 40 }}>
-                Dynamic forecasting and debt management with real-time aging reports.
-              </p>
-            </div>
-            <div style={{
-              background: "rgba(255,255,255,0.05)",
-              borderRadius: "14px 14px 0 0",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderBottom: "none",
-              padding: 24,
-            }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                {[
-                  { pct: "75%", color: C.accent },
-                  { pct: "50%", color: C.gray400 },
-                  { pct: "25%", color: "#60a5fa" },
-                ].map((bar, i) => (
-                  <div key={i} style={{
-                    height: 8, background: "rgba(255,255,255,0.08)",
-                    borderRadius: 99, position: "relative", overflow: "hidden",
-                  }}>
-                    <div style={{
-                      position: "absolute", inset: 0,
-                      width: bar.pct,
-                      background: bar.color,
-                      borderRadius: 99,
-                    }} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Card 4: Financial Integration / Audit */}
-          <div style={{
-            background: C.cardDark,
-            borderRadius: 20,
-            padding: 32,
-            border: `1px solid ${C.borderDark}`,
-            minHeight: 360,
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-              <div style={{
-                width: 34, height: 34, borderRadius: 8,
-                border: `1px solid rgba(255,255,255,0.1)`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <IconClipboard size={16} color={C.accent} />
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <p style={{ fontSize: 9, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>Audit Score</p>
-                <p style={{ fontSize: 26, fontWeight: 700, color: C.accent }}>100%</p>
-              </div>
-            </div>
-            <h3 style={{ fontSize: 18, fontWeight: 700, color: C.white, marginBottom: 12 }}>Financial Integration</h3>
-            <p style={{ fontSize: 13, color: C.gray400, lineHeight: 1.65, marginBottom: 28 }}>
-              Direct ledger posting and automated 3-way matching for absolute financial integrity.
+          <div>
+            <p className="text-[13px] font-bold">Global Entities</p>
+            <p className="text-[10px] text-white/40 uppercase tracking-[0.08em]">
+              4 Active Markets
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-              <div style={{
-                display: "flex", justifyContent: "space-between",
-                paddingBottom: 10, borderBottom: `1px solid rgba(255,255,255,0.05)`,
-                fontSize: 9, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: "0.8px",
-              }}>
-                <span>Digital Trail</span><span>Source Node</span><span>State</span>
-              </div>
-              {[
-                { trail: "Journal_Entry", ref: "#JE-2024-8821" },
-                { trail: "Bank_Statement", ref: "#BS-990-22" },
-                { trail: "Vendor_Invoice", ref: "#INV-AX-402" },
-              ].map((row) => (
-                <div key={row.trail} style={{
-                  display: "flex", justifyContent: "space-between", alignItems: "center",
-                  padding: "10px 0", borderBottom: `1px solid rgba(255,255,255,0.04)`,
-                  fontSize: 10, fontWeight: 700,
-                }}>
-                  <span style={{ color: C.white }}>{row.trail}</span>
-                  <span style={{ color: C.gray400 }}>{row.ref}</span>
-                  <div style={{
-                    width: 12, height: 12, borderRadius: "50%",
-                    background: "rgba(34,197,94,0.15)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
-                    <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#22c55e" }} />
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── 4. INTELLIGENCE / REPORTING ─────────────────────────────────────────────
-function IntelligenceSection() {
-  return (
-    <section style={{ padding: "96px 24px", background: C.fcfcfc }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 56 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.6px", color: C.gray400 }}>Reporting</span>
-          <h2 style={{
-            fontSize: "clamp(26px, 3.5vw, 38px)",
-            fontWeight: 700,
-            color: C.dark,
-            marginTop: 14,
-            letterSpacing: "-0.02em",
-          }}>
-            Finance intelligence that drives decisions
-          </h2>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "3fr 1fr", gap: 20 }}>
-
-          {/* Main chart card */}
-          <div style={{
-            background: C.white,
-            borderRadius: 20,
-            border: `1px solid ${C.border}`,
-            padding: 32,
-            boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 48 }}>
-              <div>
-                <h3 style={{ fontWeight: 700, color: C.gray800, fontSize: 15 }}>Executive Revenue Analytics</h3>
-                <p style={{ fontSize: 12, color: C.gray400, marginTop: 4 }}>Consolidated global entity performance</p>
-              </div>
-              <span style={{
-                fontSize: 10, fontWeight: 700,
-                background: C.gray100, color: C.gray600,
-                padding: "4px 10px", borderRadius: 6,
-              }}>FY2024</span>
-            </div>
-
-            {/* SVG mock chart */}
-            <div style={{ position: "relative", height: 200 }}>
-              <svg width="100%" height="100%" viewBox="0 0 400 100" preserveAspectRatio="none">
-                <path d="M0,80 Q50,20 100,60 T200,40 T300,70 T400,20" fill="none" stroke={C.accent} strokeWidth="3" />
-                <path d="M0,90 Q50,50 100,80 T200,60 T300,90 T400,50" fill="none" stroke={C.gray200} strokeDasharray="4 4" strokeWidth="2" />
-              </svg>
-              {/* Tooltip */}
-              <div style={{
-                position: "absolute",
-                left: "50%",
-                top: "28%",
-                transform: "translateX(-50%)",
-                background: C.dark,
-                color: C.white,
-                padding: "10px 16px",
-                borderRadius: 10,
-                boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
-                textAlign: "center",
-                whiteSpace: "nowrap",
-              }}>
-                <p style={{ fontSize: 8, textTransform: "uppercase", letterSpacing: "1px", opacity: 0.6, marginBottom: 4 }}>Peak Identified</p>
-                <p style={{ fontSize: 18, fontWeight: 700 }}>$1.24M</p>
-                <p style={{ fontSize: 8, opacity: 0.6 }}>Sector: Auto Manufacturing</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Metric cards stack */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {[
-              { icon: <IconClock size={16} color={C.gray400} />, label: "TOTAL SPEND", value: "$428k", sub: "↓ 4.2%", subColor: "#22c55e" },
-              { icon: <IconBar size={16} color={C.gray400} />, label: "VARIANCE", value: "0.82%", sub: "Target Optimized", subColor: C.gray400 },
-              { icon: <IconTrend size={16} color={C.gray400} />, label: "CYCLE TIME", value: "3.2d", sub: "↓ 12%", subColor: "#22c55e" },
-            ].map((m) => (
-              <div key={m.label} style={{
-                padding: 20,
-                background: C.white,
-                border: `1px solid ${C.border}`,
-                borderRadius: 14,
-                boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <div style={{
-                    width: 32, height: 32,
-                    background: C.f9,
-                    borderRadius: 8,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>{m.icon}</div>
-                  <IconDoc size={14} color={C.gray300} />
-                </div>
-                <p style={{ fontSize: 9, fontWeight: 700, color: C.gray400, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 4 }}>{m.label}</p>
-                <p style={{ fontSize: 20, fontWeight: 700, color: C.dark }}>{m.value}</p>
-                <p style={{ fontSize: 9, fontWeight: 700, color: m.subColor, marginTop: 4 }}>{m.sub}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── 5. CONNECTED SYSTEM ─────────────────────────────────────────────────────
-function ConnectedSystemSection() {
-  return (
-    <section style={{ padding: "96px 24px", background: C.dark, color: C.white }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.6px", color: C.gray500 }}>Seamless Connectivity</span>
-        <h2 style={{
-          fontSize: "clamp(26px, 3.5vw, 38px)",
-          fontWeight: 700,
-          color: C.white,
-          marginTop: 14,
-          marginBottom: 72,
-          letterSpacing: "-0.02em",
-        }}>
-          Finance connected directly to<br />operations and sales
-        </h2>
-
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0, flexWrap: "wrap" }}>
-          {/* Purchasing node */}
-          <div style={{
-            width: 128,
-            height: 160,
-            background: "rgba(255,255,255,0.04)",
-            border: `1px solid rgba(255,255,255,0.1)`,
-            borderRadius: 14,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 20,
-            gap: 12,
-            flexShrink: 0,
-          }}>
-            <div style={{
-              width: 40, height: 40,
-              background: "rgba(255,255,255,0.04)",
-              border: `1px solid rgba(255,255,255,0.1)`,
-              borderRadius: 8,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: C.gray400,
-            }}>
-              <IconCart size={22} color={C.gray400} />
-            </div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: C.white }}>Purchasing</p>
-            <div style={{ width: "100%", height: 1, background: "rgba(255,255,255,0.08)" }} />
-            <p style={{ fontSize: 8, color: C.gray500, textTransform: "uppercase", letterSpacing: "0.5px" }}>Auto-Matching</p>
-          </div>
-
-          {/* Connector line */}
-          <div style={{
-            flex: 1,
-            height: 1,
-            background: `linear-gradient(to right, transparent, rgba(212,242,77,0.5), transparent)`,
-            minWidth: 40,
-            maxWidth: 120,
-          }} />
-
-          {/* Finance Hub (center) */}
-          <div style={{ position: "relative", flexShrink: 0 }}>
-            <div style={{
-              position: "absolute",
-              inset: "-40px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(212,242,77,0.15) 0%, transparent 70%)",
-              filter: "blur(20px)",
-              zIndex: 0,
-            }} />
-            <div style={{
-              position: "relative",
-              zIndex: 1,
-              width: 128,
-              height: 128,
-              borderRadius: "50%",
-              background: C.accent,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              color: C.dark,
-              boxShadow: `0 0 50px rgba(212,242,77,0.3)`,
-              padding: 16,
-            }}>
-              <IconFinHub size={28} color={C.dark} />
-              <p style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "center", marginTop: 6, lineHeight: 1.3 }}>Finance<br />Hub</p>
-            </div>
-          </div>
-
-          {/* Connector line */}
-          <div style={{
-            flex: 1,
-            height: 1,
-            background: `linear-gradient(to right, transparent, rgba(212,242,77,0.5), transparent)`,
-            minWidth: 40,
-            maxWidth: 120,
-          }} />
-
-          {/* Inventory node */}
-          <div style={{
-            width: 128,
-            height: 160,
-            background: "rgba(255,255,255,0.04)",
-            border: `1px solid rgba(255,255,255,0.1)`,
-            borderRadius: 14,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 20,
-            gap: 12,
-            flexShrink: 0,
-          }}>
-            <div style={{
-              width: 40, height: 40,
-              background: "rgba(255,255,255,0.04)",
-              border: `1px solid rgba(255,255,255,0.1)`,
-              borderRadius: 8,
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <IconBox size={22} color={C.gray400} />
-            </div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: C.white }}>Inventory</p>
-            <div style={{ width: "100%", height: 1, background: "rgba(255,255,255,0.08)" }} />
-            <p style={{ fontSize: 8, color: C.gray500, textTransform: "uppercase", letterSpacing: "0.5px" }}>Asset Sync</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── 6. IMPACT METRICS ───────────────────────────────────────────────────────
-function MetricsSection() {
-  return (
-    <section style={{ padding: "96px 24px", background: C.white }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.6px", color: C.gray400 }}>Efficiency</span>
-        <h2 style={{
-          fontSize: "clamp(26px, 3.5vw, 38px)",
-          fontWeight: 700,
-          color: C.dark,
-          marginTop: 14,
-          marginBottom: 72,
-          letterSpacing: "-0.02em",
-        }}>
-          Measurable impact on financial operations
-        </h2>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 54 }}>
-          {[
-            {
-              value: "60%",
-              label: "Faster Month-End",
-              desc: "Automated reconciliation and elimination workflows reduce close times by more than half.",
-            },
-            {
-              value: "40%",
-              label: "Reduced Errors",
-              desc: "Eliminate manual data entry errors with direct bank feeds and automated ledger posting.",
-            },
-            {
-              value: "100%",
-              label: "Audit Compliance",
-              desc: "A complete digital paper trail for every transaction, ensuring effortless regulatory reporting.",
-            },
-          ].map((m) => (
-            <div key={m.label} style={{
-              padding: 32,
-              border: `1px solid ${C.border}`,
-              borderRadius: 20,
-              textAlign: "center",
-              transition: "box-shadow 0.2s",
-            }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 48px rgba(0,0,0,0.1)"}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "none"}
-            >
-              <p style={{ fontSize: 52, fontWeight: 700, color: C.dark, marginBottom: 12, letterSpacing: "-0.03em" }}>{m.value}</p>
-              <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.4px", color: C.gray400, marginBottom: 16 }}>{m.label}</p>
-              <p style={{ fontSize: 13, color: C.gray500, lineHeight: 1.65 }}>{m.desc}</p>
+        <div className="grid grid-cols-3 gap-3 text-center">
+          {m.map((x) => (
+            <div key={x.label}>
+              <p className="text-[9px] text-white/40 uppercase tracking-[0.08em] mb-1">
+                {x.label}
+              </p>
+              <p
+                className={[
+                  "text-[17px] font-bold",
+                  x.accent ? "text-bz-accent" : "text-white",
+                ].join(" ")}
+              >
+                {x.value}
+              </p>
             </div>
           ))}
         </div>
       </div>
-    </section>
+    </Card>
   );
 }
 
-
-
-
-
- 
-// ─── 7. CTA SECTION ──────────────────────────────────────────────────────────
-// function CTASection() {
-//   return (
-//     <section style={{ background: C.bgDark, padding: "128px 192px", overflow: "hidden", position: "relative" }}>
-//       {/* Subtle glow */}
-//       <div style={{
-//         position: "absolute", bottom: -293, left: -128, right: -128, height: 586,
-//         background: "radial-gradient(ellipse at 50% 50%, rgba(199,255,53,0.03) 0%, transparent 70%)",
-//         pointerEvents: "none",
-//       }} />
-
-//       <div style={{ maxWidth: 896, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 32, position: "relative", zIndex: 1 }}>
-//         <h2 style={{
-//           fontFamily: "Inter", fontWeight: 700,
-//           fontSize: "clamp(36px, 4.5vw, 48px)",
-//           lineHeight: 1.2, letterSpacing: "-1.2px",
-//           color: "#fff", textAlign: "center", margin: 0,
-//         }}>
-//          Take full control of<br /> your financial operations
-//         </h2>
-//         <p style={{
-//           fontFamily: "Inter", fontWeight: 400,
-//           fontSize: 20, lineHeight: 1.625,
-//           color: "rgba(255,255,255,0.4)",
-//           textAlign: "center", margin: 0, maxWidth: 580,
-//         }}>
-//           Join 50,000+ companies scaling with FinCore. Start your 14-day free trial today.
-//         </p>
-//         <div style={{ display: "flex", gap: 24, justifyContent: "center" }}>
-//           <button style={{
-//             background: C.accent, color: C.dark, border: "none",
-//             borderRadius: 4, padding: "20px 40px",
-//             fontFamily: "Inter", fontWeight: 700, fontSize: 18,
-//             cursor: "pointer", boxShadow: "0 0 20px rgba(199,255,53,0.4)",
-//           }}>Request Demo</button>
-//           <button style={{
-//             background: "transparent", color: "#fff",
-//             border: "1px solid rgba(255,255,255,0.2)", borderRadius: 4,
-//             padding: "20px 41px",
-//             fontFamily: "Inter", fontWeight: 700, fontSize: 18, cursor: "pointer",
-//           }}>Contact Sales</button>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
-
-
-function CTASection() {
+function FinancialControlCard() {
+  const rows: Array<{
+    abbr: string;
+    label: string;
+    chipBg: string;
+    chipColor: string;
+    status: "green" | "yellow" | null;
+  }> = [
+    { abbr: "M", label: "Manager Approval", chipBg: "bg-blue-500/20", chipColor: "text-blue-400", status: "green" },
+    { abbr: "CF", label: "CFO Review > $50k", chipBg: "bg-bz-accent-mid", chipColor: "text-bz-accent", status: "yellow" },
+    { abbr: "L", label: "Compliance Log", chipBg: "bg-white/[0.06]", chipColor: "text-white/40", status: null },
+  ];
   return (
-    <section className="biz-cta-section" style={{ background: C.deep, padding: "100px 0", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(rgba(199,255,53,0.04) 1px, transparent 1px)`, backgroundSize: "28px 28px", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 800, height: 400, background: "radial-gradient(ellipse, rgba(199,255,53,0.05) 0%, transparent 65%)", pointerEvents: "none" }} />
-
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 40px", textAlign: "center", position: "relative", zIndex: 1 }}>
-        {/* <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            background: C.accentLow,
-            border: `1px solid ${C.accentMid}`,
-            borderRadius: 100,
-            padding: "6px 18px",
-            marginBottom: 32,
-          }}
-        >
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.accent, display: "block" }} />
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 700, color: C.accent, letterSpacing: "0.08em" }}>OPEN TO ALL BACKGROUNDS</span>
-        </div> */}
-
-        <h2
-          style={{
-            fontFamily: "'Manrope', sans-serif",
-            fontSize: "clamp(32px, 4.5vw, 58px)",
-            fontWeight: 800,
-            color: C.white,
-            lineHeight: 1.08,
-            margin: "0 0 20px",
-            letterSpacing: "-0.03em",
-          }}
-        >
-          Take full control of your{" "}<span style={{ color: C.accent }}> financial operations</span>
-        </h2>
-
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 18,
-            color: "rgba(255,255,255,0.55)",
-            lineHeight: 1.7,
-            margin: "0 auto 48px",
-            maxWidth: 580,
-          }}
-        >
-         Join 50,000+ companies scaling with FinCore. Start your <br></br>14-day free trial today.
+    <Card tone="dark" pad="lg" className="min-h-[420px] flex flex-col justify-between">
+      <div>
+        <IconBadge tone="darkSurface" size="sm" className="mb-5">
+          <ShieldCheck className="size-4 text-bz-accent" strokeWidth={1.8} />
+        </IconBadge>
+        <h3 className="text-[18px] font-bold mb-2.5">Financial Control</h3>
+        <p className="text-[13px] text-white/60 leading-[1.65] mb-7">
+          Maintain strict fiscal hygiene with intelligent conditional routing and budget checks.
         </p>
+      </div>
+      <div className="flex flex-col gap-2.5">
+        {rows.map((r) => (
+          <div
+            key={r.label}
+            className={[
+              "px-4 py-3.5 rounded-bz-md bg-white/[0.04] border border-white/10",
+              "flex items-center justify-between",
+              r.status === null && "opacity-50",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className={[
+                  "size-7 rounded-bz-sm flex items-center justify-center text-[9px] font-bold",
+                  r.chipBg,
+                  r.chipColor,
+                ].join(" ")}
+              >
+                {r.abbr}
+              </div>
+              <span className="text-[12px] font-medium text-white">{r.label}</span>
+            </div>
+            {r.status && (
+              <div
+                className={[
+                  "size-4 rounded-full flex items-center justify-center",
+                  r.status === "green" ? "bg-emerald-500/20" : "bg-yellow-500/20",
+                ].join(" ")}
+              >
+                <div
+                  className={[
+                    "size-1.5 rounded-full",
+                    r.status === "green" ? "bg-emerald-500" : "bg-yellow-400",
+                  ].join(" ")}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
 
-        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-          <a
-            href="https://system.bizakerp.com/account/self-register"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: C.accent,
-              color: C.deep,
-              padding: "15px 36px",
-              borderRadius: 10,
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 700,
-              fontSize: 15,
-              textDecoration: "none",
-              transition: "transform 0.2s, box-shadow 0.2s",
-            }}
-            onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = "translateY(-2px)"; el.style.boxShadow = `0 8px 32px rgba(199,255,53,0.35)`; }}
-            onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = ""; el.style.boxShadow = ""; }}
-          >
-      Start Free Trial
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M7 17l9.2-9.2M17 17V7H7" />
-            </svg>
-          </a>
-          <a
-            href="/contact"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: "transparent",
-              color: C.white,
-              padding: "15px 36px",
-              borderRadius: 10,
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 600,
-              fontSize: 15,
-              textDecoration: "none",
-              border: `1px solid ${C.borderDark}`,
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.25)"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = C.borderDark; }}
-          >
-           Book a demo
-          </a>
+function CashFlowCard() {
+  const bars = [
+    { pct: 75, color: "bg-bz-accent" },
+    { pct: 50, color: "bg-white/40" },
+    { pct: 25, color: "bg-blue-400" },
+  ];
+  return (
+    <Card tone="dark" pad="lg" className="min-h-[360px] flex flex-col justify-between">
+      <div>
+        <IconBadge tone="darkSurface" size="sm" className="mb-5">
+          <FileText className="size-4 text-bz-accent" strokeWidth={1.8} />
+        </IconBadge>
+        <h3 className="text-[18px] font-bold mb-2.5">Cash Flow Management</h3>
+        <p className="text-[13px] text-white/60 leading-[1.65] mb-9">
+          Dynamic forecasting and debt management with real-time aging reports.
+        </p>
+      </div>
+      <div className="bg-white/[0.04] rounded-t-bz-xl border border-white/10 border-b-0 p-5">
+        <div className="flex flex-col gap-3.5">
+          {bars.map((b, i) => (
+            <div
+              key={i}
+              className="h-2 bg-white/[0.06] rounded-bz-pill relative overflow-hidden"
+            >
+              <div
+                className={`absolute inset-y-0 left-0 rounded-bz-pill ${b.color}`}
+                style={{ width: `${b.pct}%` }}
+              />
+            </div>
+          ))}
         </div>
 
        
       </div>
-    </section>
+    </Card>
   );
 }
 
+function FinancialIntegrationCard() {
+  const trail = [
+    { trail: "Journal_Entry", ref: "#JE-2024-8821" },
+    { trail: "Bank_Statement", ref: "#BS-990-22" },
+    { trail: "Vendor_Invoice", ref: "#INV-AX-402" },
+  ];
+  return (
+    <Card tone="dark" pad="lg" className="min-h-[360px]">
+      <div className="flex justify-between items-start mb-5">
+        <IconBadge tone="darkSurface" size="sm">
+          <ClipboardList className="size-4 text-bz-accent" strokeWidth={1.8} />
+        </IconBadge>
+        <div className="text-right">
+          <p className="text-[9px] font-bold text-white/40 uppercase tracking-[0.08em] mb-1">
+            Audit Score
+          </p>
+          <p className="text-[26px] font-bold text-bz-accent leading-none">100%</p>
+        </div>
+      </div>
+      <h3 className="text-[18px] font-bold mb-2.5">Financial Integration</h3>
+      <p className="text-[13px] text-white/60 leading-[1.65] mb-7">
+        Direct ledger posting and automated 3-way matching for absolute financial integrity.
+      </p>
+      <div>
+        <div className="flex justify-between pb-2.5 border-b border-white/[0.06]
+                        text-[9px] font-bold text-white/40 uppercase tracking-[0.08em]">
+          <span>Digital Trail</span>
+          <span>Source Node</span>
+          <span>State</span>
+        </div>
+        {trail.map((r) => (
+          <div
+            key={r.trail}
+            className="flex justify-between items-center py-2.5 border-b border-white/[0.04]
+                       text-[10px] font-bold"
+          >
+            <span className="text-white">{r.trail}</span>
+            <span className="text-white/60">{r.ref}</span>
+            <div className="size-3 rounded-full bg-emerald-500/15 flex items-center justify-center">
+              <div className="size-1 rounded-full bg-emerald-500" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
 
+// ─── 4. REPORTING — creative redesign ─────────────────────────────────────────
+//   Concept: "Click any number, see its source."
+//   12-col bento. Row 1: Live P&L (7) + Pre-built reports (5).
+//   Row 2: Anomaly detection (5) + Drill-down audit trail (7).
+function ReportingSection() {
+  return (
+    <Section tone="light">
+      <Container>
+        <SectionHeading
+          eyebrow="Reporting"
+          title={
+            <>
+              Click any number,
+              <br />
+              <span className="text-bz-sage">see its source.</span>
+            </>
+          }
+          description="From the income statement down to the originating journal entry — every figure is live, traceable and audit-ready."
+          maxWidth={720}
+          className="mb-14"
+        />
 
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          <LivePnLCard />
+          <PreBuiltReportsCard />
+          <AnomalyAlertsCard />
+          <DrillTrailCard />
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+type PnLRow = {
+  label: string;
+  value: string;
+  delta: string;
+  trend: "up" | "down";
+  intent: "good" | "bad" | "neutral";
+  emphasis?: boolean;
+};
+
+function LivePnLCard() {
+  const rows: PnLRow[] = [
+    { label: "Revenue",            value: "$4.82M",  delta: "+12.4%", trend: "up",   intent: "good"    },
+    { label: "Gross Profit",       value: "$2.91M",  delta: "60.3% margin", trend: "up", intent: "neutral" },
+    { label: "Operating Expenses", value: "($1.84M)",delta: "+4.1%",  trend: "up",   intent: "bad"     },
+    { label: "EBITDA",             value: "$1.07M",  delta: "+18.6%", trend: "up",   intent: "good"    },
+    { label: "Net Income",         value: "$812K",   delta: "+22.1%", trend: "up",   intent: "good", emphasis: true },
+  ];
+
+  return (
+    <Card pad="lg" className="lg:col-span-7">
+      <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
+        <div>
+          <div className="flex items-center gap-2 mb-1.5">
+            <IconBadge tone="sage" size="sm">
+              <FileText className="size-4" strokeWidth={1.8} />
+            </IconBadge>
+            <h3 className="text-[16px] font-bold text-bz-text">Income Statement</h3>
+          </div>
+          <p className="text-[12px] text-bz-text-muted">
+            Auto-consolidated from 4 entities · synced 2 minutes ago
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <PillBadge tone="neutral">FY2024 · Q3</PillBadge>
+          <PillBadge tone="accent" dot>
+            LIVE
+          </PillBadge>
+        </div>
+      </div>
+
+      <div className="rounded-bz-lg border border-bz-border overflow-hidden">
+        {rows.map((r, i) => (
+          <div
+            key={r.label}
+            className={[
+              "flex items-center justify-between px-5 py-4",
+              i !== rows.length - 1 && "border-b border-bz-border-soft",
+              r.emphasis && "bg-bz-bg",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <span
+                className={[
+                  "size-1.5 rounded-full shrink-0",
+                  r.emphasis ? "bg-bz-accent" : "bg-bz-border",
+                ].join(" ")}
+              />
+              <span
+                className={[
+                  "text-[14px] truncate",
+                  r.emphasis ? "font-bold text-bz-text" : "font-medium text-bz-text",
+                ].join(" ")}
+              >
+                {r.label}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+              {r.emphasis && (
+                <svg width="64" height="20" viewBox="0 0 64 20" className="hidden sm:block">
+                  <path
+                    d="M0,15 L10,12 L20,14 L30,9 L40,10 L50,5 L64,2"
+                    fill="none"
+                    stroke="var(--bz-sage)"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              )}
+              <span
+                className={[
+                  "tabular-nums",
+                  r.emphasis ? "text-[18px] font-bold text-bz-text" : "text-[14px] font-semibold text-bz-text",
+                ].join(" ")}
+              >
+                {r.value}
+              </span>
+              <DeltaPill delta={r.delta} trend={r.trend} intent={r.intent} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex items-center justify-between mt-5 flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          <PillBadge tone="neutral">PDF</PillBadge>
+          <PillBadge tone="neutral">XBRL</PillBadge>
+          <PillBadge tone="neutral">Excel</PillBadge>
+        </div>
+        <a
+          href="#"
+          className="inline-flex items-center gap-1 text-[12px] font-bold text-bz-sage hover:text-bz-sage-hover"
+        >
+          Drill into accounts
+          <ArrowUpRight className="size-3.5" strokeWidth={2} />
+        </a>
+      </div>
+    </Card>
+  );
+}
+
+function DeltaPill({
+  delta,
+  trend,
+  intent,
+}: {
+  delta: string;
+  trend: "up" | "down";
+  intent: "good" | "bad" | "neutral";
+}) {
+  const TrendIcon = trend === "up" ? TrendingUp : TrendingDown;
+  const tone =
+    intent === "good"
+      ? "bg-bz-sage-soft text-bz-sage"
+      : intent === "bad"
+      ? "bg-rose-500/10 text-rose-500"
+      : "bg-bz-bg text-bz-text-muted border border-bz-border";
+  return (
+    <span
+      className={[
+        "inline-flex items-center gap-1 px-2 py-1 rounded-bz-pill",
+        "text-[10.5px] font-bold tabular-nums",
+        tone,
+      ].join(" ")}
+    >
+      <TrendIcon className="size-3" strokeWidth={2.4} />
+      {delta}
+    </span>
+  );
+}
+
+function PreBuiltReportsCard() {
+  const reports = [
+    { icon: FileText, name: "Income Statement", sub: "Live · streaming",   live: true  },
+    { icon: Scale,    name: "Balance Sheet",    sub: "Updated 2m ago"                  },
+    { icon: Activity, name: "Cash Flow",        sub: "Updated 5m ago"                  },
+    { icon: Clock,    name: "AR Aging Report",  sub: "Updated 8m ago"                  },
+    { icon: Clock,    name: "AP Aging Report",  sub: "Updated 12m ago"                 },
+  ];
+  return (
+    <Card pad="lg" className="lg:col-span-5">
+      <div className="flex items-start justify-between mb-5">
+        <div>
+          <Eyebrow>Always-on reports</Eyebrow>
+          <h3 className="text-[16px] font-bold text-bz-text mt-1.5">Pre-built statements</h3>
+        </div>
+        <PillBadge tone="neutral">38 total</PillBadge>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {reports.map(({ icon: Icon, name, sub, live }) => (
+          <div
+            key={name}
+            className={[
+              "group flex items-center gap-4 px-4 py-3.5 rounded-bz-lg border transition-colors",
+              live
+                ? "bg-bz-bg border-bz-accent-mid"
+                : "bg-bz-surface border-bz-border-soft hover:border-bz-border",
+            ].join(" ")}
+          >
+            <div
+              className={[
+                "size-9 rounded-bz-md flex items-center justify-center shrink-0",
+                live ? "bg-bz-accent text-bz-deep" : "bg-bz-bg text-bz-sage",
+              ].join(" ")}
+            >
+              <Icon className="size-4" strokeWidth={1.8} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13.5px] font-semibold text-bz-text truncate">{name}</p>
+              <p className="text-[11px] text-bz-text-muted">{sub}</p>
+            </div>
+            {live ? (
+              <PillBadge tone="accent" dot>
+                LIVE
+              </PillBadge>
+            ) : (
+              <ChevronRight className="size-4 text-bz-text-soft group-hover:text-bz-sage transition-colors" strokeWidth={2} />
+            )}
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function AnomalyAlertsCard() {
+  const alerts: Array<{
+    icon: React.ElementType;
+    title: string;
+    sub: string;
+    delta: string;
+    intent: "bad" | "good" | "neutral";
+  }> = [
+    {
+      icon: TrendingUp,
+      title: "Marketing OpEx",
+      sub: "Review Q3 brand campaigns",
+      delta: "+18.4% vs budget",
+      intent: "bad",
+    },
+    {
+      icon: AlertTriangle,
+      title: "AR aged 60+ rising",
+      sub: "12 invoices · $284k overdue",
+      delta: "Action needed",
+      intent: "bad",
+    },
+    {
+      icon: TrendingDown,
+      title: "Travel expense",
+      sub: "Tracking under target",
+      delta: "−22% MoM",
+      intent: "good",
+    },
+  ];
+
+  return (
+    <Card pad="lg" className="lg:col-span-5">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <Eyebrow>Anomaly detection</Eyebrow>
+          <h3 className="text-[16px] font-bold text-bz-text mt-1.5">Variance, surfaced for you</h3>
+        </div>
+        <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">
+          <span className="size-1.5 rounded-full bg-bz-accent biz-pulse-glow" />
+          Watching
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-2.5">
+        {alerts.map(({ icon: Icon, title, sub, delta, intent }) => {
+          const tone =
+            intent === "bad"
+              ? "bg-rose-500/10 text-rose-500"
+              : intent === "good"
+              ? "bg-bz-sage-soft text-bz-sage"
+              : "bg-bz-bg text-bz-text-muted";
+          return (
+            <div
+              key={title}
+              className="flex items-center gap-3.5 px-4 py-3.5 rounded-bz-lg bg-bz-surface border border-bz-border"
+            >
+              <div className={`size-9 rounded-bz-md flex items-center justify-center shrink-0 ${tone}`}>
+                <Icon className="size-4" strokeWidth={2} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-bold text-bz-text">{title}</p>
+                <p className="text-[11px] text-bz-text-muted">{sub}</p>
+              </div>
+              <span
+                className={[
+                  "shrink-0 px-2 py-1 rounded-bz-pill text-[10.5px] font-bold tabular-nums",
+                  tone,
+                ].join(" ")}
+              >
+                {delta}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </Card>
+  );
+}
+
+function DrillTrailCard() {
+  const path = [
+    { label: "Net Income",       value: "$812K"   },
+    { label: "Operating Expenses", value: "$1.84M" },
+    { label: "Marketing",        value: "$284K"   },
+    { label: "Q3 Brand Campaign", value: "$48,200", final: true },
+  ];
+  const journal = [
+    { date: "14 · Sep", ref: "JE-2024-8412", desc: "Brand agency · Sept retainer", amt: "$24,000" },
+    { date: "21 · Sep", ref: "JE-2024-8593", desc: "Digital ads · Q3 LinkedIn", amt: "$18,400" },
+    { date: "28 · Sep", ref: "JE-2024-8721", desc: "Event sponsorship · DXTalks", amt: "$5,800" },
+  ];
+  return (
+    <Card pad="lg" className="lg:col-span-7">
+      <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
+        <div>
+          <Eyebrow>Audit Trail</Eyebrow>
+          <h3 className="text-[16px] font-bold text-bz-text mt-1.5">
+            Every number resolves to its source
+          </h3>
+        </div>
+        <PillBadge tone="sage">
+          <Sparkles className="size-3 mr-0.5" strokeWidth={2} />
+          One click
+        </PillBadge>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 mb-6">
+        {path.map((p, i) => (
+          <div key={p.label} className="flex items-center gap-2">
+            <div
+              className={[
+                "px-3 py-2 rounded-bz-md text-[11.5px] font-bold tabular-nums flex items-center gap-2",
+                p.final
+                  ? "bg-bz-deep text-white"
+                  : "bg-bz-bg text-bz-text border border-bz-border",
+              ].join(" ")}
+            >
+              <span className={p.final ? "text-white/50" : "text-bz-text-muted"}>{p.label}</span>
+              <span>{p.value}</span>
+            </div>
+            {i !== path.length - 1 && (
+              <ChevronRight className="size-3.5 text-bz-text-soft" strokeWidth={2.2} />
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-bz-lg border border-bz-border-soft overflow-hidden">
+        <div className="grid grid-cols-[80px_1fr_100px] gap-3 px-4 py-2.5 bg-bz-bg
+                        text-[9.5px] font-bold uppercase tracking-[0.08em] text-bz-text-soft">
+          <span>Date</span>
+          <span>Reference · Description</span>
+          <span className="text-right">Amount</span>
+        </div>
+        {journal.map((j, i) => (
+          <div
+            key={j.ref}
+            className={[
+              "grid grid-cols-[80px_1fr_100px] gap-3 px-4 py-3 items-center",
+              i !== journal.length - 1 && "border-b border-bz-border-soft",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          >
+            <span className="text-[11px] font-medium text-bz-text-muted">{j.date}</span>
+            <div className="min-w-0">
+              <p className="text-[12px] font-bold text-bz-text">{j.ref}</p>
+              <p className="text-[11px] text-bz-text-muted truncate">{j.desc}</p>
+            </div>
+            <span className="text-right text-[13px] font-bold text-bz-text tabular-nums">
+              {j.amt}
+            </span>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+// ─── 5. CONNECTIVITY — creative redesign ──────────────────────────────────────
+//   Concept: "One ledger. Every module."
+//   Six source-module chips (3 top + 3 bottom) feed a centered Live General Ledger
+//   panel that streams 5 auto-posted journal rows.
+function ConnectivitySection() {
+  const sourcesTop = [
+    { icon: ShoppingCart,   label: "Sales",        sub: "Invoice · Cash" },
+    { icon: Database,       label: "Purchasing",   sub: "PO · 3-way match" },
+    { icon: Package,        label: "Inventory",    sub: "COGS · Asset sync" },
+  ];
+  const sourcesBottom = [
+    { icon: Factory,       label: "Manufacturing", sub: "Work order · WIP" },
+    { icon: FolderKanban,  label: "Projects",      sub: "Timesheet · Cost" },
+    { icon: Landmark,      label: "Banking",       sub: "Reconcile · Fees" },
+  ];
+
+  const journal = [
+    { time: "14:32", source: "SALES",    sourceTone: "sage",    dr: "AR", cr: "Revenue · Tax",       amt: "$48,200",  fresh: true  },
+    { time: "14:28", source: "PURCH",    sourceTone: "accent",  dr: "Inventory", cr: "AP",            amt: "$12,450"               },
+    { time: "14:25", source: "PAYROLL",  sourceTone: "neutral", dr: "Wages", cr: "Cash",              amt: "$284,100"              },
+    { time: "14:21", source: "BANK",     sourceTone: "neutral", dr: "Bank Fees", cr: "Cash",          amt: "$182"                  },
+    { time: "14:18", source: "INVENT",   sourceTone: "sage",    dr: "COGS", cr: "Inventory",          amt: "$36,800"               },
+  ];
+
+  return (
+    <Section tone="dark">
+      <Container width="narrow">
+        <SectionHeading
+          eyebrow="Connected by design"
+          eyebrowTone="accent"
+          title={
+            <>
+              One ledger.
+              <br />
+              <span className="text-bz-accent">Every module.</span>
+            </>
+          }
+          description="Every event in Bizak — a shipment, a payment, a payroll run — auto-posts to the General Ledger in real time. No manual coding. No month-end catch-up."
+          tone="light"
+          align="center"
+          maxWidth={720}
+          className="mb-16"
+        />
+
+        <div className="relative max-w-[1100px] mx-auto">
+          {/* Top row of sources */}
+          <div className="grid grid-cols-3 gap-3 sm:gap-5 mb-3">
+            {sourcesTop.map((s) => (
+              <SourceChip key={s.label} icon={s.icon} label={s.label} sub={s.sub} />
+            ))}
+          </div>
+
+          {/* Connector row top */}
+          <div className="grid grid-cols-3 gap-3 sm:gap-5 h-8">
+            {sourcesTop.map((_, i) => (
+              <Connector key={i} direction="down" />
+            ))}
+          </div>
+
+          {/* Live General Ledger panel */}
+          <Card tone="dark" pad="lg" className="overflow-hidden">
+            <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-bz-md bg-bz-accent flex items-center justify-center text-bz-deep">
+                  <BookOpen className="size-4" strokeWidth={2} />
+                </div>
+                <div>
+                  <p className="text-[14px] font-bold text-white">General Ledger</p>
+                  <p className="text-[10.5px] text-white/40 uppercase tracking-[0.08em]">
+                    Auto-posting engine
+                  </p>
+                </div>
+              </div>
+              <PillBadge tone="accent" dot>
+                LIVE
+              </PillBadge>
+            </div>
+
+            <div className="rounded-bz-lg border border-white/10 overflow-hidden">
+              <div className="hidden md:grid grid-cols-[68px_92px_1fr_120px_72px] gap-3 px-4 py-2.5
+                              bg-white/[0.04] text-[9.5px] font-bold uppercase tracking-[0.08em] text-white/40">
+                <span>Time</span>
+                <span>Source</span>
+                <span>Debit · Credit</span>
+                <span className="text-right">Amount</span>
+                <span></span>
+              </div>
+              {journal.map((j, i) => (
+                <div
+                  key={i}
+                  className={[
+                    "grid grid-cols-[68px_92px_1fr_120px_72px] gap-3 px-4 py-3 items-center",
+                    i !== journal.length - 1 && "border-b border-white/[0.06]",
+                    j.fresh && "bg-bz-accent/[0.04]",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
+                  <span className="text-[11px] tabular-nums text-white/50">{j.time}</span>
+                  <SourceTag tone={j.sourceTone as "sage" | "accent" | "neutral"} label={j.source} />
+                  <p className="text-[12px] text-white/80 truncate">
+                    <span className="text-white font-semibold">{j.dr}</span>
+                    <span className="mx-1.5 text-white/30">↔</span>
+                    <span>{j.cr}</span>
+                  </p>
+                  <span className="text-right text-[13px] font-bold text-white tabular-nums">
+                    {j.amt}
+                  </span>
+                  <span className="text-right">
+                    {j.fresh ? (
+                      <PillBadge tone="accent">JUST</PillBadge>
+                    ) : (
+                      <CheckCircle2 className="size-4 text-emerald-400/70 ml-auto" strokeWidth={1.8} />
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between mt-5 flex-wrap gap-3
+                            text-[11px] text-white/50">
+              <span className="inline-flex items-center gap-2">
+                <CircleDollarSign className="size-3.5 text-bz-accent" strokeWidth={2} />
+                <span className="font-bold tabular-nums text-white">247</span> entries auto-posted today
+              </span>
+              <span className="font-bold tracking-[0.08em] uppercase text-[10.5px]">
+                0 manual journal entries
+              </span>
+            </div>
+          </Card>
+
+          {/* Connector row bottom */}
+          <div className="grid grid-cols-3 gap-3 sm:gap-5 h-8">
+            {sourcesBottom.map((_, i) => (
+              <Connector key={i} direction="up" />
+            ))}
+          </div>
+
+          {/* Bottom row of sources */}
+          <div className="grid grid-cols-3 gap-3 sm:gap-5 mt-3">
+            {sourcesBottom.map((s) => (
+              <SourceChip key={s.label} icon={s.icon} label={s.label} sub={s.sub} />
+            ))}
+          </div>
+        </div>
+
+        {/* Trust pills */}
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
+          {[
+            { icon: ShieldCheck, label: "No manual coding"      },
+            { icon: Activity,    label: "Real-time posting"     },
+            { icon: ClipboardList, label: "Full audit trail"    },
+            { icon: Building2,   label: "Multi-entity ready"    },
+          ].map(({ icon: Icon, label }) => (
+            <span
+              key={label}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-bz-pill
+                         bg-white/[0.04] border border-white/10
+                         text-[11px] font-bold uppercase tracking-[0.08em] text-white/70"
+            >
+              <Icon className="size-3.5 text-bz-accent" strokeWidth={2} />
+              {label}
+            </span>
+          ))}
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+function SourceChip({
+  icon: Icon,
+  label,
+  sub,
+}: {
+  icon: React.ElementType;
+  label: string;
+  sub: string;
+}) {
+  return (
+    <div className="px-4 py-3.5 rounded-bz-lg bg-white/[0.04] border border-white/10
+                    flex items-center gap-3 min-w-0">
+      <div className="size-9 rounded-bz-md bg-white/[0.06] border border-white/10
+                      flex items-center justify-center text-white/80 shrink-0">
+        <Icon className="size-4" strokeWidth={1.8} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-[12.5px] font-bold text-white truncate">{label}</p>
+        <p className="text-[10px] uppercase tracking-[0.08em] text-white/40 truncate">{sub}</p>
+      </div>
+    </div>
+  );
+}
+
+function Connector({ direction }: { direction: "up" | "down" }) {
+  return (
+    <div className="relative flex items-center justify-center">
+      <span className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-white/10" />
+      <span
+        className={[
+          "absolute size-1.5 rounded-full bg-bz-accent biz-pulse-glow",
+          direction === "down" ? "bottom-0" : "top-0",
+        ].join(" ")}
+      />
+    </div>
+  );
+}
+
+function SourceTag({
+  tone,
+  label,
+}: {
+  tone: "sage" | "accent" | "neutral";
+  label: string;
+}) {
+  const cls =
+    tone === "sage"
+      ? "bg-bz-sage-soft text-bz-sage border border-bz-sage-mid"
+      : tone === "accent"
+      ? "bg-bz-accent-soft text-bz-accent border border-bz-accent-mid"
+      : "bg-white/[0.06] text-white/70 border border-white/10";
+  return (
+    <span
+      className={[
+        "inline-flex items-center justify-center w-fit px-2 py-0.5 rounded-bz-sm",
+        "text-[9.5px] font-bold uppercase tracking-[0.08em] tabular-nums",
+        cls,
+      ].join(" ")}
+    >
+      {label}
+    </span>
+  );
+}
+
+// ─── 6. METRICS ──────────────────────────────────────────────────────────────
+function MetricsSection() {
+  const metrics = [
+    {
+      value: "60%",
+      label: "Faster Month-End",
+      desc: "Automated reconciliation and elimination workflows reduce close times by more than half.",
+    },
+    {
+      value: "40%",
+      label: "Reduced Errors",
+      desc: "Eliminate manual data entry errors with direct bank feeds and automated ledger posting.",
+    },
+    {
+      value: "100%",
+      label: "Audit Compliance",
+      desc: "A complete digital paper trail for every transaction, ensuring effortless regulatory reporting.",
+    },
+  ];
+  return (
+    <Section tone="white">
+      <Container>
+        <SectionHeading
+          eyebrow="Efficiency"
+          title="Measurable impact on financial operations"
+          align="center"
+          maxWidth={780}
+          className="mb-14"
+        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {metrics.map((m) => (
+            <Card key={m.label} pad="lg" hover="lift" className="text-center">
+              <p className="text-[clamp(40px,4vw,52px)] font-bold text-bz-text tracking-[-0.03em] mb-3">
+                {m.value}
+              </p>
+              <p className="text-[10px] font-bold text-bz-text-soft uppercase tracking-[0.12em] mb-4">
+                {m.label}
+              </p>
+              <p className="text-[13px] text-bz-text-muted leading-[1.65]">{m.desc}</p>
+            </Card>
+          ))}
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ─── 7. CTA ──────────────────────────────────────────────────────────────────
+//   Closing CTA must use tone="dark" (the olive-tinted bz-deep) for visual
+//   consistency with the by-industry pages' IndustryCta. See
+//   /docs/BIZAK_PRODUCT_OVERVIEW.md §7.1.
+function CTASection() {
+  return (
+    <Section tone="dark" pad="default">
+      <Container width="narrow">
+        <div className="flex flex-col items-center text-center gap-7">
+          <SectionHeading
+            title={
+              <>
+                Take full control of
+                <br />
+                your financial operations
+              </>
+            }
+            description="Join 50,000+ companies scaling with Bizak. Start your 14-day free trial today."
+            tone="light"
+            align="center"
+            maxWidth={640}
+          />
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button variant="accent" size="lg" href="/contact" withArrow>
+              Request Demo
+            </Button>
+            <Button variant="ghostDark" size="lg" href="/contact">
+              Contact Sales
+            </Button>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-6 mt-2 text-[12px] text-white/45">
+            <span className="inline-flex items-center gap-2">
+              <CheckCircle2 className="size-3.5 text-bz-accent" strokeWidth={2} />
+              GAAP &amp; IFRS ready
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <CheckCircle2 className="size-3.5 text-bz-accent" strokeWidth={2} />
+              SOC 2 Type II
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <CheckCircle2 className="size-3.5 text-bz-accent" strokeWidth={2} />
+              Multi-currency
+            </span>
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+}
 
 // ─── PAGE EXPORT ──────────────────────────────────────────────────────────────
 export function FinancialManagementPage() {
   return (
-    <div style={{ fontFamily: "Inter, sans-serif" }}>
+    <>
       <HeroSection />
       <FeatureGridSection />
       <TechnicalShowcaseSection />
-      <IntelligenceSection />
-      <ConnectedSystemSection />
+      <ReportingSection />
+      <ConnectivitySection />
       <MetricsSection />
-       <CTASection />
-    </div>
+      <CTASection />
+    </>
   );
 }

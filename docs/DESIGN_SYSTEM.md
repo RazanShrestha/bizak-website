@@ -1,9 +1,15 @@
 # Bizak Design System
 
-This document is the long-form reference for the design system. Quick rules
-for AI assistants live in `/CLAUDE.md` at the project root. Everything below
-is the *why* and *how* — read this when you're adding a new primitive,
-adjusting tokens, or migrating a legacy page.
+This document is the long-form reference for the **design system** — the
+*how Bizak looks*. For *what Bizak is* (modules, audience, narratives,
+brand voice, copy patterns, canonical statistics), see
+**`docs/BIZAK_PRODUCT_OVERVIEW.md`**. Both docs together brief any
+redesign — read the overview *first* to anchor copy and section structure,
+then this doc for primitives and tokens.
+
+Quick rules for AI assistants live in `/CLAUDE.md` at the project root.
+Everything below is the *why* and *how* — read this when you're adding a
+new primitive, adjusting tokens, or migrating a legacy page.
 
 ---
 
@@ -66,6 +72,42 @@ first, then import).
 | Tokens, fonts, animations | Page-family-specific layouts (4-card hero scaffold, 6-card challenges bento, workflow strip, etc.) |
 | Generic atoms (`Button`, `Card`, `Section`, `Stat`) | Page-family-specific data structures (e.g., `WorkflowStep[]`, `SolutionItem[]`) that only make sense for that family |
 | `<Icon>` registry — anything used across ≥2 nav groups | "Bento grid" / "method grid" structures tuned for the family's rhythm |
+
+### Scoped components delegate to global atoms
+
+The promotion rule above is about *layouts*. There's a parallel rule for
+*atoms*: **whenever a component renders a raw `<button>` / `<a>` / styled
+`<div>` whose shape mirrors a global primitive, it must delegate to the
+global primitive — never fork.**
+
+This applies equally inside scoped section primitives. A scoped primitive's
+job is the *page-family-specific layout*; its CTAs, cards, badges, and stats
+are still atoms and still belong to `marketing/`.
+
+If the visual you need isn't expressible by an existing variant on the global
+primitive, the move is:
+
+1. Add a new variant on the global primitive (`<Button variant="shimmer">`,
+   `<Card hover="glow">`, etc.).
+2. Update both the primitive's docs and `/CLAUDE.md`'s "Available primitives"
+   block.
+3. Then delegate from the scoped primitive.
+
+Never roll a parallel `function HeroCtaButton(...)` that returns a styled
+`<button>` next to the global `<Button>`. That's the same anti-pattern as a
+per-file `const C = {...}`, just at the component layer instead of the token
+layer.
+
+**Known debt (track-and-fix when touched):**
+
+- `solutions/by-industry/IndustryHero.tsx` defines a local `HeroCtaButton`
+  rendering `.biz-shimmer-btn` / `.biz-btn-outline`.
+- `solutions/by-industry/IndustryCta.tsx` defines a local `CtaButton`
+  rendering `.biz-shimmer-btn` / `.biz-btn-ghost`.
+
+The shimmer treatment isn't a `<Button>` variant yet. When either file is
+touched: add a `shimmer` (and `shimmerLg` size or equivalent) variant on
+`marketing/Button.tsx`, then refactor both wrappers to compose `<Button>`.
 
 ---
 
@@ -511,6 +553,62 @@ Any hero — landing pages, top-of-page sections, "above the fold" sections. It 
 ### Why these are the only allowed gradients
 
 Project-wide rule is "no gradients" (no decorative `linear-gradient` for cards, dividers, glows, chip backgrounds, etc.). The hero mesh and the hero badge are the **two carve-outs**: they're the visual signature of a Bizak hero, defined once in shared infrastructure (a CSS class + a React primitive), so reuse stays effortless and there's no drift.
+
+---
+
+## 3.7 Closing-CTA section convention
+
+Every marketing page that wraps with a "take action" CTA above the footer
+uses the same surface treatment. **The CTA section sits on `tone="dark"`
+— never `tone="deeper"`.**
+
+| Section tone | Token | Hex | When to use |
+|---|---|---|---|
+| `tone="dark"` | `bg-bz-deep` | `#1A1D19` | The brand dark — slightly olive-tinted. **Closing CTA**, dark technical-showcase sections, dark connectivity sections. |
+| `tone="deeper"` | `bg-bz-deep-2` | `#121212` | Pure black. Reserved for the footer (and any chrome that needs to *recede* below the page content). **Not** for the closing CTA. |
+
+The olive undertone in `bg-bz-deep` is what lets the lime accent button
+(`<Button variant="accent">`) glow against the surface. On pure black
+(`bg-bz-deep-2`) the lime visually flattens — it's almost the same
+luminance as the background.
+
+The by-industry pages already render this via `IndustryCta` (CSS class
+`.biz-cta-section`, which is hard-coded to `var(--bz-deep)`). All other
+pages should match.
+
+### Canonical pattern
+
+```tsx
+<Section tone="dark" pad="default">
+  <Container width="narrow">
+    <div className="flex flex-col items-center text-center gap-7">
+      <SectionHeading
+        title={<>Take full control of<br />your financial operations</>}
+        description="Join 50,000+ companies scaling with Bizak. Start your 14-day free trial today."
+        tone="light"
+        align="center"
+        maxWidth={640}
+      />
+      <div className="flex flex-wrap justify-center gap-3">
+        <Button variant="accent"   size="lg" href="/contact" withArrow>Request Demo</Button>
+        <Button variant="ghostDark" size="lg" href="/contact">Contact Sales</Button>
+      </div>
+    </div>
+  </Container>
+</Section>
+```
+
+- **Action pair:** `<Button variant="accent">` (primary) + `<Button variant="ghostDark">` (secondary). On the by-industry pages this currently renders as `.biz-shimmer-btn` + `.biz-btn-ghost`; both will collapse onto the global `<Button>` once the shimmer variant is added (see "Known debt" in §1).
+- **Headline + description** centered, `tone="light"`, `maxWidth={640}` so it stays compact.
+- **Pad:** `pad="default"` (not `pad="hero"`) — the closing CTA isn't a hero.
+- **The closing CTA isn't always literally the last section** (some pages may have a comparison table, FAQ, or trust-pill strip after it). But **whenever a page has a closing CTA, it lives on `tone="dark"`**.
+
+### When to use `tone="deeper"`
+
+`tone="deeper"` (`bg-bz-deep-2`) is reserved for chrome that should sit
+*below* the page in z-order — currently just the footer's deepest
+background and similar receding surfaces. **Not** for content sections
+the user is meant to act on.
 
 ---
 
