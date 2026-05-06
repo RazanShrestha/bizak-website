@@ -40,6 +40,7 @@ This is the non-negotiable preflight. Walk through every item; whatever is
 7. **Animations / motion.** Reuse the existing global keyframe classes (`biz-pulse-glow`, `biz-float`, `biz-particle`, `biz-flow`, `biz-radar-ping`, …) — don't redeclare keyframes per page.
 8. **className over inline `style`.** Static values in className. Inline `style` only for dynamic values. No `onMouseEnter`/`onMouseLeave` style mutations — use Tailwind `hover:`.
 9. **Promotion check.** A JSX pattern that appears in this page **and** in another nav group's pages with the same shape belongs in `marketing/`, not duplicated. Promote it.
+10. **Delegate-to-atom check.** Walk every `<button>`, `<a>` styled as a button, and styled `<div>`/`<span>` in the file (and inside any scoped section primitive the page composes). If its shape mirrors a global primitive (`<Button>`, `<Card>`, `<IconBadge>`, `<PillBadge>`, `<Stat>`, `<HeroBadge>`, `<Eyebrow>`), replace it with that primitive. If the needed variant doesn't exist yet (e.g., the by-industry "shimmer" CTA), **add the variant on the global primitive first** (`marketing/Button.tsx` etc.), update its prop docs in `/CLAUDE.md` + `/docs/DESIGN_SYSTEM.md`, then delegate. *This applies inside scoped primitives too:* `IndustryHero` should compose `<Button>`, not roll its own `HeroCtaButton`. Known offenders: `IndustryHero.tsx` (local `HeroCtaButton`) and `IndustryCta.tsx` (local `CtaButton`) — when you touch either, fix both.
 
 If any item fails, the redesign is the work to bring it into compliance.
 The end state of any page edit is "all items pass for the parts of the
@@ -57,6 +58,7 @@ file you touched."
   - a per-file `function Icon({ name }) { const icons = {...} }` SVG dictionary (legacy industry-page pattern — replace with the global `marketing/Icon`)
   - `<svg>` with hardcoded path strings where a lucide equivalent exists
   - `<span className="material-symbols-outlined">`
+  - a local `function FooButton(...)` / `function FooCard(...)` / `function FooBadge(...)` that returns a raw `<button>`/`<a>`/styled `<div>` mirroring the shape of a global primitive (`<Button>`/`<Card>`/`<PillBadge>`/etc.) — even when it's inside a scoped section primitive in `solutions/by-industry/`. Delegate to the global primitive (adding a variant first if needed); don't fork.
 
 If any signal is present and you're touching the file, run this skill before
 making other changes — don't bandaid the legacy pattern.

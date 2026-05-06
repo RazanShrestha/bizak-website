@@ -67,6 +67,42 @@ first, then import).
 | Generic atoms (`Button`, `Card`, `Section`, `Stat`) | Page-family-specific data structures (e.g., `WorkflowStep[]`, `SolutionItem[]`) that only make sense for that family |
 | `<Icon>` registry — anything used across ≥2 nav groups | "Bento grid" / "method grid" structures tuned for the family's rhythm |
 
+### Scoped components delegate to global atoms
+
+The promotion rule above is about *layouts*. There's a parallel rule for
+*atoms*: **whenever a component renders a raw `<button>` / `<a>` / styled
+`<div>` whose shape mirrors a global primitive, it must delegate to the
+global primitive — never fork.**
+
+This applies equally inside scoped section primitives. A scoped primitive's
+job is the *page-family-specific layout*; its CTAs, cards, badges, and stats
+are still atoms and still belong to `marketing/`.
+
+If the visual you need isn't expressible by an existing variant on the global
+primitive, the move is:
+
+1. Add a new variant on the global primitive (`<Button variant="shimmer">`,
+   `<Card hover="glow">`, etc.).
+2. Update both the primitive's docs and `/CLAUDE.md`'s "Available primitives"
+   block.
+3. Then delegate from the scoped primitive.
+
+Never roll a parallel `function HeroCtaButton(...)` that returns a styled
+`<button>` next to the global `<Button>`. That's the same anti-pattern as a
+per-file `const C = {...}`, just at the component layer instead of the token
+layer.
+
+**Known debt (track-and-fix when touched):**
+
+- `solutions/by-industry/IndustryHero.tsx` defines a local `HeroCtaButton`
+  rendering `.biz-shimmer-btn` / `.biz-btn-outline`.
+- `solutions/by-industry/IndustryCta.tsx` defines a local `CtaButton`
+  rendering `.biz-shimmer-btn` / `.biz-btn-ghost`.
+
+The shimmer treatment isn't a `<Button>` variant yet. When either file is
+touched: add a `shimmer` (and `shimmerLg` size or equivalent) variant on
+`marketing/Button.tsx`, then refactor both wrappers to compose `<Button>`.
+
 ---
 
 ## 2. Tokens
