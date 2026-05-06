@@ -25,7 +25,7 @@ import { WorkflowPage } from "./components/WorkflowPage";
 import { FinancialManagementPage } from "./components/FinancialManagement";
 import { SalesAndCrmPage } from "./components/SalesCrm";
 import { InventoryAndWarehousePage } from "./components/InventoryAndWarehouse";
-import { ManufacturingProductPage as ManufacturingModulePage, ManufacturingProductPage } from "./components/Manufacturing";
+import { ManufacturingProductPage as ManufacturingModulePage, ManufacturingProductPage } from "./components/ManufacturingProductPage";
 import { ManufacturingPage } from "./components/ManufacturingPage";
 import { SalesForceManagementPage } from "./components/SalesForceManagement";
 import { ProjectAndJobCostingPage } from "./components/ProjectAndJobCosting";
@@ -36,6 +36,8 @@ import { Integrations } from "./components/Integrations";
 import { MulticompanyAndBranchesPage } from "./components/MulticompanyAndBranchesPage";
 import { DocumentManagementPage } from "./components/DocumentManagementPage";
 import { CareersPage } from "./components/CarrersPage";
+import { PointOfSalesPage } from "./components/PointOfSales";
+
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
 function RootLayout() {
   return <Outlet />;
@@ -388,6 +390,20 @@ function CareersPageLayout() {
   );
 }
 
+
+function PointOfSalesPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <div style={{ paddingTop: 76 }}>
+        <PointOfSalesPage />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+
 function HomeLayout() {
   return <HomePage />;
 }
@@ -510,6 +526,7 @@ export const router = createBrowserRouter([
       { path: "SalesForceManagement", Component: SalesForceManagementPageLayout },
       { path: "ProjectAndCosting", Component: ProjectAndCostingPageLayout },
       { path: "manufacturing",    Component: ManufacturingPage           },
+      { path: "manufacturingProduct",    Component: ManufacturingProductPage           },
       { path: "Retail", Component: RetailAndEcommercePage    },
       { path: "ProfessionalService", Component: ProfessionalServicePage    },
       { path: "DashboardAndReporting", Component: DashboardAndReportingPage    },
@@ -517,6 +534,7 @@ export const router = createBrowserRouter([
       { path: "MulticompanyAndBranches", Component: MulticompanyAndBranchesPage },
       { path: "DocumentManagement", Component: DocumentManagementPage },
       { path: "careers", Component: CareersPageLayout },
+      { path: "PointOfSales", Component: PointOfSalesPage },
       {
         path: "blog",
         Component: () => <Outlet />,

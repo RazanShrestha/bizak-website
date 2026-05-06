@@ -37,7 +37,8 @@
       "Bash(npx tsc *)",
       "Bash(./node_modules/.bin/tsc --noEmit)",
       "WebFetch(domain:bizakerp.com)",
-      "Bash(npx vite *)"
+      "Bash(npx vite *)",
+      "Bash(npx --yes vite build)"
     ]
   }
 }
