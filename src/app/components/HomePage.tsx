@@ -1,6 +1,7 @@
-import "../../styles/style.css"
+import "../../styles/style.css";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { SectionHeading, Button } from "./marketing";
 
 const AVATAR_URL = "https://images.unsplash.com/photo-1659353221237-6a1cfb73fd90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25maWRlbnQlMjBtYWxlJTIwQ0VPJTIwZXhlY3V0aXZlJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcyMTY3OTY5fDA&ixlib=rb-4.1.0&q=80&w=1080";
 
@@ -54,9 +55,9 @@ function HeroDashboard() {
                 {/* Chart SVG */}
                 <div className="hp-chart-area">
                   <svg width="100%" height="100%" viewBox="0 0 1000 200" preserveAspectRatio="none">
-                    <path d="M0 150 C 150 140, 200 60, 400 100 S 650 20, 1000 80 V 200 H 0 Z" fill="rgba(122,130,109,0.14)" />
-                    <path d="M0 150 C 150 140, 200 60, 400 100 S 650 20, 1000 80" fill="none" stroke="#7A826D" strokeWidth="4" strokeLinecap="round" />
-                    <circle cx="400" cy="100" r="6" fill="#7A826D" stroke="white" strokeWidth="2" />
+                    <path d="M0 150 C 150 140, 200 60, 400 100 S 650 20, 1000 80 V 200 H 0 Z" fill="var(--bz-sage-soft)" />
+                    <path d="M0 150 C 150 140, 200 60, 400 100 S 650 20, 1000 80" fill="none" stroke="var(--bz-sage)" strokeWidth="4" strokeLinecap="round" />
+                    <circle cx="400" cy="100" r="6" fill="var(--bz-sage)" stroke="white" strokeWidth="2" />
                   </svg>
                   <div className="hp-hotspot-ring" style={{ left: "calc(40% - 8px)", top: "20px" }} />
                   <div className="hp-hotspot-dot" style={{ left: "calc(40% - 4px)", top: "24px" }} />
@@ -92,7 +93,7 @@ function HeroDashboard() {
         <div className="hp-float-card left hp-glass" style={{ borderRadius: 18 }}>
           <div className="hp-fc-label">
             Global Ledger Syncing
-            <span className="material-symbols-outlined" style={{ fontSize: 16, color: "#7A826D" }}>sync</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 16, color: "var(--bz-sage)" }}>sync</span>
           </div>
           <div className="hp-fc-sync-row">
             <div className="hp-fc-node"><div className="hp-fc-node-code">LDN</div><div className="hp-fc-node-sub">Node 01</div></div>
@@ -131,7 +132,7 @@ function HeroDashboard() {
             <span className="hp-health-label">Financial Health</span>
             <div className="hp-neon-dot" />
           </div>
-          <div className="hp-health-value">98.2<span style={{ color: "#C7FF35", fontWeight: 400 }}>%</span></div>
+          <div className="hp-health-value">98.2<span style={{ color: "var(--bz-accent)", fontWeight: 400 }}>%</span></div>
           <div className="hp-health-sub">STABLE / OPTIMAL</div>
           <div className="hp-health-bar-bg">
             <div className="hp-health-bar-fill" />
@@ -185,10 +186,6 @@ function HeroSection() {
             <span className="hp-badge-new">NEW</span>
             <span className="hp-badge-dot" />
             <span>Now available for global businesses</span>
-            {/* <a href="#" className="hp-badge-link">
-              Learn more
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>arrow_forward</span>
-            </a> */}
           </div>
         </div>
         <h1 className="hp-hero-title">The Operating System for Modern Business</h1>
@@ -196,10 +193,16 @@ function HeroSection() {
           A comprehensive ERP for SMEs and mid-market companies built for scale, automation, and total visibility.
         </p>
         <div className="hp-hero-btns">
-          <a className="hp-btn-primary" href="https://system.bizakerp.com/account/self-register" target="blank">Start free trial</a>
-          <button className="hp-btn-ghost">
-            Book a demo
-          </button>
+          <Button
+            variant="primary"
+            size="lg"
+            href="https://system.bizakerp.com/account/self-register"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Start free trial
+          </Button>
+          <Button variant="outline" size="lg">Book a demo</Button>
         </div>
       </div>
       <div className="hp-inner">
@@ -234,7 +237,7 @@ const MODULES = [
       <div className="hp-module-preview">
         <div className="hp-bars">
           {[50,75,33,100].map((h,i) => (
-            <div key={i} className="hp-bar" style={{ height: `${h}%`, background: i%2===0 ? "#e8eae4" : "#7A826D" }} />
+            <div key={i} className="hp-bar" style={{ height: `${h}%`, background: i % 2 === 0 ? "var(--bz-border)" : "var(--bz-sage)" }} />
           ))}
         </div>
       </div>
@@ -258,7 +261,7 @@ const MODULES = [
     preview: (
       <div className="hp-module-preview">
         <div className="hp-barcode-icon">
-          <span className="material-symbols-outlined" style={{ fontSize: 40, color: "#e8eae4" }}>barcode_scanner</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 40, color: "var(--bz-border)" }}>barcode_scanner</span>
         </div>
       </div>
     ),
@@ -282,13 +285,14 @@ function ModulesSection() {
   return (
     <section className="hp-modules">
       <div className="hp-inner">
-        <div className="hp-modules-header">
-          <span className="hp-sub-label">Core Modules</span>
-          <h2 className="hp-section-title" style={{ textAlign: "center" }}>Everything you need in one place</h2>
-          <p className="hp-section-desc" style={{ textAlign: "center", marginTop: 12 }}>
-            The unified infrastructure for your entire business lifecycle.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="Core Modules"
+          title="Everything you need in one place"
+          description="The unified infrastructure for your entire business lifecycle."
+          align="center"
+          maxWidth={640}
+          className="mb-12"
+        />
         <div className="hp-modules-grid">
           {MODULES.map((m) => (
             <div className="hp-module-card" key={m.title}>
@@ -408,7 +412,7 @@ function Step2Visual() {
           <div className="hp-mig-hub-ring-inner" />
           <div className="hp-glass-core-inner" />
           <div className="hp-mig-hub-icon">
-            <span className="material-symbols-outlined" style={{ fontSize: 28, color: "#7A826D" }}>shield_with_heart</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 28, color: "var(--bz-sage)" }}>shield_with_heart</span>
           </div>
           <div className="hp-mig-hub-badge">
             <span className="material-symbols-outlined" style={{ fontSize: 10, color: "#fff" }}>verified</span>
@@ -450,13 +454,14 @@ function HowItWorksSection() {
   return (
     <section className="hp-how">
       <div className="hp-inner">
-        <div className="hp-how-header">
-          <span className="hp-sub-label" style={{ textAlign: "center", display: "block" }}>Implementation</span>
-          <h2 className="hp-section-title" style={{ textAlign: "center" }}>How Bizak Works</h2>
-          <p className="hp-section-desc" style={{ textAlign: "center", marginTop: 12 }}>
-            A refined transition from legacy systems to a unified workspace.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="Implementation"
+          title="How Bizak Works"
+          description="A refined transition from legacy systems to a unified workspace."
+          align="center"
+          maxWidth={640}
+          className="mb-12"
+        />
 
         <div className="hp-timeline-line" />
 
@@ -520,15 +525,16 @@ function EnterpriseSection() {
   return (
     <section className="hp-enterprise">
       <div className="hp-inner">
-        <div className="hp-enterprise-header">
-          <span className="hp-sub-label" style={{ textAlign: "center", display: "block" }}>Enterprise-Grade Benefits</span>
-          <h2 className="hp-section-title hp-enterprise-title" style={{ textAlign: "center" }}>
-            Built for scale, speed, and absolute reliability.
-          </h2>
-          <p className="hp-section-desc hp-enterprise-desc" style={{ textAlign: "center", marginTop: 12 }}>
-            Unlock the potential of your operations with tools designed for mid-market leaders.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="Enterprise-Grade Benefits"
+          eyebrowTone="accent"
+          title="Built for scale, speed, and absolute reliability."
+          description="Unlock the potential of your operations with tools designed for mid-market leaders."
+          tone="light"
+          align="center"
+          maxWidth={720}
+          className="mb-12"
+        />
 
         <div className="hp-ent-grid">
           {/* ROI Growth – wide */}
@@ -550,7 +556,7 @@ function EnterpriseSection() {
                 { h: "45%", bg: "rgba(255,255,255,0.05)" },
                 { h: "65%", bg: "rgba(122,130,109,0.22)" },
                 { h: "80%", bg: "rgba(122,130,109,0.4)"  },
-                { h: "100%",bg: "#C7FF35", shadow: "0 0 12px rgba(199,255,53,0.7)" },
+                { h: "100%", bg: "var(--bz-accent)", shadow: "0 0 12px rgba(199,255,53,0.7)" },
               ].map((b, i) => (
                 <div key={i} className="hp-bc-bar" style={{ height: b.h, background: b.bg, boxShadow: b.shadow }} />
               ))}
@@ -621,13 +627,14 @@ function ImpactSection() {
   return (
     <section className="hp-impact">
       <div className="hp-inner">
-        <div className="hp-impact-header">
-          <span className="hp-sub-label" style={{ textAlign: "center", display: "block" }}>Impact</span>
-          <h2 className="hp-section-title" style={{ textAlign: "center" }}>Proven Success Across Every Industry</h2>
-          <p className="hp-section-desc" style={{ textAlign: "center", marginTop: 12 }}>
-            Real numbers from companies that made the switch.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="Impact"
+          title="Proven Success Across Every Industry"
+          description="Real numbers from companies that made the switch."
+          align="center"
+          maxWidth={640}
+          className="mb-12"
+        />
         <div className="hp-impact-grid">
           {/* 40% */}
           <div className="hp-impact-card">
@@ -647,7 +654,7 @@ function ImpactSection() {
             <div className="hp-impact-title">Paper Management</div>
             <p className="hp-impact-desc">100% cloud-native document storage with OCR capability and secure digital archiving for audit trails.</p>
             <div className="hp-impact-doc-row">
-              <span className="material-symbols-outlined" style={{ color: "#7A826D", fontVariationSettings: "'FILL' 0, 'wght' 300" }}>description</span>
+              <span className="material-symbols-outlined" style={{ color: "var(--bz-sage)", fontVariationSettings: "'FILL' 0, 'wght' 300" }}>description</span>
               <div className="hp-impact-doc-bar"><div className="hp-impact-doc-fill" /></div>
             </div>
           </div>
@@ -658,7 +665,7 @@ function ImpactSection() {
             <div className="hp-impact-title">Expert Support</div>
             <p className="hp-impact-desc">Direct access to ERP implementation experts and a dedicated account manager for enterprise plans.</p>
             <div className="hp-impact-avatars">
-              {[{ bg: "#e8eae4" }, { bg: "rgba(122,130,109,0.2)" }, { bg: "rgba(122,130,109,0.4)" }].map((a, i) => (
+              {[{ bg: "var(--bz-border)" }, { bg: "rgba(122,130,109,0.2)" }, { bg: "rgba(122,130,109,0.4)" }].map((a, i) => (
                 <div key={i} className="hp-impact-avatar" style={{ background: a.bg }} />
               ))}
               <div className="hp-impact-avatar-count">+12</div>
@@ -702,7 +709,7 @@ function GlobalStatsSection() {
         <div className="hp-global-separator">
           <div className="hp-separator-line" />
           <div className="hp-separator-icon">
-            <span className="material-symbols-outlined" style={{ color: "#7A826D", fontSize: 24 }}>public</span>
+            <span className="material-symbols-outlined" style={{ color: "var(--bz-sage)", fontSize: 24 }}>public</span>
           </div>
           <div className="hp-separator-line right" />
         </div>
@@ -726,54 +733,12 @@ function GlobalStatsSection() {
   );
 }
 
-// ─── FINAL CTA ────────────────────────────────────────────────────────────────
-function FinalCTASection() {
-  return (
-  
-
-
- <section className="blog-newsletter">
-      <div className="blog-newsletter-grid-bg" />
-      <div className="blog-newsletter-glow" />
-      <div style={{ position: "relative", zIndex: 10 }}>
-        <h2 className="blog-newsletter-title">Get ERP insights delivered to your inbox</h2>
-        <p className="blog-newsletter-sub">
-          Join 5,000+ operations leaders receiving our bi-weekly breakdown of scaling
-          strategies and technical innovations.
-        </p>
-        {submitted ? (
-          <div style={{ color: "#C7FF35", fontWeight: 700, fontSize: 16, letterSpacing: "0.02em" }}>
-            ✓ You're subscribed — thanks for joining!
-          </div>
-        ) : (
-          <form className="blog-newsletter-form" onSubmit={handleSubmit}>
-            <input
-              className="blog-newsletter-input"
-              type="email"
-              placeholder="Enter your work email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <button type="submit" className="blog-newsletter-btn">Subscribe</button>
-          </form>
-        )}
-        <p className="blog-newsletter-fine">Zero spam. Pure intelligence. Unsubscribe anytime.</p>
-      </div>
-    </section>
-
-
-
-
-  );
-}
-
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export function HomePage() {
   return (
     <div className="hp-page">
       <Header />
-      <main style={{ paddingTop: 76, paddingLeft:24, paddingRight:24 }}>
+      <main style={{ paddingTop: 76, paddingLeft: 24, paddingRight: 24 }}>
         <HeroSection />
         <ModulesSection />
         <HowItWorksSection />
@@ -781,7 +746,6 @@ export function HomePage() {
         <ImpactSection />
         <TestimonialSection />
         <GlobalStatsSection />
-        {/* <FinalCTASection /> */}
       </main>
       <Footer />
     </div>
