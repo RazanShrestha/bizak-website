@@ -25,7 +25,6 @@ import { WorkflowPage } from "./components/WorkflowPage";
 import { FinancialManagementPage } from "./components/FinancialManagement";
 import { SalesAndCrmPage } from "./components/SalesCrm";
 import { InventoryAndWarehousePage } from "./components/InventoryAndWarehouse";
-import { ManufacturingPage as ManufacturingModulePage } from "./components/Manufacturing";
 import { ManufacturingPage } from "./components/ManufacturingPage";
 import { SalesForceManagementPage } from "./components/SalesForceManagement";
 import { ProjectAndJobCostingPage } from "./components/ProjectAndJobCosting";
@@ -268,18 +267,6 @@ function InventoryAndWarehousePageLayout() {
   );
 }
 
-
-function ManufacturingPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <div style={{ paddingTop: 76 }}>
-        <ManufacturingModulePage />
-      </div>
-      <Footer />
-    </div>
-  );
-}
 
 function SalesForceManagementPageLayout() {
   return (

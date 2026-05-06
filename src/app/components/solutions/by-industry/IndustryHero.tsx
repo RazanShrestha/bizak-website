@@ -72,16 +72,12 @@ export function IndustryHero({
               {description}
             </p>
             <div className="biz-hero-cta-row">
-              <button
-                className="biz-shimmer-btn biz-shimmer-lg"
-                onClick={primaryCta.onClick}
-              >
-                {primaryCta.label}
-              </button>
+              <HeroCtaButton
+                kind="primary"
+                cta={primaryCta}
+              />
               {secondaryCta && (
-                <button className="biz-btn-outline" onClick={secondaryCta.onClick}>
-                  {secondaryCta.label} <Icon name="play" size={16} />
-                </button>
+                <HeroCtaButton kind="secondary" cta={secondaryCta} />
               )}
             </div>
             {stats && stats.length > 0 && (
@@ -97,6 +93,38 @@ export function IndustryHero({
         </div>
       </div>
     </section>
+  );
+}
+
+function HeroCtaButton({
+  kind,
+  cta,
+}: {
+  kind: "primary" | "secondary";
+  cta: IndustryHeroCta;
+}) {
+  const className =
+    kind === "primary" ? "biz-shimmer-btn biz-shimmer-lg" : "biz-btn-outline";
+  const content =
+    kind === "primary" ? (
+      cta.label
+    ) : (
+      <>
+        {cta.label} <Icon name="play" size={16} />
+      </>
+    );
+
+  if (cta.href) {
+    return (
+      <a className={className} href={cta.href}>
+        {content}
+      </a>
+    );
+  }
+  return (
+    <button className={className} onClick={cta.onClick}>
+      {content}
+    </button>
   );
 }
 

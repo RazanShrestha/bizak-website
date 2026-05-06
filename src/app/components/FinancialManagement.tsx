@@ -156,7 +156,7 @@ function HeroSection() {
         </p>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
-          <a href="/Contact" style={{
+          <a href="/contact" style={{
             padding: "14px 32px",
             background: C.dark,
             color: "#fff",
