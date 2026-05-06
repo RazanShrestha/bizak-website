@@ -1,5 +1,6 @@
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const C = {
+      deep: "#1A1D19",
   primary: "#010201",
   secondary: "#446900",
   accent: "#aef831",
@@ -713,6 +714,115 @@ function MetricsSection() {
   );
 }
 
+
+
+// ─── 7. CTA SECTION ──────────────────────────────────────────────────────────
+function CTASection() {
+  return (
+    <section className="biz-cta-section" style={{ background: C.deep, padding: "100px 0", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(rgba(199,255,53,0.04) 1px, transparent 1px)`, backgroundSize: "28px 28px", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 800, height: 400, background: "radial-gradient(ellipse, rgba(199,255,53,0.05) 0%, transparent 65%)", pointerEvents: "none" }} />
+
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 40px", textAlign: "center", position: "relative", zIndex: 1 }}>
+        {/* <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            background: C.accentLow,
+            border: `1px solid ${C.accentMid}`,
+            borderRadius: 100,
+            padding: "6px 18px",
+            marginBottom: 32,
+          }}
+        >
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.accent, display: "block" }} />
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 700, color: C.accent, letterSpacing: "0.08em" }}>OPEN TO ALL BACKGROUNDS</span>
+        </div> */}
+
+        <h2
+          style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: "clamp(32px, 4.5vw, 58px)",
+            fontWeight: 800,
+            color: C.white,
+            lineHeight: 1.08,
+            margin: "0 0 20px",
+            letterSpacing: "-0.03em",
+          }}
+        >
+          Take full control of your{" "}<span style={{ color: C.accent }}> sales force management</span>
+        </h2>
+
+        <p
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 18,
+            color: "rgba(255,255,255,0.55)",
+            lineHeight: 1.7,
+            margin: "0 auto 48px",
+            maxWidth: 580,
+          }}
+        >
+         Join 50,000+ companies scaling with FinCore. Start your <br></br>14-day free trial today.
+        </p>
+
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+          <a
+            href="https://system.bizakerp.com/account/self-register"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: C.accent,
+              color: C.deep,
+              padding: "15px 36px",
+              borderRadius: 10,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 700,
+              fontSize: 15,
+              textDecoration: "none",
+              transition: "transform 0.2s, box-shadow 0.2s",
+            }}
+            onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = "translateY(-2px)"; el.style.boxShadow = `0 8px 32px rgba(199,255,53,0.35)`; }}
+            onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = ""; el.style.boxShadow = ""; }}
+          >
+      Start Free Trial
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 17l9.2-9.2M17 17V7H7" />
+            </svg>
+          </a>
+          <a
+            href="/contact"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "transparent",
+              color: C.white,
+              padding: "15px 36px",
+              borderRadius: 10,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              fontSize: 15,
+              textDecoration: "none",
+              border: `1px solid ${C.borderDark}`,
+              transition: "border-color 0.2s",
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.25)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = C.borderDark; }}
+          >
+           Book a demo
+          </a>
+        </div>
+
+       
+      </div>
+    </section>
+  );
+}
+
+
 // ─── PAGE EXPORT ──────────────────────────────────────────────────────────────
 export function SalesForceManagementPage() {
   return (
@@ -723,6 +833,7 @@ export function SalesForceManagementPage() {
       <IntelligenceSection />
       <ConnectivitySection />
       <MetricsSection />
+             <CTASection />
     </div>
   );
 }

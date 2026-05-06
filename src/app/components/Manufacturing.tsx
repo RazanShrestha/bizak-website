@@ -679,7 +679,7 @@ function MetricsSection() {
 }
 
 // ─── PAGE EXPORT ──────────────────────────────────────────────────────────────
-export function ManufacturingPage() {
+export function ManufacturingProductPage() {
   return (
     <div style={{ fontFamily: "Inter, sans-serif" }}>
       <HeroSection />

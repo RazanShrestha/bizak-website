@@ -2,6 +2,28 @@ import "../../styles/style.css";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
+const C = {
+    deep: "#1A1D19",
+  dark: "#0a0a0a",
+  cardDark: "#1a1a1a",
+  accent: "#d4f24d",
+  accentDim: "rgba(212,242,77,0.15)",
+  white: "#ffffff",
+  fcfcfc: "#fcfcfc",
+  f9: "#f9f9f9",
+  gray100: "#f3f4f6",
+  gray200: "#e5e7eb",
+  gray300: "#d1d5db",
+  gray400: "#9ca3af",
+  gray500: "#6b7280",
+  gray600: "#4b5563",
+  gray800: "#1f2937",
+  border: "#e5e7eb",
+    bgDark: "#1a1d19",
+  borderDark: "rgba(255,255,255,0.08)",
+};
+
+
 function Icon({ name, size = 24, style }: { name: string; size?: number; style?: React.CSSProperties }) {
   const icons: Record<string, JSX.Element> = {
     play: (
@@ -834,25 +856,136 @@ function WorkflowSection() {
   );
 }
 
+// function CTASection() {
+//   return (
+//     <section className="biz-cta-section">
+//       <div className="biz-cta-glow" />
+//       <div className="biz-container" style={{ position: "relative", zIndex: 10 }}>
+//         <h2 className="biz-cta-title">Plug Bizak in. Stop hand-wiring data.</h2>
+//         <p className="biz-cta-sub">
+//           Trade brittle CSVs and one-off webhooks for a governed integration layer. Your ERP, every system around it, one source of truth.
+//         </p>
+//         <div className="biz-cta-btn-row">
+//           <button className="biz-shimmer-btn" style={{ fontSize: 17, fontWeight: 700, padding: "16px 44px", borderRadius: 8, boxShadow: "0 0 20px rgba(199,255,53,0.38)" }}>
+//             Request Demo
+//           </button>
+//           <button className="biz-btn-ghost">Browse Connectors</button>
+//         </div>
+//       </div>
+//     </section>
+//   );
+// }
+
+
+
 function CTASection() {
   return (
-    <section className="biz-cta-section">
-      <div className="biz-cta-glow" />
-      <div className="biz-container" style={{ position: "relative", zIndex: 10 }}>
-        <h2 className="biz-cta-title">Plug Bizak in. Stop hand-wiring data.</h2>
-        <p className="biz-cta-sub">
-          Trade brittle CSVs and one-off webhooks for a governed integration layer. Your ERP, every system around it, one source of truth.
+    <section className="biz-cta-section" style={{ background: C.deep, padding: "100px 0", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(rgba(199,255,53,0.04) 1px, transparent 1px)`, backgroundSize: "28px 28px", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 800, height: 400, background: "radial-gradient(ellipse, rgba(199,255,53,0.05) 0%, transparent 65%)", pointerEvents: "none" }} />
+
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 40px", textAlign: "center", position: "relative", zIndex: 1 }}>
+        {/* <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            background: C.accentLow,
+            border: `1px solid ${C.accentMid}`,
+            borderRadius: 100,
+            padding: "6px 18px",
+            marginBottom: 32,
+          }}
+        >
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.accent, display: "block" }} />
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 700, color: C.accent, letterSpacing: "0.08em" }}>OPEN TO ALL BACKGROUNDS</span>
+        </div> */}
+
+        <h2
+          style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: "clamp(32px, 4.5vw, 58px)",
+            fontWeight: 800,
+            color: C.white,
+            lineHeight: 1.08,
+            margin: "0 0 20px",
+            letterSpacing: "-0.03em",
+          }}
+        >
+         Plug Bizak in. {" "}Stop<span style={{ color: C.accent }}> hand-wiring data.</span>
+        </h2>
+
+        <p
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 18,
+            color: "rgba(255,255,255,0.55)",
+            lineHeight: 1.7,
+            margin: "0 auto 48px",
+            maxWidth: 580,
+          }}
+        >
+     Trade brittle CSVs and one-off webhooks for a governed integration layer. Your ERP,every system around it,one source of truth.  
         </p>
-        <div className="biz-cta-btn-row">
-          <button className="biz-shimmer-btn" style={{ fontSize: 17, fontWeight: 700, padding: "16px 44px", borderRadius: 8, boxShadow: "0 0 20px rgba(199,255,53,0.38)" }}>
-            Request Demo
-          </button>
-          <button className="biz-btn-ghost">Browse Connectors</button>
+
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+          <a
+            href="https://system.bizakerp.com/account/self-register"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: C.accent,
+              color: C.deep,
+              padding: "15px 36px",
+              borderRadius: 10,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 700,
+              fontSize: 15,
+              textDecoration: "none",
+              transition: "transform 0.2s, box-shadow 0.2s",
+            }}
+            onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = "translateY(-2px)"; el.style.boxShadow = `0 8px 32px rgba(199,255,53,0.35)`; }}
+            onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = ""; el.style.boxShadow = ""; }}
+          >
+      Start Free Trial
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 17l9.2-9.2M17 17V7H7" />
+            </svg>
+          </a>
+          <a
+            href="/contact"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "transparent",
+              color: C.white,
+              padding: "15px 36px",
+              borderRadius: 10,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              fontSize: 15,
+              textDecoration: "none",
+              border: `1px solid ${C.borderDark}`,
+              transition: "border-color 0.2s",
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.25)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = C.borderDark; }}
+          >
+           Book a demo
+          </a>
         </div>
+
+       
       </div>
     </section>
   );
 }
+
+
+
+
 
 export function Integrations() {
   return (

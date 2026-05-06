@@ -1,5 +1,6 @@
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const C = {
+    deep: "#1A1D19",
   dark: "#0a0a0a",
   cardDark: "#1a1a1a",
   accent: "#d4f24d",
@@ -952,53 +953,158 @@ function MetricsSection() {
 
  
 // ─── 7. CTA SECTION ──────────────────────────────────────────────────────────
+// function CTASection() {
+//   return (
+//     <section style={{ background: C.bgDark, padding: "128px 192px", overflow: "hidden", position: "relative" }}>
+//       {/* Subtle glow */}
+//       <div style={{
+//         position: "absolute", bottom: -293, left: -128, right: -128, height: 586,
+//         background: "radial-gradient(ellipse at 50% 50%, rgba(199,255,53,0.03) 0%, transparent 70%)",
+//         pointerEvents: "none",
+//       }} />
+
+//       <div style={{ maxWidth: 896, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 32, position: "relative", zIndex: 1 }}>
+//         <h2 style={{
+//           fontFamily: "Inter", fontWeight: 700,
+//           fontSize: "clamp(36px, 4.5vw, 48px)",
+//           lineHeight: 1.2, letterSpacing: "-1.2px",
+//           color: "#fff", textAlign: "center", margin: 0,
+//         }}>
+//          Take full control of<br /> your financial operations
+//         </h2>
+//         <p style={{
+//           fontFamily: "Inter", fontWeight: 400,
+//           fontSize: 20, lineHeight: 1.625,
+//           color: "rgba(255,255,255,0.4)",
+//           textAlign: "center", margin: 0, maxWidth: 580,
+//         }}>
+//           Join 50,000+ companies scaling with FinCore. Start your 14-day free trial today.
+//         </p>
+//         <div style={{ display: "flex", gap: 24, justifyContent: "center" }}>
+//           <button style={{
+//             background: C.accent, color: C.dark, border: "none",
+//             borderRadius: 4, padding: "20px 40px",
+//             fontFamily: "Inter", fontWeight: 700, fontSize: 18,
+//             cursor: "pointer", boxShadow: "0 0 20px rgba(199,255,53,0.4)",
+//           }}>Request Demo</button>
+//           <button style={{
+//             background: "transparent", color: "#fff",
+//             border: "1px solid rgba(255,255,255,0.2)", borderRadius: 4,
+//             padding: "20px 41px",
+//             fontFamily: "Inter", fontWeight: 700, fontSize: 18, cursor: "pointer",
+//           }}>Contact Sales</button>
+//         </div>
+//       </div>
+//     </section>
+//   );
+// }
+
+
+
 function CTASection() {
   return (
-    <section style={{ background: C.bgDark, padding: "128px 192px", overflow: "hidden", position: "relative" }}>
-      {/* Subtle glow */}
-      <div style={{
-        position: "absolute", bottom: -293, left: -128, right: -128, height: 586,
-        background: "radial-gradient(ellipse at 50% 50%, rgba(199,255,53,0.03) 0%, transparent 70%)",
-        pointerEvents: "none",
-      }} />
+    <section className="biz-cta-section" style={{ background: C.deep, padding: "100px 0", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(rgba(199,255,53,0.04) 1px, transparent 1px)`, backgroundSize: "28px 28px", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 800, height: 400, background: "radial-gradient(ellipse, rgba(199,255,53,0.05) 0%, transparent 65%)", pointerEvents: "none" }} />
 
-      <div style={{ maxWidth: 896, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 32, position: "relative", zIndex: 1 }}>
-        <h2 style={{
-          fontFamily: "Inter", fontWeight: 700,
-          fontSize: "clamp(36px, 4.5vw, 48px)",
-          lineHeight: 1.2, letterSpacing: "-1.2px",
-          color: "#fff", textAlign: "center", margin: 0,
-        }}>
-         Take full control of<br /> your financial operations
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 40px", textAlign: "center", position: "relative", zIndex: 1 }}>
+        {/* <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            background: C.accentLow,
+            border: `1px solid ${C.accentMid}`,
+            borderRadius: 100,
+            padding: "6px 18px",
+            marginBottom: 32,
+          }}
+        >
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.accent, display: "block" }} />
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 700, color: C.accent, letterSpacing: "0.08em" }}>OPEN TO ALL BACKGROUNDS</span>
+        </div> */}
+
+        <h2
+          style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: "clamp(32px, 4.5vw, 58px)",
+            fontWeight: 800,
+            color: C.white,
+            lineHeight: 1.08,
+            margin: "0 0 20px",
+            letterSpacing: "-0.03em",
+          }}
+        >
+          Take full control of your{" "}<span style={{ color: C.accent }}> financial operations</span>
         </h2>
-        <p style={{
-          fontFamily: "Inter", fontWeight: 400,
-          fontSize: 20, lineHeight: 1.625,
-          color: "rgba(255,255,255,0.4)",
-          textAlign: "center", margin: 0, maxWidth: 580,
-        }}>
-          Join 50,000+ companies scaling with FinCore. Start your 14-day free trial today.
+
+        <p
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 18,
+            color: "rgba(255,255,255,0.55)",
+            lineHeight: 1.7,
+            margin: "0 auto 48px",
+            maxWidth: 580,
+          }}
+        >
+         Join 50,000+ companies scaling with FinCore. Start your <br></br>14-day free trial today.
         </p>
-        <div style={{ display: "flex", gap: 24, justifyContent: "center" }}>
-          <button style={{
-            background: C.accent, color: C.dark, border: "none",
-            borderRadius: 4, padding: "20px 40px",
-            fontFamily: "Inter", fontWeight: 700, fontSize: 18,
-            cursor: "pointer", boxShadow: "0 0 20px rgba(199,255,53,0.4)",
-          }}>Request Demo</button>
-          <button style={{
-            background: "transparent", color: "#fff",
-            border: "1px solid rgba(255,255,255,0.2)", borderRadius: 4,
-            padding: "20px 41px",
-            fontFamily: "Inter", fontWeight: 700, fontSize: 18, cursor: "pointer",
-          }}>Contact Sales</button>
+
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+          <a
+            href="https://system.bizakerp.com/account/self-register"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: C.accent,
+              color: C.deep,
+              padding: "15px 36px",
+              borderRadius: 10,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 700,
+              fontSize: 15,
+              textDecoration: "none",
+              transition: "transform 0.2s, box-shadow 0.2s",
+            }}
+            onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = "translateY(-2px)"; el.style.boxShadow = `0 8px 32px rgba(199,255,53,0.35)`; }}
+            onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = ""; el.style.boxShadow = ""; }}
+          >
+      Start Free Trial
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 17l9.2-9.2M17 17V7H7" />
+            </svg>
+          </a>
+          <a
+            href="/contact"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "transparent",
+              color: C.white,
+              padding: "15px 36px",
+              borderRadius: 10,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              fontSize: 15,
+              textDecoration: "none",
+              border: `1px solid ${C.borderDark}`,
+              transition: "border-color 0.2s",
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.25)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = C.borderDark; }}
+          >
+           Book a demo
+          </a>
         </div>
+
+       
       </div>
     </section>
   );
 }
-
-
 
 
 

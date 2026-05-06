@@ -140,7 +140,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <Factory size={15} />,
             title: "Manufacturing",
             description: "Production planning and costing",
-           href: "/Manufacturing",
+           href: "/Manufacturing-Product",
           },
           {
             icon: <FolderKanban size={15} />,
@@ -599,6 +599,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <Target size={15} />,
             title: "Our Mission",
             description: "Empowering businesses with clarity and control",
+            href: "/OurMission",
           },
           {
             icon: <Users size={15} />,
