@@ -635,6 +635,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <FileText size={15} />,
             title: "Press & Media",
             description: "News, brand assets, and media kit",
+            href: "/PressAndMedia",
           },
           {
             icon: <Calendar size={15} />,

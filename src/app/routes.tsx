@@ -45,6 +45,7 @@ import { OurMissionPage } from "./components/OurMissionPage";
 import { LeadershipTeamPage } from "./components/LeadershipTeamPage";
 import { SystemStatusPage } from "./components/SystemStatusPage";
 import { DocumentationPage } from "./components/DocumentationPage";
+import { PressAndMediaPage } from "./components/PressAndMediaPage";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
 function RootLayout() {
@@ -543,6 +544,8 @@ export const router = createBrowserRouter([
       { path: "SystemStatus",    Component: SystemStatusPage   },
       { path: "documentation",   Component: DocumentationPage  },
       { path: "Documentation",   Component: DocumentationPage  },
+    
+      { path: "PressAndMedia",   Component: PressAndMediaPage  },
       {
         path: "blog",
         Component: () => <Outlet />,
