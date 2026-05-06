@@ -25,8 +25,8 @@ import { WorkflowPage } from "./components/WorkflowPage";
 import { FinancialManagementPage } from "./components/FinancialManagement";
 import { SalesAndCrmPage } from "./components/SalesCrm";
 import { InventoryAndWarehousePage } from "./components/InventoryAndWarehouse";
-import { ManufacturingProductPage as ManufacturingModulePage, ManufacturingProductPage } from "./components/ManufacturingProductPage";
 import { ManufacturingPage } from "./components/ManufacturingPage";
+import { ManufacturingProductPage } from "./components/ManufacturingProductPage";
 import { SalesForceManagementPage } from "./components/SalesForceManagement";
 import { ProjectAndJobCostingPage } from "./components/ProjectAndJobCosting";
 import { RetailAndEcommercePage } from "./components/RetailAndEcommercePage";
@@ -290,18 +290,6 @@ function ManufacturingProductPageLayout() {
 
 
 
-function ManufacturingPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <div style={{ paddingTop: 76 }}>
-        <ManufacturingModulePage />
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
 function SalesForceManagementPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -530,7 +518,7 @@ export const router = createBrowserRouter([
       { path: "SalesForceManagement", Component: SalesForceManagementPageLayout },
       { path: "ProjectAndCosting", Component: ProjectAndCostingPageLayout },
       { path: "manufacturing",    Component: ManufacturingPage           },
-      { path: "manufacturingProduct",    Component: ManufacturingProductPage           },
+      { path: "manufacturingProduct",    Component: ManufacturingProductPageLayout           },
       { path: "Retail", Component: RetailAndEcommercePage    },
       { path: "ProfessionalService", Component: ProfessionalServicePage    },
       { path: "DashboardAndReporting", Component: DashboardAndReportingPage    },

@@ -1,6 +1,27 @@
-import "../../styles/style.css"
+import "../../styles/style.css";
+import {
+  TrendingUp,
+  ShoppingCart,
+  Package,
+  Receipt,
+  Building2,
+  ScanLine,
+  PlusCircle,
+  Zap,
+  FileText,
+  FolderOpen,
+  ShieldCheck,
+  Globe,
+} from "lucide-react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import {
+  Section,
+  Container,
+  SectionHeading,
+  Button,
+  HeroBadge,
+} from "./marketing";
 
 const AVATAR_URL = "https://images.unsplash.com/photo-1659353221237-6a1cfb73fd90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25maWRlbnQlMjBtYWxlJTIwQ0VPJTIwZXhlY3V0aXZlJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcyMTY3OTY5fDA&ixlib=rb-4.1.0&q=80&w=1080";
 
@@ -14,15 +35,15 @@ function HeroDashboard() {
             {/* Sidebar */}
             <div className="hp-sidebar">
               <div className="hp-sidebar-icon-active">
-                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>grid_view</span>
+                <span className="material-symbols-outlined text-[20px]">grid_view</span>
               </div>
               {["payments","inventory_2","group","analytics"].map((icon, i) => (
-                <div className="hp-sidebar-icon" key={i} style={{ position: i === 1 ? "relative" : undefined }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{icon}</span>
+                <div className={`hp-sidebar-icon ${i === 1 ? "relative" : ""}`} key={i}>
+                  <span className="material-symbols-outlined text-[20px]">{icon}</span>
                   {i === 1 && (
                     <>
-                      <div className="hp-hotspot-ring" style={{ top: -2, right: -2 }} />
-                      <div className="hp-hotspot-dot" style={{ top: -2, right: -2 }} />
+                      <div className="hp-hotspot-ring -top-0.5 -right-0.5" />
+                      <div className="hp-hotspot-dot -top-0.5 -right-0.5" />
                     </>
                   )}
                 </div>
@@ -54,12 +75,12 @@ function HeroDashboard() {
                 {/* Chart SVG */}
                 <div className="hp-chart-area">
                   <svg width="100%" height="100%" viewBox="0 0 1000 200" preserveAspectRatio="none">
-                    <path d="M0 150 C 150 140, 200 60, 400 100 S 650 20, 1000 80 V 200 H 0 Z" fill="rgba(122,130,109,0.14)" />
-                    <path d="M0 150 C 150 140, 200 60, 400 100 S 650 20, 1000 80" fill="none" stroke="#7A826D" strokeWidth="4" strokeLinecap="round" />
-                    <circle cx="400" cy="100" r="6" fill="#7A826D" stroke="white" strokeWidth="2" />
+                    <path d="M0 150 C 150 140, 200 60, 400 100 S 650 20, 1000 80 V 200 H 0 Z" fill="var(--bz-sage-soft)" />
+                    <path d="M0 150 C 150 140, 200 60, 400 100 S 650 20, 1000 80" fill="none" stroke="var(--bz-sage)" strokeWidth="4" strokeLinecap="round" />
+                    <circle cx="400" cy="100" r="6" fill="var(--bz-sage)" stroke="white" strokeWidth="2" />
                   </svg>
-                  <div className="hp-hotspot-ring" style={{ left: "calc(40% - 8px)", top: "20px" }} />
-                  <div className="hp-hotspot-dot" style={{ left: "calc(40% - 4px)", top: "24px" }} />
+                  <div className="hp-hotspot-ring left-[calc(40%-8px)] top-[20px]" />
+                  <div className="hp-hotspot-dot left-[calc(40%-4px)] top-[24px]" />
                 </div>
               </div>
 
@@ -67,20 +88,24 @@ function HeroDashboard() {
               <div className="hp-mini-cards">
                 <div className="hp-mini-card">
                   <div className="hp-mini-card-lines">
-                    <div className="hp-mini-line" style={{ width: 72 }} />
+                    <div className="hp-mini-line w-[72px]" />
                     <div className="hp-mini-line-dark" />
                   </div>
                   <div className="hp-mini-bars">
                     {[60,80,50,90,70,100,85].map((h,i)=>(
-                      <div key={i} className="hp-mini-bar" style={{ height: `${h}%`, background: i % 2 === 0 ? "rgba(122,130,109,0.15)" : "rgba(122,130,109,0.35)", width: 6 }} />
+                      <div
+                        key={i}
+                        className={`hp-mini-bar w-1.5 ${i % 2 === 0 ? "bg-[rgba(122,130,109,0.15)]" : "bg-[rgba(122,130,109,0.35)]"}`}
+                        style={{ height: `${h}%` }}
+                      />
                     ))}
                   </div>
                 </div>
                 <div className="hp-mini-card">
                   <div>
-                    <div className="hp-mini-line" style={{ width: 56, marginBottom: 8 }} />
-                    <div style={{ height: 6, width: "90%", background: "rgba(232,234,228,0.6)", borderRadius: 999, marginBottom: 4 }} />
-                    <div style={{ height: 6, width: "60%", background: "rgba(232,234,228,0.6)", borderRadius: 999 }} />
+                    <div className="hp-mini-line w-14 mb-2" />
+                    <div className="h-1.5 w-[90%] bg-[rgba(232,234,228,0.6)] rounded-full mb-1" />
+                    <div className="h-1.5 w-[60%] bg-[rgba(232,234,228,0.6)] rounded-full" />
                   </div>
                 </div>
               </div>
@@ -89,10 +114,10 @@ function HeroDashboard() {
         </div>
 
         {/* ─ Floating card: Global Ledger ─ */}
-        <div className="hp-float-card left hp-glass" style={{ borderRadius: 18 }}>
+        <div className="hp-float-card left hp-glass rounded-[18px]">
           <div className="hp-fc-label">
             Global Ledger Syncing
-            <span className="material-symbols-outlined" style={{ fontSize: 16, color: "#7A826D" }}>sync</span>
+            <span className="material-symbols-outlined text-bz-sage text-[16px]">sync</span>
           </div>
           <div className="hp-fc-sync-row">
             <div className="hp-fc-node"><div className="hp-fc-node-code">LDN</div><div className="hp-fc-node-sub">Node 01</div></div>
@@ -106,10 +131,10 @@ function HeroDashboard() {
         </div>
 
         {/* ─ Floating card: Automation ─ */}
-        <div className="hp-float-card right-bottom hp-glass" style={{ borderRadius: 18 }}>
+        <div className="hp-float-card right-bottom hp-glass rounded-[18px]">
           <div className="hp-auto-row">
             <div className="hp-auto-icon">
-              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>bolt</span>
+              <span className="material-symbols-outlined text-[18px]">bolt</span>
             </div>
             <div>
               <div className="hp-auto-tag-label">Automation Triggered</div>
@@ -126,12 +151,12 @@ function HeroDashboard() {
         </div>
 
         {/* ─ Floating card: Financial Health ─ */}
-        <div className="hp-float-card bottom-center hp-glass-dark" style={{ borderRadius: 18, padding: "20px 22px" }}>
+        <div className="hp-float-card bottom-center hp-glass-dark rounded-[18px] px-[22px] py-5">
           <div className="hp-health-top">
             <span className="hp-health-label">Financial Health</span>
             <div className="hp-neon-dot" />
           </div>
-          <div className="hp-health-value">98.2<span style={{ color: "#C7FF35", fontWeight: 400 }}>%</span></div>
+          <div className="hp-health-value">98.2<span className="text-bz-accent font-normal">%</span></div>
           <div className="hp-health-sub">STABLE / OPTIMAL</div>
           <div className="hp-health-bar-bg">
             <div className="hp-health-bar-fill" />
@@ -139,10 +164,10 @@ function HeroDashboard() {
         </div>
 
         {/* ─ Floating card: Performance Metrics ─ */}
-        <div className="hp-float-card top-right hp-glass" style={{ borderRadius: 18, position: "absolute" }}>
+        <div className="hp-float-card top-right hp-glass rounded-[18px] absolute">
           <div className="hp-perf-header">
             <span className="hp-perf-title">Performance Metrics</span>
-            <span className="hp-perf-badge">P&L</span>
+            <span className="hp-perf-badge">P&amp;L</span>
           </div>
           <div className="hp-perf-grid">
             <div><div className="hp-perf-num">$242k</div><div className="hp-perf-key">Gross Revenue</div></div>
@@ -152,9 +177,9 @@ function HeroDashboard() {
         </div>
 
         {/* ─ Floating card: Liquid Assets ─ */}
-        <div className="hp-float-card right-small hp-glass-dark" style={{ borderRadius: 18, padding: "20px 22px" }}>
+        <div className="hp-float-card right-small hp-glass-dark rounded-[18px] px-[22px] py-5">
           <div className="hp-liq-icon">
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>account_balance_wallet</span>
+            <span className="material-symbols-outlined text-[18px]">account_balance_wallet</span>
           </div>
           <div className="hp-liq-value">$44.2K</div>
           <div className="hp-liq-label">Liquid Assets</div>
@@ -177,71 +202,74 @@ function HeroDashboard() {
 
 function HeroSection() {
   return (
-    <section className="hp-hero">
-      <div className="hp-hero-content">
-        {/* Badge */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 32 }}>
-          <div className="hp-badge">
-            <span className="hp-badge-new">NEW</span>
-            <span className="hp-badge-dot" />
-            <span>Now available for global businesses</span>
-            {/* <a href="#" className="hp-badge-link">
-              Learn more
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>arrow_forward</span>
-            </a> */}
+    <Section pad="hero" className="biz-mesh overflow-hidden">
+      <Container>
+        <div className="text-center mb-16 relative z-20">
+          <div className="flex justify-center mb-4">
+            <HeroBadge>Now available for global businesses</HeroBadge>
+          </div>
+          <h1 className="font-bold text-bz-text leading-[1.08] tracking-[-0.045em] max-w-[900px] mx-auto mb-7 text-[clamp(2.8rem,6vw,4.5rem)]">
+            The Operating System for Modern Business
+          </h1>
+          <p className="text-[20px] text-bz-text-muted leading-[1.65] max-w-[580px] mx-auto mb-9">
+            A comprehensive ERP for SMEs and mid-market companies built for scale, automation, and total visibility.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3.5">
+            <Button
+              variant="primary"
+              size="lg"
+              href="https://system.bizakerp.com/account/self-register"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Start free trial
+            </Button>
+            <Button variant="outline" size="lg">Book a demo</Button>
           </div>
         </div>
-        <h1 className="hp-hero-title">The Operating System for Modern Business</h1>
-        <p className="hp-hero-sub">
-          A comprehensive ERP for SMEs and mid-market companies built for scale, automation, and total visibility.
-        </p>
-        <div className="hp-hero-btns">
-          <a className="hp-btn-primary" href="https://system.bizakerp.com/account/self-register" target="blank">Start free trial</a>
-          <button className="hp-btn-ghost">
-            Book a demo
-          </button>
-        </div>
-      </div>
-      <div className="hp-inner">
         <HeroDashboard />
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
 // ─── MODULES ──────────────────────────────────────────────────────────────────
 const MODULES = [
   {
-    icon: "receipt_long",
+    Icon: Receipt,
     title: "E-Billing",
     desc: "Automated tax compliance, electronic signatures, and localized invoice templates.",
     preview: (
       <div className="hp-module-preview">
         <div className="hp-prev-row">
-          <div className="hp-prev-line" style={{ width: 64 }} />
-          <div className="hp-prev-line dark" style={{ width: 32 }} />
+          <div className="hp-prev-line w-16" />
+          <div className="hp-prev-line dark w-8" />
         </div>
-        <div className="hp-prev-line" style={{ width: "100%", marginBottom: 4 }} />
-        <div className="hp-prev-line" style={{ width: "66%" }} />
+        <div className="hp-prev-line w-full mb-1" />
+        <div className="hp-prev-line w-2/3" />
       </div>
     ),
   },
   {
-    icon: "trending_up",
+    Icon: TrendingUp,
     title: "Advanced Sales",
     desc: "CRM-integrated pipeline management, automated quotes, and sales forecasting.",
     preview: (
       <div className="hp-module-preview">
         <div className="hp-bars">
           {[50,75,33,100].map((h,i) => (
-            <div key={i} className="hp-bar" style={{ height: `${h}%`, background: i%2===0 ? "#e8eae4" : "#7A826D" }} />
+            <div
+              key={i}
+              className={`hp-bar ${i % 2 === 0 ? "bg-bz-border" : "bg-bz-sage"}`}
+              style={{ height: `${h}%` }}
+            />
           ))}
         </div>
       </div>
     ),
   },
   {
-    icon: "shopping_cart_checkout",
+    Icon: ShoppingCart,
     title: "Purchase & Procurement",
     desc: "RFQ automation, landed cost calculation, and vendor performance analytics.",
     preview: (
@@ -252,19 +280,19 @@ const MODULES = [
     ),
   },
   {
-    icon: "inventory_2",
+    Icon: Package,
     title: "Inventory Control",
     desc: "Real-time stock tracking, multi-warehouse management, and barcode integration.",
     preview: (
       <div className="hp-module-preview">
         <div className="hp-barcode-icon">
-          <span className="material-symbols-outlined" style={{ fontSize: 40, color: "#e8eae4" }}>barcode_scanner</span>
+          <ScanLine size={40} strokeWidth={1.5} className="text-bz-border" />
         </div>
       </div>
     ),
   },
   {
-    icon: "account_balance",
+    Icon: Building2,
     title: "Finance & Accounts",
     desc: "Journal entries, bank reconciliation, and real-time P&L reporting.",
     preview: (
@@ -280,20 +308,21 @@ const MODULES = [
 
 function ModulesSection() {
   return (
-    <section className="hp-modules">
-      <div className="hp-inner">
-        <div className="hp-modules-header">
-          <span className="hp-sub-label">Core Modules</span>
-          <h2 className="hp-section-title" style={{ textAlign: "center" }}>Everything you need in one place</h2>
-          <p className="hp-section-desc" style={{ textAlign: "center", marginTop: 12 }}>
-            The unified infrastructure for your entire business lifecycle.
-          </p>
-        </div>
+    <Section tone="white" pad="compact">
+      <Container>
+        <SectionHeading
+          eyebrow="Core Modules"
+          title="Everything you need in one place"
+          description="The unified infrastructure for your entire business lifecycle."
+          align="center"
+          maxWidth={640}
+          className="mb-12"
+        />
         <div className="hp-modules-grid">
           {MODULES.map((m) => (
             <div className="hp-module-card" key={m.title}>
               <div className="hp-module-icon">
-                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0, 'wght' 300" }}>{m.icon}</span>
+                <m.Icon size={22} strokeWidth={1.6} />
               </div>
               <div className="hp-module-title">{m.title}</div>
               <div className="hp-module-desc">{m.desc}</div>
@@ -302,20 +331,20 @@ function ModulesSection() {
           ))}
           {/* CTA tile */}
           <div className="hp-module-card hp-module-dark">
-            <span className="material-symbols-outlined hp-module-dark-icon">add_circle</span>
+            <PlusCircle size={40} strokeWidth={1.5} className="hp-module-dark-icon" />
             <div className="hp-module-dark-title">Need more?</div>
             <div className="hp-module-dark-desc">Explore 20+ additional specialized modules.</div>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
 // ─── HOW IT WORKS ─────────────────────────────────────────────────────────────
 function Step1Visual() {
   return (
-    <div className="hp-config-card" style={{ width: "100%", maxWidth: 420, margin: "0 auto" }}>
+    <div className="hp-config-card w-full max-w-[420px] mx-auto">
       <div className="hp-config-topbar">
         <div className="hp-config-topbar-left" />
         <div className="hp-toggle-on"><div className="hp-toggle-knob" /></div>
@@ -344,7 +373,7 @@ function Step1Visual() {
 
 function Step2Visual() {
   return (
-    <div className="hp-migration-card" style={{ width: "100%", maxWidth: 540, margin: "0 auto" }}>
+    <div className="hp-migration-card w-full max-w-[540px] mx-auto">
       <div className="hp-mig-grid-bg" />
       <div className="hp-mig-glow" />
 
@@ -357,7 +386,7 @@ function Step2Visual() {
         ].map((s) => (
           <div className="hp-mig-source" key={s.name}>
             <div className="hp-mig-source-icon">
-              <span className="material-symbols-outlined" style={{ fontSize: 22 }}>{s.icon}</span>
+              <span className="material-symbols-outlined text-[22px]">{s.icon}</span>
             </div>
             <div>
               <div className="hp-mig-source-name">{s.name}</div>
@@ -408,10 +437,10 @@ function Step2Visual() {
           <div className="hp-mig-hub-ring-inner" />
           <div className="hp-glass-core-inner" />
           <div className="hp-mig-hub-icon">
-            <span className="material-symbols-outlined" style={{ fontSize: 28, color: "#7A826D" }}>shield_with_heart</span>
+            <span className="material-symbols-outlined text-bz-sage text-[28px]">shield_with_heart</span>
           </div>
           <div className="hp-mig-hub-badge">
-            <span className="material-symbols-outlined" style={{ fontSize: 10, color: "#fff" }}>verified</span>
+            <span className="material-symbols-outlined text-white text-[10px]">verified</span>
           </div>
         </div>
         <div className="hp-mig-hub-label">Bizak Data Core</div>
@@ -426,20 +455,20 @@ function Step2Visual() {
 
 function Step3Visual() {
   return (
-    <div className="hp-deploy-card" style={{ width: "100%", maxWidth: 420, margin: "0 auto" }}>
+    <div className="hp-deploy-card w-full max-w-[420px] mx-auto">
       <div className="hp-avatar-stack">
         <div className="hp-avatar a1">JD</div>
         <div className="hp-avatar a2">SM</div>
         <div className="hp-avatar a3">AK</div>
         <div className="hp-avatar a4">
-          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
+          <span className="material-symbols-outlined text-[18px]">add</span>
         </div>
       </div>
-      <div style={{ width: "100%", textAlign: "center" }}>
+      <div className="w-full text-center">
         <div className="hp-deploy-ready">Ready for Launch</div>
         <button className="hp-go-live-btn">
           Go Live Now
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>rocket_launch</span>
+          <span className="material-symbols-outlined text-[16px]">rocket_launch</span>
         </button>
       </div>
     </div>
@@ -448,24 +477,25 @@ function Step3Visual() {
 
 function HowItWorksSection() {
   return (
-    <section className="hp-how">
-      <div className="hp-inner">
-        <div className="hp-how-header">
-          <span className="hp-sub-label" style={{ textAlign: "center", display: "block" }}>Implementation</span>
-          <h2 className="hp-section-title" style={{ textAlign: "center" }}>How Bizak Works</h2>
-          <p className="hp-section-desc" style={{ textAlign: "center", marginTop: 12 }}>
-            A refined transition from legacy systems to a unified workspace.
-          </p>
-        </div>
+    <Section tone="white" pad="compact" className="overflow-hidden">
+      <Container className="relative">
+        <SectionHeading
+          eyebrow="Implementation"
+          title="How Bizak Works"
+          description="A refined transition from legacy systems to a unified workspace."
+          align="center"
+          maxWidth={640}
+          className="mb-20"
+        />
 
         <div className="hp-timeline-line" />
 
         {/* Step 1 */}
         <div className="hp-step">
-          <div style={{ order: 2 }}>
+          <div className="order-2">
             <Step1Visual />
           </div>
-          <div style={{ order: 1 }}>
+          <div className="order-1">
             <div className="hp-step-label">
               <div className="hp-step-num">01</div>
               <span className="hp-step-tag">Configuration</span>
@@ -479,8 +509,8 @@ function HowItWorksSection() {
 
         {/* Step 2 */}
         <div className="hp-step">
-          <div className="hp-step-text-right" style={{ order: 1 }}>
-            <div className="hp-step-label" style={{ flexDirection: "row-reverse", justifyContent: "flex-end" }}>
+          <div className="hp-step-text-right order-1">
+            <div className="hp-step-label">
               <div className="hp-step-num">02</div>
               <span className="hp-step-tag">Data Flow</span>
             </div>
@@ -489,17 +519,17 @@ function HowItWorksSection() {
               Seamlessly transition legacy assets. Our data-stream engine maps your historical records into the Bizak cloud with zero downtime.
             </p>
           </div>
-          <div style={{ order: 2 }}>
+          <div className="order-2">
             <Step2Visual />
           </div>
         </div>
 
         {/* Step 3 */}
-        <div className="hp-step" style={{ marginBottom: 0 }}>
-          <div style={{ order: 2 }}>
+        <div className="hp-step !mb-0">
+          <div className="order-2">
             <Step3Visual />
           </div>
-          <div style={{ order: 1 }}>
+          <div className="order-1">
             <div className="hp-step-label">
               <div className="hp-step-num">03</div>
               <span className="hp-step-tag">Deployment</span>
@@ -510,31 +540,32 @@ function HowItWorksSection() {
             </p>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
 // ─── ENTERPRISE BENEFITS ──────────────────────────────────────────────────────
 function EnterpriseSection() {
   return (
-    <section className="hp-enterprise">
-      <div className="hp-inner">
-        <div className="hp-enterprise-header">
-          <span className="hp-sub-label" style={{ textAlign: "center", display: "block" }}>Enterprise-Grade Benefits</span>
-          <h2 className="hp-section-title hp-enterprise-title" style={{ textAlign: "center" }}>
-            Built for scale, speed, and absolute reliability.
-          </h2>
-          <p className="hp-section-desc hp-enterprise-desc" style={{ textAlign: "center", marginTop: 12 }}>
-            Unlock the potential of your operations with tools designed for mid-market leaders.
-          </p>
-        </div>
+    <Section tone="dark" pad="compact" className="overflow-hidden">
+      <Container>
+        <SectionHeading
+          eyebrow="Enterprise-Grade Benefits"
+          eyebrowTone="accent"
+          title="Built for scale, speed, and absolute reliability."
+          description="Unlock the potential of your operations with tools designed for mid-market leaders."
+          tone="light"
+          align="center"
+          maxWidth={720}
+          className="mb-12"
+        />
 
         <div className="hp-ent-grid">
           {/* ROI Growth – wide */}
           <div className="hp-ent-card wide">
             <div className="hp-ent-icon">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0, 'wght' 300" }}>trending_up</span>
+              <TrendingUp size={20} strokeWidth={1.5} />
             </div>
             <h3 className="hp-ent-title">Proven ROI Growth</h3>
             <p className="hp-ent-desc">
@@ -546,11 +577,11 @@ function EnterpriseSection() {
             </div>
             <div className="hp-bar-chart">
               {[
-                { h: "30%", bg: "rgba(255,255,255,0.05)" },
-                { h: "45%", bg: "rgba(255,255,255,0.05)" },
-                { h: "65%", bg: "rgba(122,130,109,0.22)" },
-                { h: "80%", bg: "rgba(122,130,109,0.4)"  },
-                { h: "100%",bg: "#C7FF35", shadow: "0 0 12px rgba(199,255,53,0.7)" },
+                { h: "30%",  bg: "rgba(255,255,255,0.05)" },
+                { h: "45%",  bg: "rgba(255,255,255,0.05)" },
+                { h: "65%",  bg: "rgba(122,130,109,0.22)" },
+                { h: "80%",  bg: "rgba(122,130,109,0.4)"  },
+                { h: "100%", bg: "var(--bz-accent)", shadow: "0 0 12px rgba(199,255,53,0.7)" },
               ].map((b, i) => (
                 <div key={i} className="hp-bc-bar" style={{ height: b.h, background: b.bg, boxShadow: b.shadow }} />
               ))}
@@ -560,7 +591,7 @@ function EnterpriseSection() {
           {/* Productivity – narrow */}
           <div className="hp-ent-card narrow">
             <div className="hp-ent-icon">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0, 'wght' 300" }}>bolt</span>
+              <Zap size={20} strokeWidth={1.5} />
             </div>
             <h3 className="hp-ent-title">Productivity Tools</h3>
             <p className="hp-ent-desc-sm">Integrated task management using AI to prioritize high-value operations.</p>
@@ -573,7 +604,7 @@ function EnterpriseSection() {
                 <span className="hp-task-name">Resource Sync</span>
                 <span className="hp-task-active"><span className="hp-task-active-dot" />Active</span>
               </div>
-              <div className="hp-task-row" style={{ opacity: 0.45 }}>
+              <div className="hp-task-row opacity-45">
                 <span className="hp-task-name">Batch Exporting</span>
                 <span className="hp-task-waiting">Waiting…</span>
               </div>
@@ -582,15 +613,15 @@ function EnterpriseSection() {
 
           {/* Smart Docs – half */}
           <div className="hp-ent-card half">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div className="flex justify-between items-start">
               <div>
                 <div className="hp-ent-icon">
-                  <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0, 'wght' 300" }}>description</span>
+                  <FileText size={20} strokeWidth={1.5} />
                 </div>
                 <h3 className="hp-ent-title">Smart Documents</h3>
                 <p className="hp-ent-desc-sm">Bank-grade encryption and automated indexing for instant retrieval across departments.</p>
               </div>
-              <span className="material-symbols-outlined hp-ent-folder-icon" style={{ fontVariationSettings: "'FILL' 0, 'wght' 300" }}>folder_shared</span>
+              <FolderOpen size={56} strokeWidth={1.2} className="hp-ent-folder-icon" />
             </div>
             <div className="hp-ent-avatars">
               {[0.1, 0.15, 0.2].map((o, i) => (
@@ -603,7 +634,7 @@ function EnterpriseSection() {
           {/* SOC-2 – half centered */}
           <div className="hp-ent-card half center">
             <div className="hp-soc-icon">
-              <span className="material-symbols-outlined" style={{ fontSize: 28, fontVariationSettings: "'FILL' 0, 'wght' 300" }}>verified_user</span>
+              <ShieldCheck size={28} strokeWidth={1.4} />
             </div>
             <h3 className="hp-ent-title">SOC-2 Certified</h3>
             <p className="hp-soc-desc">
@@ -611,23 +642,24 @@ function EnterpriseSection() {
             </p>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
 // ─── IMPACT ───────────────────────────────────────────────────────────────────
 function ImpactSection() {
   return (
-    <section className="hp-impact">
-      <div className="hp-inner">
-        <div className="hp-impact-header">
-          <span className="hp-sub-label" style={{ textAlign: "center", display: "block" }}>Impact</span>
-          <h2 className="hp-section-title" style={{ textAlign: "center" }}>Proven Success Across Every Industry</h2>
-          <p className="hp-section-desc" style={{ textAlign: "center", marginTop: 12 }}>
-            Real numbers from companies that made the switch.
-          </p>
-        </div>
+    <Section tone="white" pad="compact">
+      <Container>
+        <SectionHeading
+          eyebrow="Impact"
+          title="Proven Success Across Every Industry"
+          description="Real numbers from companies that made the switch."
+          align="center"
+          maxWidth={640}
+          className="mb-12"
+        />
         <div className="hp-impact-grid">
           {/* 40% */}
           <div className="hp-impact-card">
@@ -647,7 +679,7 @@ function ImpactSection() {
             <div className="hp-impact-title">Paper Management</div>
             <p className="hp-impact-desc">100% cloud-native document storage with OCR capability and secure digital archiving for audit trails.</p>
             <div className="hp-impact-doc-row">
-              <span className="material-symbols-outlined" style={{ color: "#7A826D", fontVariationSettings: "'FILL' 0, 'wght' 300" }}>description</span>
+              <FileText size={20} strokeWidth={1.5} className="text-bz-sage" />
               <div className="hp-impact-doc-bar"><div className="hp-impact-doc-fill" /></div>
             </div>
           </div>
@@ -658,30 +690,34 @@ function ImpactSection() {
             <div className="hp-impact-title">Expert Support</div>
             <p className="hp-impact-desc">Direct access to ERP implementation experts and a dedicated account manager for enterprise plans.</p>
             <div className="hp-impact-avatars">
-              {[{ bg: "#e8eae4" }, { bg: "rgba(122,130,109,0.2)" }, { bg: "rgba(122,130,109,0.4)" }].map((a, i) => (
-                <div key={i} className="hp-impact-avatar" style={{ background: a.bg }} />
+              {[
+                "bg-bz-border",
+                "bg-[rgba(122,130,109,0.2)]",
+                "bg-[rgba(122,130,109,0.4)]",
+              ].map((bg, i) => (
+                <div key={i} className={`hp-impact-avatar ${bg}`} />
               ))}
               <div className="hp-impact-avatar-count">+12</div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
 // ─── TESTIMONIAL ─────────────────────────────────────────────────────────────
 function TestimonialSection() {
   return (
-    <section className="hp-testimonial">
-      <div className="hp-inner">
+    <Section tone="white" pad="compact">
+      <Container>
         <div className="hp-testimonial-inner">
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 44 }}>
+          <div className="flex justify-center mb-11">
             <div className="hp-testimonial-source"><span>APEX</span></div>
           </div>
           <blockquote className="hp-testimonial-quote">
-            "Bizak is the first ERP that actually understands the complexity of global
-            operations without the typical bloat."
+            &ldquo;Bizak is the first ERP that actually understands the complexity of global
+            operations without the typical bloat.&rdquo;
           </blockquote>
           <div className="hp-testimonial-avatar">
             <img src={AVATAR_URL} alt="David Richardson" />
@@ -689,20 +725,20 @@ function TestimonialSection() {
           <div className="hp-testimonial-name">David Richardson</div>
           <div className="hp-testimonial-role">CEO, Apex Manufacturing</div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
 // ─── GLOBAL STATS ─────────────────────────────────────────────────────────────
 function GlobalStatsSection() {
   return (
-    <section className="hp-global">
-      <div className="hp-inner">
+    <Section tone="white" pad="compact">
+      <Container>
         <div className="hp-global-separator">
           <div className="hp-separator-line" />
           <div className="hp-separator-icon">
-            <span className="material-symbols-outlined" style={{ color: "#7A826D", fontSize: 24 }}>public</span>
+            <Globe size={24} strokeWidth={1.6} />
           </div>
           <div className="hp-separator-line right" />
         </div>
@@ -721,50 +757,8 @@ function GlobalStatsSection() {
             </div>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── FINAL CTA ────────────────────────────────────────────────────────────────
-function FinalCTASection() {
-  return (
-  
-
-
- <section className="blog-newsletter">
-      <div className="blog-newsletter-grid-bg" />
-      <div className="blog-newsletter-glow" />
-      <div style={{ position: "relative", zIndex: 10 }}>
-        <h2 className="blog-newsletter-title">Get ERP insights delivered to your inbox</h2>
-        <p className="blog-newsletter-sub">
-          Join 5,000+ operations leaders receiving our bi-weekly breakdown of scaling
-          strategies and technical innovations.
-        </p>
-        {submitted ? (
-          <div style={{ color: "#C7FF35", fontWeight: 700, fontSize: 16, letterSpacing: "0.02em" }}>
-            ✓ You're subscribed — thanks for joining!
-          </div>
-        ) : (
-          <form className="blog-newsletter-form" onSubmit={handleSubmit}>
-            <input
-              className="blog-newsletter-input"
-              type="email"
-              placeholder="Enter your work email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <button type="submit" className="blog-newsletter-btn">Subscribe</button>
-          </form>
-        )}
-        <p className="blog-newsletter-fine">Zero spam. Pure intelligence. Unsubscribe anytime.</p>
-      </div>
-    </section>
-
-
-
-
+      </Container>
+    </Section>
   );
 }
 
@@ -773,7 +767,7 @@ export function HomePage() {
   return (
     <div className="hp-page">
       <Header />
-      <main style={{ paddingTop: 76, paddingLeft:24, paddingRight:24 }}>
+      <main>
         <HeroSection />
         <ModulesSection />
         <HowItWorksSection />
@@ -781,7 +775,6 @@ export function HomePage() {
         <ImpactSection />
         <TestimonialSection />
         <GlobalStatsSection />
-        {/* <FinalCTASection /> */}
       </main>
       <Footer />
     </div>

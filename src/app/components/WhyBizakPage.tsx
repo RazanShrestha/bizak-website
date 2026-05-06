@@ -2,6 +2,7 @@ import React from "react";
  import "../../styles/style.css"
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { HeroBadge } from "./marketing";
 
 // ─── HERO ─────────────────────────────────────────────────────────────────────
 function ExcelSide() {
@@ -90,12 +91,12 @@ function BizakSide() {
 
 function HeroSection() {
   return (
-    <section className="wb-hero">
+    <section className="wb-hero biz-mesh">
       <div className="wb-inner">
         {/* Text */}
         <div style={{ textAlign: "center", marginBottom: 56 }}>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
-            <div className="wb-hero-badge">Transition from Chaos to Control</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <HeroBadge>Transition from Chaos to Control</HeroBadge>
           </div>
           <h1 className="wb-hero-title">Still running your business on Excel?</h1>
           <p className="wb-hero-sub">

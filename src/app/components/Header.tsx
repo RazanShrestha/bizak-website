@@ -128,7 +128,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <Truck size={15} />,
             title: "Purchasing",
             description: "Vendor management and procurement workflows",
-              href: "/Purchasing", // ← Add this
+              href: "/purchasing",
           },
           {
             icon: <Package size={15} />,
@@ -227,14 +227,13 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <Factory size={15} />,
             title: "Manufacturing",
             description: "Production, BOM, costing, and supply chain",
-
-             href: "/Manufacturing",
+            href: "/manufacturing",
           },
           {
             icon: <Truck size={15} />,
             title: "Distribution & Logistics",
             description: "Warehouse, routing, and delivery management",
-            href: "/Distribution", // ← Add this
+            href: "/distribution",
           },
           {
             icon: <Briefcase size={15} />,
@@ -535,7 +534,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <FileText size={15} />,
             title: "Blog",
             description: "Insights on ERP, finance, and operations",
-   href: "/Blog", // ← Add this
+            href: "/blog",
 
 
 
@@ -605,7 +604,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <Info size={15} />,
             title: "About Bizak",
             description: "Our story, mission, and the team behind the product",
-            href: "/About", // ← Add this
+            href: "/about",
           },
           {
             icon: <Target size={15} />,
@@ -649,7 +648,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <Mail size={15} />,
             title: "Contact Us",
             description: "Reach our team for sales and general support",
-               href: "/Contact", // ← Add this
+            href: "/contact",
 
           },
           {
@@ -1199,7 +1198,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 
 
           <a
-            href="/Contact"
+            href="/contact"
             target="_blank"
             style={{
               display: "flex",
@@ -1457,7 +1456,7 @@ export function Header() {
             />
 
             <a className="biz-shimmer-btn"
-              href="/Contact"
+              href="/contact"
               target="_blank"
               style={{
                 display: "inline-flex",
