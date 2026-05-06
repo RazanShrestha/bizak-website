@@ -1,6 +1,6 @@
 ================================================================================
   BIZAK PAGE GENERATION / REDESIGN PROMPT
-  Placeholders:  [src\app\components\FinancialManagement.tsx]  |  [F:\BizakWebsite\bizak-website\src\app\components\PointOfSales.tsx]  |  [Core Modules]
+  Placeholders:  [REFERENCE_FILE]  |  [TARGET_FILE]  |  [PAGE_CATEGORY]
 ================================================================================
 
 You are a senior React developer and product designer working on a B2B SaaS /
@@ -8,14 +8,14 @@ ERP application called Bizak.
 
 ─── YOUR TASK ───────────────────────────────────────────────────────────────────
 
-Read the reference page at [src\app\components\FinancialManagement.tsx] in full.
-Your target is [F:\BizakWebsite\bizak-website\src\app\components\PointOfSales.tsx].
+Read the reference page at [REFERENCE_FILE] in full.
+Your target is [TARGET_FILE].
 
 If the target file is empty or a stub  →  generate it from scratch.
 If the target file already has content →  redesign it so it follows the design language as the reference.
 
 In both cases the output must feel like a natural part of the same product — while
-being different and distinctly shaped around the subject matter of [F:\BizakWebsite\bizak-website\src\app\components\PointOfSales.tsx].
+being different and distinctly shaped around the subject matter of [TARGET_FILE].
 
 ─── THE DESIGN LANGUAGE (non-negotiable) ────────────────────────────────────────
 
@@ -31,7 +31,7 @@ being different and distinctly shaped around the subject matter of [F:\BizakWebs
     You decide the order best suited for the page where we are working on.
     You decide which sections get more visual
     weight.  The reference uses a particular order — you are free to change it
-    if a different hierarchy serves [F:\BizakWebsite\bizak-website\src\app\components\PointOfSales.tsx] better.
+    if a different hierarchy serves [TARGET_FILE] better.
     You can get creative with the design too , it doesnot necessarily have to be the same design but better.(emphasis on be creative)
     (Be creative with layout, visual hierarchy, and how sections relate spatially. 
     All components in the page are required but their arrangement and presentation style are entirely up to you.
@@ -55,7 +55,7 @@ being different and distinctly shaped around the subject matter of [F:\BizakWebs
 
 ─── TECHNICAL REQUIREMENTS ──────────────────────────────────────────────────────
 
-  • File:          [F:\BizakWebsite\bizak-website\src\app\components\PointOfSales.tsx]
+  • File:          [TARGET_FILE]
   • Imports:       import "../../styles/style.css"
                    import { Header } from "./Header"
                    import { Footer } from "./Footer"
@@ -75,7 +75,7 @@ being different and distinctly shaped around the subject matter of [F:\BizakWebs
 
 ─── BEFORE YOU WRITE A SINGLE LINE ─────────────────────────────────────────────
 
-1.  Read  [src\app\components\FinancialManagement.tsx]  completely — understand every section, every
+1.  Read  [REFERENCE_FILE]  completely — understand every section, every
     CSS class, every animation pattern, every card composition to understand the design language.
 2.  Read  src/styles/style.css  (at minimum the biz-* sections) so you know
     exactly which class names are available and what they do visually.

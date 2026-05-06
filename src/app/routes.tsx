@@ -37,6 +37,9 @@ import { MulticompanyAndBranchesPage } from "./components/MulticompanyAndBranche
 import { DocumentManagementPage } from "./components/DocumentManagementPage";
 import { CareersPage } from "./components/CarrersPage";
 import { PointOfSalesPage } from "./components/PointOfSales";
+import { StartupsAndSmes } from "./components/StartupsAndSmes";
+import { MidMarket } from "./components/MidMarket";
+import { Enterprise } from "./components/Enterprise";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
 function RootLayout() {
@@ -535,6 +538,9 @@ export const router = createBrowserRouter([
       { path: "DocumentManagement", Component: DocumentManagementPage },
       { path: "careers", Component: CareersPageLayout },
       { path: "PointOfSales", Component: PointOfSalesPage },
+      { path: "StartupsAndSmes", Component: StartupsAndSmes },
+      { path: "MidMarket",       Component: MidMarket       },
+      { path: "Enterprise",      Component: Enterprise       },
       {
         path: "blog",
         Component: () => <Outlet />,

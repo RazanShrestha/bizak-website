@@ -10,20 +10,6 @@ function Icon({ name, size = 24, style }: { name: string; size?: number; style?:
         <circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" />
       </svg>
     ),
-    rocket: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
-        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
-        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
-        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
-        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
-      </svg>
-    ),
-    spreadsheet: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
-        <rect width="18" height="18" x="3" y="3" rx="2" />
-        <path d="M3 9h18M3 15h18M9 3v18" />
-      </svg>
-    ),
     "check-circle": (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
@@ -49,12 +35,6 @@ function Icon({ name, size = 24, style }: { name: string; size?: number; style?:
         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
       </svg>
     ),
-    cart: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
-        <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-      </svg>
-    ),
     bar: (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
         <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" />
@@ -66,9 +46,22 @@ function Icon({ name, size = 24, style }: { name: string; size?: number; style?:
         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
       </svg>
     ),
-    puzzle: (
+    plug: (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
-        <path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.926a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.926.968a.979.979 0 0 1-.276.836l-1.611 1.612a2.415 2.415 0 0 1-1.704.705 2.415 2.415 0 0 1-1.704-.705l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877l-1.568-1.568A2.415 2.415 0 0 1 1 11.005c0-.617.236-1.234.706-1.704L3.317 7.69a.979.979 0 0 1 .836-.276c.47.07.802.48.968.926a2.501 2.501 0 1 0 3.214-3.214c-.446-.166-.855-.497-.926-.968a.979.979 0 0 1 .276-.836l1.611-1.611a2.415 2.415 0 0 1 1.704-.705c.617 0 1.234.236 1.704.705l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.968a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.967 1.02z" />
+        <path d="M12 22v-5" /><path d="M9 8V2" /><path d="M15 8V2" />
+        <path d="M18 8H6a2 2 0 0 0-2 2v3a4 4 0 0 0 4 4h4a4 4 0 0 0 4-4v-3a2 2 0 0 0-2-2Z" />
+      </svg>
+    ),
+    shield: (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+      </svg>
+    ),
+    layers: (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
+        <polygon points="12 2 2 7 12 12 22 7 12 2" />
+        <polyline points="2 17 12 22 22 17" />
+        <polyline points="2 12 12 17 22 12" />
       </svg>
     ),
     clock: (
@@ -87,13 +80,6 @@ function Icon({ name, size = 24, style }: { name: string; size?: number; style?:
         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
       </svg>
     ),
-    layers: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
-        <polygon points="12 2 2 7 12 12 22 7 12 2" />
-        <polyline points="2 17 12 22 22 17" />
-        <polyline points="2 12 12 17 22 12" />
-      </svg>
-    ),
     invoice: (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
@@ -101,21 +87,40 @@ function Icon({ name, size = 24, style }: { name: string; size?: number; style?:
         <line x1="9" x2="15" y1="13" y2="13" /><line x1="9" x2="15" y1="17" y2="17" />
       </svg>
     ),
-    plug: (
+    puzzle: (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
-        <path d="M12 22v-5" /><path d="M9 8V2" /><path d="M15 8V2" />
-        <path d="M18 8H6a2 2 0 0 0-2 2v3a4 4 0 0 0 4 4h4a4 4 0 0 0 4-4v-3a2 2 0 0 0-2-2Z" />
+        <path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.926a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.926.968a.979.979 0 0 1-.276.836l-1.611 1.612a2.415 2.415 0 0 1-1.704.705 2.415 2.415 0 0 1-1.704-.705l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877l-1.568-1.568A2.415 2.415 0 0 1 1 11.005c0-.617.236-1.234.706-1.704L3.317 7.69a.979.979 0 0 1 .836-.276c.47.07.802.48.968.926a2.501 2.501 0 1 0 3.214-3.214c-.446-.166-.855-.497-.926-.968a.979.979 0 0 1 .276-.836l1.611-1.611a2.415 2.415 0 0 1 1.704-.705c.617 0 1.234.236 1.704.705l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.968a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.967 1.02z" />
       </svg>
     ),
-    shield: (
+    building: (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+        <rect width="16" height="20" x="4" y="2" rx="2" ry="2" />
+        <path d="M9 22v-4h6v4" /><path d="M8 6h.01" /><path d="M16 6h.01" />
+        <path d="M12 6h.01" /><path d="M12 10h.01" /><path d="M12 14h.01" />
+        <path d="M16 10h.01" /><path d="M16 14h.01" /><path d="M8 10h.01" /><path d="M8 14h.01" />
       </svg>
     ),
-    "setup": (
+    "git-merge": (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
-        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-        <circle cx="12" cy="12" r="3" />
+        <circle cx="18" cy="18" r="3" /><circle cx="6" cy="6" r="3" />
+        <path d="M6 21V9a9 9 0 0 0 9 9" />
+      </svg>
+    ),
+    "pie-chart": (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
+        <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+        <path d="M22 12A10 10 0 0 0 12 2v10z" />
+      </svg>
+    ),
+    lock: (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
+        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </svg>
+    ),
+    "check-square": (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
+        <polyline points="9 11 12 14 22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
       </svg>
     ),
     migrate: (
@@ -124,16 +129,24 @@ function Icon({ name, size = 24, style }: { name: string; size?: number; style?:
         <path d="M3 22v-6h6" /><path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
       </svg>
     ),
+    setup: (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+    ),
+    rocket: (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+      </svg>
+    ),
     go: (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
         <circle cx="12" cy="12" r="10" />
         <path d="M12 8l4 4-4 4" /><path d="M8 12h8" />
-      </svg>
-    ),
-    "pie-chart": (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={style}>
-        <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-        <path d="M22 12A10 10 0 0 0 12 2v10z" />
       </svg>
     ),
   };
@@ -144,8 +157,8 @@ function Icon({ name, size = 24, style }: { name: string; size?: number; style?:
   );
 }
 
-// ─── Metric node (used in Hero visual) ───────────────────────────────────────
-function MetricNode({ label, value, unit, active }: { label: string; value: string; unit: string; active: boolean }) {
+// ─── Entity Node (used in Hero visual) ───────────────────────────────────────
+function EntityNode({ label, value, unit, active }: { label: string; value: string; unit: string; active: boolean }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flex: 1 }}>
       <div style={{
@@ -173,17 +186,17 @@ function MetricNode({ label, value, unit, active }: { label: string; value: stri
 
 // ─── Hero Section ─────────────────────────────────────────────────────────────
 function HeroSection() {
-  const metrics = [
-    { label: "Revenue",   value: "$84K",  unit: "MRR",     active: true  },
-    { label: "Customers", value: "1,240", unit: "Active",  active: true  },
-    { label: "Orders",    value: "328",   unit: "This Wk", active: true  },
-    { label: "Stock",     value: "98.2%", unit: "Health",  active: false },
+  const entities = [
+    { label: "HQ – Dubai",    value: "$2.1M", unit: "Revenue",  active: true  },
+    { label: "Branch – Cairo", value: "$840K", unit: "Revenue", active: true  },
+    { label: "Branch – London",value: "$1.3M", unit: "Revenue", active: true  },
+    { label: "Consolidation",  value: "98.5%", unit: "Accuracy",active: false },
   ];
 
-  const recentInvoices = [
-    { id: "INV-0041", client: "Nova Tech",    amount: "$3,400", status: "paid",    color: "#C7FF35" },
-    { id: "INV-0042", client: "Pixel Works",  amount: "$1,850", status: "pending", color: "#fbbf24" },
-    { id: "INV-0043", client: "Blue Shift",   amount: "$6,200", status: "paid",    color: "#C7FF35" },
+  const pendingApprovals = [
+    { id: "APV-0211", dept: "Procurement", amount: "$48,000", status: "pending", color: "#fbbf24" },
+    { id: "APV-0212", dept: "Finance",     amount: "$12,400", status: "approved", color: "#C7FF35" },
+    { id: "APV-0213", dept: "Operations",  amount: "$93,200", status: "review",  color: "#fb923c" },
   ];
 
   return (
@@ -194,37 +207,37 @@ function HeroSection() {
 
           {/* ── Copy ── */}
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span className="biz-label" style={{ marginBottom: 20 }}>ERP for Startups & SMEs</span>
+            <span className="biz-label" style={{ marginBottom: 20 }}>ERP for Mid-Market Companies</span>
             <h1 className="biz-h1">
-              Launch Fast.<br /><span>Scale</span> Without Limits.
+              Unify Operations.<br /><span>Scale</span> With Precision.
             </h1>
             <p className="biz-hero-sub" style={{ marginTop: 24 }}>
-              Replace your spreadsheets and disconnected tools with a single, pre-configured ERP built for growing businesses. Go live in days — not months — and scale every module as your team grows.
+              Mid-market companies outgrow spreadsheets and entry-level ERPs fast. Bizak gives you multi-entity financials, advanced approval workflows, and consolidated reporting — without the enterprise price tag or 18-month rollout.
             </p>
             <div className="biz-hero-cta-row">
-              <button className="biz-shimmer-btn biz-shimmer-lg">Start Free Trial</button>
+              <button className="biz-shimmer-btn biz-shimmer-lg">Request a Demo</button>
               <button className="biz-btn-outline">
-                See How It Works <Icon name="play" size={16} />
+                See It in Action <Icon name="play" size={16} />
               </button>
             </div>
             <div className="biz-hero-stats">
               <div>
-                <div className="biz-stat-value">3 Days</div>
-                <div className="biz-stat-label">Average Go-Live</div>
+                <div className="biz-stat-value">30 Days</div>
+                <div className="biz-stat-label">Typical Go-Live</div>
               </div>
               <div className="biz-divider-v" />
               <div>
-                <div className="biz-stat-value">5,000+</div>
-                <div className="biz-stat-label">SMEs Running Bizak</div>
+                <div className="biz-stat-value">800+</div>
+                <div className="biz-stat-label">Mid-Market Companies</div>
               </div>
             </div>
           </div>
 
-          {/* ── Visual: SME Command Center ── */}
+          {/* ── Visual: Multi-Entity Command Center ── */}
           <div className="biz-hero-visual">
             <div className="biz-vis-glow" />
 
-            {/* ── Main glass panel: business overview HUD ── */}
+            {/* ── Main glass panel: consolidated view ── */}
             <div className="biz-card-main biz-glass biz-float">
               {/* Panel header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
@@ -234,7 +247,7 @@ function HeroSection() {
                   <div className="biz-traffic-dot" style={{ background: "rgba(74,222,128,0.5)" }} />
                 </div>
                 <span style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(122,130,109,0.65)" }}>
-                  Bizak · Business Overview
+                  Bizak · Consolidated View
                 </span>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <div className="biz-pulse-glow" style={{ width: 6, height: 6, borderRadius: "50%", background: "#C7FF35" }} />
@@ -242,7 +255,7 @@ function HeroSection() {
                 </div>
               </div>
 
-              {/* Metric nodes */}
+              {/* Entity nodes */}
               <div style={{ position: "relative", marginBottom: 14 }}>
                 <svg style={{ position: "absolute", top: "38%", left: "12.5%", width: "75%", height: 2, overflow: "visible", pointerEvents: "none" }} viewBox="0 0 300 2">
                   <line x1="0" y1="1" x2="300" y2="1" stroke="rgba(122,130,109,0.15)" strokeWidth="1.5" />
@@ -254,60 +267,60 @@ function HeroSection() {
                   ))}
                 </svg>
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 0 }}>
-                  {metrics.map((m) => (
-                    <MetricNode key={m.label} {...m} />
+                  {entities.map((e) => (
+                    <EntityNode key={e.label} {...e} />
                   ))}
                 </div>
               </div>
 
-              {/* Recent invoices */}
+              {/* Pending approvals */}
               <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 10, borderTop: "1px solid rgba(122,130,109,0.1)" }}>
-                {recentInvoices.map((inv) => (
-                  <div key={inv.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 8, fontFamily: "monospace", color: "rgba(122,130,109,0.7)", minWidth: 58 }}>{inv.id}</span>
-                    <span style={{ fontSize: 8, color: "#888", flex: 1 }}>{inv.client}</span>
-                    <span style={{ fontSize: 8, fontWeight: 700, color: "#333", minWidth: 36 }}>{inv.amount}</span>
+                {pendingApprovals.map((apv) => (
+                  <div key={apv.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: 8, fontFamily: "monospace", color: "rgba(122,130,109,0.7)", minWidth: 58 }}>{apv.id}</span>
+                    <span style={{ fontSize: 8, color: "#888", flex: 1 }}>{apv.dept}</span>
+                    <span style={{ fontSize: 8, fontWeight: 700, color: "#333", minWidth: 44 }}>{apv.amount}</span>
                     <span style={{
                       fontSize: 7, fontWeight: 700, padding: "2px 6px", borderRadius: 3,
-                      background: inv.status === "paid" ? "rgba(199,255,53,0.15)" : "rgba(251,191,36,0.12)",
-                      color: inv.status === "paid" ? "#7A826D" : "#d97706",
+                      background: apv.status === "approved" ? "rgba(199,255,53,0.15)" : apv.status === "pending" ? "rgba(251,191,36,0.12)" : "rgba(251,146,60,0.12)",
+                      color: apv.status === "approved" ? "#7A826D" : apv.status === "pending" ? "#d97706" : "#ea580c",
                       textTransform: "uppercase", letterSpacing: "0.06em",
-                    }}>{inv.status}</span>
+                    }}>{apv.status}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* ── Dark card: Revenue Growth ── */}
+            {/* ── Dark card: Consolidated Revenue ── */}
             <div className="biz-card-inventory biz-glass-dark biz-float-d">
               <div className="biz-tag-row">
                 <div className="biz-icon-box" style={{ background: "rgba(199,255,53,0.15)", color: "#C7FF35" }}>
-                  <Icon name="trending-up" size={18} />
+                  <Icon name="layers" size={18} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)" }}>Revenue Growth</div>
-                  <div style={{ fontSize: 17, fontWeight: 700, color: "#fff" }}>+38% MoM</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)" }}>Consolidated</div>
+                  <div style={{ fontSize: 17, fontWeight: 700, color: "#fff" }}>$4.24M</div>
                 </div>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.38)" }}>vs last month</span>
-                <span style={{ fontSize: 9, color: "#C7FF35", fontWeight: 700 }}>$84K ARR</span>
+                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.38)" }}>3 entities · live</span>
+                <span style={{ fontSize: 9, color: "#C7FF35", fontWeight: 700 }}>+22% YoY</span>
               </div>
               <div style={{ height: 4, background: "rgba(255,255,255,0.1)", borderRadius: 99, overflow: "hidden" }}>
-                <div className="biz-accent-bar" style={{ width: "78%" }} />
+                <div className="biz-accent-bar" style={{ width: "82%" }} />
               </div>
             </div>
 
-            {/* ── Light card: Module health ── */}
+            {/* ── Light card: Department health ── */}
             <div className="biz-card-globe biz-glass biz-float-s">
               <div className="biz-tag-row">
                 <div className="biz-icon-box" style={{ background: "rgba(122,130,109,0.1)", color: "#7A826D" }}>
-                  <Icon name="layers" size={18} />
+                  <Icon name="bar" size={18} />
                 </div>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#7A826D" }}>Active Modules</div>
+                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#7A826D" }}>Dept. Performance</div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                {[{ label: "Finance", pct: 100 }, { label: "Inventory", pct: 100 }, { label: "Sales CRM", pct: 85 }].map((m) => (
+                {[{ label: "Finance", pct: 96 }, { label: "Supply Chain", pct: 88 }, { label: "Sales", pct: 74 }].map((m) => (
                   <div key={m.label}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                       <span style={{ fontSize: 8, fontWeight: 700, color: "#555" }}>{m.label}</span>
@@ -321,15 +334,15 @@ function HeroSection() {
               </div>
             </div>
 
-            {/* ── Circle card: Setup progress ── */}
+            {/* ── Circle card: Compliance score ── */}
             <div className="biz-card-circle biz-glass biz-float">
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#7A826D", marginBottom: 12 }}>Setup Done</div>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#7A826D", marginBottom: 12 }}>Audit Score</div>
               <div style={{ position: "relative", width: 72, height: 72, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }} viewBox="0 0 80 80">
                   <circle cx="40" cy="40" r="32" fill="transparent" stroke="rgba(199,255,53,0.18)" strokeWidth="8" strokeDasharray="201" strokeDashoffset="0" />
-                  <circle cx="40" cy="40" r="32" fill="transparent" stroke="#C7FF35" strokeWidth="8" strokeDasharray="201" strokeDashoffset="24" />
+                  <circle cx="40" cy="40" r="32" fill="transparent" stroke="#C7FF35" strokeWidth="8" strokeDasharray="201" strokeDashoffset="16" />
                 </svg>
-                <div style={{ position: "absolute", fontSize: 13, fontWeight: 700, color: "#333" }}>88%</div>
+                <div style={{ position: "absolute", fontSize: 13, fontWeight: 700, color: "#333" }}>92%</div>
               </div>
             </div>
 
@@ -353,45 +366,45 @@ function ChallengesSection() {
         <div style={{ marginBottom: 48 }}>
           <span className="biz-label">Challenges</span>
           <h2 className="biz-h2" style={{ marginTop: 16, maxWidth: 680 }}>
-            Spreadsheets and patchwork tools are holding your growth back
+            Growing fast is easy. Managing that growth is where mid-market companies break.
           </h2>
           <p className="biz-section-intro">
-            Manual processes and disconnected apps work at ten employees. At fifty, they collapse — and your team pays the price.
+            At 50–500 employees, complexity compounds. Approval chains get long, entities multiply, and the systems built for 20 people can't keep up.
           </p>
         </div>
 
         <div className="biz-bento-grid">
 
-          {/* 1 · Spreadsheet Chaos */}
+          {/* 1 · Approval Bottlenecks */}
           <div className="biz-bento-card">
-            <div className="biz-icon-wrap"><Icon name="spreadsheet" size={22} /></div>
-            <h3 className="biz-card-title">Spreadsheet Overload</h3>
-            <p className="biz-card-desc">Critical data scattered across dozens of Excel sheets leads to version conflicts, errors, and decisions made on outdated numbers.</p>
+            <div className="biz-icon-wrap"><Icon name="check-square" size={22} /></div>
+            <h3 className="biz-card-title">Approval Bottlenecks</h3>
+            <p className="biz-card-desc">Purchase orders, budget requests, and vendor invoices sit in email chains for days. Deals slow. Vendors send late-payment notices.</p>
             <div className="biz-card-footer">
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {[
-                  { label: "Sales_Q1_FINAL.xlsx",       error: true  },
-                  { label: "Inventory_v7_ACTUAL.xlsx",   error: true  },
-                  { label: "Finance_Mar_CORRECT.xlsx",   error: false },
+                  { id: "PO-3841", label: "IT Infrastructure PO",   days: "7d pending",  critical: true  },
+                  { id: "PO-3842", label: "Marketing Budget Req.",   days: "4d pending",  critical: true  },
+                  { id: "PO-3843", label: "Office Lease Renewal",    days: "12d pending", critical: true  },
                 ].map((f) => (
-                  <div key={f.label} style={{ display: "flex", alignItems: "center", gap: 7, padding: "5px 8px", borderRadius: 6, background: f.error ? "rgba(248,113,113,0.06)" : "rgba(122,130,109,0.06)" }}>
-                    <Icon name="invoice" size={12} style={{ color: f.error ? "#f87171" : "#7A826D", flexShrink: 0 }} />
-                    <span style={{ fontSize: 8, color: f.error ? "#f87171" : "#666", fontFamily: "monospace", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.label}</span>
-                    {f.error && <span style={{ fontSize: 7, fontWeight: 700, color: "#f87171" }}>Conflict</span>}
+                  <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 7, padding: "5px 8px", borderRadius: 6, background: "rgba(248,113,113,0.06)" }}>
+                    <Icon name="clock" size={12} style={{ color: "#f87171", flexShrink: 0 }} />
+                    <span style={{ fontSize: 8, color: "#f87171", fontFamily: "monospace", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.label}</span>
+                    <span style={{ fontSize: 7, fontWeight: 700, color: "#f87171" }}>{f.days}</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* 2 · No Real-Time Visibility */}
+          {/* 2 · Multi-Entity Chaos */}
           <div className="biz-bento-card">
-            <div className="biz-icon-wrap"><Icon name="bar" size={22} /></div>
-            <h3 className="biz-card-title">Zero Real-Time Visibility</h3>
-            <p className="biz-card-desc">Finance closes monthly, inventory is counted quarterly. By the time you see a problem, the damage is already done.</p>
+            <div className="biz-icon-wrap"><Icon name="building" size={22} /></div>
+            <h3 className="biz-card-title">Multi-Entity Chaos</h3>
+            <p className="biz-card-desc">Running three subsidiaries with separate spreadsheets means consolidation takes a full week every month-end. Errors are inevitable.</p>
             <div className="biz-card-footer">
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {[{ label: "Cash Position", lag: "30 days stale" }, { label: "Stock Levels", lag: "3 wks stale" }, { label: "Sales Pipeline", lag: "14 days stale" }].map((row) => (
+                {[{ label: "HQ Consolidation", lag: "7 days manual" }, { label: "Interco Eliminations", lag: "3 days manual" }, { label: "FX Revaluation", lag: "2 days manual" }].map((row) => (
                   <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: 8, color: "#666" }}>{row.label}</span>
                     <span style={{ fontSize: 8, fontWeight: 700, color: "#f87171" }}>{row.lag}</span>
@@ -399,101 +412,101 @@ function ChallengesSection() {
                 ))}
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
                   <div className="biz-pulse-glow" style={{ width: 6, height: 6, borderRadius: "50%", background: "#f87171" }} />
-                  <span style={{ fontSize: 8, fontWeight: 700, color: "#f87171", textTransform: "uppercase", letterSpacing: "0.08em" }}>No live data</span>
+                  <span style={{ fontSize: 8, fontWeight: 700, color: "#f87171", textTransform: "uppercase", letterSpacing: "0.08em" }}>12 days lost monthly</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 3 · Cash Flow Blind Spots */}
+          {/* 3 · Compliance & Audit Gaps */}
           <div className="biz-bento-card">
-            <div className="biz-icon-wrap"><Icon name="dollar" size={22} /></div>
-            <h3 className="biz-card-title">Cash Flow Blind Spots</h3>
-            <p className="biz-card-desc">Chasing overdue invoices manually, missing payment reminders, and losing track of outstanding payables drains cash without warning.</p>
+            <div className="biz-icon-wrap"><Icon name="shield" size={22} /></div>
+            <h3 className="biz-card-title">Compliance & Audit Gaps</h3>
+            <p className="biz-card-desc">No clear audit trail, missing approval records, and manual journal entries make every audit a fire drill. Regulators and investors are watching.</p>
             <div className="biz-card-footer">
               <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
                 {[
-                  { label: "Overdue >60d",  amount: "$12,400", critical: true  },
-                  { label: "Overdue >30d",  amount: "$8,700",  critical: true  },
-                  { label: "Due this week", amount: "$5,200",  critical: false },
+                  { label: "Missing audit trail",    critical: true  },
+                  { label: "Unapproved JE entries",  critical: true  },
+                  { label: "Expired vendor certs",   critical: false },
                 ].map((item) => (
                   <div key={item.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: 8, color: item.critical ? "#f87171" : "#666" }}>{item.label}</span>
-                    <span style={{ fontSize: 8, fontWeight: 700, color: item.critical ? "#f87171" : "#7A826D" }}>{item.amount}</span>
+                    <span style={{ fontSize: 8, fontWeight: 700, color: item.critical ? "#f87171" : "#7A826D" }}>{item.critical ? "High risk" : "Medium"}</span>
                   </div>
                 ))}
-                <span style={{ fontSize: 8, fontWeight: 700, color: "#f87171", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 3 }}>$26K uncollected</span>
+                <span style={{ fontSize: 8, fontWeight: 700, color: "#f87171", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 3 }}>3 critical findings</span>
               </div>
             </div>
           </div>
 
-          {/* 4 · Inventory Guesswork */}
-          <div className="biz-bento-card">
-            <div className="biz-icon-wrap"><Icon name="package" size={22} /></div>
-            <h3 className="biz-card-title">Inventory Guesswork</h3>
-            <p className="biz-card-desc">Overstocking wastes capital while stockouts kill sales. Without live inventory data, every purchase order is a gamble.</p>
-            <div className="biz-card-footer">
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {[
-                  { sku: "SKU-1102", name: "Blue T-Shirt M",   level: 5,   critical: true  },
-                  { sku: "SKU-1103", name: "Running Shoes L",  level: 148, critical: false },
-                  { sku: "SKU-1104", name: "Wireless Mouse",   level: 2,   critical: true  },
-                ].map((m) => (
-                  <div key={m.sku}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                      <span style={{ fontSize: 8, color: "#888", fontFamily: "monospace" }}>{m.sku}</span>
-                      <span style={{ fontSize: 8, fontWeight: 700, color: m.critical ? "#f87171" : "#7A826D" }}>
-                        {m.level} units {m.critical ? "⚠" : ""}
-                      </span>
-                    </div>
-                    <div style={{ height: 4, background: "#f3f3f3", borderRadius: 99, overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${Math.min((m.level / 150) * 100, 100)}%`, background: m.critical ? "#f87171" : "#7A826D", borderRadius: 99 }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* 5 · Disconnected Tools */}
+          {/* 4 · Siloed Departments */}
           <div className="biz-bento-card">
             <div className="biz-icon-wrap"><Icon name="puzzle" size={22} /></div>
-            <h3 className="biz-card-title">App Sprawl</h3>
-            <p className="biz-card-desc">Accounting in QuickBooks, CRM in HubSpot, inventory in a separate tool — each integration is a fragile bridge that breaks at the worst time.</p>
+            <h3 className="biz-card-title">Siloed Departments</h3>
+            <p className="biz-card-desc">Finance doesn't see what Ops is ordering. Sales doesn't know inventory levels. Each department optimizes alone — and the business pays the cost.</p>
             <div className="biz-card-footer">
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 44, gap: 0 }}>
-                {["QB", "HS", "SH", "GS"].map((app, i) => (
-                  <div key={app} style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(122,130,109,0.08)", border: "1.5px solid rgba(122,130,109,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <span style={{ fontSize: 7, fontWeight: 700, color: "#7A826D" }}>{app}</span>
+                {["FIN", "OPS", "SCM", "SLS"].map((dept, i) => (
+                  <div key={dept} style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(122,130,109,0.08)", border: "1.5px solid rgba(122,130,109,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span style={{ fontSize: 7, fontWeight: 700, color: "#7A826D" }}>{dept}</span>
                     </div>
                     {i < 3 && <div style={{ width: 16, height: 1, background: "rgba(248,113,113,0.4)" }} />}
                   </div>
                 ))}
               </div>
               <div style={{ textAlign: "center", marginTop: 8 }}>
-                <span style={{ fontSize: 8, fontWeight: 700, color: "#f87171", textTransform: "uppercase", letterSpacing: "0.1em" }}>4 tools, 0 single source of truth</span>
+                <span style={{ fontSize: 8, fontWeight: 700, color: "#f87171", textTransform: "uppercase", letterSpacing: "0.1em" }}>4 depts, 0 shared visibility</span>
               </div>
             </div>
           </div>
 
-          {/* 6 · Scaling Pains */}
+          {/* 5 · Reporting Delays */}
+          <div className="biz-bento-card">
+            <div className="biz-icon-wrap"><Icon name="bar" size={22} /></div>
+            <h3 className="biz-card-title">Reporting Takes Too Long</h3>
+            <p className="biz-card-desc">Board packs assembled in PowerPoint. Management reports emailed as PDFs. By the time the data reaches decision-makers, it's already stale.</p>
+            <div className="biz-card-footer">
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {[
+                  { sku: "Board Report",    level: 18, critical: true  },
+                  { sku: "P&L Statement",   level: 12, critical: true  },
+                  { sku: "Cashflow Fcst",   level: 5,  critical: false },
+                ].map((m) => (
+                  <div key={m.sku}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                      <span style={{ fontSize: 8, color: "#888" }}>{m.sku}</span>
+                      <span style={{ fontSize: 8, fontWeight: 700, color: m.critical ? "#f87171" : "#7A826D" }}>
+                        {m.level} days {m.critical ? "⚠" : ""}
+                      </span>
+                    </div>
+                    <div style={{ height: 4, background: "#f3f3f3", borderRadius: 99, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${Math.min((m.level / 20) * 100, 100)}%`, background: m.critical ? "#f87171" : "#7A826D", borderRadius: 99 }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 6 · System Debt */}
           <div className="biz-bento-card">
             <div className="biz-icon-wrap"><Icon name="alert-triangle" size={22} /></div>
-            <h3 className="biz-card-title">Scaling Breaks Everything</h3>
-            <p className="biz-card-desc">What worked at 10 employees implodes at 50. Manual approvals, ad-hoc reporting, and copy-paste workflows collapse under growth pressure.</p>
+            <h3 className="biz-card-title">Outgrown Your Current ERP</h3>
+            <p className="biz-card-desc">That entry-level system worked at 20 users but breaks at 150. Custom workarounds multiply, and the vendor says the features you need are "roadmap."</p>
             <div className="biz-card-footer">
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {[{ label: "Manual Processes", pct: 94, bad: true }, { label: "Auto Workflows", pct: 12, bad: true }].map((row) => (
+                {[{ label: "Workaround Scripts", pct: 87, bad: true }, { label: "Native Automation", pct: 11, bad: true }].map((row) => (
                   <div key={row.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 8, fontWeight: 700, color: "#999", minWidth: 88, textTransform: "uppercase", letterSpacing: "0.04em" }}>{row.label}</span>
+                    <span style={{ fontSize: 8, fontWeight: 700, color: "#999", minWidth: 96, textTransform: "uppercase", letterSpacing: "0.04em" }}>{row.label}</span>
                     <div style={{ flex: 1, height: 7, background: "#f3f3f3", borderRadius: 3, overflow: "hidden" }}>
                       <div style={{ height: "100%", width: `${row.pct}%`, background: row.bad ? "rgba(248,113,113,0.6)" : "rgba(199,255,53,0.6)", borderRadius: 3 }} />
                     </div>
                     <span style={{ fontSize: 8, fontWeight: 700, color: row.bad ? "#f87171" : "#7A826D" }}>{row.pct}%</span>
                   </div>
                 ))}
-                <span style={{ fontSize: 8, fontWeight: 700, color: "#f87171", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 2 }}>Growth bottleneck detected</span>
+                <span style={{ fontSize: 8, fontWeight: 700, color: "#f87171", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 2 }}>Tech debt compounding</span>
               </div>
             </div>
           </div>
@@ -506,12 +519,12 @@ function ChallengesSection() {
 
 // ─── Solution Section ─────────────────────────────────────────────────────────
 const SOLUTIONS = [
-  { icon: "dollar",       title: "Financial Management",    desc: "Automated bookkeeping, invoicing, payables, and real-time P&L — your finance team gets hours back every week." },
-  { icon: "cart",         title: "Sales & CRM",             desc: "Manage your pipeline, quotes, orders, and customer relationships in a single unified view. Never lose a deal again." },
-  { icon: "package",      title: "Inventory & Warehouse",   desc: "Real-time stock levels, automated reorder points, and multi-location support that scales with your business." },
-  { icon: "zap",          title: "Workflow Automation",     desc: "Auto-approve purchase orders, send payment reminders, and trigger alerts — cut hours of manual admin every week." },
-  { icon: "bar",          title: "Dashboards & Reporting",  desc: "One live dashboard for revenue, cash, inventory, and sales. Real-time numbers, not last month's exports." },
-  { icon: "plug",         title: "Integrations",            desc: "Connect your bank, Shopify, Stripe, and other tools in minutes. Bizak becomes the backbone of your entire stack." },
+  { icon: "layers",       title: "Multi-Entity Financials",    desc: "Manage multiple subsidiaries in one platform. Auto-consolidate, handle intercompany eliminations, and close books in hours — not days." },
+  { icon: "check-square", title: "Advanced Approval Workflows", desc: "Build multi-level, role-based approval chains for POs, budgets, and expenses. Auto-escalate when thresholds are breached." },
+  { icon: "shield",       title: "Audit-Ready Controls",       desc: "Full audit trail, segregation of duties, and policy enforcement baked in. Every change is logged, every approval is documented." },
+  { icon: "bar",          title: "Executive Dashboards",       desc: "Board-level reporting in real time. P&L by entity, consolidated cashflow, and department KPIs available on any device." },
+  { icon: "plug",         title: "Deep Integrations",          desc: "Connect your bank feeds, CRM, payroll, and logistics platforms. Bizak becomes the operational backbone of your entire org." },
+  { icon: "lock",         title: "Role-Based Access Control",  desc: "Granular permissions ensure each team sees only what they need. Delegate without risk — from CFO to field rep." },
 ];
 
 function SolutionSection() {
@@ -520,7 +533,7 @@ function SolutionSection() {
       <div className="biz-container">
         <div style={{ textAlign: "center", marginBottom: 64 }}>
           <span className="biz-label">The Solution</span>
-          <h2 className="biz-h2" style={{ marginTop: 12 }}>Everything a growing business needs — in one place</h2>
+          <h2 className="biz-h2" style={{ marginTop: 12 }}>Built for the complexity mid-market demands</h2>
         </div>
         <div className="biz-solution-grid">
           {SOLUTIONS.map((s) => (
@@ -544,21 +557,21 @@ function CapabilitiesSection() {
         <div style={{ marginBottom: 64, maxWidth: 560 }}>
           <span className="biz-label">Capabilities</span>
           <h2 className="biz-h2-white" style={{ marginTop: 12 }}>
-            Designed for speed. Built for scale.
+            Enterprise power. Mid-market agility.
           </h2>
         </div>
 
         <div className="biz-caps-grid">
 
-          {/* ── Full-width: Live Business Dashboard ── */}
+          {/* ── Full-width: Consolidated Dashboard ── */}
           <div className="biz-dark-card biz-col-6" style={{ minHeight: 260 }}>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 48, flexWrap: "wrap" }}>
               {/* Left: headline stats */}
               <div style={{ flexShrink: 0 }}>
-                <div className="biz-mini-stat">$84K</div>
-                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginTop: 6 }}>Monthly Revenue</p>
+                <div className="biz-mini-stat">$4.24M</div>
+                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginTop: 6 }}>Consolidated Revenue</p>
                 <div style={{ display: "flex", gap: 28, marginTop: 20 }}>
-                  {[{ val: "+38%", lbl: "MoM Growth" }, { val: "1,240", lbl: "Active Customers" }].map((s) => (
+                  {[{ val: "+22%", lbl: "YoY Growth" }, { val: "3", lbl: "Active Entities" }].map((s) => (
                     <div key={s.lbl}>
                       <div style={{ fontSize: 22, fontWeight: 700, color: "#C7FF35" }}>{s.val}</div>
                       <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)", marginTop: 3 }}>{s.lbl}</div>
@@ -567,35 +580,35 @@ function CapabilitiesSection() {
                 </div>
               </div>
 
-              {/* Right: Invoice summary table */}
+              {/* Right: Approval queue table */}
               <div style={{ flex: 1, minWidth: 240 }}>
-                <h4 style={{ fontWeight: 700, fontSize: 18, color: "#fff", marginBottom: 8 }}>Live Business Dashboard</h4>
+                <h4 style={{ fontWeight: 700, fontSize: 18, color: "#fff", marginBottom: 8 }}>Consolidated Oversight</h4>
                 <p style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", lineHeight: 1.6, marginBottom: 20 }}>
-                  Real-time revenue, receivables, inventory, and sales activity — all in one place, always up to date.
+                  Revenue, costs, headcount, and approvals across all entities — live in a single board-ready view.
                 </p>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                      {["Invoice", "Customer", "Amount", "Status"].map((h, i) => (
+                      {["Entity", "Revenue", "EBITDA", "Status"].map((h, i) => (
                         <th key={h} style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)", paddingBottom: 10, textAlign: i > 1 ? "right" : "left" }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {[
-                      { inv: "INV-0041", customer: "Nova Tech",   amt: "$3,400", status: "paid"    },
-                      { inv: "INV-0042", customer: "Pixel Works", amt: "$1,850", status: "pending" },
-                      { inv: "INV-0043", customer: "Blue Shift",  amt: "$6,200", status: "paid"    },
+                      { entity: "Dubai HQ",     revenue: "$2.1M", ebitda: "24%", status: "healthy"  },
+                      { entity: "Cairo Branch",  revenue: "$840K", ebitda: "18%", status: "healthy"  },
+                      { entity: "London Branch", revenue: "$1.3M", ebitda: "21%", status: "review"   },
                     ].map((row) => (
-                      <tr key={row.inv} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                        <td style={{ fontSize: 11, fontFamily: "monospace", color: "#fff", padding: "10px 0" }}>{row.inv}</td>
-                        <td style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", padding: "10px 0" }}>{row.customer}</td>
-                        <td style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.8)", padding: "10px 0", textAlign: "right" }}>{row.amt}</td>
+                      <tr key={row.entity} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                        <td style={{ fontSize: 11, color: "#fff", padding: "10px 0" }}>{row.entity}</td>
+                        <td style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", padding: "10px 0" }}>{row.revenue}</td>
+                        <td style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.8)", padding: "10px 0", textAlign: "right" }}>{row.ebitda}</td>
                         <td style={{ padding: "10px 0", textAlign: "right" }}>
                           <span style={{
                             fontSize: 9, fontWeight: 700, padding: "3px 8px", borderRadius: 4,
-                            background: row.status === "paid" ? "rgba(199,255,53,0.12)" : "rgba(251,191,36,0.12)",
-                            color: row.status === "paid" ? "#C7FF35" : "#fbbf24",
+                            background: row.status === "healthy" ? "rgba(199,255,53,0.12)" : "rgba(251,191,36,0.12)",
+                            color: row.status === "healthy" ? "#C7FF35" : "#fbbf24",
                             textTransform: "uppercase", letterSpacing: "0.08em",
                           }}>
                             {row.status}
@@ -609,21 +622,21 @@ function CapabilitiesSection() {
             </div>
           </div>
 
-          {/* ── Quick Setup & Onboarding | Finance Automation ── */}
+          {/* ── Advanced Approvals | Audit & Compliance ── */}
           <div className="biz-dark-card biz-col-3" style={{ minHeight: 420 }}>
             <div>
-              <h3>Quick Setup</h3>
-              <p>Pre-configured modules for common SME workflows. Import your data, invite your team, and go live in days — not months.</p>
+              <h3>Advanced Approvals</h3>
+              <p>Multi-level, policy-driven approval chains across any module. Auto-escalate, auto-notify, and maintain a tamper-proof audit trail for every decision.</p>
             </div>
             <div className="biz-mono-table">
               <div className="biz-mono-header">
-                <span>STEP</span><span>MODULE</span><span>STATUS</span>
+                <span>STEP</span><span>APPROVER</span><span>STATUS</span>
               </div>
               {[
-                { step: "01", module: "Finance",   status: "DONE",    ok: true  },
-                { step: "02", module: "Inventory", status: "DONE",    ok: true  },
-                { step: "03", module: "Sales CRM", status: "ACTIVE",  ok: true  },
-                { step: "04", module: "Reporting", status: "PENDING", ok: false },
+                { step: "01", module: "Dept Head",   status: "DONE",    ok: true  },
+                { step: "02", module: "Finance",     status: "DONE",    ok: true  },
+                { step: "03", module: "CFO",         status: "ACTIVE",  ok: true  },
+                { step: "04", module: "CEO",         status: "PENDING", ok: false },
               ].map((r) => (
                 <div key={r.step} className="biz-mono-row">
                   <span>{r.step}</span><span>{r.module}</span>
@@ -636,15 +649,15 @@ function CapabilitiesSection() {
           <div className="biz-dark-card biz-col-3" style={{ minHeight: 420 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
               <div>
-                <h3>Finance Automation</h3>
-                <p>Auto-reconcile bank transactions, chase overdue invoices, and close your books in one click — not one week.</p>
+                <h3>Audit & Compliance</h3>
+                <p>Complete audit log, segregation of duties, and policy enforcement. Prepare for any audit in minutes — not weeks.</p>
               </div>
               <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(199,255,53,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#C7FF35", flexShrink: 0 }}>
-                <Icon name="dollar" size={24} />
+                <Icon name="shield" size={24} />
               </div>
             </div>
             <div className="biz-method-grid">
-              {[["99.4%", "Auto-Match"], ["2 hrs", "Month Close"], ["$0", "Manual Entry"]].map(([val, sub]) => (
+              {[["100%", "Audit Trail"], ["<1 Day", "Audit Prep"], ["SOX-lite", "Controls"]].map(([val, sub]) => (
                 <div key={sub} className="biz-method-box">
                   <div className="biz-method-label">{val}</div>
                   <div className="biz-method-sub">{sub}</div>
@@ -655,10 +668,10 @@ function CapabilitiesSection() {
 
           {/* ── Bottom row: 3 feature tiles ── */}
           <div className="biz-dark-card biz-col-2" style={{ minHeight: 260 }}>
-            <div style={{ color: "#C7FF35", marginBottom: 20 }}><Icon name="zap" size={34} /></div>
-            <h4 style={{ fontWeight: 700, fontSize: 17, color: "#fff", marginBottom: 10 }}>Workflow Automation</h4>
+            <div style={{ color: "#C7FF35", marginBottom: 20 }}><Icon name="layers" size={34} /></div>
+            <h4 style={{ fontWeight: 700, fontSize: 17, color: "#fff", marginBottom: 10 }}>Multi-Entity Management</h4>
             <p style={{ fontSize: 13, color: "rgba(255,255,255,0.48)", lineHeight: 1.6 }}>
-              Auto-approve POs under threshold, send payment reminders, and trigger stock alerts — without any code.
+              Manage subsidiaries, branches, and JVs from one platform. Intercompany transactions auto-eliminate at consolidation.
             </p>
           </div>
 
@@ -666,24 +679,24 @@ function CapabilitiesSection() {
             <div style={{ position: "absolute", top: 16, right: 22 }}>
               <span style={{ fontSize: 9, fontWeight: 700, color: "#C7FF35", textTransform: "uppercase", letterSpacing: "0.2em", opacity: 0.85 }}>Real-time</span>
             </div>
-            <div style={{ color: "#C7FF35", marginBottom: 20 }}><Icon name="bar" size={34} /></div>
-            <h4 style={{ fontWeight: 700, fontSize: 17, color: "#fff", marginBottom: 10 }}>Live Reporting</h4>
+            <div style={{ color: "#C7FF35", marginBottom: 20 }}><Icon name="pie-chart" size={34} /></div>
+            <h4 style={{ fontWeight: 700, fontSize: 17, color: "#fff", marginBottom: 10 }}>Executive Reporting</h4>
             <p style={{ fontSize: 13, color: "rgba(255,255,255,0.48)", lineHeight: 1.6 }}>
-              Revenue, expenses, inventory turns, and cash position — live on every device, always fresh.
+              Board packs, management accounts, and KPI dashboards built live from your data — no Excel assembly required.
             </p>
           </div>
 
           <div className="biz-dark-card biz-col-2" style={{ minHeight: 260, justifyContent: "space-between" }}>
             <div>
-              <div style={{ color: "#C7FF35", marginBottom: 20 }}><Icon name="plug" size={34} /></div>
-              <h4 style={{ fontWeight: 700, fontSize: 17, color: "#fff", marginBottom: 10 }}>One-Click Integrations</h4>
+              <div style={{ color: "#C7FF35", marginBottom: 20 }}><Icon name="lock" size={34} /></div>
+              <h4 style={{ fontWeight: 700, fontSize: 17, color: "#fff", marginBottom: 10 }}>Granular Access Control</h4>
               <p style={{ fontSize: 13, color: "rgba(255,255,255,0.48)", lineHeight: 1.6 }}>
-                Connect Stripe, Shopify, your bank, and shipping providers in minutes — no developer needed.
+                Entity-level, department-level, and field-level permissions. Every user sees exactly what their role allows — nothing more.
               </p>
             </div>
             <div style={{ marginTop: "auto", paddingTop: 16 }}>
               <div style={{ height: 6, background: "rgba(255,255,255,0.1)", borderRadius: 99, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: "94%", background: "#C7FF35" }} />
+                <div style={{ height: "100%", width: "97%", background: "#C7FF35" }} />
               </div>
             </div>
           </div>
@@ -712,21 +725,26 @@ function InsightsSection() {
                 <div style={{ height: 240, background: "#fff", borderRadius: 8, border: "1px solid rgba(232,234,228,0.5)", position: "relative", padding: 16, boxShadow: "0 2px 10px rgba(0,0,0,0.04)" }}>
                   <svg style={{ width: "100%", height: "100%" }} viewBox="0 0 400 200" fill="none">
                     <defs>
-                      <linearGradient id="smeGrad" x1="0" y1="0" x2="0" y2="1">
+                      <linearGradient id="mmGrad1" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#C7FF35" stopOpacity="0.14" />
                         <stop offset="100%" stopColor="#C7FF35" stopOpacity="0" />
                       </linearGradient>
+                      <linearGradient id="mmGrad2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#7A826D" stopOpacity="0.10" />
+                        <stop offset="100%" stopColor="#7A826D" stopOpacity="0" />
+                      </linearGradient>
                     </defs>
-                    {/* Revenue growth curve */}
-                    <path d="M0 175 C 40 170, 80 158, 120 140 S 190 110, 240 88 S 330 52, 400 32" stroke="#7A826D" strokeWidth="3" strokeLinecap="round" />
-                    <path d="M0 175 C 40 170, 80 158, 120 140 S 190 110, 240 88 S 330 52, 400 32 V 200 H 0 Z" fill="url(#smeGrad)" />
-                    {/* Customer count dashed line */}
-                    <path d="M0 160 C 50 155, 100 148, 160 132 S 260 108, 320 98 S 370 72, 400 62" stroke="rgba(122,130,109,0.4)" strokeWidth="2" strokeDasharray="6 4" />
-                    <circle cx="240" cy="88" r="5" fill="#C7FF35" stroke="#7A826D" strokeWidth="2" />
+                    {/* Entity 1 revenue line */}
+                    <path d="M0 160 C 50 150, 100 135, 160 108 S 260 80, 320 60 S 370 44, 400 36" stroke="#7A826D" strokeWidth="3" strokeLinecap="round" />
+                    <path d="M0 160 C 50 150, 100 135, 160 108 S 260 80, 320 60 S 370 44, 400 36 V 200 H 0 Z" fill="url(#mmGrad1)" />
+                    {/* Entity 2 dashed line */}
+                    <path d="M0 175 C 40 170, 90 162, 150 148 S 240 128, 300 114 S 360 96, 400 88" stroke="rgba(122,130,109,0.4)" strokeWidth="2" strokeDasharray="6 4" />
+                    <path d="M0 175 C 40 170, 90 162, 150 148 S 240 128, 300 114 S 360 96, 400 88 V 200 H 0 Z" fill="url(#mmGrad2)" />
+                    <circle cx="320" cy="60" r="5" fill="#C7FF35" stroke="#7A826D" strokeWidth="2" />
                   </svg>
                   <div className="biz-tooltip">
-                    <div style={{ fontWeight: 700, fontSize: 11, color: "#333" }}>Revenue: $84K ↑</div>
-                    <div style={{ fontSize: 10, color: "#16a34a", fontWeight: 700, marginTop: 4 }}>+38% vs last month</div>
+                    <div style={{ fontWeight: 700, fontSize: 11, color: "#333" }}>Consolidated: $4.24M ↑</div>
+                    <div style={{ fontSize: 10, color: "#16a34a", fontWeight: 700, marginTop: 4 }}>+22% vs last year</div>
                   </div>
                 </div>
               </div>
@@ -736,18 +754,18 @@ function InsightsSection() {
 
           {/* ── Text on RIGHT ── */}
           <div>
-            <span className="biz-label">Business Intelligence</span>
+            <span className="biz-label">Consolidated Intelligence</span>
             <h2 className="biz-h2" style={{ marginTop: 16, marginBottom: 20, lineHeight: 1.2 }}>
-              Make confident decisions with live data.
+              One view across every entity and department.
             </h2>
             <p style={{ fontSize: 17, color: "#666", lineHeight: 1.7 }}>
-              Stop guessing. Replace end-of-month exports with real-time dashboards that show you exactly where your business stands — revenue, cash, stock, and sales — all live.
+              Stop waiting for month-end reports. Bizak consolidates financials, approvals, inventory, and headcount across all your entities in real time — giving leadership instant clarity.
             </p>
             <ul className="biz-check-list">
               {[
-                { bold: "Revenue & Cash Dashboards", rest: " — Live P&L, cash position, and receivables at a glance." },
-                { bold: "Sales Pipeline Visibility", rest: " — Track deals, conversions, and customer lifetime value in real time." },
-                { bold: "Inventory Intelligence", rest: " — Know your fast-movers, slow stock, and reorder needs automatically." },
+                { bold: "Real-Time Consolidation", rest: " — P&L, balance sheet, and cashflow across all entities with intercompany eliminations handled automatically." },
+                { bold: "Department-Level Visibility", rest: " — Every team's budget vs actuals, approval queue, and KPIs in one unified view." },
+                { bold: "Board-Ready Reports", rest: " — Export investor-grade reports directly from live data — no spreadsheet assembly needed." },
               ].map((item) => (
                 <li key={item.bold} className="biz-check-item">
                   <span className="biz-check-icon"><Icon name="check-circle" size={20} /></span>
@@ -763,14 +781,14 @@ function InsightsSection() {
   );
 }
 
-// ─── Workflow / Onboarding Steps ─────────────────────────────────────────────
+// ─── Workflow / Implementation Steps ─────────────────────────────────────────
 const STEPS = [
-  { icon: "migrate",  label: "Import Data"  },
-  { icon: "setup",    label: "Configure"    },
-  { icon: "users",    label: "Invite Team"  },
-  { icon: "plug",     label: "Connect Apps" },
-  { icon: "bar",      label: "Go Live"      },
-  { icon: "rocket",   label: "Scale Up"     },
+  { icon: "migrate",      label: "Migrate Data"     },
+  { icon: "setup",        label: "Configure"        },
+  { icon: "layers",       label: "Map Entities"     },
+  { icon: "users",        label: "Set Permissions"  },
+  { icon: "plug",         label: "Integrate"        },
+  { icon: "go",           label: "Go Live"          },
 ];
 
 function WorkflowSection() {
@@ -778,8 +796,11 @@ function WorkflowSection() {
     <section className="biz-workflow-section">
       <div className="biz-container">
         <div style={{ textAlign: "center", marginBottom: 56 }}>
-          <span className="biz-label">Onboarding</span>
-          <h2 className="biz-h2" style={{ marginTop: 12 }}>From Sign-Up to Go-Live in 3 Days</h2>
+          <span className="biz-label">Implementation</span>
+          <h2 className="biz-h2" style={{ marginTop: 12 }}>Structured rollout. Zero disruption.</h2>
+          <p style={{ fontSize: 17, color: "#666", lineHeight: 1.7, maxWidth: 520, margin: "16px auto 0" }}>
+            Our dedicated implementation team follows a proven 30-day playbook — phased go-live, data migration included, and handover training for every team.
+          </p>
         </div>
         <div className="biz-workflow-steps">
           <div className="biz-workflow-line">
@@ -802,25 +823,25 @@ function WorkflowSection() {
   );
 }
 
-// ─── Social Proof / Testimonial strip ────────────────────────────────────────
+// ─── Social Proof / Testimonials ─────────────────────────────────────────────
 const TESTIMONIALS = [
   {
-    quote: "We replaced four tools and two full-time data entry roles in our first month with Bizak. ROI was immediate.",
-    name: "Priya Mehta",
-    role: "Co-Founder, Nova Commerce",
-    metric: "4× faster invoicing",
+    quote: "We consolidated three subsidiaries onto Bizak in 30 days. Month-end close dropped from 14 days to 3. Our CFO calls it a career highlight.",
+    name: "Tariq Al-Hassan",
+    role: "CEO, Meridian Holdings",
+    metric: "3-day month close",
   },
   {
-    quote: "Our team went live in two days. The pre-configured modules meant zero setup headaches — just instant value.",
-    name: "James Okafor",
-    role: "Operations Lead, Shift Logistics",
-    metric: "2-day go-live",
+    quote: "The multi-level approval workflows alone saved us from two costly compliance findings in our last audit. Bizak paid for itself in the first quarter.",
+    name: "Sophie Nkemdirim",
+    role: "CFO, Stratum Group",
+    metric: "Zero audit findings",
   },
   {
-    quote: "Finally I can see cash position, inventory, and pipeline in one screen. I make better decisions faster.",
-    name: "Anika Torres",
-    role: "CEO, BlueMark Retail",
-    metric: "Real-time visibility",
+    quote: "We needed real-time visibility across four departments without giving everyone access to everything. Bizak's permission model is exactly what enterprises charge ten times more for.",
+    name: "David Leung",
+    role: "COO, Apex Distribution",
+    metric: "4 depts, 1 platform",
   },
 ];
 
@@ -830,7 +851,7 @@ function TestimonialsSection() {
       <div className="biz-container">
         <div style={{ textAlign: "center", marginBottom: 52 }}>
           <span className="biz-label">Customer Stories</span>
-          <h2 className="biz-h2" style={{ marginTop: 12 }}>SMEs that switched to Bizak and never looked back</h2>
+          <h2 className="biz-h2" style={{ marginTop: 12 }}>Mid-market companies that made the move to Bizak</h2>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
           {TESTIMONIALS.map((t) => (
@@ -843,7 +864,6 @@ function TestimonialsSection() {
               flexDirection: "column",
               gap: 20,
             }}>
-              {/* Stars */}
               <div style={{ display: "flex", gap: 3 }}>
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} width={14} height={14} viewBox="0 0 24 24" fill="#C7FF35" stroke="#C7FF35" strokeWidth={1.5}>
@@ -882,33 +902,33 @@ function PricingTeaserSection() {
       <div className="biz-container">
         <div style={{ textAlign: "center", marginBottom: 52 }}>
           <span className="biz-label">Pricing</span>
-          <h2 className="biz-h2" style={{ marginTop: 12 }}>Simple, transparent pricing that grows with you</h2>
+          <h2 className="biz-h2" style={{ marginTop: 12 }}>Mid-market power without the enterprise price tag</h2>
           <p style={{ fontSize: 17, color: "#666", lineHeight: 1.7, maxWidth: 560, margin: "16px auto 0" }}>
-            Start with the core and add modules as you scale. No hidden fees, no long-term lock-in.
+            Transparent pricing that scales with your headcount and entity count. No hidden fees, no proprietary lock-in.
           </p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 24, maxWidth: 860, margin: "0 auto" }}>
           {[
             {
-              tier: "Starter",
-              price: "Free",
-              sub: "Up to 5 users",
-              features: ["Finance & Invoicing", "Basic Inventory", "Sales Quotes", "1 Integration"],
-              highlight: false,
-            },
-            {
               tier: "Growth",
               price: "$49",
               sub: "per user / month",
-              features: ["All Starter features", "CRM & Pipeline", "Workflow Automation", "Unlimited Integrations", "Priority Support"],
-              highlight: true,
-              badge: "Most Popular",
+              features: ["Up to 50 users", "2 Entities", "Advanced Workflows", "Executive Dashboards", "Priority Support"],
+              highlight: false,
             },
             {
               tier: "Scale",
+              price: "$89",
+              sub: "per user / month",
+              features: ["Up to 200 users", "Up to 5 Entities", "Multi-currency", "Audit Trail", "Consolidation Engine", "Dedicated CSM"],
+              highlight: true,
+              badge: "Best for Mid-Market",
+            },
+            {
+              tier: "Enterprise",
               price: "Custom",
-              sub: "For 50+ users",
-              features: ["All Growth features", "Multi-company", "Advanced Analytics", "Dedicated CSM", "Custom SLA"],
+              sub: "200+ users",
+              features: ["Unlimited entities", "Custom SLA", "SSO & SCIM", "Advanced RBAC", "On-premise option"],
               highlight: false,
             },
           ].map((plan) => (
@@ -928,6 +948,7 @@ function PricingTeaserSection() {
                   position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
                   background: "#C7FF35", color: "#1a1a1a", fontSize: 10, fontWeight: 700,
                   padding: "4px 14px", borderRadius: 99, letterSpacing: "0.06em", textTransform: "uppercase",
+                  whiteSpace: "nowrap",
                 }}>
                   {plan.badge}
                 </div>
@@ -970,15 +991,15 @@ function CTASection() {
     <section className="biz-cta-section">
       <div className="biz-cta-glow" />
       <div className="biz-container" style={{ position: "relative", zIndex: 10 }}>
-        <h2 className="biz-cta-title">Your business deserves better than spreadsheets.</h2>
+        <h2 className="biz-cta-title">Your complexity deserves a system built for it.</h2>
         <p className="biz-cta-sub">
-          Join 5,000+ startups and SMEs that replaced their patchwork tools with Bizak. Go live in days and let your team focus on growth — not admin.
+          Join 800+ mid-market companies that replaced fragmented tools with Bizak. Multi-entity. Audit-ready. Live in 30 days.
         </p>
         <div className="biz-cta-btn-row">
           <button className="biz-shimmer-btn" style={{ fontSize: 17, fontWeight: 700, padding: "16px 44px", borderRadius: 8, boxShadow: "0 0 20px rgba(199,255,53,0.38)" }}>
-            Start Free Trial
+            Request a Demo
           </button>
-          <button className="biz-btn-ghost">Request Demo</button>
+          <button className="biz-btn-ghost">Talk to Sales</button>
         </div>
       </div>
     </section>
@@ -986,7 +1007,7 @@ function CTASection() {
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export function StartupsAndSmes() {
+export function MidMarket() {
   return (
     <div className="biz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />

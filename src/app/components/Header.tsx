@@ -158,9 +158,9 @@ const megaMenus: Record<string, MegaMenuData> = {
 
 
              {
-            icon: <Target size={15} />,
+            icon: <Store size={15} />,
             title: "Point Of Sales",
-            description: "Track sales, manage inventory, generate reports",
+            description: "Process in-store transactions, manage cashiers, and print receipts",
                  href: "/PointOfSales",
           },
 
@@ -257,16 +257,19 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <Rocket size={15} />,
             title: "Startups & SMEs",
             description: "Get started fast with pre-configured modules",
+            href: "/StartupsAndSmes",
           },
           {
             icon: <Building2 size={15} />,
             title: "Mid-Market",
             description: "Scale operations with advanced workflows",
+            href: "/MidMarket",
           },
           {
             icon: <Globe size={15} />,
             title: "Enterprise",
             description: "Multi-entity, multi-currency, global deployments",
+                   href: "/Enterprise",
           },
         ],
       },
