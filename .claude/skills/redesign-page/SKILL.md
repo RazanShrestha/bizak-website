@@ -9,6 +9,41 @@ This skill is the canonical workflow for converting a marketing page to the
 project's design system. Read `/CLAUDE.md` and `/docs/DESIGN_SYSTEM.md` first
 if you haven't loaded them in this session.
 
+## Scope first
+
+Before doing anything else, decide which **scope** the page belongs to:
+
+- The 4 "By Industry" pages (`ManufacturingPage`, `DistributionPage`,
+  `ProfessionalServicePage`, `RetailAndEcommercePage`) compose
+  `src/app/components/solutions/by-industry/` primitives + the global
+  `marketing/` primitives. The canonical reference is
+  `ManufacturingPage.tsx` — mirror its structure.
+- Any other marketing page composes `marketing/` primitives directly.
+
+Where a primitive lives encodes who is allowed to use it. **Never deep-import
+across scopes** — if a non-industry page needs `IndustryHero`, the right move
+is to promote it up to `marketing/` first (see "Scope promotion rule" in
+`/CLAUDE.md`), not to import from another scope's folder.
+
+## Page-design checklist (run BEFORE editing anything)
+
+This is the non-negotiable preflight. Walk through every item; whatever is
+"no" becomes part of this redesign — fix what you touch, don't bandaid:
+
+1. **Scope.** Open `src/app/components/Header.tsx` and find this page inside the `megaMenus` object. Which top-level group + sub-heading does it sit under? Does a corresponding scope folder exist (e.g., `solutions/by-industry/`)?
+2. **Section primitives.** If the page belongs to a family with a scope folder, is it composing those scoped section primitives, or duplicating their JSX inline? If a sibling page in the same family has invented a section the primitive doesn't cover yet, **promote that pattern into the scope folder first**, then use it.
+3. **Global primitives.** `Container`, `Section`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `Eyebrow` from `marketing/` — used wherever they fit?
+4. **Tokens.** No per-file `const C = {...}` color object. No hex literals except in genuinely dynamic style props. All colors via `var(--bz-*)` or Tailwind utilities.
+5. **Icons.** No per-file SVG dictionary `function Icon({ name }) {...}`. Use the global `<Icon name="..." />` from `marketing/` for data-driven loops; import lucide directly (`import { Factory } from "lucide-react"`) for statically known icons.
+6. **Fonts.** Inter only. References to `'Manrope'`, `'Poppins'`, etc. are silent visual bugs.
+7. **Animations / motion.** Reuse the existing global keyframe classes (`biz-pulse-glow`, `biz-float`, `biz-particle`, `biz-flow`, `biz-radar-ping`, …) — don't redeclare keyframes per page.
+8. **className over inline `style`.** Static values in className. Inline `style` only for dynamic values. No `onMouseEnter`/`onMouseLeave` style mutations — use Tailwind `hover:`.
+9. **Promotion check.** A JSX pattern that appears in this page **and** in another nav group's pages with the same shape belongs in `marketing/`, not duplicated. Promote it.
+
+If any item fails, the redesign is the work to bring it into compliance.
+The end state of any page edit is "all items pass for the parts of the
+file you touched."
+
 ## When to invoke
 
 - User explicitly asks: "redesign the X page", "migrate X to the new pattern", "convert X to use the design system".
@@ -18,7 +53,8 @@ if you haven't loaded them in this session.
   - `onMouseEnter` / `onMouseLeave` mutating `e.currentTarget.style`
   - `'Manrope'` / `'Poppins'` / any font that isn't `'Inter'`
   - `linear-gradient(...)` / `radial-gradient(...)`
-  - `<svg>` with hardcoded path strings instead of `lucide-react`
+  - a per-file `function Icon({ name }) { const icons = {...} }` SVG dictionary (legacy industry-page pattern — replace with the global `marketing/Icon`)
+  - `<svg>` with hardcoded path strings where a lucide equivalent exists
   - `<span className="material-symbols-outlined">`
 
 If any signal is present and you're touching the file, run this skill before
@@ -37,7 +73,13 @@ Read the entire file end-to-end. Note:
 
 ### Step 2 — Plan section by section
 
-For each section, decide:
+**For "By Industry" pages**, prefer the section primitives in
+`solutions/by-industry/` — they encode the canonical hero / challenges /
+solution / capabilities / insights / workflow / CTA rhythm those pages
+share. Mirror `ManufacturingPage.tsx`. The page becomes ~150–250 lines of
+data + a custom hero visual.
+
+**For all other pages**, decide section-by-section:
 
 - **Wrapper** — `<Section tone="light"|"white"|"dark"|"deeper" pad="default"|"compact"|"hero">`.
 - **Width** — `<Container>` (1320) or `<Container width="narrow">` (1200).
@@ -47,6 +89,7 @@ For each section, decide:
 - **Stats** — `<Stat value=... label=... tone=... size=... />`.
 - **Eyebrow / pills** — `<Eyebrow>`, `<PillBadge>`.
 - **Icon containers** — `<IconBadge tone=... size=...><Icon className="size-5" /></IconBadge>`.
+- **Icons inside data arrays** — use `<Icon name="..." size={N} />` from `marketing/`. For new code with statically-known icons, prefer importing the lucide icon directly (`import { Factory } from "lucide-react"`).
 
 ### Step 3 — Replace, don't rewrite from scratch
 

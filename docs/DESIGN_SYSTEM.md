@@ -16,23 +16,56 @@ src/
 │   ├── fonts.css        — Google Fonts (Inter + Material Symbols)
 │   ├── tailwind.css     — Tailwind 4 + tw-animate-css
 │   ├── theme.css        — DESIGN TOKENS (the source of truth)
-│   └── style.css        — legacy hp-* homepage CSS (do not extend)
+│   └── style.css        — legacy hp-* homepage CSS + biz-* classes
+│                          backing the by-industry primitives (do not extend)
 ├── app/components/
-│   ├── marketing/       — primitives (Container, Section, Eyebrow, …)
-│   ├── ui/              — shadcn primitives (Button, Card, Dialog, …)
-│   └── *Page.tsx        — pages: composition + content data
+│   ├── marketing/                 — GLOBAL primitives (any page may use)
+│   ├── solutions/
+│   │   └── by-industry/           — SCOPED primitives (only the 4 industry pages)
+│   ├── ui/                        — shadcn primitives (Button, Card, Dialog, …)
+│   └── *Page.tsx                  — pages: composition + content data
 └── ...
 ```
 
-The design system has three layers:
+The design system has **three layers and two scopes**:
 
 1. **Tokens** (`theme.css`) — colors, type scale, radii, spacing, shadows.
    Defined as CSS custom properties (`--bz-*`) and re-exposed as Tailwind 4
-   utilities via `@theme inline { ... }`.
-2. **Primitives** (`marketing/`) — small React components. className-driven
-   with `class-variance-authority` variants. Compose pages from these.
+   utilities via `@theme inline { ... }`. Truly global.
+2. **Primitives** — small React components. className-driven with `cva`
+   variants. Live in **two scopes**:
+   - `marketing/` — generic, used by *any* page (`Container`, `Section`,
+     `Eyebrow`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`,
+     `PillBadge`, `Icon`).
+   - `solutions/by-industry/` — page-family-specific, used only by the 4
+     "By Industry" pages (Manufacturing, Distribution, ProfessionalService,
+     Retail). These encode the *rhythm* of the industry shape:
+     `IndustryHero`, `HeroVisual` (and its 4 card sub-primitives),
+     `Node`, `ChallengesGrid`, `SolutionGrid`, `CapabilitiesGrid`
+     (and its helpers), `InsightsBlock`, `WorkflowStrip`, `IndustryCta`.
 3. **Pages** — content data + composition. No styling decisions live here.
-   No hex literals, no per-file `const C = {...}` objects.
+   No hex literals, no per-file `const C = {...}` objects, no per-file
+   `Icon` SVG dictionaries.
+
+### Scope hierarchy and the promotion rule
+
+The folder hierarchy mirrors the mega-menu in `src/app/components/Header.tsx`.
+Each top-level nav group can have its own scope folder (`solutions/by-industry/`,
+`solutions/by-function/` later, `product/` later, etc.) — and within that,
+sub-scopes if needed. **Where a primitive lives encodes who is allowed to use
+it.**
+
+The rule: **start narrow.** A primitive begins in the smallest scope where
+it's used. The moment a *second* nav group needs the same shape, **promote**
+it up to `marketing/`. Don't deep-import across scopes (`Product/SomePage` reaching
+into `solutions/by-industry/IndustryHero.tsx` is wrong — promote the primitive
+first, then import).
+
+| Belongs in `marketing/` | Belongs in a scoped folder |
+|---|---|
+| Tokens, fonts, animations | Page-family-specific layouts (4-card hero scaffold, 6-card challenges bento, workflow strip, etc.) |
+| Generic atoms (`Button`, `Card`, `Section`, `Stat`) | Page-family-specific data structures (e.g., `WorkflowStep[]`, `SolutionItem[]`) that only make sense for that family |
+| `<Icon>` registry — anything used across ≥2 nav groups | "Bento grid" / "method grid" structures tuned for the family's rhythm |
 
 ---
 
@@ -224,6 +257,192 @@ Renders as small uppercase 0.12em-tracked text. Used standalone or inside
 <PillBadge tone="neutral">v2.4</PillBadge>
 ```
 
+### Icon
+
+```tsx
+<Icon name="work-order" size={22} strokeWidth={1.8} className="..." style={{...}} />
+```
+
+A thin wrapper around `lucide-react` that maps the legacy industry-page
+names (`work-order`, `bom`, `mrp`, `floor`, `quality`, `hub`, `cost`, …)
+to lucide components. Default `strokeWidth={1.8}` to match the look the
+industry pages were drawn against (lucide's default is `2`).
+
+The registry exists for two reasons:
+1. **Single source of truth.** Before this, each of the four industry pages
+   redeclared its own SVG dictionary — ~25 icons each, with massive overlap.
+2. **Data-driven loops.** The `solutions/by-industry/` primitives accept icon
+   *names* (strings) inside data arrays (`SolutionItem[]`, `WorkflowStep[]`).
+
+For *new* code that doesn't need either of those properties, prefer importing
+the lucide icon directly:
+
+```tsx
+import { Factory, ShieldCheck } from "lucide-react";
+```
+
+---
+
+## 3.5 Solutions → By Industry primitives
+
+Lives at `src/app/components/solutions/by-industry/`. Used **only** by:
+- `ManufacturingPage.tsx` (canonical reference)
+- `DistributionPage.tsx`
+- `ProfessionalServicePage.tsx`
+- `RetailAndEcommercePage.tsx`
+
+A new "By Industry" page should compose these primitives + the global
+`marketing/` ones, with content as data arrays.
+
+### IndustryHero
+
+```tsx
+<IndustryHero
+  eyebrow="Smart Manufacturing Platform"
+  title={<>Command the Floor.<br /><span>Master</span> the Output.</>}
+  description="..."
+  primaryCta={{ label: "Request Demo" }}
+  secondaryCta={{ label: "See How It Works" }}
+  stats={[{ value: "87.4%", label: "Average OEE" }, { value: "96.2%", label: "On-Time" }]}
+  visual={<HeroVisual main={...} inventory={...} globe={...} circle={...} />}
+/>
+```
+
+Renders the split copy/visual layout, the eyebrow + h1 + sub + CTA row, and
+a stats strip. The `visual` slot is page-specific.
+
+### HeroVisual + 4 card sub-primitives
+
+```tsx
+<HeroVisual
+  main={<HeroMainCard panelTitle="Bizak · Production Control">{children}</HeroMainCard>}
+  inventory={<HeroInventoryCard iconName="..." eyebrow="..." value="..." barLabel="..." barValue="..." barPct={92} />}
+  globe={<HeroGlobeCard iconName="..." eyebrow="...">{children}</HeroGlobeCard>}
+  circle={<HeroCircleCard eyebrow="OEE Rate" value="87%" progressPct={75} />}
+/>
+```
+
+Provides the 4-card floating scaffold (main glass center + dark inventory
+top-right + light globe bottom-left + circular gauge bottom-right) plus the
+animated decorative particles + glow. Each sub-card is independently usable
+inside `HeroVisual.main` etc.
+
+### Node
+
+```tsx
+<Node icon="floor" code="M-01" label="Cutting" value="89%" active={true} />
+```
+
+The small icon-tile-with-status used inside `HeroMainCard`. Replaces the
+former page-specific `WorkCenterNode` / `ChannelNode` / "team load"
+components.
+
+### ChallengesGrid + ChallengeCard
+
+```tsx
+<ChallengesGrid
+  eyebrow="Challenges"
+  title="Manufacturing complexity grows faster than your spreadsheets"
+  description="..."
+>
+  <ChallengeCard icon="downtime" title="Unplanned Downtime" description="...">
+    {/* unique data viz for this card */}
+  </ChallengeCard>
+  // 5 more
+</ChallengesGrid>
+```
+
+Light section + 6-card bento. The unique data viz inside each card stays
+inline because it varies per row — that's the point of the section.
+
+### SolutionGrid
+
+```tsx
+<SolutionGrid
+  eyebrow="The Solution"
+  title="A complete production platform for modern manufacturers"
+  items={[{ icon: "work-order", title: "...", desc: "..." }, /* … */]}
+/>
+```
+
+Pure data. Identical structure across all 4 pages.
+
+### CapabilitiesGrid + CapabilityCard + helpers
+
+```tsx
+<CapabilitiesGrid eyebrow="Capabilities" title="...">
+  <CapabilityCard span={6} minHeight={260}>{/* full-width card */}</CapabilityCard>
+  <CapabilityCard span={3} minHeight={420}>
+    <h3>BOM &amp; Routing</h3><p>...</p>
+    <MonoTable headers={[...]} rows={[...]} />
+  </CapabilityCard>
+  <CapabilityCard span={3}>
+    <h3>Quality</h3><p>...</p>
+    <MethodGrid items={[{ label: "99.1%", sub: "First Pass" }, /* … */]} />
+  </CapabilityCard>
+  <SimpleFeatureCard span={2} iconName="mrp" title="..." body="..." />
+  <SimpleFeatureCard span={2} iconName="floor" title="..." body="..." neon cornerBadge="Live Tracking" />
+  <SimpleFeatureCard span={2} iconName="cost"  title="..." body="..." progressPct={91} />
+</CapabilitiesGrid>
+```
+
+Helpers:
+- `<MonoTable headers={...} rows={[{ values, statusColor }]} />` — the
+  monospace table inside col-3 cards.
+- `<MethodGrid items={[{ label, sub }]} />` — the 3-up "label / sub" grid.
+- `<MiniStatBlock value="248" label="Active Orders" secondary={[...]} />` —
+  the big stat used inside col-6 cards.
+- `<SimpleFeatureCard iconName="..." title="..." body="..." [progressPct]
+  [neon] [cornerBadge] />` — the col-2 card with optional neon border,
+  corner badge, and bottom progress bar.
+- `<FeatureWithMockupCard iconName eyebrow title description features
+  mockupHeader mockupBody [mockupBadges] [mockupWidth] [neon] />` — the
+  full-width col-6 card with a feature list on the left and a branded
+  device-mockup card on the right (used by Professional's Time Tracker
+  and Retail's POS Billing). Body of the mockup is a slot.
+
+### InsightsBlock + ChartFrame
+
+```tsx
+<InsightsBlock
+  eyebrow="Production Intelligence"
+  title="Make faster, smarter production decisions."
+  description="..."
+  bullets={[{ bold: "Real-time OEE Monitoring", rest: " — ..." }, /* … */]}
+  chart={<ChartFrame tooltip={{title:"OEE: 87.4% ↑", subtitle:"+3.1% vs last quarter"}}>{/* svg */}</ChartFrame>}
+  chartSide="right"   // default. four pages stay consistent at chart-right.
+/>
+```
+
+`chartSide` defaults to `"right"` — text reads first, chart confirms.
+**The four industry pages all use the default**; don't pass `"left"` per
+page unless we agree on a deliberate exception.
+
+### WorkflowStrip
+
+```tsx
+<WorkflowStrip
+  eyebrow="Production Engine"
+  title="End-to-End Manufacturing Workflow"
+  steps={[{ icon: "bom", label: "Plan" }, /* … */]}
+/>
+```
+
+Pure data. Dashed-line + 6 step circles.
+
+### IndustryCta
+
+```tsx
+<IndustryCta
+  title="Run your factory floor with complete precision."
+  description="..."
+  primaryLabel="Request Demo"   // default
+  secondaryLabel="View Pricing" // default
+/>
+```
+
+Closing CTA section.
+
 ---
 
 ## 4. Page recipe
@@ -319,9 +538,15 @@ When converting a page that still uses inline-style + per-file `const C = {...}`
 
 ## 6. When to add a new primitive
 
-Add to `marketing/` if:
+Step one is always **scope**. Decide which folder it belongs in:
 
-- The pattern shows up in **2+ pages** with the same structure.
+- **`marketing/`** — the pattern serves *any* marketing page. Tokens, fonts, generic atoms.
+- **`solutions/by-industry/`** — the pattern is specific to the rhythm of the 4 "By Industry" pages.
+- **A new sibling scope** (e.g., `solutions/by-function/`, `product/core-modules/`) — if the page family has its own rhythm and the existing scopes don't fit.
+
+Then add to that scope if:
+
+- The pattern shows up in **2+ pages** within that scope with the same structure.
 - It bundles a meaningful design decision (spacing, type, color combo) you don't want each page to re-decide.
 - It would otherwise be copy-pasted JSX.
 
@@ -329,17 +554,32 @@ Don't add a primitive for one-off layouts. A `<div className="grid ...">` inside
 
 When you do add one:
 
-1. Place it in `src/app/components/marketing/<Name>.tsx`.
-2. Export it from `marketing/index.ts`.
+1. Place it in the right scope folder (`marketing/` or `solutions/<group>/<sub-group>/`).
+2. Export it from that scope's `index.ts` barrel.
 3. Use `cva` for variants if there are >2 options per axis.
-4. Document the prop API in this file (Section 3).
-5. Update `/CLAUDE.md` rule list if relevant.
+4. Document the prop API in this file (Section 3 for global, Section 3.5 for by-industry, future sections for new scopes).
+5. Update `/CLAUDE.md` quick-reference if relevant.
+
+### Promotion rule
+
+If a primitive in a scoped folder is needed by a *second* nav group, **promote
+it up to `marketing/`** rather than copying or deep-importing across scopes.
+Update its prop API to be generic, update both barrels, update both this
+doc and `/CLAUDE.md`.
+
+Conversely, if a `marketing/` primitive is only ever used by one page family
+(e.g., it was promoted speculatively), demote it back down. The goal is that
+each scope contains exactly the primitives that scope's pages need —
+no more, no less.
 
 ---
 
 ## 7. Things still on the todo list
 
-- Migrate the remaining marketing pages (FinancialManagement, SalesCrm, Inventory, Manufacturing, Purchasing, Distribution, Retail, ProfessionalService, ProjectAndJobCosting, SalesForceManagement, DashboardAndReporting, Integrations, Multicompany, DocumentManagement, WhyBizak, Workflow, Partners, CaseStudies, Blog, About, Contact). Migrate opportunistically when touched.
+- ~~**By Industry pages — finish the migration.**~~ ✅ Complete. All 4 (Manufacturing, Distribution, ProfessionalService, Retail) now compose the `solutions/by-industry/` primitives. `chartSide="right"` is the consistent default. The promotion rule was applied during migration: `FeatureWithMockupCard` was extracted from the Professional/Retail col-6 capability card.
+- Migrate the remaining marketing pages (FinancialManagement, SalesCrm, Inventory, Purchasing, ProjectAndJobCosting, SalesForceManagement, DashboardAndReporting, Integrations, Multicompany, DocumentManagement, WhyBizak, Workflow, Partners, CaseStudies, Blog, About, Contact). Migrate opportunistically when touched.
+- The `solutions/by-industry/` primitives currently consume the legacy `biz-*` CSS classes from `src/styles/style.css`. That's intentional for now — the *primary* goal of the by-industry refactor was to eliminate JSX duplication, not to migrate the underlying CSS. A follow-up pass should swap those classes to Tailwind utilities + tokens (or move them to a colocated CSS module). Until then: **do not add new biz-* classes**, but the existing ones are load-bearing and stay.
 - Remove `@mui/icons-material` and `@mui/material` from `package.json` once the codebase no longer references them.
-- Reconcile the duplicate `/Manufacturing` route registration in `routes.tsx` (both `Manufacturing.tsx` and `ManufacturingPage.tsx` map there).
-- Decide whether `src/styles/style.css` should be split into `homepage.module.css` once the page is fully migrated.
+- Reconcile the duplicate `/Manufacturing` route registration in `routes.tsx` (both `Manufacturing.tsx` and `ManufacturingPage.tsx` map there). The Header points industry-section users to `/Manufacturing` — that should be `ManufacturingPage` (the by-industry one). Confirm with user before touching.
+- The route paths use mixed casing (`/distribution` lowercase but Header links `/Distribution` capitalized; same for `/Retail`, `/ProfessionalService`). React Router 7 paths are case-sensitive — these need to be reconciled. Flag with user.
+- Decide whether `src/styles/style.css` should be split into `homepage.module.css` + `by-industry.css` once both are fully migrated to Tailwind.
