@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(ls:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c \"taskkill /PID 43492 /F\")",
+      "Bash(cmd /c \"netstat -ano | findstr :5173\")",
+      "Bash(cmd /c \"type C:\\\\Users\\\\Dell\\\\Desktop\\\\Website\\\\src\\\\app\\\\components\\\\Header.tsx\")",
+      "Bash(python3 -c:*)",
+      "Bash(python:*)",
+      "Bash(py:*)",
+      "Bash(where:*)",
+      "Bash(node -e:*)",
+      "Bash(npm run build:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(\"C:/Users/Dell/Desktop/Website/.gitignore\":*)",
+      "Bash(cmd /c \"taskkill /PID 19900 /F\")",
+      "Bash(cmd /c \"netstat -ano | findstr :5173 | findstr LISTENING\")",
+      "Bash(cmd /c \"curl -s http://localhost:5174/ | findstr hp-hero\")",
+      "Bash(cmd /c \"curl -s -o NUL -w \"\"%{http_code}\"\" http://localhost:5174/\")",
+      "Bash(cmd /c \"curl -s http://localhost:5174/ 2>&1 | head -5\")",
+      "Bash(powershell -Command \"\\(Invoke-WebRequest -Uri ''http://localhost:5174/'' -UseBasicParsing\\).StatusCode\")",
+      "Bash(powershell -Command \"\\(Invoke-WebRequest -Uri ''http://localhost:5174/'' -UseBasicParsing\\).Content\")",
+      "Bash(powershell -Command \"$css = \\(Invoke-WebRequest -Uri ''http://localhost:5174/src/styles/style.css'' -UseBasicParsing\\).Content; if \\($css -match ''HOMEPAGE RESPONSIVE''\\) { ''Responsive block found'' } else { ''NOT found'' }; if \\($css -match ''max-width: 640px.*hp-dashboard-shell'' -or $css -match ''hp-dashboard-shell.*display.*none''\\) { ''Dashboard hide rule found'' } else { ''dashboard rule check...'' }\")",
+      "Bash(powershell -Command \"Invoke-WebRequest -Uri ''http://localhost:5174/src/styles/style.css'' -UseBasicParsing -OutFile ''C:/Users/Dell/Desktop/tmp_style.css''; Select-String -Path ''C:/Users/Dell/Desktop/tmp_style.css'' -Pattern ''HOMEPAGE RESPONSIVE|hp-dashboard-shell.*none|640px.*hp-dashboard'' | Select-Object -First 5\")",
+      "Bash(powershell -Command \"Select-String -Path ''C:/Users/Dell/Desktop/tmp_style.css'' -Pattern ''HOMEPAGE RESPONSIVE'' | Select-Object -First 3\")",
+      "Bash(powershell -File:*)",
+      "Bash(powershell -Command \":*)",
+      "Bash(cmd /c \"findstr /C:\"\"HOMEPAGE RESPONSIVE\"\" /C:\"\"max-width: 640px\"\" /C:\"\"max-width: 768px\"\" /C:\"\"hp-dashboard-shell\"\" \"\"C:\\\\Users\\\\Dell\\\\Desktop\\\\Website\\\\src\\\\styles\\\\style.css\"\"\")",
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(npx tsc *)",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "WebFetch(domain:bizakerp.com)",
+      "Bash(npx vite *)"
+    ]
+  }
+}
