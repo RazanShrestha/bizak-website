@@ -1,619 +1,998 @@
 import { useState } from "react";
 import "../../styles/style.css";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BookOpen,
+  ChevronDown,
+  CreditCard,
+  FileText,
+  Info,
+  LifeBuoy,
+  Mail,
+  MessageSquare,
+  Monitor,
+  PlayCircle,
+  RefreshCcw,
+  Search,
+  Settings2,
+  Shield,
+  Sparkles,
+  TrendingUp,
+  Users,
+  Workflow,
+  Wrench,
+  XCircle,
+  type LucideIcon,
+} from "lucide-react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import {
+  Button,
+  Card,
+  Container,
+  Eyebrow,
+  HeroBadge,
+  IconBadge,
+  PillBadge,
+  Section,
+  SectionHeading,
+} from "./marketing";
 
-// ─── Data ──────────────────────────────────────────────────────────────────────
+// ─── Data ─────────────────────────────────────────────────────────────────────
 
 const POPULAR_TOPICS = [
-  "Getting Started", "Billing & Pricing", "Data Migration", "Integrations",
-  "Security", "Mobile App",
+  "Getting Started",
+  "Pricing & Billing",
+  "Data Migration",
+  "Integrations",
+  "Security",
+  "Mobile App",
 ];
 
-const STATS = [
-  { icon: "schedule", value: "< 4 hrs", label: "avg. response time" },
-  { icon: "check_circle", value: "98%", label: "satisfaction rate" },
-  { icon: "support_agent", value: "24/7", label: "live chat support" },
-  { icon: "article", value: "200+", label: "help articles" },
+const HERO_STATS: { value: string; label: string }[] = [
+  { value: "< 4 hrs", label: "Avg. response time" },
+  { value: "98%", label: "Customer satisfaction" },
+  { value: "24 / 7", label: "Live chat coverage" },
+  { value: "200+", label: "Help articles & guides" },
 ];
 
-const CHANNELS = [
+const CHANNELS: {
+  icon: LucideIcon;
+  badge: string;
+  title: string;
+  description: string;
+  detailLabel: string;
+  detail: string;
+  cta: string;
+  href: string;
+  highlight?: boolean;
+}[] = [
   {
-    icon: "chat",
-    badge: "Fastest Response",
-    title: "Live Support Chat",
-    desc: "Connect with our support agents in real time. Get immediate help for urgent issues, guided walkthroughs, and troubleshooting without leaving your workflow.",
-    detail: "support@bizakerp.com.np",
-    detailIcon: "mail",
-    cta: "Start Live Chat",
+    icon: MessageSquare,
+    badge: "Fastest response",
+    title: "Live chat",
+    description:
+      "Talk to a Bizak specialist in real time. Best for urgent product issues, guided walkthroughs, and live troubleshooting.",
+    detailLabel: "Available",
+    detail: "Mon – Fri, 9am – 8pm NPT",
+    cta: "Start a chat",
     href: "#",
+    highlight: true,
   },
   {
-    icon: "mail_outline",
-    badge: "Always Available",
-    title: "Email Support",
-    desc: "Send a detailed message to our team and receive a thorough, documented response. Ideal for non-urgent questions, feedback, and complex technical queries.",
+    icon: Mail,
+    badge: "Always on",
+    title: "Email support",
+    description:
+      "Send a detailed message and get a documented response. Ideal for complex queries, account questions, and follow-ups.",
+    detailLabel: "Write to",
     detail: "support@bizakerp.com.np",
-    detailIcon: "mail",
-    cta: "Send an Email",
+    cta: "Send an email",
     href: "mailto:support@bizakerp.com.np",
   },
   {
-    icon: "contact_support",
-    badge: "Guided Process",
-    title: "Submit a Request",
-    desc: "Fill out our structured support form so we can route your query to the right specialist. Best for implementation issues, custom configurations, and data requests.",
-    detail: "Typically 1 business day",
-    detailIcon: "schedule",
-    cta: "Open Support Form",
+    icon: LifeBuoy,
+    badge: "Guided process",
+    title: "Submit a request",
+    description:
+      "Open a ticket and we'll route it to the right specialist — implementation, billing, integrations, or data.",
+    detailLabel: "First reply",
+    detail: "Within 1 business day",
+    cta: "Open the form",
     href: "/contact",
   },
 ];
 
-const CATEGORIES = [
+const CATEGORIES: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  count: string;
+  filter: FaqKey;
+}[] = [
   {
-    icon: "info",
+    icon: Info,
     title: "General Information",
-    desc: "ERP fundamentals, company overview, and who Bizak is built for.",
+    description: "What Bizak ERP is, who it's built for, and how it differs from typical accounting software.",
     count: "12 articles",
+    filter: "general",
   },
   {
-    icon: "tune",
+    icon: Sparkles,
     title: "Features & Functionality",
-    desc: "Deep dives on accounting, inventory, HR, CRM, and reporting modules.",
+    description: "Accounting, inventory, sales, HR, CRM, and reporting — every core module explained.",
     count: "34 articles",
+    filter: "features",
   },
   {
-    icon: "integration_instructions",
+    icon: Workflow,
     title: "Implementation & Integration",
-    desc: "Setup phases, data migration, API connections, and third-party connectors.",
+    description: "Setup phases, data migration, third-party connectors, and rollout best practices.",
     count: "21 articles",
+    filter: "implementation",
   },
   {
-    icon: "school",
+    icon: Users,
     title: "Training & Onboarding",
-    desc: "On-site sessions, webinars, tutorials, and personalized training programs.",
+    description: "On-site sessions, webinars, video tutorials, and personalised training plans.",
     count: "18 articles",
+    filter: "training",
   },
   {
-    icon: "security",
+    icon: Shield,
     title: "Security & Data Privacy",
-    desc: "Encryption standards, access controls, backups, and disaster recovery.",
+    description: "Encryption, access controls, audit logs, backups, and disaster recovery.",
     count: "15 articles",
+    filter: "security",
   },
   {
-    icon: "payments",
+    icon: CreditCard,
     title: "Pricing & Licensing",
-    desc: "Subscription tiers, billing cycles, free trials, and optional add-ons.",
+    description: "Subscription tiers, billing cycles, free trials, and optional add-on modules.",
     count: "10 articles",
+    filter: "pricing",
   },
   {
-    icon: "settings_suggest",
-    title: "Customization & Scalability",
-    desc: "Custom workflows, fields, dashboards, and architecture for growing teams.",
+    icon: Settings2,
+    title: "Customisation & Scalability",
+    description: "Custom workflows, fields, dashboards, and architecture for growing teams.",
     count: "16 articles",
+    filter: "customisation",
   },
   {
-    icon: "devices",
+    icon: Monitor,
     title: "System Requirements",
-    desc: "Browser compatibility, mobile apps, and cloud infrastructure details.",
+    description: "Browsers, mobile apps, bandwidth, and multi-platform compatibility.",
     count: "8 articles",
+    filter: "system",
   },
   {
-    icon: "system_update",
+    icon: RefreshCcw,
     title: "Upgrades & Updates",
-    desc: "How automatic cloud updates work and what's included in your plan.",
+    description: "How automatic cloud updates work and what's included in your plan.",
     count: "9 articles",
+    filter: "upgrades",
   },
   {
-    icon: "swap_horiz",
-    title: "Data Migration",
-    desc: "Migrate from legacy systems with full assessment, mapping, and validation.",
+    icon: TrendingUp,
+    title: "Migration from Existing Systems",
+    description: "Move from legacy systems with full assessment, mapping, and validation.",
     count: "13 articles",
+    filter: "migration",
   },
   {
-    icon: "forum",
+    icon: MessageSquare,
     title: "Feedback & Improvement",
-    desc: "Submit feature requests, track status, and participate in product forums.",
+    description: "Submit feature requests, track status, and join product roadmap conversations.",
     count: "7 articles",
+    filter: "feedback",
   },
   {
-    icon: "cancel",
-    title: "Cancellation & Billing",
-    desc: "Cancellation policy, data export on termination, and refund information.",
+    icon: XCircle,
+    title: "Cancellation & Termination",
+    description: "Cancellation policy, fees, and how your data is exported on termination.",
     count: "6 articles",
+    filter: "cancellation",
   },
 ];
 
-// ─── FAQ Data by category ──────────────────────────────────────────────────────
+// ─── FAQ data ─────────────────────────────────────────────────────────────────
 
-type FaqCategory = {
-  key: string;
+type FaqKey =
+  | "general"
+  | "features"
+  | "implementation"
+  | "training"
+  | "security"
+  | "pricing"
+  | "customisation"
+  | "system"
+  | "upgrades"
+  | "migration"
+  | "feedback"
+  | "cancellation";
+
+type FaqGroup = {
+  key: FaqKey;
   label: string;
-  icon: string;
   faqs: { q: string; a: string }[];
 };
 
-const FAQ_CATEGORIES: FaqCategory[] = [
+const FAQ_GROUPS: FaqGroup[] = [
   {
     key: "general",
     label: "General",
-    icon: "info",
     faqs: [
       {
-        q: "What is Bizak ERP and who is it designed for?",
-        a: "Bizak ERP is a cloud-based enterprise resource planning platform built for businesses of all sizes — from startups and SMEs to large enterprises. It unifies accounting, inventory, sales, HR, CRM, and reporting into a single, scalable platform.",
+        q: "What is Bizak ERP and who is it built for?",
+        a: "Bizak ERP is a cloud-based business operating system that brings accounting, inventory, sales, purchase, HR, CRM, and reporting into one connected platform. It's designed for businesses of every size — from early-stage startups to multi-entity enterprises — that want to replace fragmented spreadsheets and disconnected tools with a single source of truth.",
       },
       {
-        q: "What makes Bizak different from other ERP solutions?",
-        a: "Bizak stands out through its user-friendly interface, robust functionality, scalability, and exceptional customer support. It is designed to be intuitive without sacrificing depth, enabling fast adoption without lengthy onboarding cycles.",
+        q: "How is Bizak different from a typical ERP solution?",
+        a: "Bizak combines a clean, modern interface with the depth large organisations expect. Modules are configurable, deployment is fast, and the platform is built to grow with you. You don't pay for what you don't use, and you don't outgrow the system as your business scales.",
       },
       {
-        q: "Is Bizak suitable for my industry?",
-        a: "Yes. Bizak serves a wide range of industries including retail, distribution, manufacturing, professional services, and more. Industry-specific modules and configurable workflows adapt the platform to your operational context.",
+        q: "Is Bizak suitable for businesses of all sizes?",
+        a: "Yes. Small and mid-sized businesses use Bizak to consolidate operations on a single platform. Larger enterprises use it for multi-entity, multi-branch, and multi-currency operations. The same product scales across both, with modular pricing that adjusts to your usage.",
+      },
+      {
+        q: "Which industries does Bizak support?",
+        a: "Bizak supports manufacturing, distribution, retail, professional services, and more. Industry-specific modules and configurable workflows adapt the platform to your operating model — whether you're running a factory floor, a retail chain, or a project-based services firm.",
       },
     ],
   },
   {
     key: "features",
     label: "Features",
-    icon: "tune",
     faqs: [
       {
-        q: "What core modules does Bizak ERP include?",
-        a: "Core modules include accounting, inventory management with barcode scanning, sales and purchase management, human resources, CRM, and real-time reporting and analytics. Each module can be enabled independently or used together.",
+        q: "Which core modules ship with Bizak ERP?",
+        a: "Core modules include Accounting, Inventory Management, Sales & Purchase, Human Resources, CRM, and Reporting & Analytics. Optional add-ons cover manufacturing, point of sale, project management, and industry-specific extensions.",
       },
       {
-        q: "Does Bizak support real-time collaboration?",
-        a: "Yes. Bizak is built for distributed teams. All data is updated in real time so every user operates from a single source of truth, regardless of location or device.",
+        q: "How does Bizak handle inventory management?",
+        a: "Bizak provides full stock control: real-time inventory levels across warehouses, automatic reorder points, batch and serial-number tracking, barcode scanning, multi-location transfers, and live stock valuation. It works for service businesses too — just turn off the modules you don't need.",
       },
       {
-        q: "Can I automate financial processes?",
-        a: "Absolutely. Bizak automates reconciliation, invoicing, expense tracking, payroll calculations, and tax reporting. Rules-based automation reduces manual entry and minimizes human error.",
+        q: "Can Bizak automate financial workflows?",
+        a: "Yes. Bizak automates invoicing, reconciliation, expense tracking, payments, and tax reporting. Bank feeds and payment gateway integrations cut manual entry, and approval workflows enforce policy before money moves.",
+      },
+      {
+        q: "Does Bizak include CRM functionality?",
+        a: "Yes. The CRM module covers leads, contacts, sales pipelines, marketing campaigns, and post-sale support. Customer data is unified with sales and accounting, so your team works from one record across the entire customer lifecycle.",
+      },
+      {
+        q: "How does the platform support team collaboration?",
+        a: "Bizak includes built-in messaging, task management, document sharing, and project tracking. Updates are real-time, so distributed teams stay aligned without bouncing between tools.",
       },
     ],
   },
   {
     key: "implementation",
     label: "Implementation",
-    icon: "integration_instructions",
     faqs: [
       {
-        q: "How long does a typical implementation take?",
-        a: "Implementation timelines vary by complexity. Most mid-market deployments complete within 4 to 8 weeks. Enterprise-scale projects with multi-entity or multi-country requirements may take 8 to 16 weeks.",
-      },
-      {
         q: "What does the implementation process look like?",
-        a: "Implementation follows a structured multi-phase approach: requirements gathering, platform configuration, data migration, user training, parallel testing, and go-live. Our team guides you through every step.",
+        a: "Implementation runs in five phases: requirement discovery, system configuration, data migration, user training, and parallel testing before go-live. Each phase has clear owners and deliverables, and our team partners with you across the entire rollout.",
       },
       {
-        q: "Does Bizak integrate with third-party applications?",
-        a: "Yes. Bizak offers RESTful APIs and pre-built connectors for popular tools including payment gateways, e-commerce platforms, logistics providers, and communication tools. Custom integrations are also supported.",
+        q: "How long does implementation take?",
+        a: "Mid-market deployments typically complete in 4 – 8 weeks. Enterprise rollouts with multi-entity, multi-currency, or complex integration requirements may take 8 – 16 weeks. We'll give you a realistic timeline once we understand your scope.",
+      },
+      {
+        q: "Does Bizak integrate with my existing tools?",
+        a: "Yes. Bizak offers RESTful APIs, pre-built connectors for popular SaaS tools, and middleware support for legacy systems. Custom integrations can be built when needed — we've connected payment gateways, e-commerce platforms, logistics providers, and bespoke internal apps.",
+      },
+      {
+        q: "Do you support us during implementation?",
+        a: "Yes. Every implementation is led by a dedicated specialist supported by configuration consultants and technical engineers. We handle the heavy lifting — you focus on the decisions only your team can make.",
+      },
+      {
+        q: "What challenges should we plan for?",
+        a: "The two most common are data quality and change management. Time spent cleaning master data before migration pays back many times over, and so does early communication with the teams whose workflows are about to change. We'll help you de-risk both.",
+      },
+    ],
+  },
+  {
+    key: "training",
+    label: "Training",
+    faqs: [
+      {
+        q: "Do you provide user training?",
+        a: "Yes. We deliver structured training programs that cover the modules your team uses day-to-day. Training is available on-site, virtual, or as recorded sessions — we'll match the format to your team's needs.",
+      },
+      {
+        q: "What learning resources are included?",
+        a: "User guides, video tutorials, role-based playbooks, an interactive product demo, and a searchable knowledge base. New articles and videos are published regularly as features ship.",
+      },
+      {
+        q: "Is support available after we go live?",
+        a: "Yes. Every plan includes ongoing support and product updates. Higher tiers add priority response, dedicated success managers, and quarterly health checks.",
+      },
+      {
+        q: "How do I reach support after launch?",
+        a: "Through live chat, email, the in-app help portal, or — for higher tiers — a phone line and dedicated account contact. All channels are listed inside the product so the right one is always one click away.",
       },
     ],
   },
   {
     key: "security",
     label: "Security",
-    icon: "security",
     faqs: [
       {
         q: "How does Bizak protect my business data?",
-        a: "Bizak employs end-to-end SSL/TLS encryption, role-based access controls, firewalls, and intrusion detection systems. All infrastructure is hosted in certified data centers with industry-standard compliance frameworks.",
+        a: "Bizak uses end-to-end SSL/TLS encryption, role-based access controls, web application firewalls, and intrusion detection. Infrastructure is hosted in certified data centres with 24/7 monitoring, and we conduct regular vulnerability assessments and penetration tests.",
       },
       {
-        q: "How frequently is data backed up?",
-        a: "Data is backed up daily with offsite storage. Disaster recovery protocols are in place to ensure business continuity. Recovery time objectives are defined as part of your service agreement.",
+        q: "Is my data encrypted at rest and in transit?",
+        a: "Yes. Data is encrypted in transit using SSL/TLS and at rest using industry-standard AES encryption. Key management follows best-practice rotation and isolation.",
       },
       {
-        q: "Can I control who has access to specific data?",
-        a: "Yes. Bizak provides granular, role-based access controls. Administrators can define what each user or user group can view, edit, approve, or export — at the module, record, and field level.",
+        q: "How often is my data backed up?",
+        a: "Backups run daily and are stored in geographically separate locations. Disaster-recovery procedures are documented and tested, with recovery objectives defined as part of your service agreement.",
+      },
+      {
+        q: "Can I control who sees what?",
+        a: "Yes. Permissions are granular and role-based — administrators control what each user or group can view, edit, approve, or export, down to module, record, and field level.",
       },
     ],
   },
   {
     key: "pricing",
     label: "Pricing",
-    icon: "payments",
     faqs: [
       {
         q: "How is Bizak priced?",
-        a: "Bizak uses a subscription-based model with flexible monthly and annual billing options. All plans include setup — there are no hidden onboarding fees. Optional add-on modules may carry additional costs.",
+        a: "Bizak uses a subscription model with monthly and annual billing options. Pricing scales with users, modules, and transaction volume. There are no hidden setup fees — implementation is included in standard plans.",
       },
       {
-        q: "Is there a free trial available?",
-        a: "Yes. Bizak offers a free trial so you can explore the platform before committing. Contact our sales team or register via our website to get started with no credit card required.",
+        q: "Are there hidden fees?",
+        a: "No. The price you see is the price you pay. Optional modules, premium support tiers, or specialist services (like custom development or dedicated training) are quoted separately and agreed in advance.",
+      },
+      {
+        q: "Do you offer different plans by company size?",
+        a: "Yes. Plans are tiered by user count, transaction volume, and module needs. Custom enterprise pricing is available for multi-entity or high-volume deployments.",
+      },
+      {
+        q: "Can I change my plan later?",
+        a: "Yes. You can upgrade or downgrade at any time. Charges are prorated, and the customer success team helps with the transition so nothing breaks.",
+      },
+      {
+        q: "Is there a free trial?",
+        a: "Yes. Bizak offers a free trial with full feature access so you can evaluate the platform before committing. No credit card required.",
+      },
+      {
+        q: "Which payment methods do you accept?",
+        a: "Credit and debit cards, bank transfers, and electronic funds transfer. Enterprise customers can be invoiced on standard payment terms.",
+      },
+    ],
+  },
+  {
+    key: "customisation",
+    label: "Customisation",
+    faqs: [
+      {
+        q: "Can I tailor Bizak to my workflows?",
+        a: "Yes. Forms, fields, print templates, approval flows, reports, and dashboards are all configurable without writing code. Deeper customisation is supported through our extension framework.",
+      },
+      {
+        q: "How well does Bizak scale as I grow?",
+        a: "Bizak's modular architecture means you can start lean and add capacity, modules, users, and entities as you grow. The same platform supports a 5-person team and a 5,000-person enterprise.",
+      },
+      {
+        q: "Are there limits on users or transactions?",
+        a: "Plans define usage envelopes that fit most businesses comfortably. For high-volume operations, our enterprise plan removes most ceilings — talk to us about your specific scale.",
+      },
+      {
+        q: "Can I build custom reports and dashboards?",
+        a: "Yes. The reporting builder lets non-technical users compose dashboards and KPIs from any data in the system. Power users can write SQL-like expressions and embed them anywhere.",
+      },
+    ],
+  },
+  {
+    key: "system",
+    label: "System",
+    faqs: [
+      {
+        q: "What are the system requirements?",
+        a: "Bizak is fully cloud-based. Any modern browser — Chrome, Edge, Firefox, Safari — runs the product without plugins or installs.",
+      },
+      {
+        q: "Is there a mobile app?",
+        a: "Yes. Native iOS and Android apps are available for on-the-go access. Most workflows also work in a mobile browser.",
+      },
+      {
+        q: "What internet speed do I need?",
+        a: "There's no hard minimum, but a stable broadband connection delivers the best experience. Bizak is designed to handle intermittent connectivity gracefully — you won't lose work to a dropped link.",
+      },
+      {
+        q: "Can I work from anywhere?",
+        a: "Yes. Anywhere you have an internet connection, you have Bizak. Your team can collaborate in real time across offices, factories, branches, and the field.",
+      },
+    ],
+  },
+  {
+    key: "upgrades",
+    label: "Upgrades",
+    faqs: [
+      {
+        q: "How often does Bizak release updates?",
+        a: "We ship updates regularly — small fixes ride out continuously, and larger feature releases are bundled into a clearly communicated cadence. Customers always run a recent, secure version.",
+      },
+      {
+        q: "Are upgrades included in my subscription?",
+        a: "Yes. Updates and upgrades are included at every tier. You always have access to the latest version of the product at no additional cost.",
+      },
+      {
+        q: "Will updates disrupt my workflow?",
+        a: "Updates are deployed seamlessly through the cloud, typically without downtime. Major maintenance windows are scheduled outside business hours and announced in advance.",
+      },
+      {
+        q: "Where can I see what's new?",
+        a: "Release notes are published in the help center and inside the product. Significant releases are also covered by an email digest so you can plan ahead for any workflow changes.",
+      },
+    ],
+  },
+  {
+    key: "migration",
+    label: "Migration",
+    faqs: [
+      {
+        q: "Can Bizak migrate data from my current system?",
+        a: "Yes. Our migration team handles assessment, field mapping, transformation, cleansing, and validation. Whether you're moving from spreadsheets, Tally, QuickBooks, or another ERP, we have the playbook.",
+      },
+      {
+        q: "How does migration work?",
+        a: "We extract data from your existing system, map fields to Bizak's data model, transform values where needed, validate against business rules, and migrate in stages with parallel testing before final cutover.",
+      },
+      {
+        q: "Will you support us through the cutover?",
+        a: "Yes. Cutover is a hands-on phase. Our team is on call during the transition, and we run extended monitoring afterwards to catch anything that needs adjustment.",
+      },
+    ],
+  },
+  {
+    key: "feedback",
+    label: "Feedback",
+    faqs: [
+      {
+        q: "How do I submit feedback or feature requests?",
+        a: "Through the in-app feedback form, the help center, or directly to your customer success contact. We track every request, and your account portal shows the status of items you've submitted.",
+      },
+      {
+        q: "What happens to feedback once submitted?",
+        a: "Feedback is reviewed weekly, categorised, and weighed against impact, demand, and roadmap priorities. Items that ship are announced in release notes — and the customer who suggested them is credited.",
+      },
+      {
+        q: "Can I track the status of my requests?",
+        a: "Yes. The customer portal shows submitted requests with status — under review, planned, in progress, shipped — so you always know where things stand.",
+      },
+    ],
+  },
+  {
+    key: "cancellation",
+    label: "Cancellation",
+    faqs: [
+      {
+        q: "How do I cancel my subscription?",
+        a: "Submit a cancellation request through your customer success contact or the help center. We'll confirm details and process the request, and you'll keep access until the end of the current billing period.",
+      },
+      {
+        q: "Are there cancellation fees?",
+        a: "Standard plans have no termination fees. Specific contractual commitments — like multi-year enterprise agreements with negotiated pricing — may have terms attached, which are spelled out in your agreement.",
       },
       {
         q: "What happens to my data if I cancel?",
-        a: "Upon cancellation, you retain full access to your data. Our team provides data export assistance and, where needed, migration support to ensure a smooth transition with no data loss.",
+        a: "Your data belongs to you. We provide full data export and, where needed, migration support to your next system. You'll never be locked in by data ownership.",
       },
     ],
   },
 ];
 
-const RESOURCES = [
+const RESOURCES: { icon: LucideIcon; tag: string; title: string; description: string; cta: string; href: string }[] = [
   {
-    icon: "play_circle",
-    tag: "Video Tutorials",
-    title: "Get started with Bizak in under 30 minutes",
-    desc: "A guided video walkthrough covering account setup, core module activation, and your first day-to-day workflow.",
-    cta: "Watch Tutorial",
-    href: "#",
-  },
-  {
-    icon: "description",
+    icon: BookOpen,
     tag: "Documentation",
-    title: "Full API & Integration Reference",
-    desc: "Technical documentation for developers connecting Bizak to third-party systems, custom apps, or data pipelines.",
-    cta: "Read the Docs",
+    title: "Product & API documentation",
+    description:
+      "The full reference for every module, every endpoint, and every webhook. Built for both end users and integration developers.",
+    cta: "Open the docs",
     href: "#",
   },
   {
-    icon: "groups",
+    icon: PlayCircle,
+    tag: "Video tutorials",
+    title: "Get started in 30 minutes",
+    description:
+      "A guided video walkthrough — sign up, configure your first modules, and run a full day-one workflow. No prior ERP experience required.",
+    cta: "Watch the series",
+    href: "#",
+  },
+  {
+    icon: Users,
     tag: "Community",
-    title: "Join the Bizak User Community",
-    desc: "Ask questions, share best practices, and connect with thousands of Bizak users across industries and company sizes.",
-    cta: "Join the Forum",
+    title: "Bizak user community",
+    description:
+      "Trade playbooks with other Bizak users, get answers from the team, and influence the roadmap. Open to every customer at every plan.",
+    cta: "Join the forum",
     href: "#",
   },
 ];
 
-// ─── Search data (flat list for quick lookup) ─────────────────────────────────
+// ─── Search index ─────────────────────────────────────────────────────────────
 
-const SEARCH_INDEX = FAQ_CATEGORIES.flatMap((cat) =>
-  cat.faqs.map((f) => ({ q: f.q, category: cat.label, icon: cat.icon }))
+const SEARCH_INDEX = FAQ_GROUPS.flatMap((g) =>
+  g.faqs.map((f) => ({ q: f.q, group: g.label, key: g.key })),
 );
 
-// ─── Arrow icon ────────────────────────────────────────────────────────────────
-
-function ArrowRight({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>
-  );
-}
-
-// ─── Hero ──────────────────────────────────────────────────────────────────────
+// ─── Hero ─────────────────────────────────────────────────────────────────────
 
 function HeroSection() {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
 
-  const results = query.trim().length > 1
-    ? SEARCH_INDEX.filter((item) =>
-        item.q.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 5)
-    : [];
+  const trimmed = query.trim();
+  const results =
+    trimmed.length > 1
+      ? SEARCH_INDEX.filter((item) => item.q.toLowerCase().includes(trimmed.toLowerCase())).slice(0, 6)
+      : [];
 
   const showDropdown = focused && results.length > 0;
 
   return (
-    <section className="hc-hero">
-      <div className="hc-hero-inner">
-        <div className="hc-hero-badge">
-          <span className="hc-hero-badge-dot" />
-          Support Hub
-        </div>
+    <Section pad="hero" tone="light" className="biz-mesh overflow-hidden">
+      <Container width="narrow" className="relative">
+        <div className="flex flex-col items-center text-center">
+          <HeroBadge>Bizak Help Center</HeroBadge>
+          <h1 className="mt-4 max-w-[820px] text-[clamp(40px,5.5vw,68px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
+            How can we{" "}
+            <span className="relative inline-block">
+              help you
+              <span className="absolute inset-x-0 bottom-1 -z-0 h-[10px] rounded-full bg-bz-accent/55" />
+            </span>{" "}
+            today?
+          </h1>
+          <p className="mt-5 max-w-[640px] text-[17px] leading-[1.7] text-bz-text-muted">
+            Search the knowledge base, browse help by topic, or talk to a Bizak
+            specialist directly. We're here to make your ERP work for you.
+          </p>
 
-        <h1 className="hc-hero-title">How can we help you?</h1>
-        <p className="hc-hero-sub">
-          Search our knowledge base, browse help categories, or reach our
-          support team directly — we're here to make Bizak work for you.
-        </p>
-
-        <div className="hc-search-wrap">
-          <span className="material-symbols-outlined hc-search-icon">search</span>
-          <input
-            className="hc-search-input"
-            type="text"
-            placeholder="Search articles, guides, FAQs…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setTimeout(() => setFocused(false), 180)}
-            aria-label="Search help center"
-          />
-          <button className="hc-search-btn" aria-label="Submit search">
-            <span className="material-symbols-outlined">arrow_forward</span>
-          </button>
-
-          {showDropdown && (
-            <div className="hc-search-results">
-              {results.map((r, i) => (
-                <a key={i} href="#faq" className="hc-search-result-item">
-                  <span className="material-symbols-outlined hc-result-icon">{r.icon}</span>
-                  <span className="hc-result-text">{r.q}</span>
-                  <span className="hc-result-cat">{r.category}</span>
-                </a>
-              ))}
+          {/* Search */}
+          <div className="relative mt-9 w-full max-w-[680px]">
+            <div className="flex h-[58px] items-center gap-3 rounded-bz-pill border border-bz-border bg-bz-surface pl-5 pr-2 shadow-[0_8px_28px_rgba(15,17,14,0.06)] focus-within:border-bz-sage-mid focus-within:shadow-[0_12px_36px_rgba(15,17,14,0.08)]">
+              <Search className="size-5 shrink-0 text-bz-text-soft" strokeWidth={1.8} />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setTimeout(() => setFocused(false), 180)}
+                type="text"
+                placeholder="Search articles, guides, FAQs…"
+                aria-label="Search the help center"
+                className="flex-1 bg-transparent text-[15px] text-bz-text placeholder:text-bz-text-soft focus:outline-none"
+              />
+              <button
+                type="button"
+                aria-label="Submit search"
+                className="inline-flex h-[42px] items-center gap-1.5 rounded-bz-pill bg-bz-deep px-5 text-[13px] font-semibold text-white transition-colors hover:bg-black"
+              >
+                Search
+                <ArrowRight className="size-[14px]" />
+              </button>
             </div>
-          )}
-        </div>
 
-        <div className="hc-popular">
-          <span className="hc-popular-label">Popular:</span>
-          {POPULAR_TOPICS.map((t) => (
-            <a key={t} href="#faq" className="hc-popular-pill">{t}</a>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Stats bar ─────────────────────────────────────────────────────────────────
-
-function StatsBar() {
-  return (
-    <div className="hc-stats-bar">
-      <div className="hc-stats-bar-inner">
-        {STATS.map((s) => (
-          <div className="hc-stat-item" key={s.label}>
-            <span className="material-symbols-outlined hc-stat-icon">{s.icon}</span>
-            <span className="hc-stat-text">
-              {s.value} <span>{s.label}</span>
-            </span>
+            {showDropdown && (
+              <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-20 overflow-hidden rounded-bz-xl border border-bz-border bg-bz-surface shadow-[0_24px_64px_rgba(15,17,14,0.12)]">
+                {results.map((r, i) => (
+                  <a
+                    key={`${r.q}-${i}`}
+                    href="#faq"
+                    className="flex items-center gap-3 border-b border-bz-border-soft px-5 py-3 text-left last:border-b-0 hover:bg-bz-bg"
+                  >
+                    <Search className="size-[14px] text-bz-sage" strokeWidth={2} />
+                    <span className="flex-1 truncate text-[14px] text-bz-text">{r.q}</span>
+                    <span className="shrink-0 rounded-bz-pill bg-bz-sage-soft px-2 py-[3px] text-[10px] font-bold uppercase tracking-[0.1em] text-bz-sage">
+                      {r.group}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
-        ))}
-      </div>
-    </div>
+
+          {/* Popular topics */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+            <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-bz-text-soft">
+              Popular
+            </span>
+            {POPULAR_TOPICS.map((t) => (
+              <a
+                key={t}
+                href="#faq"
+                className="rounded-bz-pill border border-bz-border bg-bz-surface px-3.5 py-1.5 text-[12.5px] font-medium text-bz-text-muted transition-colors hover:border-bz-sage-mid hover:bg-bz-sage-soft hover:text-bz-text"
+              >
+                {t}
+              </a>
+            ))}
+          </div>
+
+          {/* Stats strip */}
+          <div className="mt-14 grid w-full grid-cols-2 gap-x-6 gap-y-8 border-t border-bz-border pt-10 md:grid-cols-4">
+            {HERO_STATS.map((s) => (
+              <div key={s.label} className="flex flex-col items-center text-center md:items-start md:text-left">
+                <span className="text-[28px] font-bold tracking-[-0.02em] text-bz-text md:text-[32px]">
+                  {s.value}
+                </span>
+                <span className="mt-1 text-[12px] uppercase tracking-[0.1em] text-bz-text-soft">
+                  {s.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Container>
+    </Section>
   );
 }
 
-// ─── Contact Channels ─────────────────────────────────────────────────────────
+// ─── Channels ─────────────────────────────────────────────────────────────────
 
 function ChannelsSection() {
   return (
-    <div className="hc-section" style={{ paddingBottom: 64 }}>
-      <div className="hc-section-header">
-        <span className="hc-section-label">Get in touch</span>
-        <h2 className="hc-section-title">Contact our support team</h2>
-        <p className="hc-section-desc">
-          Choose the channel that works best for you. Our team is available to
-          help with any question, big or small.
-        </p>
-      </div>
+    <Section tone="white" pad="default">
+      <Container>
+        <SectionHeading
+          eyebrow="Talk to us"
+          title="Three ways to reach the support team"
+          description="Pick the channel that fits the moment. We answer every message, and we'll route you to the right specialist."
+          maxWidth={720}
+          className="mb-12"
+        />
 
-      <div className="hc-channels-grid">
-        {CHANNELS.map((c) => (
-          <div className="hc-channel-card" key={c.title}>
-            <div className="hc-channel-icon-wrap">
-              <span className="material-symbols-outlined">{c.icon}</span>
-            </div>
-            <span className="hc-channel-badge">{c.badge}</span>
-            <div className="hc-channel-title">{c.title}</div>
-            <div className="hc-channel-desc">{c.desc}</div>
-            <div className="hc-channel-detail">
-              <span className="material-symbols-outlined">{c.detailIcon}</span>
-              {c.detail}
-            </div>
-            <a href={c.href} className="hc-channel-btn">
-              {c.cta} <ArrowRight />
-            </a>
-          </div>
-        ))}
-      </div>
-    </div>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          {CHANNELS.map(({ icon: ChannelIcon, ...c }) => (
+            <Card
+              key={c.title}
+              tone="light"
+              pad="lg"
+              hover="lift"
+              className={c.highlight ? "border-bz-sage-mid" : ""}
+            >
+              <div className="flex items-start justify-between">
+                <IconBadge size="lg" tone={c.highlight ? "accent" : "sage"}>
+                  <ChannelIcon className="size-5" strokeWidth={1.8} />
+                </IconBadge>
+                <PillBadge tone={c.highlight ? "accent" : "neutral"} dot={c.highlight}>
+                  {c.badge}
+                </PillBadge>
+              </div>
+
+              <h3 className="mt-7 text-[22px] font-bold tracking-[-0.01em] text-bz-text">
+                {c.title}
+              </h3>
+              <p className="mt-3 text-[14.5px] leading-[1.7] text-bz-text-muted">{c.description}</p>
+
+              <div className="mt-7 flex items-center gap-3 rounded-bz-lg bg-bz-bg px-4 py-3">
+                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
+                  {c.detailLabel}
+                </span>
+                <span className="ml-auto text-[13px] font-semibold text-bz-text">{c.detail}</span>
+              </div>
+
+              <a
+                href={c.href}
+                className="mt-6 inline-flex items-center gap-1.5 text-[13.5px] font-bold text-bz-sage transition-colors hover:text-bz-sage-hover"
+              >
+                {c.cta}
+                <ArrowRight className="size-[14px]" />
+              </a>
+            </Card>
+          ))}
+        </div>
+      </Container>
+    </Section>
   );
 }
 
 // ─── Categories ───────────────────────────────────────────────────────────────
 
-function CategoriesSection() {
+function CategoriesSection({ onPick }: { onPick: (key: FaqKey) => void }) {
   return (
-    <div className="hc-categories-wrap">
-      <div className="hc-section">
-        <div className="hc-section-header">
-          <span className="hc-section-label">Knowledge base</span>
-          <h2 className="hc-section-title">Browse by topic</h2>
-          <p className="hc-section-desc">
-            Find articles, guides, and answers organised by the area of Bizak
-            you're working with.
-          </p>
-        </div>
+    <Section tone="light" pad="default">
+      <Container>
+        <SectionHeading
+          eyebrow="Knowledge base"
+          title="Browse help by topic"
+          description="Twelve focus areas covering everything from your first day on Bizak to enterprise-scale configuration."
+          maxWidth={720}
+          className="mb-12"
+        />
 
-        <div className="hc-categories-grid">
-          {CATEGORIES.map((cat) => (
-            <a href="#faq" className="hc-cat-card" key={cat.title}>
-              <div className="hc-cat-icon-row">
-                <div className="hc-cat-icon">
-                  <span className="material-symbols-outlined">{cat.icon}</span>
-                </div>
-                <span className="hc-cat-count">{cat.count}</span>
-              </div>
-              <div className="hc-cat-title">{cat.title}</div>
-              <div className="hc-cat-desc">{cat.desc}</div>
-              <span className="material-symbols-outlined hc-cat-arrow">north_east</span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── FAQ Section ──────────────────────────────────────────────────────────────
-
-function FAQSection() {
-  const [activeKey, setActiveKey] = useState("general");
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  const activeCat = FAQ_CATEGORIES.find((c) => c.key === activeKey) ?? FAQ_CATEGORIES[0];
-
-  const handleTabChange = (key: string) => {
-    setActiveKey(key);
-    setOpenIndex(null);
-  };
-
-  return (
-    <div className="hc-section" id="faq">
-      <div className="hc-section-header">
-        <span className="hc-section-label">FAQ</span>
-        <h2 className="hc-section-title">Frequently asked questions</h2>
-        <p className="hc-section-desc">
-          Answers to the most common questions about Bizak ERP — from getting
-          started to enterprise-level configuration.
-        </p>
-      </div>
-
-      <div className="hc-faq-layout">
-        {/* Tab navigation */}
-        <nav className="hc-faq-nav" aria-label="FAQ categories">
-          {FAQ_CATEGORIES.map((cat) => (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {CATEGORIES.map(({ icon: CatIcon, ...cat }) => (
             <button
-              key={cat.key}
-              className={`hc-faq-nav-btn${activeKey === cat.key ? " active" : ""}`}
-              onClick={() => handleTabChange(cat.key)}
+              key={cat.title}
+              type="button"
+              onClick={() => onPick(cat.filter)}
+              className="group relative flex flex-col rounded-bz-xl border border-bz-border bg-bz-surface p-6 text-left transition-all duration-200 hover:-translate-y-[2px] hover:border-bz-sage-mid hover:shadow-[0_16px_40px_rgba(15,17,14,0.06)]"
             >
-              <span className="material-symbols-outlined hc-faq-nav-icon">{cat.icon}</span>
-              <span className="hc-faq-nav-text">{cat.label}</span>
+              <div className="flex items-center justify-between">
+                <IconBadge size="md" tone="sage">
+                  <CatIcon className="size-[18px]" strokeWidth={1.8} />
+                </IconBadge>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-bz-text-soft">
+                  {cat.count}
+                </span>
+              </div>
+              <h3 className="mt-5 text-[16.5px] font-bold tracking-[-0.01em] text-bz-text">
+                {cat.title}
+              </h3>
+              <p className="mt-2 text-[13.5px] leading-[1.65] text-bz-text-muted">{cat.description}</p>
+              <span className="mt-5 inline-flex items-center gap-1 text-[12.5px] font-bold text-bz-sage transition-transform duration-200 group-hover:translate-x-0.5">
+                Read articles
+                <ArrowUpRight className="size-[13px]" strokeWidth={2.2} />
+              </span>
             </button>
           ))}
-        </nav>
+        </div>
+      </Container>
+    </Section>
+  );
+}
 
-        {/* FAQ list */}
-        <div className="hc-faq-content">
-          <div className="hc-faq-category-label">{activeCat.label}</div>
-          <div className="hc-faq-list">
-            {activeCat.faqs.map((faq, i) => (
-              <div
-                key={i}
-                className={`hc-faq-item${openIndex === i ? " open" : ""}`}
-              >
-                <button
-                  className="hc-faq-trigger"
-                  onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                  aria-expanded={openIndex === i}
-                >
-                  <span className="hc-faq-q">{faq.q}</span>
-                  <span className="material-symbols-outlined hc-faq-chevron">expand_more</span>
-                </button>
-                <div className="hc-faq-answer">
-                  <p>{faq.a}</p>
-                </div>
+// ─── FAQ ──────────────────────────────────────────────────────────────────────
+
+function FaqSection({
+  activeKey,
+  onChange,
+}: {
+  activeKey: FaqKey;
+  onChange: (key: FaqKey) => void;
+}) {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const activeGroup = FAQ_GROUPS.find((g) => g.key === activeKey) ?? FAQ_GROUPS[0];
+
+  return (
+    <Section tone="white" pad="default" id="faq">
+      <Container>
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[320px_1fr] lg:gap-16">
+          {/* Sidebar */}
+          <aside className="lg:sticky lg:top-[100px] lg:self-start">
+            <Eyebrow>Frequently asked</Eyebrow>
+            <h2 className="mt-3 text-[34px] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text md:text-[40px]">
+              Answers, organised by topic.
+            </h2>
+            <p className="mt-4 text-[15.5px] leading-[1.7] text-bz-text-muted">
+              The questions Bizak users ask us most often. Pick a topic to filter
+              — or use the search bar at the top of the page.
+            </p>
+
+            {/* Topic filter */}
+            <div className="mt-7 flex flex-wrap gap-2 lg:flex-col lg:gap-1">
+              {FAQ_GROUPS.map((g) => {
+                const isActive = g.key === activeKey;
+                return (
+                  <button
+                    key={g.key}
+                    type="button"
+                    onClick={() => {
+                      onChange(g.key);
+                      setOpenIndex(0);
+                    }}
+                    className={[
+                      "inline-flex items-center justify-between rounded-bz-md px-4 py-2.5 text-[13.5px] font-semibold transition-colors",
+                      isActive
+                        ? "bg-bz-deep text-white"
+                        : "bg-transparent text-bz-text-muted hover:bg-bz-bg hover:text-bz-text",
+                    ].join(" ")}
+                    aria-pressed={isActive}
+                  >
+                    <span>{g.label}</span>
+                    <span
+                      className={[
+                        "ml-3 hidden text-[11px] font-bold tabular-nums lg:inline",
+                        isActive ? "text-white/60" : "text-bz-text-soft",
+                      ].join(" ")}
+                    >
+                      {String(g.faqs.length).padStart(2, "0")}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+
+          {/* Accordion list */}
+          <div>
+            <div className="mb-6 flex items-center justify-between border-b border-bz-border pb-5">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-bz-sage">
+                  {activeGroup.label}
+                </span>
+                <h3 className="mt-1 text-[20px] font-bold text-bz-text">
+                  {activeGroup.faqs.length} questions in this topic
+                </h3>
               </div>
-            ))}
+              <PillBadge tone="neutral">FAQ</PillBadge>
+            </div>
+
+            <div className="flex flex-col">
+              {activeGroup.faqs.map((faq, i) => {
+                const isOpen = openIndex === i;
+                return (
+                  <div key={faq.q} className="border-b border-bz-border">
+                    <button
+                      type="button"
+                      onClick={() => setOpenIndex(isOpen ? null : i)}
+                      className="flex w-full items-start justify-between gap-6 py-6 text-left transition-colors hover:text-bz-sage"
+                      aria-expanded={isOpen}
+                    >
+                      <span className="text-[16.5px] font-semibold text-bz-text">{faq.q}</span>
+                      <ChevronDown
+                        className={[
+                          "mt-0.5 size-5 shrink-0 text-bz-text-soft transition-transform duration-200",
+                          isOpen && "rotate-180 text-bz-sage",
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
+                        strokeWidth={2}
+                      />
+                    </button>
+                    <div
+                      className={[
+                        "grid transition-[grid-template-rows] duration-300 ease-out",
+                        isOpen ? "grid-rows-[1fr] pb-7" : "grid-rows-[0fr]",
+                      ].join(" ")}
+                    >
+                      <div className="overflow-hidden">
+                        <p className="max-w-[720px] text-[15px] leading-[1.75] text-bz-text-muted">
+                          {faq.a}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Container>
+    </Section>
   );
 }
 
-// ─── Quote strip ─────────────────────────────────────────────────────────────
-
-function QuoteStrip() {
-  return (
-    <div className="hc-quote-strip">
-      <div className="hc-quote-strip-inner">
-        <div className="hc-quote-strip-text">
-          <p className="hc-quote-strip-q">
-            "We understand the operational challenges of growth."
-          </p>
-          <p className="hc-quote-strip-body">
-            Scaling a business shouldn't mean managing a mountain of
-            spreadsheets. Our support team is here to ensure every Bizak user
-            gets the most out of the platform — from day one through your
-            largest milestones.
-          </p>
-        </div>
-        <div className="hc-quote-strip-actions">
-          <a href="/contact" className="hc-qstrip-btn-primary">
-            Request a Demo <ArrowRight />
-          </a>
-          <a href="mailto:support@bizakerp.com.np" className="hc-qstrip-btn-ghost">
-            Email Support
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Resources ────────────────────────────────────────────────────────────────
+// ─── Resources (dark) ─────────────────────────────────────────────────────────
 
 function ResourcesSection() {
   return (
-    <div className="hc-section" style={{ paddingTop: 64 }}>
-      <div className="hc-section-header">
-        <span className="hc-section-label">Resources</span>
-        <h2 className="hc-section-title">Learn & grow with Bizak</h2>
-        <p className="hc-section-desc">
-          Beyond the help center — explore tutorials, docs, and community
-          discussions to get the most from your ERP investment.
-        </p>
-      </div>
+    <Section tone="dark" pad="default">
+      <Container>
+        <SectionHeading
+          eyebrow="Learn & grow"
+          eyebrowTone="accent"
+          title="Beyond the help center"
+          description="Tutorials, deep documentation, and a community of Bizak operators ready to share what's worked for them."
+          tone="light"
+          maxWidth={720}
+          className="mb-12"
+        />
 
-      <div className="hc-resources-grid">
-        {RESOURCES.map((r) => (
-          <div className="hc-resource-card" key={r.title}>
-            <div className="hc-resource-tag">
-              <span className="material-symbols-outlined">{r.icon}</span>
-              {r.tag}
-            </div>
-            <div className="hc-resource-title">{r.title}</div>
-            <div className="hc-resource-desc">{r.desc}</div>
-            <a href={r.href} className="hc-resource-link">
-              {r.cta} <ArrowRight />
-            </a>
-          </div>
-        ))}
-      </div>
-    </div>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          {RESOURCES.map(({ icon: ResIcon, ...r }) => (
+            <Card key={r.title} tone="dark" pad="lg" className="group flex flex-col">
+              <div className="flex items-center gap-3">
+                <IconBadge size="md" tone="darkSurface">
+                  <ResIcon className="size-[18px]" strokeWidth={1.8} />
+                </IconBadge>
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/60">
+                  {r.tag}
+                </span>
+              </div>
+              <h3 className="mt-7 text-[20px] font-bold tracking-[-0.01em] text-white">
+                {r.title}
+              </h3>
+              <p className="mt-3 flex-1 text-[14.5px] leading-[1.7] text-white/60">{r.description}</p>
+              <a
+                href={r.href}
+                className="mt-7 inline-flex items-center gap-1.5 text-[13.5px] font-bold text-bz-accent transition-transform duration-200 group-hover:translate-x-0.5"
+              >
+                {r.cta}
+                <ArrowRight className="size-[14px]" />
+              </a>
+            </Card>
+          ))}
+        </div>
+      </Container>
+    </Section>
   );
 }
 
-// ─── Bottom CTA ──────────────────────────────────────────────────────────────
+// ─── Bottom CTA ───────────────────────────────────────────────────────────────
 
-function BottomCTA() {
+function BottomCta() {
   return (
-    <div className="hc-bottom-cta">
-      <div className="hc-bottom-cta-inner">
-        <p className="hc-bottom-cta-label">Still need help?</p>
-        <h2 className="hc-bottom-cta-title">
-          Our team is ready to assist you.
-        </h2>
-        <p className="hc-bottom-cta-sub">
-          Can't find what you're looking for? Reach out directly and a Bizak
-          specialist will get back to you within one business day.
-        </p>
-        <div className="hc-bottom-cta-btns">
-          <a href="/contact" className="hc-cta-btn-primary">
-            Contact Support <ArrowRight size={13} />
-          </a>
-          <a
-            href="https://system.bizakerp.com/account/self-register"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hc-cta-btn-ghost"
-          >
-            Start Free Trial
-          </a>
+    <Section tone="light" pad="default">
+      <Container width="narrow">
+        <div className="relative overflow-hidden rounded-bz-2xl border border-bz-border bg-bz-surface p-10 md:p-16">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-bz-accent/10 blur-3xl"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-24 -left-24 h-[320px] w-[320px] rounded-full bg-bz-sage/10 blur-3xl"
+          />
+
+          <div className="relative grid grid-cols-1 items-center gap-10 md:grid-cols-[1fr_auto]">
+            <div>
+              <PillBadge tone="sage" dot>
+                Still need help
+              </PillBadge>
+              <h2 className="mt-5 text-[clamp(28px,3.5vw,44px)] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text">
+                A Bizak specialist is one click away.
+              </h2>
+              <p className="mt-4 max-w-[560px] text-[16px] leading-[1.7] text-bz-text-muted">
+                Can't find what you're looking for? Talk to our team and we'll
+                get back to you within one business day — or jump straight into
+                a free trial and explore the platform yourself.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 md:items-end">
+              <Button variant="primary" size="lg" href="/contact" withArrow>
+                Contact support
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                href="https://system.bizakerp.com/account/self-register"
+              >
+                Start a free trial
+              </Button>
+            </div>
+          </div>
+
+          <div className="relative mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-bz-border pt-7 text-[13px] text-bz-text-muted">
+            {[
+              { icon: Wrench, label: "Free implementation guidance" },
+              { icon: FileText, label: "No credit card required" },
+              { icon: Shield, label: "Cancel anytime" },
+            ].map(({ icon: Tick, label }) => (
+              <span key={label} className="inline-flex items-center gap-2">
+                <Tick className="size-4 text-bz-sage" strokeWidth={1.8} />
+                {label}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
-    </div>
+      </Container>
+    </Section>
   );
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function HelpCenter() {
+  const [activeFaq, setActiveFaq] = useState<FaqKey>("general");
+
+  const handlePickCategory = (key: FaqKey) => {
+    setActiveFaq(key);
+    if (typeof window !== "undefined") {
+      const el = document.getElementById("faq");
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
-    <div className="hc-page">
+    <div>
       <Header />
       <main style={{ paddingTop: 76 }}>
         <HeroSection />
-        <StatsBar />
         <ChannelsSection />
-        <CategoriesSection />
-        <FAQSection />
-        <QuoteStrip />
+        <CategoriesSection onPick={handlePickCategory} />
+        <FaqSection activeKey={activeFaq} onChange={setActiveFaq} />
         <ResourcesSection />
-        <BottomCTA />
+        <BottomCta />
       </main>
       <Footer />
     </div>
