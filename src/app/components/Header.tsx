@@ -554,6 +554,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <HeadphonesIcon size={15} />,
             title: "Help Center",
             description: "Find answers to common questions",
+               href: "/HelpCenter", // ← Add this
           },
           {
             icon: <MessageSquare size={15} />,
