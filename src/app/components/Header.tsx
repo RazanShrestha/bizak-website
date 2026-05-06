@@ -529,6 +529,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <BookOpen size={15} />,
             title: "Documentation",
             description: "Full technical docs for all modules and APIs",
+            href: "/documentation",
           },
           {
             icon: <FileText size={15} />,
