@@ -41,6 +41,7 @@ import { StartupsAndSmes } from "./components/StartupsAndSmes";
 import { MidMarket } from "./components/MidMarket";
 import { Enterprise } from "./components/Enterprise";
 import { HelpCenter } from "./components/HelpCenter";
+import { OurMissionPage } from "./components/OurMissionPage";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
 function RootLayout() {
@@ -532,6 +533,7 @@ export const router = createBrowserRouter([
       { path: "Enterprise",      Component: Enterprise       },
       { path: "support",         Component: HelpCenter       },
       { path: "HelpCenter",      Component: HelpCenter       },
+      { path: "OurMission",      Component: OurMissionPage   },
       {
         path: "blog",
         Component: () => <Outlet />,
