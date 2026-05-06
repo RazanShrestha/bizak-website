@@ -36,7 +36,7 @@ The design system has **three layers and two scopes**:
    variants. Live in **two scopes**:
    - `marketing/` — generic, used by *any* page (`Container`, `Section`,
      `Eyebrow`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`,
-     `PillBadge`, `Icon`).
+     `PillBadge`, `HeroBadge`, `Icon`).
    - `solutions/by-industry/` — page-family-specific, used only by the 4
      "By Industry" pages (Manufacturing, Distribution, ProfessionalService,
      Retail). These encode the *rhythm* of the industry shape:
@@ -257,6 +257,23 @@ Renders as small uppercase 0.12em-tracked text. Used standalone or inside
 <PillBadge tone="neutral">v2.4</PillBadge>
 ```
 
+### HeroBadge
+
+```tsx
+<HeroBadge>Transition from Chaos to Control</HeroBadge>
+```
+
+The eyebrow pill that sits above a hero `<h1>`. Has the brand
+accent→sage gradient, soft sage shadow, and tight uppercase tracking.
+
+**Use it instead of `<PillBadge>` whenever the pill sits in a hero**
+(directly above an `<h1>`). For non-hero contexts (cards, callouts, status
+chips, mid-page section eyebrows), keep using `<PillBadge>` or `<Eyebrow>`.
+
+Pair with `.biz-mesh` on the hero `<section>` — the mesh background and
+the badge gradient are the canonical hero treatment together. See
+"Canonical hero pattern" below.
+
 ### Icon
 
 ```tsx
@@ -442,6 +459,58 @@ Pure data. Dashed-line + 6 step circles.
 ```
 
 Closing CTA section.
+
+---
+
+## 3.6 Canonical hero pattern
+
+Marketing heroes (HomePage, By-Industry, By-Function, product, "Why Bizak", etc.) share two reusable visual primitives. Don't reinvent them per page — they're the visual signature of a Bizak hero.
+
+### Hero background — `.biz-mesh`
+
+A 3-stop radial mesh defined once at `src/styles/style.css`'s `.biz-mesh` rule. Apply it to the hero `<section>`:
+
+```tsx
+// Plain section
+<section className="biz-mesh ..."> ... </section>
+
+// With the Section primitive (preferred for new pages)
+<Section pad="hero" className="biz-mesh"> ... </Section>
+```
+
+`<Section tone="light">` sets a flat `bg-bz-bg`; layering `className="biz-mesh"` on top wins because the mesh uses `background-image` (the section's `background-color` shows through where the radial stops fade out — that's the design).
+
+If the mesh needs adjusting (different hue, stronger contrast), edit `.biz-mesh` once. **Do not redeclare radial-gradient stops inline** in a page file.
+
+### Hero pill — `<HeroBadge>`
+
+The eyebrow pill above the hero `<h1>`:
+
+```tsx
+import { HeroBadge } from "./marketing";
+
+<HeroBadge>Transition from Chaos to Control</HeroBadge>
+<h1 className="...">Still running your business on Excel?</h1>
+```
+
+It carries the brand accent→sage gradient, a soft sage shadow, and tight uppercase tracking. **Use it instead of `<PillBadge tone="accent">` whenever the pill is in a hero.** For non-hero contexts (cards, callouts, mid-page eyebrows, status chips), keep using `<PillBadge>` / `<Eyebrow>`.
+
+### Hero spacing baseline
+
+When stacking `HeroBadge → h1 → subhead → buttons`:
+
+- The badge sits **~16px** above the `<h1>` (the gradient pill is loud — big gaps fight it).
+- Hero `<section>` top padding is **moderate (~72px)** on top of the 76px header offset, **not** 120px.
+
+If a page has its own legacy `wb-*` / page-prefix hero CSS, drop the inlined gradients and tighten the spacing to this baseline before adding new content.
+
+### When this pattern applies
+
+Any hero — landing pages, top-of-page sections, "above the fold" sections. It does **not** apply to mid-page section headings (those use `<SectionHeading>` + `<Eyebrow>` on a flat `<Section tone="light"|"white"|"dark">`).
+
+### Why these are the only allowed gradients
+
+Project-wide rule is "no gradients" (no decorative `linear-gradient` for cards, dividers, glows, chip backgrounds, etc.). The hero mesh and the hero badge are the **two carve-outs**: they're the visual signature of a Bizak hero, defined once in shared infrastructure (a CSS class + a React primitive), so reuse stays effortless and there's no drift.
 
 ---
 

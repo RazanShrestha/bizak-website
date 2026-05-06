@@ -32,7 +32,8 @@ This is the non-negotiable preflight. Walk through every item; whatever is
 
 1. **Scope.** Open `src/app/components/Header.tsx` and find this page inside the `megaMenus` object. Which top-level group + sub-heading does it sit under? Does a corresponding scope folder exist (e.g., `solutions/by-industry/`)?
 2. **Section primitives.** If the page belongs to a family with a scope folder, is it composing those scoped section primitives, or duplicating their JSX inline? If a sibling page in the same family has invented a section the primitive doesn't cover yet, **promote that pattern into the scope folder first**, then use it.
-3. **Global primitives.** `Container`, `Section`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `Eyebrow` from `marketing/` — used wherever they fit?
+3. **Global primitives.** `Container`, `Section`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `HeroBadge`, `Eyebrow` from `marketing/` — used wherever they fit?
+3a. **Hero pattern (canonical).** If the page has a hero `<section>`: it MUST use `.biz-mesh` for the background and `<HeroBadge>` for the eyebrow pill. No inline `linear-gradient` / `radial-gradient` for the hero bg. No hand-rolled `<div className="...-badge">` with a custom gradient. Spacing baseline: hero top padding ~72px, badge sits ~16px above the `<h1>`. See "Canonical hero pattern" in `/docs/DESIGN_SYSTEM.md` §3.6 and `/CLAUDE.md`.
 4. **Tokens.** No per-file `const C = {...}` color object. No hex literals except in genuinely dynamic style props. All colors via `var(--bz-*)` or Tailwind utilities.
 5. **Icons.** No per-file SVG dictionary `function Icon({ name }) {...}`. Use the global `<Icon name="..." />` from `marketing/` for data-driven loops; import lucide directly (`import { Factory } from "lucide-react"`) for statically known icons.
 6. **Fonts.** Inter only. References to `'Manrope'`, `'Poppins'`, etc. are silent visual bugs.
@@ -52,7 +53,7 @@ file you touched."
   - inline `style={{ ... }}` for static values (colors, padding, fonts)
   - `onMouseEnter` / `onMouseLeave` mutating `e.currentTarget.style`
   - `'Manrope'` / `'Poppins'` / any font that isn't `'Inter'`
-  - `linear-gradient(...)` / `radial-gradient(...)`
+  - `linear-gradient(...)` / `radial-gradient(...)` (except via the canonical `.biz-mesh` class on a hero, or inside the `<HeroBadge>` primitive — those two are the allowed reuses)
   - a per-file `function Icon({ name }) { const icons = {...} }` SVG dictionary (legacy industry-page pattern — replace with the global `marketing/Icon`)
   - `<svg>` with hardcoded path strings where a lucide equivalent exists
   - `<span className="material-symbols-outlined">`
@@ -110,7 +111,10 @@ data + a custom hero visual.
   - `rgba(255,255,255,0.6)` (text on dark muted) → `text-white/60`
 
 - For each old `onMouseEnter` style mutation, replace with Tailwind `hover:` utility.
-- For each old gradient (`linear-gradient` or `radial-gradient`), replace with a flat fill or remove the decorative element. Project rule: no gradients.
+- For each old gradient (`linear-gradient` or `radial-gradient`):
+  - **If it's the hero `<section>` background** → replace with the `.biz-mesh` className (no inline radials).
+  - **If it's a hero eyebrow/badge** → replace with `<HeroBadge>` from `marketing/`.
+  - **Anything else** (cards, dividers, glows, chip backgrounds, decorative blobs) → flat fill or delete the decorative element. Project rule still bans non-hero gradients.
 - For each `<svg>` with a hardcoded path, look up the lucide-react equivalent. If unsure, leave the SVG temporarily and flag it in your summary — don't guess wrong icons.
 
 ### Step 4 — Remove dead code
@@ -127,7 +131,7 @@ data + a custom hero visual.
    ```
    Manrope|Poppins|linear-gradient|radial-gradient|material-symbols-outlined|onMouseEnter
    ```
-   Inside the file you migrated, all results should be 0 (or justified).
+   Inside the file you migrated, all results should be 0. **Justified exceptions:** if the file is a hero, it should reference `.biz-mesh` (className) and `<HeroBadge>` instead of inline `linear-gradient`/`radial-gradient` — verify those references are present, not the raw gradient strings.
 3. If non-trivial, ask the user to run `npm run build` and `npm run dev` to verify visually.
 
 ### Step 6 — Report

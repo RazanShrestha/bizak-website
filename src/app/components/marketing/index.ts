@@ -7,5 +7,6 @@ export { Card } from "./Card";
 export { Stat } from "./Stat";
 export { IconBadge } from "./IconBadge";
 export { PillBadge } from "./PillBadge";
+export { HeroBadge } from "./HeroBadge";
 export { Icon } from "./Icon";
 export type { IconName, IconProps } from "./Icon";

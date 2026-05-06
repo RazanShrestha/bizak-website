@@ -29,7 +29,7 @@ The component layer has **two scopes**, and where a primitive lives encodes who 
 
 | Scope | Location | Used by | Examples |
 |---|---|---|---|
-| **Global** | `src/app/components/marketing/` | *any* marketing page | `Container`, `Section`, `Eyebrow`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `Icon` |
+| **Global** | `src/app/components/marketing/` | *any* marketing page | `Container`, `Section`, `Eyebrow`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `HeroBadge`, `Icon` |
 | **Solutions → By Industry** | `src/app/components/solutions/by-industry/` | only the 4 "By Industry" pages (Manufacturing, Distribution, ProfessionalService, Retail) | `IndustryHero`, `HeroVisual` (+ `HeroMainCard` / `HeroInventoryCard` / `HeroGlobeCard` / `HeroCircleCard`), `Node`, `ChallengesGrid` (+ `ChallengeCard`), `SolutionGrid`, `CapabilitiesGrid` (+ `CapabilityCard`, `SimpleFeatureCard`, `MonoTable`, `MethodGrid`, `MiniStatBlock`), `InsightsBlock` (+ `ChartFrame`), `WorkflowStrip`, `IndustryCta` |
 
 The folder hierarchy mirrors `Header.tsx`'s mega-menu hierarchy. When you add a new family of pages (e.g., "Solutions → By Function"), create a new sibling scope folder rather than dumping into `marketing/`.
@@ -72,7 +72,7 @@ Never deep-import from another scope's folder (`solutions/by-industry/IndustryHe
 
 1. **One font family: Inter.** It's the only family loaded in `fonts.css`. Do not introduce Manrope, Poppins, Roboto, or anything else without first adding the `@import` to `fonts.css`. References to unloaded fonts silently fall back and create real visual bugs.
 2. **One icon library: `lucide-react`** — wrapped by the global `<Icon>` registry at `marketing/Icon.tsx` for legacy-name aliases (`work-order`, `bom`, `mrp`, etc.). Do not redefine an `Icon` component inside a page file. Do not bring in `@mui/icons-material`. Do not use Material Symbols (`<span className="material-symbols-outlined">`) in *new* code. Existing usage in `HomePage.tsx`'s dashboard mockup may stay until rewritten.
-3. **No gradients.** Project rule (`linear-gradient`, `radial-gradient`, conic-gradient). Use flat fills, layered solid colors, subtle dot patterns, or shadows for depth. This includes "glow" mesh backgrounds.
+3. **No gradients — except the canonical hero treatment.** Don't add decorative `linear-gradient`/`radial-gradient`/`conic-gradient` for cards, sections, dividers, glows, etc. **The one exception is the hero pattern** (see "Canonical hero pattern" below): hero `<section>`s wear `.biz-mesh` (a 3-stop radial mesh defined once in `style.css`) and any hero pill uses the `<HeroBadge>` primitive (which has the brand accent→sage gradient baked in). Reuse those — don't reinvent the gradient inline.
 4. **`className` over inline `style`.** Never use `onMouseEnter`/`onMouseLeave` to mutate `e.currentTarget.style` — use Tailwind `hover:` utilities. The only legitimate inline `style` is for **dynamic values that can't be expressed in className** (e.g., a computed `width: ${pct}%` for a progress bar, or `style={{ maxWidth: 560 }}` when the value comes from a prop).
 5. **No per-file color objects.** No `const C = {...}` at the top of a page file. Use tokens (`var(--bz-sage)`) or Tailwind utilities (`text-bz-sage`).
 6. **Keep page files small.** Pages should be composition + data arrays. If a section grows past ~80 lines of JSX, extract it into a sibling component or a primitive.
@@ -104,6 +104,10 @@ Never deep-import from another scope's folder (`solutions/by-industry/IndustryHe
 <Stat value="50,000+" label="businesses" tone="dark"|"light" size="sm"|"md"|"lg" align="left"|"center" />
 <IconBadge size="sm"|"md"|"lg" tone="sage"|"accent"|"darkSurface"><Icon/></IconBadge>
 <PillBadge tone="sage"|"accent"|"neutral"|"live" dot>NEW</PillBadge>
+<HeroBadge>Transition from Chaos to Control</HeroBadge>
+   // Hero-only pill. Brand accent→sage gradient baked in. Pair with
+   // <section className="biz-mesh ..."> (or any hero-mesh section).
+   // For non-hero pills use <PillBadge> instead.
 <Icon name="work-order" size={22} strokeWidth={1.8} />
    // single SVG registry; wraps lucide-react with legacy aliases
    // (work-order, bom, mrp, floor, quality, hub, …). For *new* code,
@@ -184,6 +188,29 @@ Never deep-import from another scope's folder (`solutions/by-industry/IndustryHe
 
 The canonical reference page using all of these: `src/app/components/ManufacturingPage.tsx`. When migrating Distribution / ProfessionalService / Retail, mirror its structure.
 
+## Canonical hero pattern
+
+Every marketing hero (HomePage, By-Industry, By-Function, product, "Why Bizak", etc.) shares **two reusable visual primitives**. Don't reinvent them per page.
+
+1. **Hero background — `.biz-mesh`.** A 3-stop radial mesh defined once at `src/styles/style.css`'s `.biz-mesh` rule. Apply it on the hero `<section>`:
+   ```tsx
+   <section className="biz-mesh ..."> ... </section>
+   // or with the Section primitive:
+   <Section pad="hero" className="biz-mesh"> ... </Section>
+   ```
+   `<Section tone="light">` sets a flat `bg-bz-bg`; adding `className="biz-mesh"` layers the mesh on top (the mesh wins because it's a `background-image`). Don't redeclare radial-gradient stops inline — if the mesh needs adjusting, edit `.biz-mesh` once.
+
+2. **Hero pill — `<HeroBadge>`.** The eyebrow pill above the hero `<h1>`. It carries the brand accent→sage gradient + soft shadow + tight uppercase tracking. Use it instead of `<PillBadge tone="accent">` *whenever the pill sits above an `<h1>` in a hero*. For non-hero contexts (cards, callouts, status chips), keep using `<PillBadge>`.
+
+   ```tsx
+   <HeroBadge>Transition from Chaos to Control</HeroBadge>
+   <h1 className="...">Still running your business on Excel?</h1>
+   ```
+
+**Hero spacing baseline.** When stacking `HeroBadge → h1 → subhead → buttons`, the badge sits ~16px above the h1 (don't pad it 28px+ — the gradient pill is loud enough that big gaps fight it). Hero `<section>` top padding is moderate (~72px on top of the 76px header offset, not 120px).
+
+**When this rule applies.** Any hero — landing pages, top-of-page sections of marketing pages, "above the fold." It does **not** apply to mid-page section headings (those use `<SectionHeading>` + `<Eyebrow>` on a flat `<Section tone="light"|"white"|"dark">`).
+
 ## Anatomy of a marketing page
 
 Every marketing page follows this shape:
@@ -255,7 +282,8 @@ Before editing **any** page file, walk through this checklist. If any item is "n
 
 1. **Scope.** Open `src/app/components/Header.tsx` and find this page in the `megaMenus` data structure. Which top-level group + sub-heading does it sit under? Does a corresponding scope folder exist (e.g., `solutions/by-industry/`)?
 2. **Section primitives.** If the page belongs to a family with a scope folder, is it composing those scoped section primitives (`IndustryHero`, `ChallengesGrid`, etc.)? Or is it duplicating their JSX inline? If duplicated → migrate to the primitives. If a sibling page in the same family has invented a section the primitive doesn't cover yet → promote that pattern into the scope folder before using it.
-3. **Global primitives.** Is the page using `marketing/` for atoms (`Container`, `Section`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `Eyebrow`)? Hand-rolled wrappers around those shapes are red flags.
+3. **Global primitives.** Is the page using `marketing/` for atoms (`Container`, `Section`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `HeroBadge`, `Eyebrow`)? Hand-rolled wrappers around those shapes are red flags.
+3a. **Hero pattern.** If this page has a hero `<section>`, it must use `.biz-mesh` for the background **and** `<HeroBadge>` for the eyebrow pill (not a hand-rolled `<div>` with a custom gradient, not `<PillBadge>`). Hero top padding is moderate (~72px), and the badge sits ~16px above the `<h1>`. See "Canonical hero pattern" above.
 4. **Tokens.** No per-file `const C = {...}`, no hex literals (except in genuinely dynamic style props). All colors via `var(--bz-*)` or Tailwind utilities (`text-bz-sage`, `bg-bz-accent`).
 5. **Icons.** No per-file `function Icon({ name }) { const icons = {...} }` SVG dictionary. Use the global `<Icon>` from `marketing/Icon.tsx` for data-driven loops; import lucide directly for static usage.
 6. **Fonts.** Inter only. No `'Manrope'`, `'Poppins'`, etc.
