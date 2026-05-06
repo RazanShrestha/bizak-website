@@ -914,6 +914,16 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
     if (!open) setExpandedItem(null);
   }, [open]);
 
+  // Lock body scroll while drawer is open
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   return (
     <>
       {/* Backdrop */}
@@ -959,7 +969,11 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
             borderBottom: "1px solid #f0f1ed",
           }}
         >
-          <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+          <a
+            href="/"
+            onClick={onClose}
+            style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
+          >
             <img
               src={bizakLogo}
               alt="Bizak ERP"
@@ -1058,7 +1072,13 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                             <a
                               key={mIdx}
                               href={mItem.href || "#"}
-                              onClick={mItem.href ? undefined : (e) => e.preventDefault()}
+                              onClick={(e) => {
+                                if (!mItem.href) {
+                                  e.preventDefault();
+                                  return;
+                                }
+                                onClose();
+                              }}
                               style={{
                                 display: "flex",
                                 alignItems: "center",
@@ -1067,6 +1087,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                                 borderRadius: 8,
                                 textDecoration: "none",
                                 transition: "background 0.15s ease",
+                                WebkitTapHighlightColor: "rgba(122,130,109,0.15)",
                               }}
                               onMouseEnter={(e) =>
                                 ((e.currentTarget as HTMLElement).style.background = "#f7f8f5")
@@ -1173,8 +1194,10 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 
           
     <a
-            href="https://system.bizakerp.com" target="_blank"
-           
+            href="https://system.bizakerp.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={onClose}
             style={{
               display: "block",
               textAlign: "center",
@@ -1187,6 +1210,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
               color: "#444",
               textDecoration: "none",
               transition: "background 0.15s ease",
+              WebkitTapHighlightColor: "rgba(122,130,109,0.15)",
             }}
             onMouseEnter={(e) =>
               ((e.currentTarget as HTMLElement).style.background = "#f7f8f5")
@@ -1196,12 +1220,12 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
             }
           >
             Log in
-          </a> 
+          </a>
 
 
           <a
             href="/contact"
-            target="_blank"
+            onClick={onClose}
             style={{
               display: "flex",
               alignItems: "center",
@@ -1215,6 +1239,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
               fontSize: 14,
               color: "#fff",
               textDecoration: "none",
+              WebkitTapHighlightColor: "rgba(255,255,255,0.2)",
             }}
             onMouseEnter={(e) =>
               ((e.currentTarget as HTMLElement).style.background = "#333")
