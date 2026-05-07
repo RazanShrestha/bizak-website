@@ -10,7 +10,7 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import {
   Container, Section, SectionHeading, Button, Card,
-  IconBadge, PillBadge, HeroPanel,
+  IconBadge, PillBadge, HeroPanel, HeroBadge,
 } from "./marketing";
 
 // ─── Hero panel ───────────────────────────────────────────────────────────────
@@ -103,7 +103,7 @@ function BusinessOverviewPanel() {
 function HeroSection() {
   return (
     <HeroPanel
-      badge={<PillBadge tone="accent" dot>ERP for Startups & SMEs</PillBadge>}
+      badge={<HeroBadge tone="dark">ERP for Startups & SMEs</HeroBadge>}
       title={<>Launch Fast.<br /><span className="text-bz-accent">Scale</span> Without Limits.</>}
       description="Replace your spreadsheets and disconnected tools with a single, pre-configured ERP built for growing businesses. Go live in days — not months — and scale every module as your team grows."
       actions={

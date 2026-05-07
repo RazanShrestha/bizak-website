@@ -118,10 +118,14 @@ Never deep-import from another scope's folder (`solutions/by-industry/IndustryHe
 <Stat value="50,000+" label="businesses" tone="dark"|"light" size="sm"|"md"|"lg" align="left"|"center" />
 <IconBadge size="sm"|"md"|"lg" tone="sage"|"accent"|"darkSurface"><Icon/></IconBadge>
 <PillBadge tone="sage"|"accent"|"neutral"|"live" dot>NEW</PillBadge>
-<HeroBadge>Transition from Chaos to Control</HeroBadge>
-   // Hero-only pill. Brand accent→sage gradient baked in. Pair with
-   // <section className="biz-mesh ..."> (or any hero-mesh section).
-   // For non-hero pills use <PillBadge> instead.
+<HeroBadge tone="light"|"dark">Transition from Chaos to Control</HeroBadge>
+   // Hero-only pill. Elevated glass with a subtle lime brand wash + slow
+   // shine sweep. Use tone="light" (default) on `.biz-mesh` hero surfaces
+   // (HeroCentered / HeroSplit, HomePage, by-industry pages). Use
+   // tone="dark" on dark hero surfaces (HeroPanel — StartupsAndSmes,
+   // Careers, etc.). ALWAYS use <HeroBadge> in the hero badge slot —
+   // never substitute <PillBadge tone="accent">; that's reserved for
+   // non-hero contexts (cards, callouts, status chips).
 <Icon name="work-order" size={22} strokeWidth={1.8} />
    // single SVG registry; wraps lucide-react with legacy aliases
    // (work-order, bom, mrp, floor, quality, hub, …). For *new* code,
@@ -251,7 +255,7 @@ This applies to: `redesign hero in <Page>`, `redesign <Page>` (when the page has
 
 // Option 3 — Panel (Careers)
 <HeroPanel
-  badge={<PillBadge tone="accent" dot>...</PillBadge>}
+  badge={<HeroBadge tone="dark">...</HeroBadge>}
   title={<>Build what the <span className="text-bz-accent">world runs on.</span></>}
   description="..."
   actions={<><Button/><Button/></>}
@@ -328,7 +332,7 @@ The `paddingTop: 76` shim is **only** valid for routed pages whose first content
 
 If you're unsure where the 76 is hiding, grep: `grep -rn "paddingTop: 76" src/app/`. Both layers must be clean for the page you're redesigning.
 
-**One global rule still applies inside all three:** when the page has a hero, the badge above the `<h1>` is `<HeroBadge>` (Options 1 & sometimes 2) or `<PillBadge tone="accent">` (Option 3 / Careers pattern). Don't roll a custom gradient pill. The `.biz-mesh` background applies wherever `mesh={true}`.
+**One global rule still applies inside all three:** when the page has a hero, the badge above the `<h1>` is **always** `<HeroBadge>` — never `<PillBadge tone="accent">`, never a hand-rolled gradient pill. Use `tone="light"` (default) for light/`.biz-mesh` heroes (Options 1 & 2) and `tone="dark"` for dark heroes (Option 3 / `HeroPanel`, or any `HeroCentered`/`HeroSplit` set to `tone="dark"`). The `.biz-mesh` background applies wherever `mesh={true}`.
 
 ## Canonical hero pattern (the rules every option obeys)
 
@@ -342,11 +346,18 @@ Every marketing hero (HomePage, By-Industry, By-Function, product, "Why Bizak", 
    ```
    `<Section tone="light">` sets a flat `bg-bz-bg`; adding `className="biz-mesh"` layers the mesh on top (the mesh wins because it's a `background-image`). Don't redeclare radial-gradient stops inline — if the mesh needs adjusting, edit `.biz-mesh` once.
 
-2. **Hero pill — `<HeroBadge>`.** The eyebrow pill above the hero `<h1>`. It carries the brand accent→sage gradient + soft shadow + tight uppercase tracking. Use it instead of `<PillBadge tone="accent">` *whenever the pill sits above an `<h1>` in a hero*. For non-hero contexts (cards, callouts, status chips), keep using `<PillBadge>`.
+2. **Hero pill — `<HeroBadge tone="light"|"dark">`.** The eyebrow pill above the hero `<h1>`. Elevated glass with a subtle lime brand wash, soft drop shadow, and a slow shine sweep — tight uppercase tracking. Use it **whenever the pill sits above an `<h1>` in a hero**, on every hero option:
+   - `tone="light"` (default) — for light/`.biz-mesh` heroes (`HeroCentered`, `HeroSplit`, all by-industry pages, HomePage).
+   - `tone="dark"` — for dark heroes (`HeroPanel`, or `HeroCentered`/`HeroSplit` rendered with `tone="dark"`).
+
+   Never substitute `<PillBadge tone="accent">` in a hero badge slot — `<PillBadge>` is for non-hero contexts (cards, callouts, status chips).
 
    ```tsx
-   <HeroBadge>Transition from Chaos to Control</HeroBadge>
-   <h1 className="...">Still running your business on Excel?</h1>
+   // Light hero
+   <HeroBadge>Smart Manufacturing Platform</HeroBadge>
+
+   // Dark hero (HeroPanel — StartupsAndSmes, Careers, …)
+   <HeroBadge tone="dark">ERP for Startups & SMEs</HeroBadge>
    ```
 
 **Hero spacing baseline.** When stacking `HeroBadge → h1 → subhead → buttons`, the badge sits ~16px above the h1 (don't pad it 28px+ — the gradient pill is loud enough that big gaps fight it). Hero `<section>` top padding is moderate (~72px on top of the 76px header offset, not 120px).
@@ -426,7 +437,7 @@ Before editing **any** page file, walk through this checklist. If any item is "n
 1. **Scope.** Open `src/app/components/Header.tsx` and find this page in the `megaMenus` data structure. Which top-level group + sub-heading does it sit under? Does a corresponding scope folder exist (e.g., `solutions/by-industry/`)?
 2. **Section primitives.** If the page belongs to a family with a scope folder, is it composing those scoped section primitives (`IndustryHero`, `ChallengesGrid`, etc.)? Or is it duplicating their JSX inline? If duplicated → migrate to the primitives. If a sibling page in the same family has invented a section the primitive doesn't cover yet → promote that pattern into the scope folder before using it.
 3. **Global primitives.** Is the page using `marketing/` for atoms (`Container`, `Section`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `HeroBadge`, `Eyebrow`)? Hand-rolled wrappers around those shapes are red flags.
-3a. **Hero pattern.** If this page has a hero `<section>`, it must use `.biz-mesh` for the background **and** `<HeroBadge>` for the eyebrow pill (not a hand-rolled `<div>` with a custom gradient, not `<PillBadge>`). Hero top padding is moderate (~72px), and the badge sits ~16px above the `<h1>`. See "Canonical hero pattern" above.
+3a. **Hero pattern.** If this page has a hero `<section>`, it must use `.biz-mesh` for the background (where applicable) **and** `<HeroBadge>` for the eyebrow pill — `<HeroBadge tone="dark">` on dark hero surfaces (`HeroPanel`), default `<HeroBadge>` on light. Never a hand-rolled `<div>` with a custom gradient, never `<PillBadge>` in a hero badge slot. Hero top padding is moderate (~72px), and the badge sits ~16px above the `<h1>`. See "Canonical hero pattern" above.
 4. **Tokens.** No per-file `const C = {...}`, no hex literals (except in genuinely dynamic style props). All colors via `var(--bz-*)` or Tailwind utilities (`text-bz-sage`, `bg-bz-accent`).
 5. **Icons.** No per-file `function Icon({ name }) { const icons = {...} }` SVG dictionary. Use the global `<Icon>` from `marketing/Icon.tsx` for data-driven loops; import lucide directly for static usage.
 6. **Fonts.** Inter only. No `'Manrope'`, `'Poppins'`, etc.
