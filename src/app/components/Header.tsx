@@ -4,57 +4,23 @@ import {
   Menu,
   X,
   ArrowRight,
-  LayoutDashboard,
-  Shield,
-  Layers,
-  DollarSign,
-  ShoppingCart,
-  Package,
-  Factory,
-  FolderKanban,
-  BarChart3,
-  Zap,
-  Plug,
-  Building2,
-  Truck,
-  Briefcase,
-  Store,
-  Users,
-  Calculator,
-  Tag,
-  BookOpen,
-  FileText,
-  HeadphonesIcon,
-  GraduationCap,
-  MessageSquare,
-  Globe,
-  Award,
-  Star,
-  Heart,
-  Rocket,
-  Handshake,
-  BookMarked,
-  Video,
-  Info,
-  Target,
-  UserCheck,
-  Calendar,
-  Mail,
-  CheckCircle,
-  Activity,
+  ArrowUpRight,
 } from "lucide-react";
-import svgPaths from "../../imports/svg-eyvfmiiac4";
 import bizakLogo from "../../assets/bizaklogo.png";
+import imgBlogCover from "../../assets/3ba19eec4fd3cf07fba6be8524f24fddb8d27558.png";
+
+// Mirrors `IMG_HERO_MAIN` on CaseStudiesPage so the Customers menu thumbnail
+// matches the case-studies hero image.
+const CASE_STUDIES_THUMB =
+  "https://images.unsplash.com/photo-1759092912815-cb0ee4a8a365?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbnRlcnByaXNlJTIwYnVzaW5lc3MlMjBvcGVyYXRpb25zJTIwZ2xvYmFsJTIwaGVhZHF1YXJ0ZXJzfGVufDF8fHx8MTc3MjEwOTAyNnww&ixlib=rb-4.1.0&q=80&w=1080";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface MenuItem {
-  icon: React.ReactNode;
   title: string;
-  description: string;
+  description?: string;
   badge?: string;
-   href?: string; // ← Add this
- 
+  href?: string;
 }
 
 interface MenuColumn {
@@ -64,23 +30,13 @@ interface MenuColumn {
 
 interface MegaMenuData {
   columns: MenuColumn[];
-  cta?: {
-    label: string;
-    buttonLabel: string;
-    highlight?: string;
-  };
-}
-
-interface MegaMenuPanelProps {
-  data: MegaMenuData;
-  visible: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
 }
 
 // ─── Mega Menu Content Data ───────────────────────────────────────────────────
+//
+// Data is now content-only — no per-menu visual primitives. Each menu's
+// layout composition lives in its own *Layout component below, which can
+// hardcode menu-specific elements (stats, featured card, image slots).
 
 const megaMenus: Record<string, MegaMenuData> = {
   Product: {
@@ -89,20 +45,16 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Overview",
         items: [
           {
-            icon: <Layers size={15} />,
             title: "Bizak ERP Platform",
-            description: "Unified system to manage finance, inventory, sales, and operations",
-             href: "/product",
-           
+            description: "Unified system for finance, inventory, sales and operations",
+            href: "/product",
           },
           {
-            icon: <Target size={15} />,
             title: "Why Bizak",
-            description: "Replace spreadsheets and disconnected legacy systems",
-                 href: "/why-bizak", // ← Add this
+            description: "Replace spreadsheets and disconnected legacy tools",
+            href: "/why-bizak",
           },
           {
-            icon: <Shield size={15} />,
             title: "Architecture & Security",
             description: "Enterprise-grade infrastructure and reliability",
           },
@@ -112,110 +64,79 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Core Modules",
         items: [
           {
-            icon: <DollarSign size={15} />,
             title: "Financial Management",
-            description: "General ledger, receivables, payables, reporting",
-             href: "/FinancialManagement", 
+            description: "GL, AR, AP, multi-entity consolidation",
+            href: "/FinancialManagement",
           },
           {
-            icon: <ShoppingCart size={15} />,
             title: "Sales & CRM",
-            description: "Quotes, sales orders, invoicing, customer tracking",
+            description: "Quotes, orders, invoicing, pipeline",
             badge: "Popular",
-           href: "/SalesCrm", 
+            href: "/SalesCrm",
           },
           {
-            icon: <Truck size={15} />,
             title: "Purchasing",
-            description: "Vendor management and procurement workflows",
-              href: "/purchasing",
+            description: "Vendors, POs, 3-way matching",
+            href: "/purchasing",
           },
           {
-            icon: <Package size={15} />,
             title: "Inventory & Warehouse",
-            description: "Real-time stock and warehouse control",
-                 href: "/InventoryAndWarehouse",
+            description: "Real-time stock and multi-location control",
+            href: "/InventoryAndWarehouse",
           },
           {
-            icon: <Factory size={15} />,
             title: "Manufacturing",
-            description: "Production planning and costing",
-           href: "/ManufacturingProduct",
+            description: "BOM, routing, work orders, MRP, OEE",
+            href: "/ManufacturingProduct",
           },
           {
-            icon: <FolderKanban size={15} />,
             title: "Projects & Job Costing",
-            description: "Track project profitability and resources",
-               href: "/ProjectAndCosting",
+            description: "Project P&L, time, milestones, billing",
+            href: "/ProjectAndCosting",
           },
-
-   {
-            icon: <Target size={15} />,
+          {
             title: "Sales Force Management",
-            description: "Improve productivity and track performance",
-                 href: "/SalesForceManagement",
+            description: "Field productivity, beat plans, targets",
+            href: "/SalesForceManagement",
           },
-
-
-             {
-            icon: <Store size={15} />,
-            title: "Point Of Sales",
-            description: "Process in-store transactions, manage cashiers, and print receipts",
-                 href: "/PointOfSales",
+          {
+            title: "Point of Sales",
+            description: "In-store transactions and cashier flow",
+            href: "/PointOfSales",
           },
-
-
         ],
       },
-
-
-
-
-
       {
-        heading: "Platform Capabilities",
+        heading: "Platform",
         items: [
           {
-            icon: <BarChart3 size={15} />,
             title: "Dashboards & Reporting",
-            description: "Real-time operational insights across your business",
-               href: "/DashboardAndReporting", // ← Add this
+            description: "Real-time, cross-module insights",
+            href: "/DashboardAndReporting",
           },
           {
-            icon: <Zap size={15} />,
             title: "Workflow Automation",
-            description: "Automate approvals and routine business processes",
-                 href: "/workflow", // ← Add this
+            description: "Approvals and rules without code",
+            href: "/workflow",
           },
           {
-            icon: <Plug size={15} />,
             title: "Integrations",
-            description: "Connect banks, ecommerce, and external systems",
+            description: "Banks, ecommerce, shipping, tax",
             href: "/Integrations",
           },
           {
-            icon: <Building2 size={15} />,
             title: "Multi-company & Multi-branch",
-            description: "Manage multiple entities from one platform",
+            description: "Inter-company elimination, consolidated books",
             href: "/MulticompanyAndBranches",
           },
-
-    {
-            icon: <FileText size={15} />,
+          {
             title: "Document Management",
-            description: "File & Document of organisation",
+            description: "Attachments, e-sign, retention",
             href: "/DocumentManagement",
           },
-
-
         ],
       },
     ],
-    cta: {
-      label: "See Bizak in action",
-      buttonLabel: "Request Demo",
-      highlight: "Live demo with a product expert",
-    },
   },
 
   Solutions: {
@@ -224,28 +145,24 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "By Industry",
         items: [
           {
-            icon: <Factory size={15} />,
             title: "Manufacturing",
-            description: "Production, BOM, costing, and supply chain",
+            description: "Production, BOM, costing, supply chain",
             href: "/manufacturing",
           },
           {
-            icon: <Truck size={15} />,
             title: "Distribution & Logistics",
-            description: "Warehouse, routing, and delivery management",
+            description: "Warehouse, routing, multi-channel fulfilment",
             href: "/distribution",
           },
           {
-            icon: <Briefcase size={15} />,
             title: "Professional Services",
-            description: "Project tracking, billing, and resource planning",
-               href: "/ProfessionalService", // ← Add this
+            description: "Project tracking, billing, utilisation",
+            href: "/ProfessionalService",
           },
           {
-            icon: <Store size={15} />,
             title: "Retail & E-Commerce",
-            description: "POS, multi-channel, inventory, and returns",
-                 href: "/Retail", // ← Add this
+            description: "POS, omnichannel, inventory, returns",
+            href: "/Retail",
           },
         ],
       },
@@ -253,200 +170,47 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "By Company Size",
         items: [
           {
-            icon: <Rocket size={15} />,
             title: "Startups & SMEs",
-            description: "Get started fast with pre-configured modules",
+            description: "Pre-configured modules to start fast",
             href: "/StartupsAndSmes",
           },
           {
-            icon: <Building2 size={15} />,
             title: "Mid-Market",
-            description: "Scale operations with advanced workflows",
+            description: "Scale with advanced workflows",
             href: "/MidMarket",
           },
           {
-            icon: <Globe size={15} />,
             title: "Enterprise",
-            description: "Multi-entity, multi-currency, global deployments",
-                   href: "/Enterprise",
+            description: "Multi-entity, multi-currency, global",
+            href: "/Enterprise",
           },
         ],
       },
       {
         heading: "By Function",
         items: [
-          {
-            icon: <DollarSign size={15} />,
-            title: "Finance Teams",
-            description: "Automate close, compliance, and reporting",
-          },
-          {
-            icon: <Package size={15} />,
-            title: "Operations",
-            description: "Streamline supply chain and fulfillment",
-          },
-          {
-            icon: <Users size={15} />,
-            title: "Sales & Revenue",
-            description: "Accelerate pipeline and close faster",
-          },
-          {
-            icon: <LayoutDashboard size={15} />,
-            title: "IT & Admins",
-            description: "Manage integrations, access, and system health",
-          },
+          { title: "Finance Teams", description: "Close, compliance, reporting" },
+          { title: "Operations", description: "Supply chain and fulfilment" },
+          { title: "Sales & Revenue", description: "Pipeline and faster close" },
+          { title: "IT & Admins", description: "Integrations, access, system health" },
         ],
       },
     ],
-    cta: {
-      label: "Find your industry solution",
-      buttonLabel: "Explore Solutions",
-    },
-  },
-
-  Pricing: {
-    columns: [
-      {
-        heading: "Plans",
-        items: [
-          {
-            icon: <Rocket size={15} />,
-            title: "Starter",
-            description: "Core ERP modules for growing businesses up to 25 users",
-          },
-          {
-            icon: <Building2 size={15} />,
-            title: "Growth",
-            description: "Advanced automation and multi-branch support",
-            badge: "Most Popular",
-          },
-          {
-            icon: <Globe size={15} />,
-            title: "Enterprise",
-            description: "Full suite with custom SLA and dedicated support",
-          },
-        ],
-      },
-      {
-        heading: "Compare & Calculate",
-        items: [
-          {
-            icon: <CheckCircle size={15} />,
-            title: "Compare Plans",
-            description: "Side-by-side feature comparison across all tiers",
-          },
-          {
-            icon: <Calculator size={15} />,
-            title: "ROI Calculator",
-            description: "Estimate your savings and payback period",
-          },
-          {
-            icon: <Tag size={15} />,
-            title: "Volume Discounts",
-            description: "Custom pricing for 100+ seat deployments",
-          },
-        ],
-      },
-      {
-        heading: "Add-ons",
-        items: [
-          {
-            icon: <Plug size={15} />,
-            title: "Integration Pack",
-            description: "Premium connectors for Shopify, Stripe, and Xero",
-          },
-          {
-            icon: <Shield size={15} />,
-            title: "Advanced Security",
-            description: "SSO, audit logs, IP restrictions, and more",
-          },
-          {
-            icon: <HeadphonesIcon size={15} />,
-            title: "Priority Support",
-            description: "Dedicated CSM and guaranteed SLA response times",
-          },
-        ],
-      },
-    ],
-    cta: {
-      label: "Not sure which plan fits your team?",
-      buttonLabel: "Talk to Sales",
-      highlight: "No long-term contracts",
-    },
   },
 
   Customers: {
     columns: [
       {
-        heading: "Success Stories",
+        heading: "Stories",
         items: [
           {
-            icon: <Star size={15} />,
-            title: "Customer Stories",
-            description: "How businesses scaled with Bizak ERP",
-          },
-          {
-            icon: <BarChart3 size={15} />,
             title: "Case Studies",
             description: "Detailed results and metrics from real deployments",
-                href: "/case-studies", // ← Add this
-          },
-          {
-            icon: <Heart size={15} />,
-            title: "Reviews & Ratings",
-            description: "Verified reviews from G2, Capterra, and Trustpilot",
-          },
-        ],
-      },
-
-
-      
-      {
-        heading: "By Industry",
-        items: [
-          {
-            icon: <Factory size={15} />,
-            title: "Manufacturing Wins",
-            description: "Production efficiency gains across the sector",
-          },
-          {
-            icon: <Truck size={15} />,
-            title: "Distribution Leaders",
-            description: "Logistics and fulfillment transformation stories",
-          },
-          {
-            icon: <Store size={15} />,
-            title: "Retail Champions",
-            description: "Omnichannel and POS success stories",
-          },
-        ],
-      },
-      {
-        heading: "Community",
-        items: [
-          {
-            icon: <Users size={15} />,
-            title: "Customer Community",
-            description: "Connect with 5,000+ Bizak users worldwide",
-          },
-          {
-            icon: <Award size={15} />,
-            title: "Customer Advisory Board",
-            description: "Shape the future of the product with us",
-          },
-          {
-            icon: <Calendar size={15} />,
-            title: "User Conference",
-            description: "BizakConnect 2025 — Join our annual summit",
-            badge: "Sept 2025",
+            href: "/case-studies",
           },
         ],
       },
     ],
-    cta: {
-      label: "Join 5,000+ businesses growing with Bizak",
-      buttonLabel: "Read Stories",
-    },
   },
 
   Partners: {
@@ -455,44 +219,38 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Partner Types",
         items: [
           {
-            icon: <Handshake size={15} />,
             title: "Resellers",
-            description: "Sell and implement Bizak in your local market",
+            description: "Sell and implement Bizak in your market",
             href: "/partners/resellers",
           },
           {
-            icon: <UserCheck size={15} />,
             title: "Consultants & SIs",
-            description: "Deliver Bizak implementations for clients",
+            description: "Deliver implementations for clients",
             href: "/partners/consultants",
           },
           {
-            icon: <Plug size={15} />,
             title: "Technology Partners",
-            description: "Build integrations on top of Bizak APIs",
+            description: "Build integrations on Bizak APIs",
             href: "/partners/technology",
           },
         ],
       },
       {
-        heading: "Partner Resources",
+        heading: "Resources",
         items: [
           {
-            icon: <BookOpen size={15} />,
             title: "Partner Portal",
-            description: "Access training, certifications, and sales tools",
+            description: "Training, certifications, sales tools",
             href: "/partners/portal",
           },
           {
-            icon: <FileText size={15} />,
             title: "Marketplace",
             description: "Discover and list partner extensions",
             href: "/partners/marketplace",
           },
           {
-            icon: <Globe size={15} />,
             title: "Find a Partner",
-            description: "Locate a certified Bizak partner near you",
+            description: "Locate a certified Bizak partner",
             href: "/partners/find",
           },
         ],
@@ -501,30 +259,23 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Grow Together",
         items: [
           {
-            icon: <Rocket size={15} />,
             title: "Become a Partner",
             description: "Apply to join the Bizak Partner Network",
             href: "/partners",
           },
           {
-            icon: <Award size={15} />,
             title: "Partner Awards",
-            description: "Recognizing excellence in our partner ecosystem",
+            description: "Recognising excellence in our ecosystem",
             href: "/partners/awards",
           },
           {
-            icon: <Calendar size={15} />,
             title: "Partner Events",
-            description: "Upcoming training, summits, and webinars",
+            description: "Training, summits, and webinars",
             href: "/partners/events",
           },
         ],
       },
     ],
-    cta: {
-      label: "Grow your practice with Bizak",
-      buttonLabel: "Become a Partner",
-    },
   },
 
   Resources: {
@@ -533,22 +284,16 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Learn",
         items: [
           {
-            icon: <BookOpen size={15} />,
             title: "Documentation",
-            description: "Full technical docs for all modules and APIs",
+            description: "Full technical docs for modules and APIs",
             href: "/documentation",
           },
           {
-            icon: <FileText size={15} />,
             title: "Blog",
             description: "Insights on ERP, finance, and operations",
             href: "/blog",
-
-
-
           },
           {
-            icon: <BookMarked size={15} />,
             title: "Guides & Playbooks",
             description: "Step-by-step implementation guides",
             href: "/GuidesAndPlaybooks",
@@ -559,21 +304,18 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Support",
         items: [
           {
-            icon: <HeadphonesIcon size={15} />,
             title: "Help Center",
-            description: "Find answers to common questions",
-               href: "/HelpCenter", // ← Add this
+            description: "Answers to common questions",
+            href: "/HelpCenter",
           },
           {
-            icon: <MessageSquare size={15} />,
             title: "Community Forum",
-            description: "Ask questions and share tips with peers",
+            description: "Ask and share with peers",
             href: "/CommunityForum",
           },
           {
-            icon: <GraduationCap size={15} />,
             title: "Training & Certification",
-            description: "Self-paced courses and official certifications",
+            description: "Self-paced courses and certifications",
             href: "/TrainingAndCertification",
           },
         ],
@@ -581,30 +323,17 @@ const megaMenus: Record<string, MegaMenuData> = {
       {
         heading: "Tools",
         items: [
+          { title: "ROI Calculator", description: "Estimate savings and payback" },
+          { title: "Templates Library", description: "Ready-to-use templates" },
           {
-            icon: <Calculator size={15} />,
-            title: "ROI Calculator",
-            description: "Estimate your savings and payback period",
-          },
-          {
-            icon: <FileText size={15} />,
-            title: "Templates Library",
-            description: "Ready-to-use finance and operations templates",
-          },
-          {
-            icon: <Video size={15} />,
             title: "Webinars & Events",
-            description: "Live and on-demand product sessions",
+            description: "Live and on-demand sessions",
             href: "/WebinarsAndEvents",
             badge: "Live",
           },
         ],
       },
     ],
-    cta: {
-      label: "Explore all resources",
-      buttonLabel: "Visit Resource Center",
-    },
   },
 
   Company: {
@@ -613,19 +342,16 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "About",
         items: [
           {
-            icon: <Info size={15} />,
             title: "About Bizak",
-            description: "Our story, mission, and the team behind the product",
+            description: "Our story, mission and team",
             href: "/about",
           },
           {
-            icon: <Target size={15} />,
             title: "Our Mission",
             description: "Empowering businesses with clarity and control",
             href: "/OurMission",
           },
           {
-            icon: <Users size={15} />,
             title: "Leadership Team",
             description: "Meet the people driving Bizak forward",
             href: "/LeadershipTeam",
@@ -636,53 +362,34 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Connect",
         items: [
           {
-            icon: <Briefcase size={15} />,
             title: "Careers",
-            description: "Join a team building the future of enterprise ERP",
+            description: "Join the team building enterprise ERP",
             badge: "Hiring",
             href: "/careers",
           },
           {
-            icon: <FileText size={15} />,
             title: "Press & Media",
             description: "News, brand assets, and media kit",
             href: "/PressAndMedia",
           },
           {
-            icon: <Calendar size={15} />,
-            title: "Events",
-            description: "Conferences, webinars, and roadshows",
+            title: "Contact Us",
+            description: "Reach our team for sales and support",
+            href: "/contact",
           },
         ],
       },
       {
-        heading: "Support & Trust",
+        heading: "Trust",
         items: [
           {
-            icon: <Mail size={15} />,
-            title: "Contact Us",
-            description: "Reach our team for sales and general support",
-            href: "/contact",
-
-          },
-          {
-            icon: <Shield size={15} />,
-            title: "Trust Center",
-            description: "Compliance, certifications, and data policies",
-          },
-          {
-            icon: <Activity size={15} />,
             title: "System Status",
-            description: "Live uptime monitoring and incident reporting",
+            description: "Live uptime and incident reporting",
             href: "/system-status",
           },
         ],
       },
     ],
-    cta: {
-      label: "Want to learn more about Bizak?",
-      buttonLabel: "Contact Us",
-    },
   },
 };
 
@@ -696,223 +403,456 @@ const NAV_ITEMS = [
   "Company",
 ];
 
-// ─── MenuItem Component ───────────────────────────────────────────────────────
+// ─── Shared Mega-Menu Atoms ───────────────────────────────────────────────────
+//
+// Same primitives across every menu — only the layout composition varies.
 
-function MegaMenuItem({ item }: { item: MenuItem }) {
+function ColumnHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2.5 mb-4">
+      <span aria-hidden className="block h-px w-3 bg-bz-sage" />
+      <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-bz-text-soft">
+        {children}
+      </span>
+    </div>
+  );
+}
+
+function MenuLink({
+  item,
+  dense = false,
+  dark = false,
+}: {
+  item: MenuItem;
+  dense?: boolean;
+  dark?: boolean;
+}) {
+  const handleClick = item.href ? undefined : (e: React.MouseEvent) => e.preventDefault();
   return (
     <a
-   
-
-     href={item.href || "#"}          // ← Use item.href here
- onClick={item.href ? undefined : (e) => e.preventDefault()} // ← Only prevent default if no href
-
- 
-      className="group flex items-start gap-3 p-2.5 rounded-lg hover:bg-[#f7f8f5] transition-all duration-150 cursor-pointer"
+      href={item.href || "#"}
+      onClick={handleClick}
+      className={`group block ${dense ? "py-1.5" : "py-2"} px-3 -mx-3 rounded-bz-md transition-colors ${
+        dark ? "hover:bg-white/[0.06]" : "hover:bg-bz-bg-alt"
+      }`}
     >
-      <div
-        className="mt-0.5 flex-shrink-0 w-[30px] h-[30px] flex items-center justify-center rounded-md transition-all duration-150"
-        style={{ background: "#f2f3ef", color: "#7a826d" }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.background = "#7a826d";
-          (e.currentTarget as HTMLElement).style.color = "#fff";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.background = "#f2f3ef";
-          (e.currentTarget as HTMLElement).style.color = "#7a826d";
-        }}
-      >
-        {item.icon}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
+      <span className="flex items-baseline gap-2">
+        <span
+          className={`text-[13.5px] font-semibold transition-colors leading-tight ${
+            dark
+              ? "text-white group-hover:text-bz-accent"
+              : "text-bz-text group-hover:text-bz-sage"
+          }`}
+        >
+          {item.title}
+        </span>
+        {item.badge && (
           <span
-            className="text-[#1c1c1c] group-hover:text-[#7a826d] transition-colors duration-150"
-            style={{ fontFamily: "Inter", fontWeight: 500, fontSize: 13.5, lineHeight: 1.3 }}
+            className={`text-[9px] font-bold uppercase tracking-[0.06em] px-1.5 py-[2px] rounded-bz-sm ${
+              dark ? "bg-bz-accent/15 text-bz-accent" : "bg-bz-sage-soft text-bz-sage"
+            }`}
           >
-            {item.title}
+            {item.badge}
           </span>
-          {item.badge && (
-            <span
-              className="flex-shrink-0 px-1.5 py-[2px] rounded"
-              style={{
-                fontFamily: "Inter",
-                fontWeight: 600,
-                fontSize: 9.5,
-                letterSpacing: "0.4px",
-                background: "rgba(122,130,109,0.12)",
-                color: "#7a826d",
-                textTransform: "uppercase",
-              }}
-            >
-              {item.badge}
-            </span>
-          )}
-        </div>
-        <p
-          className="text-[#999] leading-snug mt-[3px] group-hover:text-[#777] transition-colors"
-          style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 12 }}
+        )}
+      </span>
+      {item.description && !dense && (
+        <span
+          className={`block text-[11.5px] mt-0.5 leading-snug ${
+            dark ? "text-white/55" : "text-bz-text-soft"
+          }`}
         >
           {item.description}
-        </p>
-      </div>
+        </span>
+      )}
     </a>
+  );
+}
+
+function MenuColumnView({ column, dense = false }: { column: MenuColumn; dense?: boolean }) {
+  return (
+    <div>
+      {column.heading && <ColumnHeading>{column.heading}</ColumnHeading>}
+      <div className="flex flex-col">
+        {column.items.map((item, i) => (
+          <MenuLink key={i} item={item} dense={dense} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Per-Menu Layouts ─────────────────────────────────────────────────────────
+//
+// Each layout shares the menu atoms but composes them differently to suit
+// the section's narrative. Stats, callouts, and image slots only appear
+// where they make sense — never as boilerplate.
+
+/** Product — dark olive pane on the left holds the title + the Overview
+ *  links (the title doubles as the column heading). The right area drops
+ *  to 2 columns: Core Modules (dense) + Platform. */
+function ProductLayout({ data }: { data: MegaMenuData }) {
+  const overview = data.columns[0];
+  const coreModules = data.columns[1];
+  const platform = data.columns[2];
+  return (
+    <div className="grid grid-cols-[300px_1fr]">
+      {/* Dark pane — title doubles as Overview column heading, links below */}
+      <div className="flex flex-col bg-bz-deep px-6 py-7 text-white relative overflow-hidden">
+        <span
+          aria-hidden
+          className="absolute -top-12 -right-12 size-40 rounded-full bg-bz-accent/10 blur-2xl"
+        />
+        <span className="relative text-[10px] font-bold uppercase tracking-[0.16em] text-bz-accent">
+          The Platform
+        </span>
+        <h3 className="relative mt-2.5 text-[20px] font-bold leading-[1.2] tracking-[-0.015em] text-white">
+          One system.
+          <br />
+          Every module.
+        </h3>
+
+        <div className="relative mt-5 pt-5 border-t border-white/10 flex flex-col">
+          {overview.items.map((item, i) => (
+            <MenuLink key={i} item={item} dark />
+          ))}
+        </div>
+
+        <a
+          href="/contact"
+          className="group/cta relative mt-auto pt-6 inline-flex items-center gap-1.5 text-[13px] font-semibold text-bz-accent hover:text-white transition-colors w-fit"
+        >
+          Request Demo
+          <ArrowUpRight
+            size={14}
+            className="transition-transform duration-150 group-hover/cta:translate-x-[1px] group-hover/cta:-translate-y-[1px]"
+          />
+        </a>
+      </div>
+
+      {/* Right — 2 link columns on white. Core Modules dense so titles don't
+          dominate; Platform keeps descriptions. */}
+      <div className="px-7 py-7 grid grid-cols-2 gap-x-10 bg-bz-surface">
+        <MenuColumnView column={coreModules} dense />
+        <MenuColumnView column={platform} />
+      </div>
+    </div>
+  );
+}
+
+/** Solutions — clean 3-axis catalog. The leading "By Industry" column
+ *  sits on a sage-soft tint to mark it as the headline category, with the
+ *  primary "Talk to Sales →" CTA pinned to its bottom. */
+function SolutionsLayout({ data }: { data: MegaMenuData }) {
+  return (
+    <div className="grid grid-cols-3 bg-bz-surface">
+      <div className="flex flex-col bg-bz-sage-soft px-6 py-7 border-r border-bz-border-soft relative">
+        <span
+          aria-hidden
+          className="absolute top-7 left-0 block w-[3px] h-9 bg-bz-sage rounded-r-full"
+        />
+        <MenuColumnView column={data.columns[0]} />
+        <a
+          href="/contact"
+          className="group/cta mt-auto pt-6 inline-flex items-center gap-1.5 text-[13px] font-semibold text-bz-sage hover:text-bz-sage-hover transition-colors w-fit"
+        >
+          Talk to Sales
+          <ArrowUpRight
+            size={14}
+            className="transition-transform duration-150 group-hover/cta:translate-x-[1px] group-hover/cta:-translate-y-[1px]"
+          />
+        </a>
+      </div>
+      <div className="px-6 py-7">
+        <MenuColumnView column={data.columns[1]} />
+      </div>
+      <div className="px-6 py-7 border-l border-bz-border-soft">
+        <MenuColumnView column={data.columns[2]} />
+      </div>
+    </div>
+  );
+}
+
+/** Customers — same dark two-pane design with qualitative copy on the
+ *  left (no numbers) and a single thumbnail card on the right that mirrors
+ *  the hero image used on /case-studies. */
+function CustomersLayout(_props: { data: MegaMenuData }) {
+  return (
+    <div className="grid grid-cols-[1.3fr_1fr] gap-10 px-7 py-7 bg-bz-deep relative overflow-hidden">
+      <span
+        aria-hidden
+        className="absolute -top-20 -left-10 size-56 rounded-full bg-bz-accent/8 blur-3xl"
+      />
+      <span
+        aria-hidden
+        className="absolute -bottom-24 -right-10 size-64 rounded-full bg-bz-sage/15 blur-3xl"
+      />
+
+      <div className="relative flex flex-col">
+        <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-bz-accent">
+          Customer Stories
+        </span>
+        <h3 className="mt-2.5 text-[24px] font-bold leading-[1.15] tracking-[-0.015em] text-white">
+          How real teams run on Bizak.
+        </h3>
+        <p className="mt-3 text-[13px] leading-[1.55] text-white/65 max-w-[440px]">
+          See how operators across manufacturing, distribution, services and
+          retail replaced spreadsheet chaos with a single source of truth —
+          and what changed for the people running the books.
+        </p>
+
+        <a
+          href="/case-studies"
+          className="group/cta mt-auto pt-6 inline-flex items-center gap-1.5 text-[13px] font-semibold text-bz-accent hover:text-white transition-colors w-fit"
+        >
+          Read the case studies
+          <ArrowUpRight
+            size={14}
+            className="transition-transform duration-150 group-hover/cta:translate-x-[1px] group-hover/cta:-translate-y-[1px]"
+          />
+        </a>
+      </div>
+
+      {/* Thumbnail card — mirrors the hero image on /case-studies */}
+      <a
+        href="/case-studies"
+        className="group relative flex flex-col rounded-bz-lg overflow-hidden bg-black/25 border border-white/10 hover:border-bz-accent/50 transition-colors no-underline"
+      >
+        <div className="aspect-[4/3] relative">
+          <img
+            src={CASE_STUDIES_THUMB}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-[3px] bg-bz-accent text-bz-deep text-[9px] font-bold uppercase tracking-[0.14em] rounded-bz-pill">
+            <span className="size-1.5 rounded-full bg-bz-deep" aria-hidden />
+            Featured
+          </span>
+        </div>
+        <div className="flex items-center justify-between gap-3 p-3.5 bg-black/40">
+          <span className="min-w-0">
+            <span className="block text-[9.5px] font-bold uppercase tracking-[0.16em] text-bz-accent">
+              Case Studies
+            </span>
+            <span className="block mt-0.5 text-[12.5px] font-semibold text-white truncate">
+              Browse the full library
+            </span>
+          </span>
+          <ArrowUpRight
+            size={14}
+            className="text-white/50 group-hover:text-bz-accent transition-all duration-150 group-hover:translate-x-[1px] group-hover:-translate-y-[1px] flex-shrink-0"
+          />
+        </div>
+      </a>
+    </div>
+  );
+}
+
+/** Partners — sage-soft pane on the left holds the "Partner Types" column
+ *  + the "Become a Partner →" CTA. The right area is 2 cols (Resources +
+ *  Grow Together). Mirrors the Product pattern where the colored pane
+ *  doubles as the first-column home. */
+function PartnersLayout({ data }: { data: MegaMenuData }) {
+  const types = data.columns[0];
+  const resources = data.columns[1];
+  const grow = data.columns[2];
+  return (
+    <div className="grid grid-cols-[300px_1fr]">
+      <div className="flex flex-col bg-bz-sage-soft px-6 py-7 relative">
+        <span
+          aria-hidden
+          className="absolute top-7 left-0 block w-[3px] h-9 bg-bz-sage rounded-r-full"
+        />
+        <MenuColumnView column={types} />
+        <a
+          href="/partners"
+          className="group/cta mt-auto pt-6 inline-flex items-center gap-1.5 text-[13px] font-semibold text-bz-sage hover:text-bz-sage-hover transition-colors w-fit"
+        >
+          Become a Partner
+          <ArrowUpRight
+            size={14}
+            className="transition-transform duration-150 group-hover/cta:translate-x-[1px] group-hover/cta:-translate-y-[1px]"
+          />
+        </a>
+      </div>
+      <div className="grid grid-cols-2 gap-x-10 px-7 py-7 bg-bz-surface">
+        <MenuColumnView column={resources} />
+        <MenuColumnView column={grow} />
+      </div>
+    </div>
+  );
+}
+
+/** Resources — white panel with a dark-toned featured card on the left
+ *  carrying a real blog cover image. The dark card is the eye-catcher;
+ *  "Visit Resource Center →" pins to the bottom of the left pane. */
+function ResourcesLayout({ data }: { data: MegaMenuData }) {
+  return (
+    <div className="grid grid-cols-[280px_1fr] gap-8 px-7 py-7 bg-bz-surface">
+      <div className="flex flex-col">
+        <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-bz-sage mb-3">
+          Latest
+        </span>
+        <a
+          href="/blog"
+          className="group flex flex-col rounded-bz-lg overflow-hidden bg-bz-deep hover:shadow-[0_12px_28px_rgba(20,22,18,0.18)] transition-shadow no-underline"
+        >
+          <div className="aspect-[16/10] relative">
+            <img
+              src={imgBlogCover}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-[3px] bg-bz-accent text-bz-deep text-[9px] font-bold uppercase tracking-[0.14em] rounded-bz-pill">
+              <span className="size-1.5 rounded-full bg-bz-deep" aria-hidden />
+              Featured
+            </span>
+          </div>
+          <div className="p-4 flex-1 flex flex-col">
+            <span className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-bz-accent">
+              Blog
+            </span>
+            <h4 className="mt-1.5 text-[13.5px] font-semibold leading-[1.3] tracking-[-0.005em] text-white">
+              Replace your spreadsheet stack: a step-by-step playbook
+            </h4>
+            <span className="mt-3 inline-flex items-center gap-1 text-[11.5px] font-semibold text-bz-accent">
+              Read article
+              <ArrowUpRight
+                size={12}
+                className="transition-transform duration-150 group-hover:translate-x-[1px] group-hover:-translate-y-[1px]"
+              />
+            </span>
+          </div>
+        </a>
+        <a
+          href="/documentation"
+          className="group/cta mt-auto pt-6 inline-flex items-center gap-1.5 text-[13px] font-semibold text-bz-sage hover:text-bz-sage-hover transition-colors w-fit"
+        >
+          Visit Resource Center
+          <ArrowUpRight
+            size={14}
+            className="transition-transform duration-150 group-hover/cta:translate-x-[1px] group-hover/cta:-translate-y-[1px]"
+          />
+        </a>
+      </div>
+      <div className="grid grid-cols-3 gap-x-7">
+        {data.columns.map((col, i) => (
+          <MenuColumnView key={i} column={col} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Company — dark "We're hiring" spotlight strip across the top
+ *  (tappable, links to /careers), then a clean 3-col grid below. */
+function CompanyLayout({ data }: { data: MegaMenuData }) {
+  return (
+    <div className="bg-bz-surface">
+      <a
+        href="/careers"
+        className="group relative flex items-center justify-between gap-4 px-7 py-3.5 bg-bz-deep overflow-hidden no-underline"
+      >
+        <span
+          aria-hidden
+          className="absolute -left-10 -top-10 size-32 rounded-full bg-bz-accent/12 blur-2xl"
+        />
+        <span
+          aria-hidden
+          className="absolute -right-12 -bottom-12 size-32 rounded-full bg-bz-sage/15 blur-2xl"
+        />
+        <span className="relative flex items-center gap-3 min-w-0">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-bz-sm bg-bz-accent text-bz-deep text-[9.5px] font-bold uppercase tracking-[0.18em] flex-shrink-0">
+            Hiring
+          </span>
+          <span className="text-[13.5px] font-semibold text-white truncate">
+            Join the team building the future of enterprise ERP.
+          </span>
+        </span>
+        <span className="relative inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-bz-accent flex-shrink-0">
+          View open roles
+          <ArrowUpRight
+            size={13}
+            className="transition-transform duration-150 group-hover:translate-x-[1px] group-hover:-translate-y-[1px]"
+          />
+        </span>
+      </a>
+      <div className="grid grid-cols-3 gap-x-10 px-7 py-7">
+        {data.columns.map((col, i) => (
+          <MenuColumnView key={i} column={col} />
+        ))}
+      </div>
+    </div>
   );
 }
 
 // ─── Mega Menu Panel ──────────────────────────────────────────────────────────
 
+interface MegaMenuPanelProps {
+  menu: string;
+  data: MegaMenuData;
+  visible: boolean;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}
+
 function MegaMenuPanel({
+  menu,
   data,
   visible,
   onMouseEnter,
   onMouseLeave,
-  onFocus,
-  onBlur,
 }: MegaMenuPanelProps) {
-  const colCount = data.columns.length;
+  let body: React.ReactNode;
+  switch (menu) {
+    case "Product":
+      body = <ProductLayout data={data} />;
+      break;
+    case "Solutions":
+      body = <SolutionsLayout data={data} />;
+      break;
+    case "Customers":
+      body = <CustomersLayout data={data} />;
+      break;
+    case "Partners":
+      body = <PartnersLayout data={data} />;
+      break;
+    case "Resources":
+      body = <ResourcesLayout data={data} />;
+      break;
+    case "Company":
+      body = <CompanyLayout data={data} />;
+      break;
+    default:
+      body = <SolutionsLayout data={data} />;
+  }
+
+  // Customers uses a full-dark panel; everyone else stays light.
+  const isDark = menu === "Customers";
+  const chromeClass = isDark
+    ? "rounded-bz-xl bg-bz-deep border border-white/10 shadow-[0_18px_50px_rgba(0,0,0,0.30),0_4px_12px_rgba(0,0,0,0.18)] overflow-hidden"
+    : "rounded-bz-xl bg-bz-surface border border-bz-border shadow-[0_10px_36px_rgba(20,22,18,0.07),0_2px_8px_rgba(20,22,18,0.04)] overflow-hidden";
 
   return (
     <div
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      onFocus={onFocus}
-      onBlur={onBlur}
       style={{
         position: "absolute",
-        top: "calc(100% + 8px)",
+        top: "100%",
         left: "50%",
         transform: visible
-          ? "translateX(-50%) translateY(0px)"
-          : "translateX(-50%) translateY(-10px)",
+          ? "translateX(-50%) translateY(0)"
+          : "translateX(-50%) translateY(-6px)",
         opacity: visible ? 1 : 0,
         pointerEvents: visible ? "all" : "none",
-        transition: "opacity 0.18s ease, transform 0.2s ease",
-        width: colCount === 3 ? "min(1080px, calc(100vw - 64px))" : "min(780px, calc(100vw - 64px))",
-        background: "#ffffff",
-        borderRadius: 14,
-        border: "1px solid #eaece7",
-        boxShadow: "0 8px 48px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)",
-        overflow: "hidden",
+        transition: "opacity 0.18s ease, transform 0.22s ease",
+        width: "min(1040px, calc(100vw - 48px))",
+        marginTop: 10,
         zIndex: 100,
       }}
     >
-      {/* Caret pointer */}
-      <div
-        style={{
-          position: "absolute",
-          top: -6,
-          left: "50%",
-          transform: "translateX(-50%) rotate(45deg)",
-          width: 12,
-          height: 12,
-          background: "#ffffff",
-          border: "1px solid #eaece7",
-          borderBottom: "none",
-          borderRight: "none",
-        }}
-      />
-
-      <div style={{ padding: "28px 28px 24px" }}>
-        {/* Column grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: `repeat(${colCount}, 1fr)`,
-            gap: "24px 32px",
-          }}
-        >
-          {data.columns.map((col, colIdx) => (
-            <div key={colIdx}>
-              {col.heading && (
-                <div
-                  style={{
-                    fontFamily: "Inter",
-                    fontWeight: 600,
-                    fontSize: 10,
-                    letterSpacing: "0.8px",
-                    color: "#c0c0b8",
-                    textTransform: "uppercase",
-                    marginBottom: 10,
-                    paddingBottom: 10,
-                    borderBottom: "1px solid #f0f1ed",
-                  }}
-                >
-                  {col.heading}
-                </div>
-              )}
-              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                {col.items.map((item, itemIdx) => (
-                  <MegaMenuItem key={itemIdx} item={item} />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA Bar */}
-        {data.cta && (
-          <div
-            style={{
-              marginTop: 22,
-              paddingTop: 18,
-              borderTop: "1px solid #f0f1ed",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 16,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-              <span
-                style={{
-                  fontFamily: "Inter",
-                  fontWeight: 400,
-                  fontSize: 13,
-                  color: "#666",
-                }}
-              >
-                {data.cta.label}
-              </span>
-              {data.cta.highlight && (
-                <span
-                  style={{
-                    fontFamily: "Inter",
-                    fontWeight: 400,
-                    fontSize: 12,
-                    color: "#bbb",
-                  }}
-                >
-                  — {data.cta.highlight}
-                </span>
-              )}
-            </div>
-            <a
-              href="#"
-              onClick={(e) => e.preventDefault()}
-              className="group flex-shrink-0 inline-flex items-center gap-2 hover:gap-3 transition-all duration-150"
-              style={{
-                fontFamily: "Inter",
-                fontWeight: 600,
-                fontSize: 13,
-                color: "#fff",
-                background: "#1a1a1a",
-                padding: "10px 20px",
-                borderRadius: 8,
-                textDecoration: "none",
-              }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLElement).style.background = "#3a3a3a")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLElement).style.background = "#1a1a1a")
-              }
-            >
-              {data.cta.buttonLabel}
-              <ArrowRight size={13} />
-            </a>
-          </div>
-        )}
-      </div>
+      <div className={chromeClass}>{body}</div>
     </div>
   );
 }
@@ -922,12 +862,10 @@ function MegaMenuPanel({
 function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
-  // Reset expansion when drawer closes
   useEffect(() => {
     if (!open) setExpandedItem(null);
   }, [open]);
 
-  // Lock body scroll while drawer is open
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -939,81 +877,33 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 
   return (
     <>
-      {/* Backdrop */}
       <div
         onClick={onClose}
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 45,
-          background: "rgba(0,0,0,0.25)",
-          backdropFilter: "blur(4px)",
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? "all" : "none",
-          transition: "opacity 0.22s ease",
-        }}
+        className="fixed inset-0 z-[45] bg-black/25 backdrop-blur-[4px] transition-opacity duration-200"
+        style={{ opacity: open ? 1 : 0, pointerEvents: open ? "all" : "none" }}
       />
 
-      {/* Slide-in panel */}
       <div
+        className="fixed top-0 right-0 bottom-0 w-full max-w-[360px] bg-bz-surface z-50 overflow-y-auto shadow-[-8px_0_40px_rgba(0,0,0,0.12)]"
         style={{
-          position: "fixed",
-          top: 0,
-          right: 0,
-          bottom: 0,
-          width: "100%",
-          maxWidth: 360,
-          background: "#ffffff",
-          zIndex: 50,
-          overflowY: "auto",
           transform: open ? "translateX(0)" : "translateX(100%)",
           transition: "transform 0.26s cubic-bezier(0.4,0,0.2,1)",
-          boxShadow: "-8px 0 40px rgba(0,0,0,0.12)",
         }}
       >
-        {/* Drawer header */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 20px",
-            height: 76,
-            borderBottom: "1px solid #f0f1ed",
-          }}
-        >
-          <a
-            href="/"
-            onClick={onClose}
-            style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
-          >
-            <img
-              src={bizakLogo}
-              alt="Bizak ERP"
-              style={{ height: 22, width: "auto", display: "block" }}
-            />
+        <div className="flex items-center justify-between px-5 h-[76px] border-b border-bz-border-soft">
+          <a href="/" onClick={onClose} className="flex items-center no-underline">
+            <img src={bizakLogo} alt="Bizak ERP" className="h-[22px] w-auto block" />
           </a>
           <button
             onClick={onClose}
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 8,
-              border: "none",
-              background: "transparent",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#666",
-            }}
+            className="size-9 rounded-bz-md bg-transparent hover:bg-bz-bg-alt text-bz-text-muted flex items-center justify-center transition-colors"
+            aria-label="Close menu"
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* Nav accordion */}
-        <div style={{ padding: "12px 12px 0" }}>
+        <div className="px-3 pt-3">
           {NAV_ITEMS.map((item) => {
             const menuData = megaMenus[item];
             const isExpanded = expandedItem === item;
@@ -1021,64 +911,33 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
               <div key={item}>
                 <button
                   onClick={() => setExpandedItem(isExpanded ? null : item)}
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "14px 14px",
-                    borderRadius: 10,
-                    border: "none",
-                    background: isExpanded ? "#f7f8f5" : "transparent",
-                    cursor: "pointer",
-                    transition: "background 0.15s ease",
-                  }}
+                  className={`w-full flex items-center justify-between px-3.5 py-3.5 rounded-bz-lg border-0 cursor-pointer transition-colors ${
+                    isExpanded ? "bg-bz-bg-alt text-bz-text" : "bg-transparent text-bz-text-muted"
+                  }`}
                 >
-                  <span
-                    style={{
-                      fontFamily: "Inter",
-                      fontWeight: 500,
-                      fontSize: 15,
-                      color: isExpanded ? "#1a1a1a" : "#444",
-                    }}
-                  >
-                    {item}
-                  </span>
+                  <span className="text-[15px] font-medium">{item}</span>
                   <ChevronDown
                     size={15}
-                    color={isExpanded ? "#7a826d" : "#bbb"}
-                    style={{
-                      transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                      transition: "transform 0.2s ease",
-                    }}
+                    className={`transition-transform duration-200 ${
+                      isExpanded ? "rotate-180 text-bz-sage" : "text-bz-text-soft"
+                    }`}
                   />
                 </button>
 
-                {/* Accordion content */}
                 <div
-                  style={{
-                    maxHeight: isExpanded ? 900 : 0,
-                    overflow: "hidden",
-                    transition: "max-height 0.32s ease",
-                  }}
+                  className="overflow-hidden transition-[max-height] duration-300"
+                  style={{ maxHeight: isExpanded ? 1400 : 0 }}
                 >
                   {menuData && (
-                    <div style={{ padding: "4px 8px 12px 12px" }}>
+                    <div className="pt-1 pb-3 px-2">
                       {menuData.columns.map((col, cIdx) => (
-                        <div key={cIdx} style={{ marginBottom: 12 }}>
+                        <div key={cIdx} className="mb-3">
                           {col.heading && (
-                            <div
-                              style={{
-                                fontFamily: "Inter",
-                                fontWeight: 600,
-                                fontSize: 9.5,
-                                letterSpacing: "0.7px",
-                                color: "#ccc",
-                                textTransform: "uppercase",
-                                padding: "10px 12px 6px",
-                              }}
-                            >
-                              {col.heading}
+                            <div className="flex items-center gap-2 px-3 pt-2 pb-1.5">
+                              <span aria-hidden className="block w-2.5 h-px bg-bz-sage" />
+                              <span className="text-[9.5px] font-bold uppercase tracking-[0.16em] text-bz-text-soft">
+                                {col.heading}
+                              </span>
                             </div>
                           )}
                           {col.items.map((mItem, mIdx) => (
@@ -1092,69 +951,23 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                                 }
                                 onClose();
                               }}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 10,
-                                padding: "9px 12px",
-                                borderRadius: 8,
-                                textDecoration: "none",
-                                transition: "background 0.15s ease",
-                                WebkitTapHighlightColor: "rgba(122,130,109,0.15)",
-                              }}
-                              onMouseEnter={(e) =>
-                                ((e.currentTarget as HTMLElement).style.background = "#f7f8f5")
-                              }
-                              onMouseLeave={(e) =>
-                                ((e.currentTarget as HTMLElement).style.background = "transparent")
-                              }
+                              className="block px-3 py-2 rounded-bz-md hover:bg-bz-bg-alt transition-colors"
                             >
-                              <div
-                                style={{
-                                  width: 26,
-                                  height: 26,
-                                  borderRadius: 6,
-                                  background: "#f2f3ef",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  color: "#7a826d",
-                                  flexShrink: 0,
-                                }}
-                              >
-                                {mItem.icon}
-                              </div>
-                              <div>
-                                <div
-                                  style={{
-                                    fontFamily: "Inter",
-                                    fontWeight: 500,
-                                    fontSize: 13.5,
-                                    color: "#333",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 6,
-                                  }}
-                                >
+                              <span className="flex items-center gap-1.5">
+                                <span className="text-[13.5px] font-semibold text-bz-text">
                                   {mItem.title}
-                                  {mItem.badge && (
-                                    <span
-                                      style={{
-                                        fontSize: 9,
-                                        fontWeight: 600,
-                                        background: "rgba(122,130,109,0.12)",
-                                        color: "#7a826d",
-                                        padding: "1px 5px",
-                                        borderRadius: 4,
-                                        letterSpacing: "0.3px",
-                                        textTransform: "uppercase",
-                                      }}
-                                    >
-                                      {mItem.badge}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
+                                </span>
+                                {mItem.badge && (
+                                  <span className="text-[9px] font-bold uppercase tracking-[0.06em] bg-bz-sage-soft text-bz-sage px-1.5 py-[1px] rounded-bz-sm">
+                                    {mItem.badge}
+                                  </span>
+                                )}
+                              </span>
+                              {mItem.description && (
+                                <span className="block text-[11.5px] text-bz-text-soft mt-0.5 leading-snug">
+                                  {mItem.description}
+                                </span>
+                              )}
                             </a>
                           ))}
                         </div>
@@ -1167,99 +980,20 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           })}
         </div>
 
-        {/* Bottom CTA */}
-        <div
-          style={{
-            padding: "20px 20px 32px",
-            marginTop: 8,
-            borderTop: "1px solid #f0f1ed",
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-          }}
-        >
-          {/* <a
-            href="https://system.bizakerp.com"
-            onClick={(e) => e.preventDefault()}
-            style={{
-              display: "block",
-              textAlign: "center",
-              padding: "12px",
-              borderRadius: 10,
-              border: "1px solid #e8eae4",
-              fontFamily: "Inter",
-              fontWeight: 500,
-              fontSize: 14,
-              color: "#444",
-              textDecoration: "none",
-              transition: "background 0.15s ease",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "#f7f8f5")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "transparent")
-            }
-          >
-            Log in
-          </a> */}
-
-
-          
-    <a
+        <div className="px-5 pt-5 pb-8 mt-2 border-t border-bz-border-soft flex flex-col gap-2.5">
+          <a
             href="https://system.bizakerp.com"
             target="_blank"
             rel="noopener noreferrer"
             onClick={onClose}
-            style={{
-              display: "block",
-              textAlign: "center",
-              padding: "12px",
-              borderRadius: 10,
-              border: "1px solid #e8eae4",
-              fontFamily: "Inter",
-              fontWeight: 500,
-              fontSize: 14,
-              color: "#444",
-              textDecoration: "none",
-              transition: "background 0.15s ease",
-              WebkitTapHighlightColor: "rgba(122,130,109,0.15)",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "#f7f8f5")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "transparent")
-            }
+            className="block text-center py-3 rounded-bz-lg border border-bz-border text-[14px] font-medium text-bz-text-muted hover:bg-bz-bg-alt no-underline transition-colors"
           >
             Log in
           </a>
-
-
           <a
             href="/contact"
             onClick={onClose}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              padding: "12px",
-              borderRadius: 10,
-              background: "#1a1a1a",
-              fontFamily: "Inter",
-              fontWeight: 600,
-              fontSize: 14,
-              color: "#fff",
-              textDecoration: "none",
-              WebkitTapHighlightColor: "rgba(255,255,255,0.2)",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "#333")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "#1a1a1a")
-            }
+            className="flex items-center justify-center gap-2 py-3 rounded-bz-lg bg-bz-deep hover:bg-black/85 text-white text-[14px] font-semibold no-underline transition-colors"
           >
             Request Demo
             <ArrowRight size={14} />
@@ -1274,18 +1008,26 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 
 export function Header() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [renderedMenu, setRenderedMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Shadow on scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close mega menu when clicking outside
+  useEffect(() => {
+    if (activeMenu) {
+      setRenderedMenu(activeMenu);
+      return;
+    }
+    const t = setTimeout(() => setRenderedMenu(null), 220);
+    return () => clearTimeout(t);
+  }, [activeMenu]);
+
   useEffect(() => {
     const onClick = () => setActiveMenu(null);
     if (activeMenu) document.addEventListener("click", onClick);
@@ -1293,11 +1035,15 @@ export function Header() {
   }, [activeMenu]);
 
   const scheduleClose = useCallback(() => {
-    closeTimerRef.current = setTimeout(() => setActiveMenu(null), 300);
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => setActiveMenu(null), 220);
   }, []);
 
   const cancelClose = useCallback(() => {
-    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
   }, []);
 
   const handleNavEnter = (item: string) => {
@@ -1305,74 +1051,37 @@ export function Header() {
     if (megaMenus[item]) setActiveMenu(item);
   };
 
+  const panelData = renderedMenu ? megaMenus[renderedMenu] : null;
+  const panelVisible = !!activeMenu && activeMenu === renderedMenu;
+
   return (
     <>
-      {/* Soft backdrop tint behind mega menu */}
       <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 35,
-          background: activeMenu ? "rgba(0,0,0,0.05)" : "transparent",
-          pointerEvents: "none",
-          transition: "background 0.2s ease",
-        }}
+        aria-hidden
+        className="fixed inset-0 z-[35] pointer-events-none transition-colors duration-200"
+        style={{ background: activeMenu ? "rgba(20,22,18,0.10)" : "transparent" }}
       />
 
-      {/* ──────────────── Header Bar ──────────────── */}
       <header
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 40,
-          background: "#ffffff",
-          boxShadow: scrolled || activeMenu
-            ? "0 1px 0 rgba(0,0,0,0.08), 0 4px 24px rgba(0,0,0,0.07)"
-            : "0 1px 0 rgba(0,0,0,0.07)",
-          transition: "box-shadow 0.25s ease",
-        }}
+        className={`fixed top-0 left-0 right-0 z-40 bg-bz-surface transition-shadow duration-200 ${
+          scrolled || activeMenu
+            ? "shadow-[0_1px_0_rgba(0,0,0,0.06),0_4px_24px_rgba(0,0,0,0.06)]"
+            : "shadow-[0_1px_0_rgba(0,0,0,0.05)]"
+        }`}
+        onMouseLeave={scheduleClose}
       >
         <div
-          style={{
-            maxWidth: 1320,
-            margin: "0 auto",
-            padding: "0 24px",
-            height: 76,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            position: "relative",
-          }}
+          className="relative mx-auto flex items-center justify-between"
+          style={{ maxWidth: 1320, padding: "0 24px", height: 76 }}
         >
-          {/* ── Logo ── */}
-          <a
-            href="/"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              textDecoration: "none",
-              flexShrink: 0,
-            }}
-          >
-            <img
-              src={bizakLogo}
-              alt="Bizak ERP"
-              style={{ height: 25, width: "auto", display: "block" }}
-            />
+          <a href="/" className="flex items-center no-underline flex-shrink-0">
+            <img src={bizakLogo} alt="Bizak ERP" className="h-[25px] w-auto block" />
           </a>
 
-          {/* ── Desktop Center Navigation ── */}
           <nav
-            className="hidden lg:flex"
-            style={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              alignItems: "center",
-              gap: 2,
-            }}
+            className="hidden lg:flex items-center gap-0.5"
+            style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}
+            onMouseEnter={cancelClose}
           >
             {NAV_ITEMS.map((item) => {
               const hasMega = !!megaMenus[item];
@@ -1380,76 +1089,33 @@ export function Header() {
               return (
                 <div
                   key={item}
-                  style={{ position: "relative" }}
+                  className="relative"
                   onMouseEnter={() => handleNavEnter(item)}
-                  onMouseLeave={scheduleClose}
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
-                    onMouseEnter={cancelClose}
                     onFocus={() => handleNavEnter(item)}
                     onBlur={scheduleClose}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 4,
-                      padding: "8px 13px",
-                      borderRadius: 8,
-                      border: "none",
-                      background: isActive ? "#f5f5f2" : "transparent",
-                      cursor: "pointer",
-                      transition: "background 0.15s ease",
-                      outline: "none",
-                    }}
+                    className={`flex items-center gap-1 px-3.5 py-2 rounded-bz-md border-0 cursor-pointer outline-none transition-colors duration-150 ${
+                      isActive
+                        ? "bg-bz-bg-alt text-bz-text"
+                        : "bg-transparent text-bz-text-muted hover:text-bz-text"
+                    }`}
                   >
-                    <span
-                      style={{
-                        fontFamily: "Inter",
-                        fontWeight: 500,
-                        fontSize: 14,
-                        color: isActive ? "#1a1a1a" : "#555",
-                        transition: "color 0.15s ease",
-                      }}
-                    >
-                      {item}
-                    </span>
+                    <span className="text-[14px] font-medium">{item}</span>
                     {hasMega && (
                       <ChevronDown
                         size={13}
-                        style={{
-                          color: isActive ? "#7a826d" : "#c0c0b8",
-                          transform: isActive ? "rotate(180deg)" : "rotate(0deg)",
-                          transition: "transform 0.2s ease, color 0.15s ease",
-                        }}
+                        className={`transition-transform duration-200 ${
+                          isActive ? "rotate-180 text-bz-sage" : "text-bz-text-soft"
+                        }`}
                       />
                     )}
                   </button>
-
-                  {/* Bridge: transparent hover zone covering the gap between button and panel */}
-                  {hasMega && (
-                    <div
-                      aria-hidden="true"
-                      onMouseEnter={cancelClose}
-                      style={{
-                        position: "absolute",
-                        top: "100%",
-                        left: "-20px",
-                        right: "-20px",
-                        height: "10px",
-                        zIndex: 99,
-                      }}
-                    />
-                  )}
-
-                  {/* Mega Menu Panel */}
-                  {hasMega && (
-                    <MegaMenuPanel
-                      data={megaMenus[item]}
-                      visible={isActive}
-                      onMouseEnter={cancelClose}
-                      onMouseLeave={scheduleClose}
-                      onFocus={cancelClose}
-                      onBlur={scheduleClose}
+                  {isActive && (
+                    <span
+                      aria-hidden
+                      className="absolute left-3.5 right-3.5 -bottom-[3px] h-[2px] rounded-full bg-bz-sage"
                     />
                   )}
                 </div>
@@ -1457,67 +1123,25 @@ export function Header() {
             })}
           </nav>
 
-          {/* ── Right: Auth Actions ── */}
-          <div
-            className="hidden lg:flex"
-            style={{
-              alignItems: "center",
-              gap: 4,
-              flexShrink: 0,
-            }}
-          >
+          <div className="hidden lg:flex items-center gap-1 flex-shrink-0">
             <a
-              href="https://system.bizakerp.com" target="_blank"
-         
-              style={{
-                fontFamily: "Inter",
-                fontWeight: 500,
-                fontSize: 14,
-                color: "#555",
-                textDecoration: "none",
-                padding: "8px 14px",
-                borderRadius: 8,
-                transition: "background 0.15s ease, color 0.15s ease",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "#f5f5f2";
-                (e.currentTarget as HTMLElement).style.color = "#1a1a1a";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-                (e.currentTarget as HTMLElement).style.color = "#555";
-              }}
+              href="https://system.bizakerp.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[14px] font-medium text-bz-text-muted hover:text-bz-text hover:bg-bz-bg-alt px-3.5 py-2 rounded-bz-md transition-colors no-underline"
             >
               Log in
             </a>
 
-            <div
-              style={{ width: 1, height: 16, background: "#e8eae4", margin: "0 4px" }}
-            />
+            <span className="block w-px h-4 bg-bz-border mx-1" aria-hidden />
 
-            <a className="biz-shimmer-btn"
+            <a
+              className="biz-shimmer-btn inline-flex items-center gap-1.5 text-[13.5px] no-underline rounded-bz-md"
               href="/contact"
-              target="_blank"
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 7,
-                fontFamily: "Inter",
-                fontWeight: 600,
-                fontSize: 13.5,
-                color: "#1A1D19",
-                // background: "#1a1a1a",
+                color: "var(--bz-deep)",
                 padding: "10px 20px",
-                borderRadius: 9,
-                textDecoration: "none",
                 height: 40,
-                transition: "background 0.15s ease, gap 0.15s ease",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "#C7FF35";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "#C7FF35";
               }}
             >
               Request Demo
@@ -1525,36 +1149,43 @@ export function Header() {
             </a>
           </div>
 
-          {/* ── Mobile Hamburger ── */}
           <button
-            className="flex lg:hidden"
+            className="flex lg:hidden size-10 rounded-bz-md bg-transparent hover:bg-bz-bg-alt text-bz-text-muted items-center justify-center cursor-pointer transition-colors"
             onClick={() => setMobileOpen(true)}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 8,
-              border: "none",
-              background: "transparent",
-              cursor: "pointer",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#555",
-              transition: "background 0.15s ease",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "#f5f5f2")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "transparent")
-            }
             aria-label="Open menu"
           >
             <Menu size={22} />
           </button>
         </div>
+
+        {/* Hover bridge — full-width strip below the header so cursor never
+            falls through the gap on the way to the centered panel. */}
+        {activeMenu && (
+          <div
+            aria-hidden
+            onMouseEnter={cancelClose}
+            style={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              height: 14,
+              zIndex: 99,
+            }}
+          />
+        )}
+
+        {panelData && renderedMenu && (
+          <MegaMenuPanel
+            menu={renderedMenu}
+            data={panelData}
+            visible={panelVisible}
+            onMouseEnter={cancelClose}
+            onMouseLeave={scheduleClose}
+          />
+        )}
       </header>
 
-      {/* Mobile Drawer */}
       <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
     </>
   );
