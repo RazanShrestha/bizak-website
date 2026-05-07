@@ -92,7 +92,7 @@ export function HeroSplit({
             )}
             <h1
               className={cn(
-                "font-bold tracking-[-0.04em] text-[clamp(2rem,5vw,3.7rem)] [line-height:1.1]",
+                "font-bold tracking-[-0.02em] text-[clamp(32px,5vw,56px)] [line-height:1.15]",
                 isDark ? "text-white" : "text-bz-text",
               )}
             >
@@ -101,7 +101,7 @@ export function HeroSplit({
             {description && (
               <p
                 className={cn(
-                  "mt-6 text-[17px] md:text-[18px] leading-[1.7] max-w-[520px]",
+                  "mt-6 text-[17px] leading-[1.7] max-w-[560px]",
                   isDark ? "text-white/65" : "text-bz-text-muted",
                 )}
               >

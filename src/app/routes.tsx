@@ -145,18 +145,6 @@ function PurchasingPageLayout() {
 }
 
 
-function DistributionPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <div style={{ paddingTop: 76 }}>
-        <DistributionPage />
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
 
 
 function AboutUsPageLayout() {

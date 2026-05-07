@@ -1,10 +1,10 @@
 import "../../styles/style.css";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { Icon } from "./marketing/Icon";
+import { HeroSplit, HeroBadge, Button, Icon } from "./marketing";
 import {
-  IndustryHero,
   HeroVisual,
+  HeroMainCard,
   HeroInventoryCard,
   HeroGlobeCard,
   HeroCircleCard,
@@ -26,46 +26,71 @@ import {
 
 // ─── Hero ────────────────────────────────────────────────────────────────────
 
+const SHIPMENT_ORDERS = [
+  { id: "SO-2024-0891", dest: "Dubai, UAE", pct: 94, status: "shipped" },
+  { id: "SO-2024-0892", dest: "London, UK", pct: 67, status: "picking" },
+  { id: "SO-2024-0893", dest: "Mumbai, IN", pct: 28, status: "processing" },
+];
+
 function DistributionHeroVisual() {
   return (
     <HeroVisual
       main={
-        <div className="biz-card-main biz-glass biz-float">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", gap: 8 }}>
-              <div className="biz-traffic-dot" style={{ background: "rgba(248,113,113,0.5)" }} />
-              <div className="biz-traffic-dot" style={{ background: "rgba(251,191,36,0.5)" }} />
-              <div className="biz-traffic-dot" style={{ background: "rgba(74,222,128,0.5)" }} />
-            </div>
-            <div
-              style={{ height: 14, width: 112, background: "rgba(122,130,109,0.1)", borderRadius: 99 }}
-            />
+        <HeroMainCard panelTitle="Bizak · Order Control">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 7,
+              paddingTop: 10,
+              borderTop: "1px solid rgba(122,130,109,0.1)",
+            }}
+          >
+            {SHIPMENT_ORDERS.map((order) => (
+              <div key={order.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ minWidth: 86 }}>
+                  <span style={{ fontSize: 8, fontFamily: "monospace", color: "rgba(122,130,109,0.7)" }}>
+                    {order.id}
+                  </span>
+                  <div style={{ fontSize: 7, color: "rgba(122,130,109,0.45)", marginTop: 1 }}>
+                    {order.dest}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    height: 4,
+                    background: "rgba(122,130,109,0.1)",
+                    borderRadius: 99,
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "100%",
+                      width: `${order.pct}%`,
+                      background: "var(--bz-accent)",
+                      borderRadius: 99,
+                    }}
+                  />
+                </div>
+                <span
+                  style={{
+                    fontSize: 8,
+                    fontWeight: 700,
+                    color: order.status === "shipped" ? "var(--bz-sage)" : "var(--bz-accent)",
+                    minWidth: 60,
+                    textAlign: "right",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                  }}
+                >
+                  {order.status}
+                </span>
+              </div>
+            ))}
           </div>
-          <div className="biz-card-row">
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div className="biz-skeleton-line" />
-              <div className="biz-skeleton-line" style={{ width: "80%" }} />
-              <div
-                className="biz-skeleton-box"
-                style={{
-                  background: "rgba(122,130,109,0.05)",
-                  border: "1px solid rgba(122,130,109,0.1)",
-                }}
-              />
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div className="biz-skeleton-line" />
-              <div className="biz-skeleton-line" style={{ width: "75%" }} />
-              <div
-                className="biz-skeleton-box"
-                style={{
-                  background: "rgba(199,255,53,0.08)",
-                  border: "1px solid rgba(199,255,53,0.18)",
-                }}
-              />
-            </div>
-          </div>
-        </div>
+        </HeroMainCard>
       }
       inventory={
         <HeroInventoryCard
@@ -94,11 +119,7 @@ function DistributionHeroVisual() {
               viewBox="0 0 200 80"
               fill="none"
             >
-              <path
-                d="M20,40 Q60,15 100,40 T180,40"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
+              <path d="M20,40 Q60,15 100,40 T180,40" stroke="currentColor" strokeWidth="1" />
             </svg>
             {[
               { top: "50%", left: "25%", delay: "0s" },
@@ -126,16 +147,21 @@ function DistributionHeroVisual() {
 
 function HeroSection() {
   return (
-    <IndustryHero
-      eyebrow="Unified Distribution Platform"
+    <HeroSplit
+      badge={<HeroBadge>Unified Distribution Platform</HeroBadge>}
       title={
         <>
-          ERP for Trading &amp;&nbsp;<span>Distribution</span> Companies
+          ERP for Trading &amp;&nbsp;
+          <span className="text-bz-sage">Distribution</span> Companies
         </>
       }
       description="Consolidate your purchasing, warehouse inventory, and multi-channel sales into a single source of truth. Scale without the operational complexity."
-      primaryCta={{ label: "Request Demo" }}
-      secondaryCta={{ label: "See How It Works" }}
+      actions={
+        <>
+          <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
+          <Button variant="outline" size="lg">See How It Works</Button>
+        </>
+      }
       stats={[
         { value: "99.9%", label: "Inventory Accuracy" },
         { value: "24/7", label: "Real-time Sync" },
@@ -170,13 +196,7 @@ function ChallengesSection() {
               overflow: "hidden",
             }}
           >
-            <div
-              style={{
-                height: "100%",
-                background: "linear-gradient(90deg, #f87171, #fde68a, #7A826D)",
-                width: "100%",
-              }}
-            />
+            <div style={{ height: "100%", background: "var(--bz-sage)", width: "100%" }} />
           </div>
           <span
             style={{
@@ -214,14 +234,7 @@ function ChallengesSection() {
             </span>
             <span style={{ fontSize: 10, fontWeight: 700, color: "#f87171" }}>High</span>
           </div>
-          <div
-            style={{
-              height: 6,
-              background: "#f3f3f3",
-              borderRadius: 99,
-              overflow: "hidden",
-            }}
-          >
+          <div style={{ height: 6, background: "#f3f3f3", borderRadius: 99, overflow: "hidden" }}>
             <div style={{ height: "100%", background: "#f87171", width: "85%" }} />
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
@@ -413,9 +426,7 @@ function ChallengesSection() {
             >
               Warehouse Radar
             </div>
-            <div style={{ fontSize: 9, color: "#666", marginTop: 2 }}>
-              Illuminating Blind Spots
-            </div>
+            <div style={{ fontSize: 9, color: "#666", marginTop: 2 }}>Illuminating Blind Spots</div>
           </div>
         </div>
       </ChallengeCard>
@@ -439,14 +450,7 @@ function ChallengesSection() {
               flexShrink: 0,
             }}
           >
-            <div
-              style={{
-                width: 6,
-                height: 6,
-                background: "rgba(122,130,109,0.4)",
-                borderRadius: "50%",
-              }}
-            />
+            <div style={{ width: 6, height: 6, background: "rgba(122,130,109,0.4)", borderRadius: "50%" }} />
           </div>
           <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center", height: 2 }}>
             <div style={{ width: "100%", height: 1, background: "rgba(122,130,109,0.15)" }} />
@@ -737,7 +741,7 @@ function CapabilitiesSection() {
               </p>
             </div>
           </div>
-          <button className="biz-read-btn">Read Audit Report</button>
+          <Button variant="ghostDark" size="sm">Read Audit Report</Button>
         </div>
       </CapabilityCard>
     </CapabilitiesGrid>
@@ -785,7 +789,7 @@ export function DistributionPage() {
   return (
     <div className="biz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <main style={{ paddingTop: 76 }}>
+      <main>
         <HeroSection />
         <ChallengesSection />
         <SolutionGrid

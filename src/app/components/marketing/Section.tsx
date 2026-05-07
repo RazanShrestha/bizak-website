@@ -15,7 +15,7 @@ const sectionVariants = cva(
       pad: {
         default: "py-24 md:py-[96px]",
         compact: "py-16 md:py-20",
-        hero:    "pt-[120px] pb-24 md:pt-[140px] md:pb-[96px]",
+        hero:    "pt-[148px] pb-24 md:pt-[172px] md:pb-[96px]",
       },
     },
     defaultVariants: {

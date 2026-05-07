@@ -8,6 +8,7 @@ import {
   PillBadge,
   HeroBadge,
   Eyebrow,
+  HeroCentered,
 } from "./marketing";
 import {
   ClipboardList,
@@ -39,35 +40,29 @@ import {
 // ─── 1. HERO ──────────────────────────────────────────────────────────────────
 function HeroSection() {
   return (
-    <Section pad="hero" className="biz-mesh">
-      <Container width="narrow">
-        <div className="flex flex-col items-center text-center">
-          <HeroBadge>Financial Module</HeroBadge>
-          <h1
-            className="mt-4 font-bold text-bz-text leading-[1.1] tracking-[-0.03em]
-                       text-[clamp(36px,5.4vw,60px)] max-w-[820px]"
-          >
-            Control your finances with
-            <br />
-            <span className="text-bz-sage">clarity</span> and confidence
-          </h1>
-          <p className="mt-6 text-[17px] leading-[1.7] text-bz-text-muted max-w-[600px]">
-            Streamline financial operations from ledger to report. Centralise cash flow, automate
-            reconciliation and manage vendor payments in one high-fidelity interface.
-          </p>
-          <div className="mt-9 flex flex-wrap justify-center gap-3">
-            <Button variant="primary" size="lg" href="/contact" withArrow>
-              Request Demo
-            </Button>
-            <Button variant="outline" size="lg" href="#features">
-              View features
-            </Button>
-          </div>
-        </div>
-
-        <HeroDashboard />
-      </Container>
-    </Section>
+    <HeroCentered
+      containerWidth="narrow"
+      badge={<HeroBadge>Financial Module</HeroBadge>}
+      title={
+        <>
+          Control your finances with
+          <br />
+          <span className="text-bz-sage">clarity</span> and confidence
+        </>
+      }
+      description="Streamline financial operations from ledger to report. Centralise cash flow, automate reconciliation and manage vendor payments in one high-fidelity interface."
+      actions={
+        <>
+          <Button variant="primary" size="lg" href="/contact" withArrow>
+            Request Demo
+          </Button>
+          <Button variant="outline" size="lg" href="#features">
+            View features
+          </Button>
+        </>
+      }
+      visual={<HeroDashboard />}
+    />
   );
 }
 

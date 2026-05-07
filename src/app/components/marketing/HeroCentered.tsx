@@ -45,7 +45,7 @@ export function HeroCentered({
           {badge && <div className="flex justify-center mb-4">{badge}</div>}
           <h1
             className={cn(
-              "font-bold tracking-[-0.04em] max-w-[900px] mx-auto mb-6 md:mb-7 text-[clamp(2rem,5vw,3.7rem)] [line-height:1.1]",
+              "font-bold tracking-[-0.02em] max-w-[900px] mx-auto mb-6 md:mb-7 text-[clamp(32px,5vw,56px)] [line-height:1.15]",
               tone === "dark" ? "text-white" : "text-bz-text",
             )}
           >
@@ -54,7 +54,7 @@ export function HeroCentered({
           {description && (
             <p
               className={cn(
-                "text-[17px] md:text-[20px] leading-[1.65] max-w-[580px] mx-auto mb-7 md:mb-9",
+                "text-[17px] leading-[1.7] max-w-[560px] mx-auto mb-9",
                 tone === "dark" ? "text-white/70" : "text-bz-text-muted",
               )}
             >

@@ -1,14 +1,8 @@
 import "../../styles/style.css";
 import { Header } from "./Header";
-import { Icon } from "./marketing/Icon";
+import { Footer } from "./Footer";
+import { HeroSplit, HeroBadge, Button, Icon } from "./marketing";
 import {
-  Section,
-  Container,
-  SectionHeading,
-  Button,
-} from "./marketing";
-import {
-  IndustryHero,
   HeroVisual,
   HeroMainCard,
   HeroInventoryCard,
@@ -27,11 +21,8 @@ import {
   ChartFrame,
   WorkflowStrip,
   type WorkflowStep,
+  IndustryCta,
 } from "./solutions/by-industry";
-// Experimental: light-themed CTA + light footer for this page only.
-// Mirrors the pattern in RetailAndEcommercePage.tsx.
-import bizakLogo from "../../assets/bizaklogo.png";
-import svgPaths from "../../imports/svg-eyvfmiiac4";
 
 // ─── Hero ────────────────────────────────────────────────────────────────────
 
@@ -352,18 +343,22 @@ function ProfessionalHeroVisual() {
 
 function HeroSection() {
   return (
-    <IndustryHero
-      eyebrow="Professional Services ERP"
+    <HeroSplit
+      badge={<HeroBadge>Professional Services ERP</HeroBadge>}
       title={
         <>
           Bill Every Hour.
           <br />
-          <span>Deliver</span> Every Engagement.
+          <span className="text-bz-sage">Deliver</span> Every Engagement.
         </>
       }
       description="Run consultancies, agencies, and advisory firms on one platform. Capture every billable minute, plan utilisation in real time, and turn every engagement into a renewable, profitable client relationship."
-      primaryCta={{ label: "Request Demo" }}
-      secondaryCta={{ label: "See How It Works" }}
+      actions={
+        <>
+          <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
+          <Button variant="outline" size="lg">See How It Works</Button>
+        </>
+      }
       stats={[
         { value: "87%", label: "Avg. Utilisation" },
         { value: "12 d", label: "Faster Invoicing" },
@@ -635,8 +630,7 @@ function ChallengesSection() {
                   style={{
                     flex: 1,
                     height: 1,
-                    background:
-                      "linear-gradient(to right, rgba(122,130,109,0.3), rgba(122,130,109,0.1))",
+                    background: "rgba(122,130,109,0.2)",
                     margin: "0 4px",
                   }}
                 />
@@ -1239,7 +1233,7 @@ export function ProfessionalServicePage() {
   return (
     <div className="biz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <main style={{ paddingTop: 76 }}>
+      <main>
         <HeroSection />
         <ChallengesSection />
         <SolutionGrid
@@ -1248,173 +1242,38 @@ export function ProfessionalServicePage() {
           items={SOLUTIONS}
         />
         <CapabilitiesSection />
+        <InsightsBlock
+          eyebrow="Practice Intelligence"
+          title="Make faster, smarter decisions on every engagement."
+          description="Stop guessing at profitability after the work is done. Use real-time utilisation dashboards and cost-to-bill analytics to run your practice with full confidence."
+          bullets={[
+            {
+              bold: "Real-time Utilisation Monitoring",
+              rest: " — See who's loaded, who's free, and forecast hiring needs weeks ahead.",
+            },
+            {
+              bold: "Engagement Margin Tracking",
+              rest: " — Live cost-to-bill and realisation per engagement, partner, and practice.",
+            },
+            {
+              bold: "Billable Hours Auto-Posted",
+              rest: " — Approved time flows directly to draft invoices. No re-keying.",
+            },
+          ]}
+          chart={<ProfessionalChart />}
+        />
         <WorkflowStrip
           eyebrow="Engagement Lifecycle"
           title="From First Conversation to Lifetime Client"
           steps={STEPS}
         />
-        <LightCtaSection />
+        <IndustryCta
+          title="Run a profitable practice, not a busy one."
+          description="Unify time, talent, and clients on Bizak — and turn every billable hour into a lasting client relationship."
+        />
       </main>
-      <ProfessionalFooterLight />
+      <Footer />
     </div>
   );
 }
 
-// ─── EXPERIMENTAL: Light-themed CTA ──────────────────────────────────────────
-//   Replacement for <IndustryCta /> on this page only. Mirrors the pattern
-//   used in RetailAndEcommercePage.tsx.
-function LightCtaSection() {
-  return (
-    <Section
-      tone="light"
-      pad="default"
-      className="overflow-hidden"
-      style={{
-        backgroundImage: `
-          radial-gradient(ellipse 70% 60% at 100% 100%, rgba(199,255,53,0.30) 0%, transparent 55%),
-          radial-gradient(ellipse 60% 60% at 0% 0%, rgba(122,130,109,0.12) 0%, transparent 55%)
-        `,
-      }}
-    >
-      <Container width="narrow">
-        <div className="flex flex-col items-center text-center gap-7 relative z-10">
-          <SectionHeading
-            eyebrow="Get started"
-            title={
-              <>
-                Run a profitable practice,
-                <br />
-                <span className="text-bz-sage">not a busy one.</span>
-              </>
-            }
-            description="Unify time, talent, and clients on Bizak — and turn every billable hour into a lasting relationship."
-            tone="dark"
-            align="center"
-            maxWidth={680}
-          />
-          <div className="mt-2 flex flex-wrap justify-center gap-3">
-            <Button variant="primary" size="lg" href="/contact" withArrow>
-              Request Demo
-            </Button>
-            <Button variant="outline" size="lg" href="/contact">
-              View Pricing
-            </Button>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12px] text-bz-text-muted">
-            {[
-              "No credit card required",
-              "14-day free trial",
-              "Cancel anytime",
-            ].map((t) => (
-              <span key={t} className="inline-flex items-center gap-2">
-                <span className="size-1.5 rounded-full bg-bz-sage" />
-                {t}
-              </span>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── EXPERIMENTAL: Light-themed Footer ───────────────────────────────────────
-//   Replacement for the global <Footer /> on this page only. Mirrors the
-//   pattern used in RetailAndEcommercePage.tsx.
-const PROFESSIONAL_FOOTER_LINKS = [
-  {
-    heading: "Product",
-    items: [
-      { label: "Features", href: "#" },
-      { label: "Pricing", href: "#" },
-      { label: "Integrations", href: "#" },
-      { label: "Changelog", href: "#" },
-    ],
-  },
-  {
-    heading: "Resources",
-    items: [
-      { label: "Documentation", href: "#" },
-      { label: "Help Center", href: "#" },
-      { label: "Blog", href: "/blog" },
-      { label: "Customer Stories", href: "#" },
-    ],
-  },
-  {
-    heading: "Company",
-    items: [
-      { label: "About Us", href: "/about" },
-      { label: "Careers", href: "#" },
-      { label: "Contact", href: "/contact" },
-      { label: "Privacy Policy", href: "#" },
-    ],
-  },
-];
-
-function ProfessionalFooterLight() {
-  return (
-    <footer className="bg-bz-bg-alt border-t border-bz-border">
-      <div className="max-w-[1320px] mx-auto px-5 py-16">
-        <div className="flex flex-col lg:flex-row gap-12 justify-between">
-          {/* Brand column */}
-          <div className="lg:w-[464px]">
-            <div className="flex items-center gap-2 mb-6">
-              <img src={bizakLogo} alt="Bizak" className="h-8 w-auto" />
-            </div>
-            <p className="text-bz-text-muted text-[14px] leading-[1.625] max-w-[310px]">
-              Empowering modern businesses with an all-in-one ERP that is flexible, powerful, and
-              easy to use.
-            </p>
-          </div>
-
-          {/* Links columns */}
-          <div className="flex flex-col sm:flex-row gap-12">
-            {PROFESSIONAL_FOOTER_LINKS.map((col) => (
-              <div key={col.heading} className="w-52">
-                <h5 className="text-bz-text uppercase mb-6 text-[11px] font-bold tracking-[0.05em]">
-                  {col.heading}
-                </h5>
-                <ul className="space-y-4">
-                  {col.items.map((item) => (
-                    <li key={item.label}>
-                      <a
-                        href={item.href}
-                        className="text-bz-text-muted hover:text-bz-sage transition-colors text-[14px]"
-                      >
-                        {item.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom bar */}
-        <div className="flex items-center justify-between mt-16 pt-8 border-t border-bz-border-soft">
-          <p className="text-bz-text-soft text-[11px] font-medium tracking-[0.05em]">
-            © 2024 BIZAK SYSTEMS INC. ALL RIGHTS RESERVED.
-          </p>
-          <div className="flex items-center gap-6">
-            <a href="#" aria-label="Social link" className="text-bz-text-soft hover:text-bz-sage transition-colors">
-              <svg width="19" height="19" viewBox="0 0 18.9999 18.9999" fill="none">
-                <path d={svgPaths.p1a75c680} fill="currentColor" />
-              </svg>
-            </a>
-            <a href="#" aria-label="Social link" className="text-bz-text-soft hover:text-bz-sage transition-colors">
-              <svg width="19" height="15" viewBox="0 0 18.9999 14.9999" fill="none">
-                <path d={svgPaths.p3f52f0c0} fill="currentColor" />
-              </svg>
-            </a>
-            <a href="#" aria-label="Social link" className="text-bz-text-soft hover:text-bz-sage transition-colors">
-              <svg width="17" height="19" viewBox="0 0 16.9999 18.9999" fill="none">
-                <path d={svgPaths.p9aabd00} fill="currentColor" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
