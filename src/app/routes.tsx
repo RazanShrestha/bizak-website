@@ -136,9 +136,7 @@ function PurchasingPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <div style={{ paddingTop: 76 }}>
-        <PurchasingPage />
-      </div>
+      <PurchasingPage />
       <Footer />
     </div>
   );
@@ -255,9 +253,7 @@ function InventoryAndWarehousePageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <div style={{ paddingTop: 76 }}>
-        <InventoryAndWarehousePage />
-      </div>
+      <InventoryAndWarehousePage />
       <Footer />
     </div>
   );
@@ -267,9 +263,7 @@ function ManufacturingProductPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <div style={{ paddingTop: 76 }}>
-        <ManufacturingProductPage />
-      </div>
+      <ManufacturingProductPage />
       <Footer />
     </div>
   );
@@ -283,9 +277,7 @@ function SalesForceManagementPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <div style={{ paddingTop: 76 }}>
-        <SalesForceManagementPage />
-      </div>
+      <SalesForceManagementPage />
       <Footer />
     </div>
   );
@@ -295,9 +287,7 @@ function ProjectAndCostingPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <div style={{ paddingTop: 76 }}>
-        <ProjectAndJobCostingPage />
-      </div>
+      <ProjectAndJobCostingPage />
       <Footer />
     </div>
   );
@@ -374,9 +364,7 @@ function PointOfSalesPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <div style={{ paddingTop: 76 }}>
-        <PointOfSalesPage />
-      </div>
+      <PointOfSalesPage />
       <Footer />
     </div>
   );
@@ -513,7 +501,7 @@ export const router = createBrowserRouter([
       { path: "MulticompanyAndBranches", Component: MulticompanyAndBranchesPage },
       { path: "DocumentManagement", Component: DocumentManagementPage },
       { path: "careers", Component: CareersPageLayout },
-      { path: "PointOfSales", Component: PointOfSalesPage },
+      { path: "PointOfSales", Component: PointOfSalesPageLayout },
       { path: "StartupsAndSmes", Component: StartupsAndSmes },
       { path: "MidMarket",       Component: MidMarket       },
       { path: "Enterprise",      Component: Enterprise       },

@@ -53,7 +53,7 @@ function HeroSection() {
       description="Streamline financial operations from ledger to report. Centralise cash flow, automate reconciliation and manage vendor payments in one high-fidelity interface."
       actions={
         <>
-          <Button variant="primary" size="lg" href="/contact" withArrow>
+          <Button variant="accent" size="lg" href="/contact" withArrow>
             Request Demo
           </Button>
           <Button variant="outline" size="lg" href="#features">

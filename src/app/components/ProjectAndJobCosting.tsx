@@ -1,792 +1,397 @@
-// ─── Brand tokens ─────────────────────────────────────────────────────────────
-const C = {
-   deep: "#1A1D19",
-  primary: "#010201",
-  accent: "#aef831",
-  white: "#ffffff",
-  fcfcfc: "#fcfcfc",
-  onSurface: "#191c1c",
-  onSurfaceVar: "#444844",
-  finDark: "#0a0a0a",
-  finGray: "#1a1a1a",
-  zinc500: "#71717a",
-  zinc400: "#a1a1aa",
-  borderLight: "rgba(229,231,235,0.8)",
-    borderDark: "rgba(255,255,255,0.08)",
-};
+import {
+  Section, Container, SectionHeading, Button, Card,
+  IconBadge, HeroBadge, HeroCentered,
+} from "./marketing";
+import {
+  CalendarClock, Calculator, BarChart3, Users, Clock, FileText,
+  DollarSign, CheckSquare, Grid3x3, TrendingUp, Package, Network,
+} from "lucide-react";
 
-// ─── SVG Icon helper ──────────────────────────────────────────────────────────
-function Ico({ d, size = 20, color = "currentColor", strokeWidth = 1.8 }: {
-  d: string | string[]; size?: number; color?: string; strokeWidth?: number;
-}) {
-  const paths = Array.isArray(d) ? d : [d];
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
+const CAPABILITIES = [
+  { Icon: CalendarClock, title: "Project Planning",         desc: "Multi-phase milestone tracking with dynamic Gantt visualization and dependency modeling." },
+  { Icon: Calculator,    title: "Budgeting & Estimation",    desc: "Hierarchical cost modeling and automated margin guardrails powered by historical analysis." },
+  { Icon: BarChart3,     title: "Cost Tracking",             desc: "Real-time ledger integration captures every project expense the moment it's committed in the field." },
+  { Icon: Users,         title: "Resource Allocation",       desc: "Optimize workforce and specialized equipment across the entire project portfolio for maximum utilization." },
+  { Icon: Clock,         title: "Timesheets",                desc: "High-precision labor tracking linked to job cost codes and site-specific burden multipliers." },
+  { Icon: FileText,      title: "Project Billing",           desc: "Automated AIA-style progress billing based on verified site milestones or time-and-materials data." },
+];
+
+const METRICS = [
+  { value: "20%",  label: "Profitability Increase", desc: "Automated tracking and reconciliation workflows capture leaked revenue immediately." },
+  { value: "35%",  label: "Better Cost Control",     desc: "Reduce uncaptured site expenses and labor variances with real-time field data." },
+  { value: "100%", label: "Cost Visibility",         desc: "Real-time margin visibility across the entire project lifecycle, from site to C-suite." },
+];
+
+// ─── HERO VISUAL ──────────────────────────────────────────────────────────────
+
+function HeroDashboard() {
+  const steps = [
+    { code: "PLAN",  label: "Planning"   },
+    { code: "EST",   label: "Estimation" },
+    { code: "TRACK", label: "Tracking", active: true },
+    { code: "BILL",  label: "Billing"    },
+  ];
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-      {paths.map((p, i) => <path key={i} d={p} />)}
-    </svg>
-  );
-}
-
-// ─── 1. HERO ──────────────────────────────────────────────────────────────────
-function HeroSection() {
-  const steps = ["PLAN", "EST", "TRACK", "BILL"];
-  const labels = ["Planning", "Estimation", "Tracking", "Billing"];
-
-  return (
-    <section style={{ paddingTop: 96, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, background: C.fcfcfc }}>
-      <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" as const, marginBottom: 64 }}>
-        <span style={{
-          display: "inline-block",
-          padding: "5px 14px",
-          background: "rgba(174,248,49,0.1)",
-          border: "1px solid rgba(174,248,49,0.3)",
-          fontSize: 10, fontWeight: 700,
-          letterSpacing: "0.2em",
-          textTransform: "uppercase" as const,
-          color: "#4b5563",
-          borderRadius: 999,
-          marginBottom: 32,
-        }}>Enterprise Project Control</span>
-
-        <h1 style={{
-          fontFamily: "Manrope, Inter, sans-serif",
-          fontSize: "clamp(36px, 5.5vw, 60px)",
-          fontWeight: 800,
-          lineHeight: 1.1,
-          color: C.primary,
-          marginBottom: 28,
-          letterSpacing: "-0.03em",
-        }}>
-          Track every cost.<br />Protect every project margin.
-        </h1>
-
-        <p style={{ fontSize: 17, color: "#6b7280", maxWidth: 600, margin: "0 auto 40px", lineHeight: 1.7 }}>
-          Manage budgets, allocate resources, and monitor real-time project profitability with precision intelligence.
-        </p>
-
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" as const }}>
-          <a href="/contact" style={{
-            padding: "14px 32px", background: C.primary, color: C.white,
-            borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: "none",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
-          }}>Request Demo</a>
-          <button style={{
-            padding: "14px 32px", background: C.white,
-            border: `1px solid ${C.borderLight}`,
-            borderRadius: 8, fontWeight: 700, fontSize: 14, color: C.primary, cursor: "pointer",
-          }}>View features</button>
+    <div className="max-w-[1100px] mx-auto rounded-bz-2xl border border-bz-border bg-bz-surface overflow-hidden p-2">
+      <div className="bg-bz-bg rounded-[14px] border border-bz-border p-8 flex gap-8 flex-wrap">
+        <div className="w-[200px] flex-shrink-0">
+          <div className="h-10 bg-bz-border rounded-bz-md mb-4" />
+          <div className="h-3.5 bg-bz-border/50 rounded-bz-sm mb-2 w-3/4" />
+          <div className="h-3.5 bg-bz-border/50 rounded-bz-sm mb-5 w-1/2" />
+          <div className="flex flex-col gap-2">
+            {[0, 1, 2].map(i => (
+              <div key={i} className="h-8 bg-bz-surface border border-bz-border rounded-bz-sm" />
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Dashboard Mockup */}
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{
-          background: C.white, borderRadius: 20,
-          boxShadow: "0 25px 60px -10px rgba(0,0,0,0.12)",
-          border: `1px solid ${C.borderLight}`,
-          overflow: "hidden", padding: 8,
-        }}>
-          <div style={{
-            background: "#f9f9f9", borderRadius: 14,
-            border: `1px solid ${C.borderLight}`,
-            padding: 32, display: "flex", gap: 32, flexWrap: "wrap" as const,
-          }}>
-            {/* Sidebar skeleton */}
-            <div style={{ width: 200, flexShrink: 0 }}>
-              <div style={{ height: 40, background: "#e5e7eb", borderRadius: 8, marginBottom: 16 }} />
-              <div style={{ height: 14, background: "#f3f4f6", borderRadius: 6, marginBottom: 8, width: "75%" }} />
-              <div style={{ height: 14, background: "#f3f4f6", borderRadius: 6, marginBottom: 20, width: "50%" }} />
-              <div style={{ display: "flex", flexDirection: "column" as const, gap: 8 }}>
-                {[0, 1, 2].map(i => (
-                  <div key={i} style={{ height: 32, background: C.white, border: `1px solid ${C.borderLight}`, borderRadius: 6 }} />
-                ))}
+        <div className="flex-1 min-w-0">
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            {[
+              { label: "PROJECT HEALTH", value: "92%",    chip: "STABLE" },
+              { label: "BUDGET VS ACTUAL", value: "+$124k", accent: true },
+              { label: "COST BREAKDOWN", value: "4 Active" },
+            ].map(s => (
+              <div key={s.label} className="p-5 bg-bz-surface rounded-bz-md border border-bz-border">
+                <p className="text-[9px] text-bz-text-muted font-bold uppercase tracking-[0.1em] mb-1.5">{s.label}</p>
+                <p className={`text-[22px] font-bold flex items-center gap-2 ${s.accent ? "text-bz-sage" : "text-bz-text"}`}>
+                  {s.value}
+                  {s.chip && (
+                    <span className="text-[9px] bg-bz-accent/15 text-bz-text px-1.5 py-0.5 rounded-bz-sm font-bold">{s.chip}</span>
+                  )}
+                </p>
               </div>
+            ))}
+          </div>
+
+          <div className="p-8 bg-bz-surface rounded-bz-md border border-bz-border">
+            <div className="flex justify-between items-center mb-9">
+              <h4 className="font-bold text-bz-text text-[14px]">Project Workflow: #PX-904</h4>
+              <span className="text-[9px] bg-bz-accent text-bz-text px-2 py-0.5 rounded-bz-sm font-bold">LIVE</span>
             </div>
-
-            {/* Main content */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              {/* Stats */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 }}>
-                <div style={{ padding: "20px 24px", background: C.white, borderRadius: 12, border: `1px solid ${C.borderLight}` }}>
-                  <p style={{ fontSize: 9, color: "#9ca3af", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", marginBottom: 6 }}>PROJECT HEALTH</p>
-                  <p style={{ fontSize: 22, fontWeight: 700, color: C.primary, display: "flex", alignItems: "center", gap: 8 }}>
-                    92%
-                    <span style={{
-                      fontSize: 9, background: "rgba(174,248,49,0.15)", color: "#446900",
-                      padding: "2px 6px", borderRadius: 4, fontWeight: 700,
-                    }}>STABLE</span>
-                  </p>
-                </div>
-                <div style={{ padding: "20px 24px", background: C.white, borderRadius: 12, border: `1px solid ${C.borderLight}` }}>
-                  <p style={{ fontSize: 9, color: "#9ca3af", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", marginBottom: 6 }}>BUDGET VS ACTUAL</p>
-                  <p style={{ fontSize: 22, fontWeight: 700, color: C.accent }}>+$124k</p>
-                </div>
-                <div style={{ padding: "20px 24px", background: C.white, borderRadius: 12, border: `1px solid ${C.borderLight}` }}>
-                  <p style={{ fontSize: 9, color: "#9ca3af", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", marginBottom: 6 }}>COST BREAKDOWN</p>
-                  <p style={{ fontSize: 22, fontWeight: 700, color: C.primary }}>4 Active</p>
-                </div>
-              </div>
-
-              {/* Workflow card */}
-              <div style={{ padding: 32, background: C.white, borderRadius: 12, border: `1px solid ${C.borderLight}` }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 36 }}>
-                  <h4 style={{ fontWeight: 700, color: "#1f2937", fontSize: 14 }}>Project Workflow: #PX-904</h4>
-                  <span style={{
-                    fontSize: 9, background: C.accent, color: C.primary,
-                    padding: "3px 8px", borderRadius: 4, fontWeight: 700,
-                  }}>LIVE</span>
-                </div>
-
-                {/* Step indicators */}
-                <div style={{ position: "relative", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 16px" }}>
-                  <div style={{
-                    position: "absolute", top: "50%", left: 16, right: 16,
-                    height: 2, background: "#f3f4f6", transform: "translateY(-50%)", zIndex: 0,
-                  }} />
-                  {steps.map((step, i) => (
-                    <div key={step} style={{
-                      position: "relative", zIndex: 1,
-                      width: 48, height: 48,
-                      background: i === 2 ? C.primary : "#f9fafb",
-                      border: i === 2 ? "4px solid #fff" : `1px solid ${C.borderLight}`,
-                      borderRadius: "50%",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 9, fontWeight: 700,
-                      color: i === 2 ? C.white : "#9ca3af",
-                      boxShadow: i === 2 ? "0 4px 16px rgba(0,0,0,0.15)" : "none",
-                    }}>{step}</div>
-                  ))}
-                </div>
-
-                {/* Step labels */}
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, padding: "0 8px" }}>
-                  {labels.map((label, i) => (
-                    <span key={label} style={{
-                      fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const,
-                      letterSpacing: "0.05em",
-                      color: i === 2 ? C.primary : "#9ca3af",
-                    }}>{label}</span>
-                  ))}
-                </div>
-              </div>
+            <div className="relative flex justify-between items-center px-4">
+              <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-bz-border -translate-y-1/2 z-0" />
+              {steps.map(s => (
+                <div key={s.code} className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                  s.active
+                    ? "bg-bz-text text-bz-surface border-4 border-bz-surface shadow-md"
+                    : "bg-bz-bg text-bz-text-muted border border-bz-border"
+                }`}>{s.code}</div>
+              ))}
+            </div>
+            <div className="flex justify-between mt-3 px-2">
+              {steps.map(s => (
+                <span key={s.code} className={`text-[9px] font-bold uppercase tracking-[0.05em] ${
+                  s.active ? "text-bz-text" : "text-bz-text-muted"
+                }`}>{s.label}</span>
+              ))}
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
-// ─── 2. CAPABILITIES ──────────────────────────────────────────────────────────
-const features = [
-  {
-    icon: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 0 2-2z",
-    title: "Project Planning",
-    desc: "Comprehensive multi-phase milestone tracking with dynamic Gantt visualization and dependency modeling.",
-  },
-  {
-    icon: "M21 4H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z M1 10h22 M16 14h.01",
-    title: "Budgeting & Estimation",
-    desc: "Hierarchical cost modeling and automated margin protection guardrails powered by historical analysis.",
-  },
-  {
-    icon: "M18 20V10M12 20V4M6 20v-6",
-    title: "Cost Tracking",
-    desc: "Real-time ledger integration captures every project expense the moment it's committed in the field.",
-  },
-  {
-    icon: ["M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2", "M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8", "M23 21v-2a4 4 0 0 0-3-3.87", "M16 3.13a4 4 0 0 1 0 7.75"],
-    title: "Resource Allocation",
-    desc: "Optimize workforce and specialized equipment across the entire project portfolio for maximum utilization.",
-  },
-  {
-    icon: "M12 2v20M2 12h20",
-    title: "Timesheets",
-    desc: "High-precision labor tracking linked to job cost codes and site-specific labor burden multipliers.",
-  },
-  {
-    icon: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z M14 2v7h7 M16 13H8 M16 17H8 M10 9H8",
-    title: "Project Billing",
-    desc: "Automated AIA-style progress billing based on verified site milestones or time-and-materials data.",
-  },
-];
+// ─── DARK SHOWCASE ────────────────────────────────────────────────────────────
 
-function CapabilitiesSection() {
+function TechShowcaseSection() {
   return (
-    <section style={{ padding: "96px 32px", background: C.white }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.2em", color: "#9ca3af", display: "block", marginBottom: 18 }}>Capabilities</span>
-        <h2 style={{
-          fontFamily: "Manrope, Inter, sans-serif",
-          fontSize: "clamp(28px, 4vw, 44px)",
-          fontWeight: 700,
-          color: C.primary,
-          letterSpacing: "-0.02em",
-          lineHeight: 1.2,
-          marginBottom: 56,
-        }}>Precision Engineering for Projects</h2>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 50 }}>
-          {features.map((f) => (
-            <div key={f.title}
-              style={{
-                padding: 32, background: "#f9f9f9", borderRadius: 16,
-                border: `1px solid ${C.borderLight}`, transition: "border-color 0.2s", cursor: "default",
-              }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = C.accent}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = C.borderLight}
-            >
-              <div style={{
-                width: 40, height: 40, background: C.white, borderRadius: 8,
-                border: `1px solid ${C.borderLight}`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                marginBottom: 24, boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-              }}>
-                <Ico d={f.icon} size={18} color="#4b5563" />
-              </div>
-              <h3 style={{ fontWeight: 700, fontSize: 16, color: C.primary, marginBottom: 10 }}>{f.title}</h3>
-              <p style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.65 }}>{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── 3. DARK SHOWCASE ─────────────────────────────────────────────────────────
-function DarkShowcaseSection() {
-  return (
-    <section style={{ padding: "96px 32px", background: C.finDark, color: C.white }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.2em", color: "#52525b", display: "block", marginBottom: 18 }}>Technical Showcase</span>
-        <h2 style={{
-          fontFamily: "Manrope, Inter, sans-serif",
-          fontSize: "clamp(28px, 4vw, 44px)",
-          fontWeight: 700,
-          color: C.white,
-          letterSpacing: "-0.02em",
-          lineHeight: 1.2,
-          maxWidth: 640,
-          marginBottom: 64,
-        }}>
-          High-fidelity tools for the<br />modern project team
-        </h2>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
-          {/* Card 1: Real-time Job Costing */}
-          <div style={{
-            background: C.finGray, borderRadius: 24,
-            border: "1px solid rgba(255,255,255,0.05)",
-            padding: 36, display: "flex", flexDirection: "column" as const,
-            justifyContent: "space-between", minHeight: 450,
-          }}>
+    <Section tone="dark">
+      <Container>
+        <SectionHeading
+          eyebrow="Technical Showcase"
+          title={<>High-fidelity tools for the<br />modern project team</>}
+          tone="light"
+          maxWidth={640}
+          className="mb-16"
+        />
+        <div className="grid grid-cols-2 gap-5">
+          {/* Real-time Job Costing */}
+          <div className="bg-white/[0.03] rounded-[24px] border border-white/[0.05] p-9 flex flex-col justify-between min-h-[450px]">
             <div>
-              <div style={{
-                width: 34, height: 34, borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.1)",
-                display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24,
-              }}>
-                <Ico d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" size={18} color={C.accent} />
-              </div>
-              <h3 style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 12, fontFamily: "Manrope, Inter, sans-serif" }}>Real-time Job Costing</h3>
-              <p style={{ fontSize: 13, color: C.zinc500, lineHeight: 1.65, marginBottom: 48 }}>
+              <DollarSign className="size-5 text-bz-accent mb-6" />
+              <h3 className="text-[22px] font-bold text-white mb-3">Real-time Job Costing</h3>
+              <p className="text-[13px] text-white/40 leading-[1.65] mb-12">
                 Track every PO and labor shift against project codes with live reconciliation.
               </p>
             </div>
-            <div style={{
-              background: "rgba(255,255,255,0.04)", borderRadius: 14,
-              border: "1px solid rgba(255,255,255,0.08)", padding: 24,
-            }}>
+            <div className="bg-white/[0.04] rounded-bz-xl border border-white/[0.08] p-6">
               {[
-                { label: "PO #8841: Concrete", value: "+$1,200" },
-                { label: "Labor Shift: Grade II", value: "+$4,500" },
-                { label: "Logistics: Haulage", value: "+$890" },
+                { label: "PO #8841: Concrete",     value: "+$1,200" },
+                { label: "Labor Shift: Grade II",  value: "+$4,500" },
+                { label: "Logistics: Haulage",     value: "+$890"   },
               ].map((row, i) => (
-                <div key={row.label} style={{
-                  display: "flex", justifyContent: "space-between", alignItems: "center",
-                  paddingBottom: i < 2 ? 16 : 0,
-                  marginBottom: i < 2 ? 16 : 0,
-                  borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.05)" : "none",
-                }}>
-                  <span style={{ fontSize: 12, color: C.zinc400 }}>{row.label}</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: C.accent }}>{row.value}</span>
+                <div key={row.label} className={`flex justify-between items-center ${i < 2 ? "pb-4 mb-4 border-b border-white/[0.05]" : ""}`}>
+                  <span className="text-[12px] text-white/60">{row.label}</span>
+                  <span className="text-[13px] font-bold text-bz-accent">{row.value}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Card 2: Project Control */}
-          <div style={{
-            background: C.finGray, borderRadius: 24,
-            border: "1px solid rgba(255,255,255,0.05)",
-            padding: 36, display: "flex", flexDirection: "column" as const,
-            justifyContent: "space-between", minHeight: 450,
-          }}>
+          {/* Project Control */}
+          <div className="bg-white/[0.03] rounded-[24px] border border-white/[0.05] p-9 flex flex-col justify-between min-h-[450px]">
             <div>
-              <div style={{
-                width: 34, height: 34, borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.1)",
-                display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24,
-              }}>
-                <Ico d="M9 11l3 3L22 4 M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" size={18} color={C.accent} />
-              </div>
-              <h3 style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 12, fontFamily: "Manrope, Inter, sans-serif" }}>Project Control</h3>
-              <p style={{ fontSize: 13, color: C.zinc500, lineHeight: 1.65, marginBottom: 32 }}>
+              <CheckSquare className="size-5 text-bz-accent mb-6" />
+              <h3 className="text-[22px] font-bold text-white mb-3">Project Control</h3>
+              <p className="text-[13px] text-white/40 leading-[1.65] mb-8">
                 Maintain strict project hygiene with intelligent approval workflows and margin guardrails.
               </p>
             </div>
-            <div style={{ display: "flex", flexDirection: "column" as const, gap: 10 }}>
+            <div className="flex flex-col gap-2.5">
               {[
-                { abbr: "PM", label: "PM Approval", dot: "#22c55e", pulse: false },
-                { abbr: "EX", label: "Exec Review > $100k", dot: "#eab308", pulse: true },
-              ].map((row) => (
-                <div key={row.label} style={{
-                  padding: "14px 16px",
-                  background: "rgba(255,255,255,0.04)",
-                  borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)",
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{
-                      width: 24, height: 24, borderRadius: 6,
-                      background: "rgba(174,248,49,0.15)", color: C.accent,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 9, fontWeight: 700,
-                    }}>{row.abbr}</div>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: C.zinc400 }}>{row.label}</span>
+                { abbr: "PM", label: "PM Approval",          dot: "bg-green-500"  },
+                { abbr: "EX", label: "Exec Review > $100k",  dot: "bg-amber-500"  },
+              ].map(row => (
+                <div key={row.label} className="px-4 py-3.5 bg-white/[0.04] rounded-bz-lg border border-white/[0.08] flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-bz-sm bg-bz-accent/15 text-bz-accent flex items-center justify-center text-[9px] font-bold">{row.abbr}</div>
+                    <span className="text-[12px] font-semibold text-white/60">{row.label}</span>
                   </div>
-                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: row.dot }} />
+                  <div className={`w-2 h-2 rounded-full ${row.dot}`} />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Card 3: Resource Heatmap */}
-          <div style={{
-            background: C.finGray, borderRadius: 24,
-            border: "1px solid rgba(255,255,255,0.05)",
-            padding: 36, display: "flex", flexDirection: "column" as const,
-            justifyContent: "space-between", minHeight: 400,
-          }}>
+          {/* Resource Heatmap */}
+          <div className="bg-white/[0.03] rounded-[24px] border border-white/[0.05] p-9 flex flex-col justify-between min-h-[400px]">
             <div>
-              <div style={{
-                width: 34, height: 34, borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.1)",
-                display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24,
-              }}>
-                <Ico d="M3 3h7v7H3z M14 3h7v7h-7z M14 14h7v7h-7z M3 14h7v7H3z" size={18} color={C.accent} />
-              </div>
-              <h3 style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 12, fontFamily: "Manrope, Inter, sans-serif" }}>Resource Heatmap</h3>
-              <p style={{ fontSize: 13, color: C.zinc500, lineHeight: 1.65, marginBottom: 48 }}>
+              <Grid3x3 className="size-5 text-bz-accent mb-6" />
+              <h3 className="text-[22px] font-bold text-white mb-3">Resource Heatmap</h3>
+              <p className="text-[13px] text-white/40 leading-[1.65] mb-12">
                 Dynamic workforce utilization across all active job sites.
               </p>
             </div>
-            <div style={{
-              background: "rgba(255,255,255,0.04)",
-              borderRadius: "14px 14px 0 0",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderBottom: "none",
-              padding: 24, flex: 1,
-              display: "flex", flexDirection: "column" as const, justifyContent: "center",
-            }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
-                {[
-                  { opacity: 1 }, { opacity: 0.4 }, { opacity: 0.1 }, { opacity: 0.8 },
-                ].map((cell, i) => (
-                  <div key={i} style={{
-                    aspectRatio: "1", borderRadius: 4,
-                    background: `rgba(174,248,49,${cell.opacity})`,
-                  }} />
+            <div className="bg-white/[0.04] rounded-t-[14px] border border-white/[0.08] border-b-0 p-6 flex-1 flex items-center">
+              <div className="grid grid-cols-4 gap-2 w-full">
+                {[1, 0.4, 0.1, 0.8, 0.6, 0.9, 0.3, 0.5, 0.2, 0.7, 1, 0.4].map((opacity, i) => (
+                  <div key={i} className="aspect-square rounded-bz-sm" style={{ background: `rgba(199,255,53,${opacity})` }} />
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Card 4: Profitability Analysis */}
-          <div style={{
-            background: C.finGray, borderRadius: 24,
-            border: "1px solid rgba(255,255,255,0.05)",
-            padding: 36, minHeight: 400,
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
-              <div style={{
-                width: 34, height: 34, borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.1)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <Ico d="M23 6l-9.5 9.5-5-5L1 18 M17 6h6v6" size={18} color={C.accent} />
-              </div>
-              <div style={{ textAlign: "right" as const }}>
-                <p style={{ fontSize: 9, color: C.zinc500, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.15em", marginBottom: 4 }}>NET ROI</p>
-                <p style={{ fontSize: 24, fontWeight: 700, color: C.accent }}>+24.5%</p>
+          {/* Profitability */}
+          <div className="bg-white/[0.03] rounded-[24px] border border-white/[0.05] p-9 min-h-[400px]">
+            <div className="flex justify-between items-start mb-6">
+              <TrendingUp className="size-5 text-bz-accent" />
+              <div className="text-right">
+                <p className="text-[9px] text-white/40 font-bold uppercase tracking-[0.15em] mb-1">NET ROI</p>
+                <p className="text-[24px] font-bold text-bz-accent">+24.5%</p>
               </div>
             </div>
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 12, fontFamily: "Manrope, Inter, sans-serif" }}>Profitability Analysis</h3>
-            <p style={{ fontSize: 13, color: C.zinc500, lineHeight: 1.65, marginBottom: 32 }}>
+            <h3 className="text-[22px] font-bold text-white mb-3">Profitability Analysis</h3>
+            <p className="text-[13px] text-white/40 leading-[1.65] mb-8">
               Direct job costing linked to automated revenue recognition for absolute margin integrity.
             </p>
-            <div style={{ display: "flex", flexDirection: "column" as const, gap: 0 }}>
+            <div>
               {[
                 { project: "Metropolis Tower", health: "A+ Health" },
-                { project: "Bridge Deck A", health: "B+ Health" },
+                { project: "Bridge Deck A",    health: "B+ Health" },
               ].map((row, i) => (
-                <div key={row.project} style={{
-                  display: "flex", justifyContent: "space-between", alignItems: "center",
-                  padding: "12px 0",
-                  borderBottom: i === 0 ? "1px solid rgba(255,255,255,0.05)" : "none",
-                }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: C.white }}>{row.project}</span>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: C.accent }}>{row.health}</span>
+                <div key={row.project} className={`flex justify-between items-center py-3 ${i === 0 ? "border-b border-white/[0.05]" : ""}`}>
+                  <span className="text-[12px] font-bold text-white">{row.project}</span>
+                  <span className="text-[11px] font-bold text-bz-accent">{row.health}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
-// ─── 4. INTELLIGENCE ──────────────────────────────────────────────────────────
+// ─── INTELLIGENCE ─────────────────────────────────────────────────────────────
+
 function IntelligenceSection() {
   const metrics = [
-    { label: "MARGIN PER PROJECT", value: "+19.4%", sub: "↑ 2.1%", subColor: "#22c55e", accent: true },
-    { label: "COST VARIANCE", value: "-2.1%", sub: "Optimized", subColor: "#9ca3af", accent: false },
-    { label: "UTILIZATION %", value: "88.5%", sub: "", subColor: "", accent: false },
-    { label: "COMPLETION RATE", value: "94.2%", sub: "", subColor: "", accent: false },
+    { label: "MARGIN PER PROJECT", value: "+19.4%", sub: "↑ 2.1%",     pos: true,  accent: true  },
+    { label: "COST VARIANCE",       value: "−2.1%",  sub: "Optimized",  pos: false, accent: false },
+    { label: "UTILIZATION %",       value: "88.5%",  accent: false },
+    { label: "COMPLETION RATE",     value: "94.2%",  accent: false },
   ];
-
   return (
-    <section style={{ padding: "96px 32px", background: C.fcfcfc }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ textAlign: "center" as const, marginBottom: 64 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.2em", color: "#9ca3af", display: "block", marginBottom: 18 }}>Reporting</span>
-          <h2 style={{
-            fontFamily: "Manrope, Inter, sans-serif",
-            fontSize: "clamp(28px, 4vw, 44px)",
-            fontWeight: 700, color: C.primary, letterSpacing: "-0.02em",
-          }}>Executive Project Analytics</h2>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "3fr 1fr", gap: 24, }}>
-          {/* Chart */}
-          <div style={{
-            background: C.white, borderRadius: 24, padding: 40,
-            border: `1px solid ${C.borderLight}`,
-            boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 48 }}>
+    <Section tone="light">
+      <Container>
+        <SectionHeading eyebrow="Reporting" title="Executive Project Analytics" align="center" className="mb-14" />
+        <div className="grid grid-cols-[3fr_1fr] gap-6">
+          <div className="bg-bz-surface rounded-bz-2xl border border-bz-border p-10 shadow-sm">
+            <div className="flex justify-between items-start mb-12">
               <div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1f2937", marginBottom: 6 }}>Margin Trends &amp; Variances</h3>
-                <p style={{ fontSize: 11, color: "#9ca3af" }}>Consolidated performance across 12 active sites</p>
+                <h3 className="text-[18px] font-bold text-bz-text mb-1.5">Margin Trends &amp; Variances</h3>
+                <p className="text-[11px] text-bz-text-muted">Consolidated performance across 12 active sites</p>
               </div>
-              <span style={{
-                fontSize: 9, fontWeight: 700, background: "#f3f4f6",
-                padding: "4px 10px", borderRadius: 6, color: C.onSurfaceVar,
-              }}>FY2024</span>
+              <span className="text-[9px] font-bold bg-bz-bg px-3 py-1 rounded-bz-sm text-bz-text-muted">FY2024</span>
             </div>
-            <div style={{ position: "relative", height: 240 }}>
-              <svg width="100%" height="100%" viewBox="0 0 400 100" preserveAspectRatio="none">
-                <path d="M0,80 Q50,20 100,60 T200,40 T300,70 T400,20" fill="none" stroke={C.accent} strokeWidth="3" strokeLinecap="round" />
-                <path d="M0,90 Q50,50 100,80 T200,60 T300,90 T400,50" fill="none" stroke="#e5e7eb" strokeDasharray="4 4" strokeWidth="2" strokeLinecap="round" />
+            <div className="relative h-[240px]">
+              <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-full">
+                <path d="M0,80 Q50,20 100,60 T200,40 T300,70 T400,20" fill="none" stroke="var(--bz-sage)" strokeWidth="3" strokeLinecap="round" />
+                <path d="M0,90 Q50,50 100,80 T200,60 T300,90 T400,50" fill="none" stroke="var(--bz-border)" strokeDasharray="4 4" strokeWidth="2" strokeLinecap="round" />
               </svg>
-              <div style={{
-                position: "absolute", top: "20%", left: "50%", transform: "translateX(-50%)",
-                background: C.primary, color: C.white,
-                padding: "12px 20px", borderRadius: 12,
-                boxShadow: "0 8px 24px rgba(0,0,0,0.2)", textAlign: "center" as const, whiteSpace: "nowrap" as const,
-              }}>
-                <p style={{ fontSize: 7, textTransform: "uppercase" as const, letterSpacing: "0.15em", opacity: 0.6, marginBottom: 4 }}>Peak Margin</p>
-                <p style={{ fontSize: 18, fontWeight: 700 }}>19.4%</p>
-                <p style={{ fontSize: 7, opacity: 0.6 }}>Project: Metropolis</p>
+              <div className="absolute top-[20%] left-1/2 -translate-x-1/2 bg-bz-deep text-white px-5 py-3 rounded-bz-xl shadow-lg text-center whitespace-nowrap">
+                <p className="text-[7px] uppercase tracking-[0.15em] opacity-60 mb-1">Peak Margin</p>
+                <p className="text-[18px] font-bold">19.4%</p>
+                <p className="text-[7px] opacity-60">Project: Metropolis</p>
               </div>
             </div>
           </div>
-
-          {/* Metric cards */}
-          <div style={{ display: "flex", flexDirection: "column" as const, gap: 16 }}>
-            {metrics.map((m) => (
-              <div key={m.label} style={{
-                padding: 24, background: C.white,
-                border: `1px solid ${C.borderLight}`,
-                borderRadius: 16, boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-              }}>
-                <p style={{ fontSize: 9, color: "#9ca3af", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", marginBottom: 4 }}>{m.label}</p>
-                <p style={{ fontSize: 20, fontWeight: 700, color: m.accent ? C.accent : C.primary }}>{m.value}</p>
-                {m.sub && <p style={{ fontSize: 9, fontWeight: 700, color: m.subColor, marginTop: 4 }}>{m.sub}</p>}
+          <div className="flex flex-col gap-4">
+            {metrics.map(m => (
+              <div key={m.label} className="p-6 bg-bz-surface border border-bz-border rounded-bz-xl shadow-sm">
+                <p className="text-[9px] text-bz-text-muted font-bold uppercase tracking-[0.1em] mb-1">{m.label}</p>
+                <p className={`text-[20px] font-bold ${m.accent ? "text-bz-sage" : "text-bz-text"}`}>{m.value}</p>
+                {m.sub && <p className={`text-[9px] font-bold mt-1 ${m.pos ? "text-green-700" : "text-bz-text-muted"}`}>{m.sub}</p>}
               </div>
             ))}
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
-// ─── 5. CONNECTED SYSTEM ──────────────────────────────────────────────────────
-function ConnectedSystemSection() {
+// ─── CONNECTIVITY ─────────────────────────────────────────────────────────────
+
+function ConnectivitySection() {
   return (
-    <section style={{ padding: "96px 32px", background: C.finDark, color: C.white }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" as const }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.2em", color: "#52525b", display: "block", marginBottom: 20 }}>Connected System</span>
-        <h2 style={{
-          fontFamily: "Manrope, Inter, sans-serif",
-          fontSize: "clamp(28px, 4vw, 44px)",
-          fontWeight: 700, color: C.white, letterSpacing: "-0.02em",
-          margin: "0 auto 96px",
-        }}>Project Intelligence Node</h2>
-
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap" as const }}>
-          {/* Finance node */}
-          <div style={{
-            width: 130, minHeight: 160,
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: 16,
-            display: "flex", flexDirection: "column" as const, alignItems: "center",
-            justifyContent: "center", padding: 24, transition: "border-color 0.2s",
-          }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = C.accent}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)"}
-          >
-            <div style={{
-              width: 40, height: 40, background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8,
-              display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16,
-            }}>
-              <Ico d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" size={20} color={C.zinc500} />
+    <Section tone="dark">
+      <Container>
+        <SectionHeading
+          eyebrow="Connected System"
+          title="Project Intelligence Node"
+          tone="light"
+          align="center"
+          className="mb-24"
+        />
+        <div className="flex items-center justify-center flex-wrap">
+          <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
+            <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
+              <DollarSign className="size-7 text-white/60" />
             </div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: C.white, marginBottom: 12 }}>Finance</p>
-            <div style={{ width: "100%", height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 8 }} />
-            <p style={{ fontSize: 8, color: "#52525b", textTransform: "uppercase" as const, letterSpacing: "0.1em" }}>ERP Sync</p>
-          </div>
-
-          {/* Connector */}
-          <div style={{
-            flex: 1, maxWidth: 120, height: 1,
-            background: "linear-gradient(90deg, transparent, rgba(174,248,49,0.5), transparent)",
-          }} />
-
-          {/* Project Hub */}
-          <div style={{ position: "relative", flexShrink: 0 }}>
-            <div style={{
-              position: "absolute", inset: -48,
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(174,248,49,0.25) 0%, transparent 65%)",
-              filter: "blur(20px)", zIndex: 0,
-            }} />
-            <div style={{
-              position: "relative", zIndex: 1,
-              width: 120, height: 120, borderRadius: "50%",
-              background: C.accent,
-              display: "flex", flexDirection: "column" as const, alignItems: "center",
-              justifyContent: "center", color: C.primary,
-              boxShadow: "0 0 60px rgba(174,248,49,0.35)",
-            }}>
-              <Ico d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M12 2v2 M12 20v2 M2 12h2 M20 12h2" size={32} color={C.primary} strokeWidth={2} />
-              <p style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase" as const, letterSpacing: "0.2em", textAlign: "center" as const, lineHeight: 1.2, marginTop: 4 }}>Project<br />Hub</p>
+            <h4 className="text-[20px] font-bold text-white mb-3">Finance</h4>
+            <p className="text-[13px] text-white/50 leading-[1.65] mb-7">
+              Project costs flow into the GL the moment they're committed — no batch syncs, no end-of-month surprises.
+            </p>
+            <div className="flex justify-between items-center px-4 py-2 bg-black/30 rounded-bz-lg border border-white/[0.05]">
+              <span className="text-[9px] font-bold text-white/50 uppercase">ERP SYNC</span>
+              <span className="text-[9px] font-bold text-bz-accent">Real-time</span>
             </div>
           </div>
 
-          {/* Connector */}
-          <div style={{
-            flex: 1, maxWidth: 120, height: 1,
-            background: "linear-gradient(90deg, transparent, rgba(174,248,49,0.5), transparent)",
-          }} />
+          <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
 
-          {/* Inventory node */}
-          <div style={{
-            width: 130, minHeight: 160,
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: 16,
-            display: "flex", flexDirection: "column" as const, alignItems: "center",
-            justifyContent: "center", padding: 24, transition: "border-color 0.2s",
-          }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = C.accent}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)"}
-          >
-            <div style={{
-              width: 40, height: 40, background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8,
-              display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16,
-            }}>
-              <Ico d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" size={20} color={C.zinc500} />
+          <div className="flex-shrink-0 flex flex-col items-center gap-4">
+            <div className="w-28 h-28 rounded-full bg-bz-accent flex items-center justify-center">
+              <Network className="size-10 text-bz-text" strokeWidth={1.8} />
             </div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: C.white, marginBottom: 12 }}>Inventory</p>
-            <div style={{ width: "100%", height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 8 }} />
-            <p style={{ fontSize: 8, color: "#52525b", textTransform: "uppercase" as const, letterSpacing: "0.1em" }}>Asset Sync</p>
+            <div className="text-[10px] font-black tracking-[0.3em] text-bz-accent uppercase">Project Hub</div>
+          </div>
+
+          <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+
+          <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
+            <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
+              <Package className="size-7 text-white/60" />
+            </div>
+            <h4 className="text-[20px] font-bold text-white mb-3">Inventory</h4>
+            <p className="text-[13px] text-white/50 leading-[1.65] mb-7">
+              Material drawdowns charge directly to project codes — every part used is reconciled in real time.
+            </p>
+            <div className="flex justify-between items-center px-4 py-2 bg-black/30 rounded-bz-lg border border-white/[0.05]">
+              <span className="text-[9px] font-bold text-white/50 uppercase">ASSET SYNC</span>
+              <span className="text-[9px] font-bold text-bz-accent">Live</span>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
-
-// ─── 6. IMPACT METRICS ────────────────────────────────────────────────────────
-function MetricsSection() {
-  return (
-    <section style={{ padding: "96px 32px", background: C.white }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" as const }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.2em", color: "#9ca3af", display: "block", marginBottom: 18 }}>Impact</span>
-        <h2 style={{
-          fontFamily: "Manrope, Inter, sans-serif",
-          fontSize: "clamp(28px, 4vw, 44px)",
-          fontWeight: 700, color: C.primary, letterSpacing: "-0.02em",
-          marginBottom: 80,
-        }}>Measurable impact on project margins</h2>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 55 }}>
-          {[
-            { value: "20%", label: "Profitability Increase", desc: "Automated tracking and reconciliation workflows capture leaked revenue immediately.", accent: true },
-            { value: "35%", label: "Better Cost Control", desc: "Reduce uncaptured site expenses and labor variances with real-time field data.", accent: false },
-            { value: "100%", label: "Cost Visibility", desc: "Real-time margin visibility across the entire project lifecycle, from site to C-suite.", accent: false },
-          ].map((m) => (
-            <div key={m.label}
-              style={{
-                padding: 40, border: `1px solid ${C.borderLight}`,
-                borderRadius: 20, textAlign: "center" as const, transition: "box-shadow 0.2s",
-              }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 48px rgba(0,0,0,0.1)"}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "none"}
-            >
-              <p style={{
-                fontSize: 52, fontWeight: 900, marginBottom: 16,
-                letterSpacing: "-0.04em", fontFamily: "Manrope, Inter, sans-serif",
-                color: m.accent ? C.accent : C.primary,
-              }}>{m.value}</p>
-              <p style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.15em", color: "#9ca3af", marginBottom: 20 }}>{m.label}</p>
-              <p style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.65 }}>{m.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-
-// ─── 7. CTA SECTION ──────────────────────────────────────────────────────────
-function CTASection() {
-  return (
-    <section className="biz-cta-section" style={{ background: C.deep, padding: "100px 0", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(rgba(199,255,53,0.04) 1px, transparent 1px)`, backgroundSize: "28px 28px", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 800, height: 400, background: "radial-gradient(ellipse, rgba(199,255,53,0.05) 0%, transparent 65%)", pointerEvents: "none" }} />
-
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 40px", textAlign: "center", position: "relative", zIndex: 1 }}>
-        {/* <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            background: C.accentLow,
-            border: `1px solid ${C.accentMid}`,
-            borderRadius: 100,
-            padding: "6px 18px",
-            marginBottom: 32,
-          }}
-        >
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.accent, display: "block" }} />
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 700, color: C.accent, letterSpacing: "0.08em" }}>OPEN TO ALL BACKGROUNDS</span>
-        </div> */}
-
-        <h2
-          style={{
-            fontFamily: "'Manrope', sans-serif",
-            fontSize: "clamp(32px, 4.5vw, 58px)",
-            fontWeight: 800,
-            color: C.white,
-            lineHeight: 1.08,
-            margin: "0 0 20px",
-            letterSpacing: "-0.03em",
-          }}
-        >
-          Take control of your  project{" "}<span style={{ color: C.accent }}> margins today.</span>
-        </h2>
-
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 18,
-            color: "rgba(255,255,255,0.55)",
-            lineHeight: 1.7,
-            margin: "0 auto 48px",
-            maxWidth: 580,
-          }}
-        >
-         Join 50,000+ companies scaling with FinCore. Start your <br></br>14-day free trial today.
-        </p>
-
-        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-          <a
-            href="https://system.bizakerp.com/account/self-register"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: C.accent,
-              color: C.deep,
-              padding: "15px 36px",
-              borderRadius: 10,
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 700,
-              fontSize: 15,
-              textDecoration: "none",
-              transition: "transform 0.2s, box-shadow 0.2s",
-            }}
-            onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = "translateY(-2px)"; el.style.boxShadow = `0 8px 32px rgba(199,255,53,0.35)`; }}
-            onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = ""; el.style.boxShadow = ""; }}
-          >
-      Start Free Trial
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M7 17l9.2-9.2M17 17V7H7" />
-            </svg>
-          </a>
-          <a
-            href="/contact"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: "transparent",
-              color: C.white,
-              padding: "15px 36px",
-              borderRadius: 10,
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 600,
-              fontSize: 15,
-              textDecoration: "none",
-              border: `1px solid ${C.borderDark}`,
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.25)"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = C.borderDark; }}
-          >
-           Book a demo
-          </a>
-        </div>
-
-       
-      </div>
-    </section>
-  );
-}
-
-
-
 
 // ─── PAGE EXPORT ──────────────────────────────────────────────────────────────
+
 export function ProjectAndJobCostingPage() {
   return (
-    <div style={{ fontFamily: "Inter, sans-serif" }}>
-      <HeroSection />
-      <CapabilitiesSection />
-      <DarkShowcaseSection />
+    <>
+      <HeroCentered
+        badge={<HeroBadge>Enterprise Project Control</HeroBadge>}
+        title={<>Track every cost.<br />Protect every project margin.</>}
+        description="Manage budgets, allocate resources, and monitor real-time project profitability with precision intelligence."
+        actions={
+          <>
+            <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
+            <Button variant="outline" size="lg">View features</Button>
+          </>
+        }
+        visual={<HeroDashboard />}
+      />
+
+      <Section tone="white">
+        <Container>
+          <SectionHeading
+            eyebrow="Capabilities"
+            title="Precision engineering for projects"
+            maxWidth={680}
+            className="mb-14"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+            {CAPABILITIES.map(({ Icon, title, desc }) => (
+              <Card key={title} hover="lift" pad="md">
+                <IconBadge tone="sage" size="md" className="mb-6">
+                  <Icon className="size-5" />
+                </IconBadge>
+                <h3 className="font-bold text-[16px] text-bz-text mb-2.5">{title}</h3>
+                <p className="text-[13px] text-bz-text-muted leading-[1.65]">{desc}</p>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      <TechShowcaseSection />
       <IntelligenceSection />
-      <ConnectedSystemSection />
-      <MetricsSection />
-      <CTASection />
-    </div>
+      <ConnectivitySection />
+
+      <Section tone="white">
+        <Container>
+          <SectionHeading eyebrow="Impact" title="Measurable impact on project margins" align="center" className="mb-16" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {METRICS.map(m => (
+              <Card key={m.label} hover="lift" pad="lg" className="text-center">
+                <div className="text-[52px] font-black text-bz-text tracking-[-0.04em] mb-3">{m.value}</div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-bz-text-muted mb-4">{m.label}</div>
+                <p className="text-[13px] text-bz-text-muted leading-[1.65]">{m.desc}</p>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      <Section tone="dark">
+        <Container width="narrow">
+          <SectionHeading
+            title={<>Take control of your<br /><span className="text-bz-accent">project margins today</span></>}
+            description="Join 50,000+ companies running real-time project P&Ls with Bizak — from estimate to final billing."
+            tone="light"
+            align="center"
+            maxWidth={580}
+            className="mb-10"
+          />
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button variant="accent" size="lg" href="https://system.bizakerp.com/account/self-register" withArrow>
+              Start Free Trial
+            </Button>
+            <Button variant="ghostDark" size="lg" href="/contact">
+              Book a Demo
+            </Button>
+          </div>
+        </Container>
+      </Section>
+    </>
   );
 }

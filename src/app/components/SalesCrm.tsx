@@ -132,7 +132,7 @@ function HeroSection() {
       description="Centralize your pipeline, automate approvals, and post every sale straight to the ledger. One system — no re-keying, no spreadsheet reconciliation."
       actions={
         <>
-          <Button variant="primary" size="lg" href="/contact" withArrow>Request Demo</Button>
+          <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
           <Button variant="outline" size="lg" href="#features">View features</Button>
         </>
       }

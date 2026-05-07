@@ -4,7 +4,7 @@ import { cn } from "../ui/utils";
 import { Eyebrow } from "./Eyebrow";
 
 const headingVariants = cva(
-  "font-bold leading-[1.1] tracking-[-0.02em]",
+  "font-bold leading-[1.15] tracking-[-0.02em]",
   {
     variants: {
       level: {

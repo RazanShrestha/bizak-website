@@ -240,7 +240,7 @@ function TechShowcaseSection() {
                   { ref: "CC-2024-0439", loc: "Zone A / Rack 12" },
                 ].map((row) => (
                   <tr key={row.ref} className="border-b border-white/[0.04]">
-                    <td className="text-[11px] font-mono text-white py-3">{row.ref}</td>
+                    <td className="text-[11px] font-bold tracking-tight text-white py-3">{row.ref}</td>
                     <td className="text-[11px] text-white/60 py-3">{row.loc}</td>
                     <td className="py-3 text-right">
                       <div className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-green-500/15">

@@ -316,7 +316,7 @@ function SolutionSection() {
         <SectionHeading
           eyebrow="The Solution"
           title="Built for the complexity mid-market demands"
-          align="center"
+          align="left"
           className="mb-16"
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -517,72 +517,15 @@ const INSIGHT_BULLETS = [
   { bold: "Board-Ready Reports",         rest: " — Export investor-grade reports directly from live data — no spreadsheet assembly needed." },
 ];
 
-function InsightsSection() {
-  return (
-    <Section tone="white">
-      <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
-          <div className="rounded-bz-xl border border-bz-border bg-bz-surface overflow-hidden p-6">
-            <div className="flex gap-4 mb-4">
-              <div className="h-8 w-36 bg-bz-bg rounded-lg" />
-              <div className="h-8 w-20 bg-bz-bg rounded-lg" />
-            </div>
-            <div className="h-56 bg-bz-surface rounded-lg border border-bz-border/50 relative p-4">
-              <svg className="w-full h-full" viewBox="0 0 400 200" fill="none">
-                <defs>
-                  <linearGradient id="mmRevGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#7A826D" stopOpacity="0.12" />
-                    <stop offset="100%" stopColor="#7A826D" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path d="M0 160 C 50 150, 100 135, 160 108 S 260 80, 320 60 S 370 44, 400 36" stroke="#7A826D" strokeWidth="3" strokeLinecap="round" />
-                <path d="M0 160 C 50 150, 100 135, 160 108 S 260 80, 320 60 S 370 44, 400 36 V 200 H 0 Z" fill="url(#mmRevGrad)" />
-                <path d="M0 175 C 40 170, 90 162, 150 148 S 240 128, 300 114 S 360 96, 400 88" stroke="rgba(122,130,109,0.4)" strokeWidth="2" strokeDasharray="6 4" />
-                <circle cx="320" cy="60" r="5" fill="#C7FF35" stroke="#7A826D" strokeWidth="2" />
-              </svg>
-              <div className="absolute top-4 right-4 bg-bz-surface border border-bz-border rounded-lg p-2.5 shadow-sm">
-                <div className="text-[11px] font-bold text-bz-text">Consolidated: $4.24M ↑</div>
-                <div className="text-[10px] font-bold text-green-600 mt-1">+22% vs last year</div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <SectionHeading
-              eyebrow="Consolidated Intelligence"
-              title="One view across every entity and department."
-              description="Stop waiting for month-end reports. Bizak consolidates financials, approvals, inventory, and headcount across all your entities in real time — giving leadership instant clarity."
-              maxWidth={560}
-              className="mb-8"
-            />
-            <ul className="flex flex-col gap-4">
-              {INSIGHT_BULLETS.map((item) => (
-                <li key={item.bold} className="flex items-start gap-3">
-                  <CheckCircle size={20} className="text-bz-sage shrink-0 mt-0.5" strokeWidth={1.8} />
-                  <span className="text-[15px] text-bz-text leading-[1.7]">
-                    <strong>{item.bold}</strong>{item.rest}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
 // ─── Workflow ─────────────────────────────────────────────────────────────────
 
 type WorkflowStep = { icon: LucideIcon; label: string };
 
 const WORKFLOW_STEPS: WorkflowStep[] = [
-  { icon: RefreshCw, label: "Migrate Data"    },
   { icon: Settings,  label: "Configure"       },
-  { icon: Layers,    label: "Map Entities"    },
   { icon: Users,     label: "Set Permissions" },
+  { icon: Layers,    label: "Map Entities"    },
+  { icon: RefreshCw, label: "Migrate Data"    },
   { icon: Plug,      label: "Integrate"       },
   { icon: Rocket,    label: "Go Live"         },
 ];
@@ -595,7 +538,7 @@ function WorkflowSection() {
           eyebrow="Implementation"
           title="Structured rollout. Zero disruption."
           description="Our dedicated implementation team follows a proven 30-day playbook — phased go-live, data migration included, and handover training for every team."
-          align="center"
+          align="left"
           maxWidth={520}
           className="mb-16"
         />
@@ -823,7 +766,6 @@ export function MidMarket() {
         <ChallengesSection />
         <SolutionSection />
         <CapabilitiesSection />
-        <InsightsSection />
         <WorkflowSection />
         <TestimonialsSection />
         <PricingSection />
