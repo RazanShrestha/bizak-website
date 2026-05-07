@@ -1,30 +1,36 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "../../styles/style.css";
 import {
+  AlertCircle,
   ArrowLeft,
   ArrowRight,
   ArrowUp,
   ArrowUpRight,
   AtSign,
   Boxes,
+  Check,
   CheckCircle2,
   Eye,
   Factory,
+  FileText,
   Flame,
   Hammer,
   HelpCircle,
   Layers,
   LayoutGrid,
+  Lightbulb,
   Lock,
   LogIn,
   LogOut,
   MessageCircle,
+  Pencil,
   PlugZap,
   Plus,
   Search,
   Send,
   Share2,
   Sparkles,
+  Tag,
   TrendingUp,
   User as UserIcon,
   Wallet,
@@ -779,23 +785,24 @@ function ComposeDialog({
     }
   }, [open]);
 
-  const titleOk = title.trim().length >= 12;
-  const bodyOk = body.trim().length >= 30;
+  const titleOk = title.trim().length >= 8;
+  const bodyOk = body.trim().length >= 20;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submitting) return;
     setError(null);
     if (!titleOk) {
-      setError("Give your question a title of at least 12 characters.");
+      setError("Give your question a title of at least 8 characters.");
       return;
     }
     if (!bodyOk) {
-      setError("Add 30+ characters of context — what have you tried?");
+      setError("Add a bit more context — at least 20 characters.");
       return;
     }
     setSubmitting(true);
+    const found = COMPOSE_CATEGORIES.find((c) => c.key === category)!;
     setTimeout(() => {
-      const found = COMPOSE_CATEGORIES.find((c) => c.key === category)!;
       onSubmit({
         title: title.trim(),
         body: body.trim(),
@@ -805,60 +812,87 @@ function ComposeDialog({
     }, 250);
   }
 
+  const selectedCategory = COMPOSE_CATEGORIES.find((c) => c.key === category);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="overflow-hidden border-bz-border bg-bz-surface p-0 sm:max-w-[640px]">
+      <DialogContent className="flex max-h-[calc(100vh-4rem)] flex-col overflow-hidden border-bz-border bg-bz-surface p-0 sm:max-w-[640px]">
         <DialogTitle className="sr-only">Ask the community</DialogTitle>
         <DialogDescription className="sr-only">
           Post a new question to the Bizak community forum.
         </DialogDescription>
 
-        <div className="flex items-center gap-3 border-b border-bz-border px-7 py-5">
-          <Avatar initials={user.initials} size="md" tone="sage" />
-          <div className="min-w-0 flex-1">
-            <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-bz-sage">
-              Posting as
-            </div>
-            <div className="truncate text-[14px] font-bold text-bz-text">
-              {user.name}
+        {/* Hero header — fixed top */}
+        <div className="relative shrink-0 overflow-hidden bg-bz-deep px-7 pb-7 pt-9 text-white">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-20 -top-20 h-[220px] w-[220px] rounded-full bg-bz-accent/12 blur-3xl"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-24 -left-24 h-[200px] w-[200px] rounded-full bg-bz-sage/15 blur-3xl"
+          />
+          <div className="relative">
+            <PillBadge tone="accent" dot>
+              Bizak Community
+            </PillBadge>
+            <h2 className="mt-3 text-[24px] font-bold leading-[1.15] tracking-[-0.02em]">
+              Ask the community.
+            </h2>
+            <p className="mt-2 max-w-[440px] text-[13px] leading-[1.6] text-white/65">
+              Specifics get specific answers. The more context you share, the
+              faster the right operator finds you.
+            </p>
+
+            <div className="mt-5 inline-flex items-center gap-3 rounded-bz-xl border border-white/10 bg-white/[0.04] py-2 pl-2 pr-4 backdrop-blur-sm">
+              <Avatar initials={user.initials} size="sm" tone="accent" />
+              <div className="min-w-0 leading-tight">
+                <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
+                  Posting as
+                </div>
+                <div className="truncate text-[13px] font-bold text-white">
+                  {user.name}
+                </div>
+              </div>
             </div>
           </div>
-          <PillBadge tone="neutral">New question</PillBadge>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-7 py-6">
-          {/* Title */}
-          <label className="flex flex-col gap-1.5">
-            <span className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-                Title
-              </span>
-              <span
-                className={[
-                  "text-[11px] tabular-nums",
-                  titleOk ? "text-bz-sage" : "text-bz-text-soft",
-                ].join(" ")}
-              >
-                {title.length} / 120
-              </span>
-            </span>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value.slice(0, 120))}
-              placeholder="Be specific — what are you trying to do?"
-              autoFocus
-              className="h-[48px] rounded-bz-md border border-bz-border bg-bz-surface px-3.5 text-[15px] font-semibold text-bz-text transition-colors placeholder:font-normal placeholder:text-bz-text-soft focus:border-bz-sage-mid focus:shadow-[0_0_0_3px_rgba(122,130,109,0.12)] focus:outline-none"
-            />
-          </label>
+        <form
+          onSubmit={handleSubmit}
+          className="flex min-h-0 flex-1 flex-col"
+        >
+          <div className="flex-1 overflow-y-auto px-7 py-7">
+           <div className="flex flex-col gap-7">
+            {/* Title */}
+            <div className="flex flex-col gap-2">
+              <FieldLabel
+                icon={Pencil}
+                label="Question title"
+                meta={`${title.length} / 120`}
+                valid={titleOk}
+              />
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value.slice(0, 120))}
+                placeholder="Be specific — what are you trying to do?"
+                autoFocus
+                className="h-[50px] rounded-bz-md border border-bz-border bg-bz-bg px-4 text-[15px] font-semibold text-bz-text transition-all placeholder:font-normal placeholder:text-bz-text-soft focus:border-bz-sage-mid focus:bg-bz-surface focus:shadow-[0_0_0_3px_rgba(122,130,109,0.12)] focus:outline-none"
+              />
+            </div>
 
-          {/* Category picker */}
-          <div className="flex flex-col gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-              Category
-            </span>
-            <div className="-mx-1 overflow-x-auto px-1 pb-1">
-              <div className="flex min-w-max flex-nowrap gap-2">
+            {/* Category picker — visual grid */}
+            <div className="flex flex-col gap-3">
+              <FieldLabel
+                icon={Tag}
+                label="Category"
+                meta={
+                  selectedCategory ? selectedCategory.label : "Pick the closest match"
+                }
+                valid={!!selectedCategory}
+              />
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {COMPOSE_CATEGORIES.map((c) => {
                   const Icon = c.icon;
                   const isActive = c.key === category;
@@ -867,78 +901,152 @@ function ComposeDialog({
                       key={c.key}
                       type="button"
                       onClick={() => setCategory(c.key)}
+                      aria-pressed={isActive}
                       className={[
-                        "inline-flex shrink-0 items-center gap-1.5 rounded-bz-pill border px-3 py-1.5 text-[12.5px] font-semibold transition-colors",
+                        "group relative flex flex-col items-start gap-2.5 rounded-bz-md border p-3 text-left transition-all",
                         isActive
-                          ? "border-bz-sage-mid bg-bz-sage-soft text-bz-sage"
-                          : "border-bz-border bg-bz-surface text-bz-text-muted hover:border-bz-sage-mid hover:text-bz-text",
+                          ? "border-bz-sage-mid bg-bz-sage-soft/70 shadow-[0_0_0_3px_rgba(122,130,109,0.10)]"
+                          : "border-bz-border bg-bz-bg hover:-translate-y-[1px] hover:border-bz-sage-mid hover:bg-bz-surface",
                       ].join(" ")}
                     >
-                      <Icon className="size-[13px]" strokeWidth={1.8} />
-                      {c.label}
+                      {isActive && (
+                        <span
+                          aria-hidden
+                          className="absolute right-2 top-2 inline-flex size-4 items-center justify-center rounded-full bg-bz-sage text-white shadow-[0_2px_6px_rgba(122,130,109,0.4)]"
+                        >
+                          <Check className="size-[10px]" strokeWidth={3} />
+                        </span>
+                      )}
+                      <span
+                        className={[
+                          "inline-flex size-7 items-center justify-center rounded-bz-sm transition-colors",
+                          isActive
+                            ? "bg-bz-sage text-white"
+                            : "bg-bz-surface text-bz-text-soft group-hover:bg-bz-sage-soft group-hover:text-bz-sage",
+                        ].join(" ")}
+                      >
+                        <Icon className="size-[14px]" strokeWidth={1.8} />
+                      </span>
+                      <span
+                        className={[
+                          "text-[12.5px] font-bold leading-tight tracking-[-0.005em]",
+                          isActive ? "text-bz-sage" : "text-bz-text",
+                        ].join(" ")}
+                      >
+                        {c.label}
+                      </span>
                     </button>
                   );
                 })}
               </div>
             </div>
+
+            {/* Body */}
+            <div className="flex flex-col gap-2">
+              <FieldLabel
+                icon={FileText}
+                label="What's the question?"
+                meta={`${body.length} chars`}
+                valid={bodyOk}
+              />
+              <textarea
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                placeholder="What were you trying to do, what did you try, what did you see? Specifics get specific answers."
+                rows={6}
+                className="resize-none rounded-bz-md border border-bz-border bg-bz-bg px-4 py-3 text-[14px] leading-[1.65] text-bz-text transition-all placeholder:text-bz-text-soft focus:border-bz-sage-mid focus:bg-bz-surface focus:shadow-[0_0_0_3px_rgba(122,130,109,0.12)] focus:outline-none"
+              />
+            </div>
+
+            </div>
           </div>
 
-          {/* Body */}
-          <label className="flex flex-col gap-1.5">
-            <span className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-                What's the question?
-              </span>
-              <span
-                className={[
-                  "text-[11px] tabular-nums",
-                  bodyOk ? "text-bz-sage" : "text-bz-text-soft",
-                ].join(" ")}
-              >
-                {body.length} chars
-              </span>
+          {/* Footer band — sticky bottom */}
+          <div className="shrink-0 border-t border-bz-border bg-bz-bg/60 px-7 py-4">
+            {error && (
+              <div className="mb-3 flex items-start gap-2 rounded-bz-md border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-[12.5px] font-medium text-rose-700">
+                <AlertCircle
+                  className="mt-0.5 size-[14px] shrink-0"
+                  strokeWidth={2.2}
+                />
+                <span>{error}</span>
+              </div>
+            )}
+            <div className="flex items-center justify-between gap-4">
+            <span className="hidden items-center gap-2 text-[11.5px] leading-[1.5] text-bz-text-soft sm:inline-flex">
+              <Lightbulb
+                className="size-[13px] shrink-0 text-bz-accent"
+                strokeWidth={2}
+                fill="currentColor"
+              />
+              Share what you've tried — boring details get the best answers.
             </span>
-            <textarea
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              placeholder="What were you trying to do, what did you try, what did you see? Specifics get specific answers."
-              rows={6}
-              className="resize-none rounded-bz-md border border-bz-border bg-bz-surface px-3.5 py-3 text-[14px] leading-[1.65] text-bz-text transition-colors placeholder:text-bz-text-soft focus:border-bz-sage-mid focus:shadow-[0_0_0_3px_rgba(122,130,109,0.12)] focus:outline-none"
-            />
-          </label>
-
-          {error && (
-            <div className="rounded-bz-md border border-rose-200 bg-rose-50 px-3 py-2 text-[12.5px] font-medium text-rose-700">
-              {error}
-            </div>
-          )}
-
-          <div className="flex items-center justify-between gap-3 border-t border-bz-border-soft pt-5">
-            <p className="max-w-[280px] text-[11.5px] leading-[1.5] text-bz-text-soft">
-              Tip: include what you've tried. The forum's best answers come
-              from threads that share the boring details.
-            </p>
-            <div className="flex items-center gap-2">
+            <div className="ml-auto flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => onOpenChange(false)}
-                className="inline-flex h-[42px] items-center justify-center rounded-bz-pill border border-bz-border bg-bz-surface px-4 text-[13px] font-semibold text-bz-text-muted transition-colors hover:border-bz-sage-mid hover:text-bz-text"
+                className="inline-flex h-[42px] shrink-0 items-center justify-center whitespace-nowrap rounded-bz-pill px-4 text-[13px] font-semibold text-bz-text-muted transition-colors hover:bg-bz-surface hover:text-bz-text"
               >
                 Cancel
               </button>
               <button
-                type="submit"
+                type="submit" style={{ minWidth: '120px' }}
                 disabled={submitting}
-                className="inline-flex h-[42px] items-center justify-center gap-1.5 rounded-bz-pill bg-bz-deep px-5 text-[13px] font-bold text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-[42px] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-bz-pill bg-bz-deep px-5 text-[13px] font-bold text-white transition-all hover:bg-black hover:shadow-[0_8px_24px_rgba(15,17,14,0.18)] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {submitting ? "Posting…" : "Post question"}
-                <Send className="size-[13px]" strokeWidth={2} />
+                {submitting ? (
+                  <>
+                    <span className="size-2 animate-pulse rounded-full bg-bz-accent" />
+                    Posting…
+                  </>
+                ) : (
+                  <>
+                    Post question
+                    <Send className="size-[13px]" strokeWidth={2} />
+                  </>
+                )}
               </button>
+            </div>
             </div>
           </div>
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function FieldLabel({
+  icon: Icon,
+  label,
+  meta,
+  valid,
+}: {
+  icon: LucideIcon;
+  label: string;
+  meta?: string;
+  valid?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-bz-text">
+        <Icon
+          className="size-[12px] text-bz-text-soft"
+          strokeWidth={2}
+        />
+        {label}
+      </span>
+      {meta && (
+        <span
+          className={[
+            "inline-flex items-center gap-1 text-[11px] tabular-nums transition-colors",
+            valid ? "font-bold text-bz-sage" : "text-bz-text-soft",
+          ].join(" ")}
+        >
+          {valid && <Check className="size-[10px]" strokeWidth={3} />}
+          {meta}
+        </span>
+      )}
+    </div>
   );
 }
 
