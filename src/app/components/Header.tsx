@@ -561,6 +561,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <MessageSquare size={15} />,
             title: "Community Forum",
             description: "Ask questions and share tips with peers",
+            href: "/CommunityForum",
           },
           {
             icon: <GraduationCap size={15} />,
