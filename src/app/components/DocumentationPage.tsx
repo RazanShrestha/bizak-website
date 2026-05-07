@@ -898,7 +898,7 @@ export function DocumentationPage() {
   return (
     <div>
       <Header />
-      <main style={{ paddingTop: 76 }}>
+      <main>
         <HeroSection query={query} onQuery={setQuery} />
         <LibrarySection
           activeCat={activeCat}

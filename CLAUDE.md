@@ -202,7 +202,135 @@ Never deep-import from another scope's folder (`solutions/by-industry/IndustryHe
 
 The canonical reference page using all of these: `src/app/components/ManufacturingPage.tsx`. When migrating Distribution / ProfessionalService / Retail, mirror its structure.
 
-## Canonical hero pattern
+## The 3 hero options (always ask before redesigning a hero)
+
+Every marketing hero on the site is one of **three approved layouts**. They live as global primitives in `src/app/components/marketing/` and are exported from the `marketing/` barrel — pick one, fill its slots, ship.
+
+| Option | Primitive | When to use | Reference page |
+|---|---|---|---|
+| **1 · Centered** | `<HeroCentered>` | Big "showpiece" visual works best **below** the copy at full container width — hero's job is "set the tone + show one large illustration / dashboard." | `HomePage.tsx` |
+| **2 · Split** | `<HeroSplit>` | Hero "explains *and* demos" — copy on the left, a domain-specific cluster (dashboard / diagram / multi-card composition) on the right at equal vertical weight. Light surface + `.biz-mesh`. | `ManufacturingPage.tsx` (uses scoped `<IndustryHero>`, the by-industry twin of `<HeroSplit>`) |
+| **3 · Panel** | `<HeroPanel>` | Right-hand content is a **self-contained card** (live KPIs, leaderboard, headcount panel). Dark surface by default — gives the panel a clear container. | `CarrersPage.tsx` |
+
+**MANDATORY workflow** — when the user asks to redesign a hero (or a page that has a hero), and they haven't already specified which option:
+
+1. Ask: *"Which hero layout — Option 1 (Centered, like HomePage), Option 2 (Split, like Manufacturing), or Option 3 (Panel, like Careers)?"*
+2. Wait for the answer. Don't guess. Don't pick "the closest one" silently.
+3. Only after the user picks, compose the chosen primitive with the page's copy + visual/panel slot.
+
+This applies to: `redesign hero in <Page>`, `redesign <Page>` (when the page has a hero), `make a new hero for <Page>`. It does **not** apply to mid-page sections — those use `<SectionHeading>` and don't follow this menu.
+
+### Hero primitive APIs
+
+```tsx
+// Option 1 — Centered (HomePage)
+<HeroCentered
+  badge={<HeroBadge>...</HeroBadge>}        // optional
+  title={ReactNode}                          // h1 content
+  description={ReactNode}                    // optional subhead
+  actions={<><Button/><Button/></>}          // CTA slot
+  visual={<MyDashboard/>}                    // full-width slot below copy
+  tone="light"|"dark"                        // default light
+  mesh={true|false}                          // default true (.biz-mesh on)
+  containerWidth="default"|"narrow"          // default "default"
+/>
+
+// Option 2 — Split (Manufacturing — global twin of by-industry's <IndustryHero>)
+<HeroSplit
+  eyebrow="Smart Manufacturing Platform"     // OR
+  badge={<PillBadge .../>}                   // pass one or the other
+  title={<>Command the Floor.<br/><span className="text-bz-sage">Master</span> the Output.</>}
+  description="..."
+  actions={<><Button/><Button/></>}
+  stats={[{value:"87.4%", label:"Average OEE"}, ...]}  // optional, divided row under CTAs
+  visual={<MyHeroVisual/>}                   // right column
+  tone="light"|"dark"                        // default light
+  mesh={true|false}                          // default true
+  reverse={false}                            // swap columns
+/>
+
+// Option 3 — Panel (Careers)
+<HeroPanel
+  badge={<PillBadge tone="accent" dot>...</PillBadge>}
+  title={<>Build what the <span className="text-bz-accent">world runs on.</span></>}
+  description="..."
+  actions={<><Button/><Button/></>}
+  stats={[{value:"110+", label:"Team members"}, ...]}  // optional, border-top row
+  panel={<Card tone="dark" pad="md">{...KPIs / live list}</Card>}   // right column
+  tone="dark"|"light"                        // default dark
+  mesh={false}                               // default false
+  ratio="55/45"|"1/1"|"60/40"                // copy/panel grid ratio, default 55/45
+  reverse={false}
+/>
+```
+
+All three: responsive (collapse to single column on mobile/tablet), no hardcoded hex literals, no `onMouseEnter` style mutations. They render their own `<Section pad="hero">`, so the caller doesn't wrap.
+
+### Header offset — never double-pad the hero
+
+The `<Header>` is `position: fixed` (76px tall, `--bz-header-h`). `<Section pad="hero">` already adds `pt-[120px]` to clear it with ~44px breathing room. **A page that uses one of the 3 hero primitives must NOT also be wrapped in a `paddingTop: 76` shim** — that produces 196px of dead space at the top instead of 120px, and is the exact bug that made `/SalesCrm` look loaded with empty top space while `/` (HomePage) looked tight.
+
+**Two valid patterns** for routing a page that uses a hero primitive:
+
+```tsx
+// A) Page renders its own Header (HomePage / Manufacturing pattern)
+export function HomePage() {
+  return (
+    <>
+      <Header />
+      <main>
+        <HeroCentered ... />     {/* pad="hero" handles the 76px offset */}
+        ...
+      </main>
+      <Footer />
+    </>
+  );
+}
+// In routes.tsx → just `Component: HomePage` (or a thin layout that returns <HomePage />).
+
+// B) Layout in routes.tsx renders Header + Footer, no padding shim
+function SalesAndCrmPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <SalesAndCrmPage />        {/* page starts with HeroCentered/Split/Panel — pad="hero" handles offset */}
+      <Footer />
+    </div>
+  );
+}
+```
+
+**Forbidden** when the page starts with a hero primitive — in **either** location:
+
+```tsx
+// ❌ Routes-level shim (in routes.tsx)
+<Header />
+<div style={{ paddingTop: 76 }}>
+  <SalesAndCrmPage />
+</div>
+
+// ❌ Page-level shim (inside the page component itself)
+<Header />
+<main style={{ paddingTop: 76 }}>     {/* same bug, just hidden one layer deeper */}
+  <HeroSection />
+  ...
+</main>
+```
+
+Both shims add a redundant 76px on top of `pad="hero"`'s 120px. Result: 196px of dead space on `/SalesCrm`-style pages while `/` (HomePage) sits at 120px — the visible inconsistency that triggered this rule.
+
+**Single source of truth.** The 3 hero primitives (and any `<Section pad="hero">`) own the full top offset — they account for the 76px fixed `<Header>` themselves. Pages that compose them must NOT add a separate `paddingTop: 76` (or `pt-[76px]`, or `mt-[76px]`) anywhere — not in `routes.tsx` `*PageLayout` wrappers, not in the page's own `<main>` / outer `<div>`. There is exactly one place vertical hero padding is defined: the `Section` primitive's `pad="hero"` variant. **Don't re-derive it locally.**
+
+The `paddingTop: 76` shim is **only** valid for routed pages whose first content is **not** a `pad="hero"` section (legacy pages whose top JSX is a raw `<div>` with their own non-hero content). When you redesign such a page to use a hero option, you MUST remove every `paddingTop: 76` shim from both files in the same change:
+
+1. The page's own component file — `<main style={{paddingTop: 76}}>` → `<main>`, `<div style={{paddingTop: 76}}>` → `<div>` (or delete the wrapper).
+2. The page's `*PageLayout` in `src/app/routes.tsx` — drop the `<div style={{ paddingTop: 76 }}>` wrapper.
+
+If you're unsure where the 76 is hiding, grep: `grep -rn "paddingTop: 76" src/app/`. Both layers must be clean for the page you're redesigning.
+
+**One global rule still applies inside all three:** when the page has a hero, the badge above the `<h1>` is `<HeroBadge>` (Options 1 & sometimes 2) or `<PillBadge tone="accent">` (Option 3 / Careers pattern). Don't roll a custom gradient pill. The `.biz-mesh` background applies wherever `mesh={true}`.
+
+## Canonical hero pattern (the rules every option obeys)
 
 Every marketing hero (HomePage, By-Industry, By-Function, product, "Why Bizak", etc.) shares **two reusable visual primitives**. Don't reinvent them per page.
 

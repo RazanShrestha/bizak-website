@@ -1,9 +1,8 @@
 import "../../styles/style.css";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { Icon } from "./marketing/Icon";
+import { HeroSplit, HeroBadge, Button, Icon } from "./marketing";
 import {
-  IndustryHero,
   HeroVisual,
   HeroMainCard,
   HeroInventoryCard,
@@ -203,18 +202,22 @@ function ManufacturingHeroVisual() {
 
 function HeroSection() {
   return (
-    <IndustryHero
-      eyebrow="Smart Manufacturing Platform"
+    <HeroSplit
+      badge={<HeroBadge>Smart Manufacturing Platform</HeroBadge>}
       title={
         <>
           Command the Floor.
           <br />
-          <span>Master</span> the Output.
+          <span className="text-bz-sage">Master</span> the Output.
         </>
       }
       description="Connect your BOMs, work orders, shop floor, and quality management into one intelligent command center. Drive throughput, cut waste, and hit every delivery date."
-      primaryCta={{ label: "Request Demo" }}
-      secondaryCta={{ label: "See How It Works" }}
+      actions={
+        <>
+          <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
+          <Button variant="outline" size="lg">See How It Works</Button>
+        </>
+      }
       stats={[
         { value: "87.4%", label: "Average OEE" },
         { value: "96.2%", label: "On-Time Production" },
@@ -941,7 +944,7 @@ export function ManufacturingPage() {
   return (
     <div className="biz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <main style={{ paddingTop: 76 }}>
+      <main>
         <HeroSection />
         <ChallengesSection />
         <SolutionGrid

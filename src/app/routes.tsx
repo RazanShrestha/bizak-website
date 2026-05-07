@@ -244,9 +244,7 @@ function FinancialManagementPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <div style={{ paddingTop: 76 }}>
-        <FinancialManagementPage />
-      </div>
+      <FinancialManagementPage />
       <Footer />
     </div>
   );
@@ -256,9 +254,7 @@ function SalesAndCrmPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <div style={{ paddingTop: 76 }}>
-        <SalesAndCrmPage />
-      </div>
+      <SalesAndCrmPage />
       <Footer />
     </div>
   );
@@ -379,9 +375,7 @@ function CareersPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <div style={{ paddingTop: 76 }}>
-        <CareersPage />
-      </div>
+      <CareersPage />
       <Footer />
     </div>
   );

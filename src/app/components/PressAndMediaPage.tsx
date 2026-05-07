@@ -758,7 +758,7 @@ export function PressAndMediaPage() {
   return (
     <div>
       <Header />
-      <main style={{ paddingTop: 76 }}>
+      <main>
         <HeroSection />
         <FeedSection />
         <PressContactSection />

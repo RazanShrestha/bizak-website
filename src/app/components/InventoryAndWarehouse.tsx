@@ -1,363 +1,158 @@
-// ─── Brand tokens ─────────────────────────────────────────────────────────────
-const C = {
-   deep: "#1A1D19",
-  primary: "#010201",
-  accent: "#aef831",
-  accentDim: "rgba(174,248,49,0.12)",
-  accentGlow: "rgba(174,248,49,0.3)",
-  white: "#ffffff",
-  bg: "#f8faf9",
-  surface: "#f8faf9",
-  surfaceLow: "#f3f4f3",
-  surfaceMid: "#edeeed",
-  surfaceHigh: "#e7e8e7",
-  dark: "#0a0b0a",
-  darkBg: "#1a1d1a",
-  zinc900: "#18181b",
-  zinc800: "#27272a",
-  zinc700: "#3f3f46",
-  zinc500: "#71717a",
-  zinc400: "#a1a1aa",
-  zinc300: "#d4d4d8",
-  outline: "#c5c7c2",
-  onSurface: "#191c1c",
-  onSurfaceVar: "#444844",
-  gray: "#757873",
-  border: "rgba(197,199,194,0.3)",
-  borderDark: "rgba(255,255,255,0.06)",
-  green: "#446900",
-  red: "#ba1a1a",
+import {
+  Section,
+  Container,
+  SectionHeading,
+  Button,
+  Card,
+  IconBadge,
+  HeroBadge,
+  HeroCentered,
+} from "./marketing";
+import {
+  Warehouse,
+  ClipboardList,
+  Package,
+  RefreshCw,
+  DollarSign,
+  BarChart3,
+  ArrowUpDown,
+  BadgeCheck,
+  TrendingDown,
+  FileText,
+  ShoppingCart,
+  PackagePlus,
+  Truck,
+} from "lucide-react";
 
-  brand: "#7a826d",
-  brandLight: "rgba(122,130,109,0.1)",
- text: "#666",
- bgLight: "#f8f9f7",
-  bgDark: "#1a1d19",
- accentLow: "rgba(199,255,53,0.1)",
+// ─── DATA ────────────────────────────────────────────────────────────────────
 
-
-};
-
-// ─── SVG Icons ────────────────────────────────────────────────────────────────
-function Ico({ d, size = 20, color = "currentColor", strokeWidth = 1.8 }: {
-  d: string | string[]; size?: number; color?: string; strokeWidth?: number;
-}) {
-  const paths = Array.isArray(d) ? d : [d];
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-      {paths.map((p, i) => <path key={i} d={p} />)}
-    </svg>
-  );
-}
-
-// ─── 1. HERO ─────────────────────────────────────────────────────────────────
-function HeroSection() {
-  const stats = [
-    { label: "Live Stock",  value: "1,402",  unit: "SKUs" },
-    { label: "In Transit",  value: "248",    unit: "Orders" },
-    { label: "Pending QC",  value: "12",     unit: "Batches" },
-    { label: "Turn Over",   value: "4.2x",   unit: "Rate" },
-  ];
-
-  const flow = ["Receiving", "Storage", "Shipping"];
-
-  return (
-    <section style={{ paddingTop: 96, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, background: C.surface }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
-        {/* Badge */}
-        <div style={{
-          display: "inline-block",
-          padding: "6px 18px",
-          background: C.surfaceHigh,
-          borderRadius: 999,
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: "0.2em",
-          color: C.onSurfaceVar,
-          textTransform: "uppercase",
-          marginBottom: 44,
-        }}>Inventory Module</div>
-
-        <h1 style={{
-          fontFamily: "Manrope, Inter, sans-serif",
-          fontSize: "clamp(36px, 5.5vw, 62px)",
-          fontWeight: 700,
-          lineHeight: 1.1,
-          letterSpacing: "-0.04em",
-          color: C.primary,
-          maxWidth: 860,
-          margin: "0 auto 28px",
-        }}>
-          Real-time inventory control<br />without the chaos
-        </h1>
-
-        <p style={{ fontSize: 17, color: C.onSurfaceVar, maxWidth: 560, margin: "0 auto 40px", lineHeight: 1.7 }}>
-          Track every item across all warehouses in real time. Automate replenishment, manage movements, and close every cycle count with complete audit accuracy.
-        </p>
-
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 72 }}>
-          <a href="/contact" style={{
-            padding: "14px 32px", background: C.primary, color: C.white,
-            borderRadius: 10, fontWeight: 700, fontSize: 14, textDecoration: "none",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
-          }}>Request Demo</a>
-          <button style={{
-            padding: "14px 32px", background: C.white,
-            border: `1px solid rgba(197,199,194,0.5)`,
-            borderRadius: 10, fontWeight: 700, fontSize: 14, color: C.primary, cursor: "pointer",
-          }}>View features</button>
-        </div>
-
-        {/* Dashboard Mockup */}
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{
-            background: C.white,
-            borderRadius: 24,
-            border: `1px solid ${C.border}`,
-            boxShadow: "0 25px 60px -10px rgba(0,0,0,0.12)",
-            overflow: "hidden",
-          }}>
-            {/* Top bar */}
-            <div style={{
-              background: C.primary,
-              padding: "16px 32px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}>
-              <div style={{ display: "flex", gap: 6 }}>
-                {["#ff5f57", "#ffbd2e", "#28c840"].map(c => (
-                  <div key={c} style={{ width: 12, height: 12, borderRadius: "50%", background: c }} />
-                ))}
-              </div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em" }}>BIZAK · WAREHOUSE CONTROL</div>
-              <div style={{ width: 54 }} />
-            </div>
-
-            {/* Stats row */}
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              borderBottom: `1px solid ${C.border}`,
-            }}>
-              {stats.map((s, i) => (
-                <div key={s.label} style={{
-                  padding: "28px 32px",
-                  borderLeft: i > 0 ? `1px solid ${C.border}` : "none",
-                  textAlign: "left",
-                }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(68,72,68,0.6)", marginBottom: 8 }}>{s.label}</div>
-                  <div style={{ fontSize: 34, fontWeight: 800, color: C.primary, letterSpacing: "-0.03em", lineHeight: 1 }}>{s.value}</div>
-                  <div style={{ fontSize: 10, color: C.onSurfaceVar, marginTop: 4 }}>{s.unit}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Warehouse flow */}
-            <div style={{
-              padding: "48px 48px 56px",
-              background: "#f8faf9",
-              backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px)",
-              backgroundSize: "28px 28px",
-              position: "relative",
-            }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0 }}>
-                {flow.map((step, i) => (
-                  <div key={step} style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{
-                      padding: "20px 40px",
-                      background: C.white,
-                      borderRadius: 16,
-                      border: `1px solid ${C.border}`,
-                      boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: 10,
-                      minWidth: 130,
-                    }}>
-                      <div style={{
-                        width: 40, height: 40, borderRadius: 12,
-                        background: i === 1 ? C.accent : C.surfaceHigh,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>
-                        <Ico
-                          d={i === 0
-                            ? "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                            : i === 1
-                            ? "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10"
-                            : "M5 12h14M12 5l7 7-7 7"}
-                          size={20}
-                          color={i === 1 ? C.primary : C.onSurfaceVar}
-                        />
-                      </div>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: C.primary }}>{step}</span>
-                    </div>
-                    {i < flow.length - 1 && (
-                      <div style={{
-                        width: 64, height: 2,
-                        background: `linear-gradient(90deg, rgba(174,248,49,0.6), rgba(174,248,49,0.2))`,
-                        margin: "0 -1px",
-                        position: "relative",
-                      }}>
-                        <div style={{
-                          position: "absolute", right: -6, top: "50%", transform: "translateY(-50%)",
-                          width: 0, height: 0,
-                          borderTop: "5px solid transparent", borderBottom: "5px solid transparent",
-                          borderLeft: `6px solid rgba(174,248,49,0.5)`,
-                        }} />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── 2. CORE CAPABILITIES ─────────────────────────────────────────────────────
-const capabilities = [
-  {
-    icon: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",
-    title: "Multi-warehouse Management",
-    desc: "Manage stock across multiple locations with unified visibility and zone-level control.",
-  },
-  {
-    icon: "M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M12 12v6M9 15h6",
-    title: "Live Stock Tracking",
-    desc: "Real-time quantity updates on every movement — from receipt to dispatch to adjustment.",
-  },
-  {
-    icon: "M5 8h14M5 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8m-9 4h4",
-    title: "Goods Receipt & Dispatch",
-    desc: "Streamline inbound and outbound operations with automated GRN and delivery notes.",
-  },
-  {
-    icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 0 0 4.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0 1-15.357-2m15.357 2H15",
-    title: "Reorder Management",
-    desc: "Smart reorder points and automated purchase requests keep stock levels optimized.",
-  },
-  {
-    icon: "M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
-    title: "Stock Valuation",
-    desc: "FIFO, LIFO, and average cost methods with real-time valuation across all warehouses.",
-  },
-  {
-    icon: "M18 20V10M12 20V4M6 20v-6",
-    title: "Inventory Reporting",
-    desc: "Comprehensive aging, movement, and valuation reports with one-click export.",
-  },
+const CAPABILITIES = [
+  { Icon: Warehouse,   title: "Multi-warehouse Management", desc: "Manage stock across multiple locations with unified visibility and zone-level control." },
+  { Icon: Package,     title: "Live Stock Tracking",        desc: "Real-time quantity updates on every movement — from receipt to dispatch to adjustment." },
+  { Icon: ArrowUpDown, title: "Goods Receipt & Dispatch",   desc: "Streamline inbound and outbound operations with automated GRN and delivery notes." },
+  { Icon: RefreshCw,   title: "Reorder Management",         desc: "Smart reorder points and automated purchase requests keep stock levels optimized." },
+  { Icon: DollarSign,  title: "Stock Valuation",            desc: "FIFO, LIFO, and average cost methods with real-time valuation across all warehouses." },
+  { Icon: BarChart3,   title: "Inventory Reporting",        desc: "Comprehensive aging, movement, and valuation reports with one-click export." },
 ];
 
-function CapabilitiesSection() {
-  return (
-    <section style={{ padding: "96px 32px", background: C.white }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.2em", color: C.onSurfaceVar, display: "block", marginBottom: 18 }}>Core Capabilities</span>
-        <h2 style={{
-          fontFamily: "Manrope, Inter, sans-serif",
-          fontSize: "clamp(28px, 4vw, 44px)",
-          fontWeight: 600,
-          color: C.primary,
-          letterSpacing: "-0.02em",
-          lineHeight: 1.2,
-          maxWidth: 700,
-          marginBottom: 56,
-        }}>
-          Every warehouse operation,<br />precisely under control
-        </h2>
+const METRICS = [
+  { value: "98%", label: "Inventory Accuracy",      desc: "Cycle count discipline and real-time adjustments keep your records consistently reliable." },
+  { value: "40%", label: "Lower Stockouts",          desc: "Smart reorder rules prevent stock shortfalls before they impact customer commitments." },
+  { value: "25%", label: "Carrying Cost Reduction",  desc: "Optimized reorder quantities and dead-stock alerts cut unnecessary holding expenses." },
+];
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 28 }}>
-          {capabilities.map((cap) => (
-            <div key={cap.title}
-              style={{
-                padding: 32,
-                background: "rgba(243,244,243,0.5)",
-                borderRadius: 18,
-                border: `1px solid rgba(197,199,194,0.2)`,
-                transition: "border-color 0.2s",
-                cursor: "default",
-              }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(1,2,1,0.2)"}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(197,199,194,0.2)"}
-            >
-              <div style={{
-                width: 40, height: 40, borderRadius: 10,
-                background: C.white, border: `1px solid rgba(197,199,194,0.3)`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                marginBottom: 28,
-              }}>
-                <Ico d={cap.icon} size={18} color={C.onSurface} />
-              </div>
-              <h3 style={{ fontWeight: 700, fontSize: 16, color: C.primary, marginBottom: 10 }}>{cap.title}</h3>
-              <p style={{ fontSize: 13, color: C.onSurfaceVar, lineHeight: 1.65 }}>{cap.desc}</p>
-            </div>
+// ─── HERO VISUAL ──────────────────────────────────────────────────────────────
+
+function HeroDashboard() {
+  const heroStats = [
+    { label: "Live Stock", value: "1,402", unit: "SKUs" },
+    { label: "In Transit", value: "248",   unit: "Orders" },
+    { label: "Pending QC", value: "12",    unit: "Batches" },
+    { label: "Turn Over",  value: "4.2x",  unit: "Rate" },
+  ];
+  const flow = [
+    { label: "Receiving", Icon: PackagePlus },
+    { label: "Storage",   Icon: Warehouse },
+    { label: "Shipping",  Icon: Truck },
+  ];
+
+  return (
+    <div className="max-w-[1100px] mx-auto rounded-bz-2xl border border-bz-border overflow-hidden">
+      {/* Top bar */}
+      <div className="bg-bz-deep px-8 py-4 flex items-center justify-between">
+        <div className="flex gap-1.5">
+          {[{ c: "#ff5f57" }, { c: "#ffbd2e" }, { c: "#28c840" }].map(({ c }) => (
+            <div key={c} className="w-3 h-3 rounded-full" style={{ background: c }} />
           ))}
         </div>
+        <span className="text-[11px] font-bold text-white/40 tracking-[0.1em]">BIZAK · WAREHOUSE CONTROL</span>
+        <div className="w-14" />
       </div>
-    </section>
+
+      {/* Stats row */}
+      <div className="grid grid-cols-4 border-b border-bz-border bg-bz-surface">
+        {heroStats.map((s, i) => (
+          <div key={s.label} className={`px-8 py-7 text-left${i > 0 ? " border-l border-bz-border" : ""}`}>
+            <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-bz-text-muted mb-2">{s.label}</div>
+            <div className="text-[34px] font-extrabold text-bz-text tracking-[-0.03em] leading-none">{s.value}</div>
+            <div className="text-[10px] text-bz-text-muted mt-1">{s.unit}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Warehouse flow */}
+      <div className="px-12 py-14 bg-bz-bg flex items-center justify-center">
+        {flow.map(({ label, Icon: FlowIcon }, i) => (
+          <div key={label} className="flex items-center">
+            <div className="px-10 py-5 bg-bz-surface rounded-bz-xl border border-bz-border flex flex-col items-center gap-2.5 min-w-[130px]">
+              <div className={`w-10 h-10 rounded-bz-lg flex items-center justify-center ${i === 1 ? "bg-bz-accent" : "bg-bz-bg"}`}>
+                <FlowIcon className={`size-5 ${i === 1 ? "text-bz-text" : "text-bz-text-muted"}`} />
+              </div>
+              <span className="text-[12px] font-bold text-bz-text">{label}</span>
+            </div>
+            {i < flow.length - 1 && (
+              <div className="relative w-16 h-px bg-bz-accent/50 mx-[-1px]">
+                <div
+                  className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0"
+                  style={{
+                    borderTop: "5px solid transparent",
+                    borderBottom: "5px solid transparent",
+                    borderLeft: "6px solid var(--bz-accent)",
+                    opacity: 0.6,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
-// ─── 3. DARK TECHNICAL SHOWCASE ───────────────────────────────────────────────
+// ─── TECH SHOWCASE ────────────────────────────────────────────────────────────
+
 function TechShowcaseSection() {
   return (
-    <section style={{ padding: "96px 32px", background: C.darkBg, color: C.white }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.2em", color: C.zinc500, display: "block", marginBottom: 18 }}>Technical Showcase</span>
-        <h2 style={{
-          fontFamily: "Manrope, Inter, sans-serif",
-          fontSize: "clamp(28px, 4vw, 44px)",
-          fontWeight: 600,
-          color: C.white,
-          letterSpacing: "-0.02em",
-          lineHeight: 1.2,
-          maxWidth: 700,
-          marginBottom: 64,
-        }}>High-fidelity tools for the<br />modern warehouse team</h2>
+    <Section tone="dark">
+      <Container>
+        <SectionHeading
+          eyebrow="Technical Showcase"
+          title={<>High-fidelity tools for the<br />modern warehouse team</>}
+          tone="light"
+          maxWidth={700}
+          className="mb-16"
+        />
 
-        {/* Top row: large + side */}
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20, marginBottom: 20 }}>
+        {/* Top row: 2/3 + 1/3 */}
+        <div className="grid grid-cols-3 gap-5 mb-5">
 
           {/* Warehouse Control */}
-          <div style={{
-            background: "rgba(255,255,255,0.03)", borderRadius: 28, padding: 44,
-            border: `1px solid ${C.borderDark}`, position: "relative", overflow: "hidden",
-          }}>
-            <Ico d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10" size={22} color={C.zinc700} />
-            <h3 style={{ fontSize: 22, fontWeight: 700, color: C.white, margin: "16px 0 10px" }}>Warehouse Control</h3>
-            <p style={{ fontSize: 13, color: C.zinc500, maxWidth: 380, lineHeight: 1.65, marginBottom: 36 }}>
+          <div className="col-span-2 bg-white/[0.03] rounded-[28px] p-11 border border-white/[0.06]">
+            <Warehouse className="size-[22px] text-white/30" />
+            <h3 className="text-[22px] font-bold text-white mt-4 mb-2.5">Warehouse Control</h3>
+            <p className="text-[13px] text-white/50 max-w-[380px] leading-[1.65] mb-9">
               Full zone-level visibility into live inventory quantities, batch status, and location accuracy across every rack.
             </p>
-            <div style={{
-              background: "rgba(255,255,255,0.04)", borderRadius: 18, padding: 24,
-              border: "1px solid rgba(255,255,255,0.06)", maxWidth: 400,
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
-                <div style={{
-                  width: 48, height: 48, borderRadius: 14,
-                  background: C.accentDim,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontWeight: 700, color: C.accent, fontSize: 14,
-                }}>ZA</div>
+            <div className="bg-white/[0.04] rounded-bz-2xl p-6 border border-white/[0.05] max-w-[400px]">
+              <div className="flex items-center gap-3.5 mb-5">
+                <div className="w-12 h-12 rounded-bz-xl bg-bz-accent-soft flex items-center justify-center font-bold text-bz-accent text-[14px]">
+                  ZA
+                </div>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: C.white }}>Zone A — Main Warehouse</div>
-                  <div style={{ fontSize: 10, color: C.zinc500, marginTop: 2 }}>• Active · Sector 3 · Rack 12–18</div>
+                  <div className="text-[13px] font-bold text-white">Zone A — Main Warehouse</div>
+                  <div className="text-[10px] text-white/50 mt-0.5">• Active · Sector 3 · Rack 12–18</div>
                 </div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/[0.05]">
                 {[
-                  { label: "On-Hand Units", value: "3,842", color: C.accent },
-                  { label: "Utilisation", value: "78%", color: C.white },
-                  { label: "Last Audit", value: "2d ago", color: C.white },
+                  { label: "On-Hand Units", value: "3,842", accent: true },
+                  { label: "Utilisation",   value: "78%",   accent: false },
+                  { label: "Last Audit",    value: "2d ago", accent: false },
                 ].map((m) => (
                   <div key={m.label}>
-                    <div style={{ fontSize: 9, color: C.zinc500, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>{m.label}</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: m.color }}>{m.value}</div>
+                    <div className="text-[9px] text-white/50 uppercase tracking-[0.05em] mb-1">{m.label}</div>
+                    <div className={`text-[13px] font-bold ${m.accent ? "text-bz-accent" : "text-white"}`}>{m.value}</div>
                   </div>
                 ))}
               </div>
@@ -365,58 +160,54 @@ function TechShowcaseSection() {
           </div>
 
           {/* Smart Replenishment */}
-          <div style={{
-            background: "rgba(255,255,255,0.03)", borderRadius: 28, padding: 36,
-            border: `1px solid ${C.borderDark}`, display: "flex", flexDirection: "column",
-          }}>
-            <Ico d="M4 4v5h.582m15.356 2A8.001 8.001 0 0 0 4.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0 1-15.357-2m15.357 2H15" size={22} color={C.zinc700} />
-            <h3 style={{ fontSize: 22, fontWeight: 700, color: C.white, margin: "16px 0 10px" }}>Smart Replenishment</h3>
-            <p style={{ fontSize: 13, color: C.zinc500, lineHeight: 1.65, marginBottom: 32, flex: 1 }}>
+          <div className="bg-white/[0.03] rounded-[28px] p-9 border border-white/[0.06] flex flex-col">
+            <RefreshCw className="size-[22px] text-white/30" />
+            <h3 className="text-[22px] font-bold text-white mt-4 mb-2.5">Smart Replenishment</h3>
+            <p className="text-[13px] text-white/50 leading-[1.65] mb-8 flex-1">
               Auto-triggered purchase requests with configurable approval chains and priority routing.
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div className="flex flex-col gap-2.5">
               {[
-                { label: "PO Approval Pending", dot: "accent", opacity: 1 },
-                { label: "Low Stock Alert — SKU 4821", dot: "green", opacity: 1 },
-                { label: "Reorder Queued", dot: "none", opacity: 0.4 },
+                { label: "PO Approval Pending",       dot: "accent", dim: false },
+                { label: "Low Stock Alert — SKU 4821", dot: "green",  dim: false },
+                { label: "Reorder Queued",             dot: "none",   dim: true },
               ].map((row) => (
-                <div key={row.label} style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                  background: "rgba(255,255,255,0.04)", padding: "14px 16px",
-                  borderRadius: 12, border: "1px solid rgba(255,255,255,0.05)", opacity: row.opacity,
-                }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: C.zinc400 }}>{row.label}</span>
-                  {row.dot === "green" && <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />}
-                  {row.dot === "accent" && <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.accent }} />}
+                <div
+                  key={row.label}
+                  className={`flex items-center justify-between bg-white/[0.04] px-4 py-3.5 rounded-bz-lg border border-white/[0.05]${row.dim ? " opacity-40" : ""}`}
+                >
+                  <span className="text-[10px] font-bold text-white/60">{row.label}</span>
+                  {row.dot === "green"  && <div className="w-2 h-2 rounded-full bg-green-500" />}
+                  {row.dot === "accent" && <div className="w-2 h-2 rounded-full bg-bz-accent" />}
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Bottom row */}
-        <div style={{ display: "grid", gridTemplateColumns: "5fr 7fr", gap: 20 }}>
+        {/* Bottom row: 5/12 + 7/12 */}
+        <div className="grid grid-cols-12 gap-5">
 
           {/* Movement Tracking */}
-          <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 28, padding: 36, border: `1px solid ${C.borderDark}` }}>
-            <Ico d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4" size={22} color={C.zinc700} />
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: C.white, margin: "16px 0 10px" }}>Movement Tracking</h3>
-            <p style={{ fontSize: 13, color: C.zinc500, lineHeight: 1.65, marginBottom: 32 }}>
+          <div className="col-span-5 bg-white/[0.03] rounded-[28px] p-9 border border-white/[0.06]">
+            <ArrowUpDown className="size-[22px] text-white/30" />
+            <h3 className="text-[20px] font-bold text-white mt-4 mb-2.5">Movement Tracking</h3>
+            <p className="text-[13px] text-white/50 leading-[1.65] mb-8">
               Real-time transfer logs for every inbound and outbound movement with reference tracing.
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div className="flex flex-col gap-3">
               {[
-                { label: "Inbound Receipts", pct: 82, color: C.accent },
-                { label: "Outbound Dispatches", pct: 64, color: "rgba(174,248,49,0.5)" },
-                { label: "Internal Transfers", pct: 45, color: "rgba(174,248,49,0.25)" },
-              ].map(bar => (
+                { label: "Inbound Receipts",    pct: 82, colorClass: "bg-bz-accent" },
+                { label: "Outbound Dispatches", pct: 64, colorClass: "bg-bz-accent/50" },
+                { label: "Internal Transfers",  pct: 45, colorClass: "bg-bz-accent/25" },
+              ].map((bar) => (
                 <div key={bar.label}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                    <span style={{ fontSize: 10, color: C.zinc400, fontWeight: 700 }}>{bar.label}</span>
-                    <span style={{ fontSize: 10, color: C.zinc500 }}>{bar.pct}%</span>
+                  <div className="flex justify-between mb-1.5">
+                    <span className="text-[10px] text-white/60 font-bold">{bar.label}</span>
+                    <span className="text-[10px] text-white/50">{bar.pct}%</span>
                   </div>
-                  <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 99, overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${bar.pct}%`, background: bar.color, borderRadius: 99, transition: "width 0.6s" }} />
+                  <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${bar.colorClass}`} style={{ width: `${bar.pct}%` }} />
                   </div>
                 </div>
               ))}
@@ -424,21 +215,21 @@ function TechShowcaseSection() {
           </div>
 
           {/* Cycle Counting */}
-          <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 28, padding: 36, border: `1px solid ${C.borderDark}`, position: "relative" }}>
-            <div style={{ position: "absolute", top: 36, right: 36, textAlign: "right" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: C.zinc500, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Accuracy</div>
-              <div style={{ fontSize: 26, fontWeight: 900, color: C.accent }}>99.8%</div>
+          <div className="col-span-7 bg-white/[0.03] rounded-[28px] p-9 border border-white/[0.06] relative">
+            <div className="absolute top-9 right-9 text-right">
+              <div className="text-[9px] font-bold text-white/50 uppercase tracking-[0.1em] mb-1">Accuracy</div>
+              <div className="text-[26px] font-black text-bz-accent">99.8%</div>
             </div>
-            <Ico d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M12 12v6M9 15h6" size={22} color={C.zinc700} />
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: C.white, margin: "16px 0 10px" }}>Cycle Counting</h3>
-            <p style={{ fontSize: 13, color: C.zinc500, lineHeight: 1.65, maxWidth: 340, marginBottom: 32 }}>
+            <ClipboardList className="size-[22px] text-white/30" />
+            <h3 className="text-[20px] font-bold text-white mt-4 mb-2.5">Cycle Counting</h3>
+            <p className="text-[13px] text-white/50 leading-[1.65] max-w-[340px] mb-8">
               Scheduled and ad-hoc counts with variance detection and automated reconciliation records.
             </p>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table className="w-full border-collapse">
               <thead>
-                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                <tr className="border-b border-white/[0.05]">
                   {["Count Ref", "Location", "Status"].map((h, i) => (
-                    <th key={h} style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: C.zinc500, paddingBottom: 12, textAlign: i === 2 ? "right" : "left" }}>{h}</th>
+                    <th key={h} className={`text-[9px] font-bold uppercase tracking-[0.1em] text-white/50 pb-3 ${i === 2 ? "text-right" : "text-left"}`}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -448,12 +239,12 @@ function TechShowcaseSection() {
                   { ref: "CC-2024-0440", loc: "Zone B / Shelf 3" },
                   { ref: "CC-2024-0439", loc: "Zone A / Rack 12" },
                 ].map((row) => (
-                  <tr key={row.ref} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                    <td style={{ fontSize: 11, fontFamily: "monospace", color: C.white, padding: "12px 0" }}>{row.ref}</td>
-                    <td style={{ fontSize: 11, color: C.zinc400, padding: "12px 0" }}>{row.loc}</td>
-                    <td style={{ padding: "12px 0", textAlign: "right" }}>
-                      <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 16, height: 16, borderRadius: "50%", background: "rgba(34,197,94,0.15)" }}>
-                        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e" }} />
+                  <tr key={row.ref} className="border-b border-white/[0.04]">
+                    <td className="text-[11px] font-mono text-white py-3">{row.ref}</td>
+                    <td className="text-[11px] text-white/60 py-3">{row.loc}</td>
+                    <td className="py-3 text-right">
+                      <div className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-green-500/15">
+                        <div className="w-[5px] h-[5px] rounded-full bg-green-500" />
                       </div>
                     </td>
                   </tr>
@@ -462,92 +253,84 @@ function TechShowcaseSection() {
             </table>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
-// ─── 4. INVENTORY INTELLIGENCE ────────────────────────────────────────────────
+// ─── INTELLIGENCE ─────────────────────────────────────────────────────────────
+
 function IntelligenceSection() {
-  const stats = [
-    { icon: "M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4", label: "Turn Over", value: "4.2x", sub: "↑ 0.3x", subColor: "#446900" },
-    { icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 0 0 1.946-.806 3.42 3.42 0 0 1 4.438 0 3.42 3.42 0 0 0 1.946.806 3.42 3.42 0 0 1 3.138 3.138 3.42 3.42 0 0 0 .806 1.946 3.42 3.42 0 0 1 0 4.438 3.42 3.42 0 0 0-.806 1.946 3.42 3.42 0 0 1-3.138 3.138 3.42 3.42 0 0 0-1.946.806 3.42 3.42 0 0 1-4.438 0 3.42 3.42 0 0 0-1.946-.806 3.42 3.42 0 0 1-3.138-3.138 3.42 3.42 0 0 0-.806-1.946 3.42 3.42 0 0 1 0-4.438 3.42 3.42 0 0 0 .806-1.946 3.42 3.42 0 0 1 3.138-3.138z", label: "Accuracy", value: "99.8%", sub: "Target Achieved", subColor: C.onSurfaceVar },
-    { icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6", label: "Dead Stock", value: "0.82%", sub: "↓ 0.1%", subColor: "#446900" },
-    { icon: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z", label: "Fulfillment", value: "98.5%", bar: 98 },
+  const intelStats = [
+    { Icon: ArrowUpDown, label: "Turn Over",  value: "4.2x",  sub: "↑ 0.3x",        positive: true },
+    { Icon: BadgeCheck,  label: "Accuracy",   value: "99.8%", sub: "Target Achieved", positive: false },
+    { Icon: TrendingDown,label: "Dead Stock", value: "0.82%", sub: "↓ 0.1%",         positive: true },
+    { Icon: FileText,    label: "Fulfillment",value: "98.5%", bar: 98 },
   ];
 
   return (
-    <section style={{ padding: "96px 32px", background: C.surface }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 72 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.2em", color: C.onSurfaceVar, display: "block", marginBottom: 14 }}>Reporting</span>
-          <h2 style={{
-            fontFamily: "Manrope, Inter, sans-serif",
-            fontSize: "clamp(28px, 4vw, 44px)",
-            fontWeight: 600,
-            color: C.primary,
-            letterSpacing: "-0.02em",
-          }}>Inventory Intelligence</h2>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "3fr 1fr", gap: 20, alignItems: "start" }}>
+    <Section tone="light">
+      <Container>
+        <SectionHeading
+          eyebrow="Reporting"
+          title="Inventory Intelligence"
+          align="center"
+          className="mb-16"
+        />
+        <div className="grid grid-cols-[3fr_1fr] gap-5 items-start">
           {/* Chart card */}
-          <div style={{
-            background: C.white, padding: 44, borderRadius: 32,
-            border: `1px solid rgba(197,199,194,0.3)`,
-            boxShadow: "0 1px 4px rgba(0,0,0,0.04)", position: "relative", overflow: "hidden",
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 48 }}>
+          <div className="bg-bz-surface rounded-[32px] p-11 border border-bz-border">
+            <div className="flex justify-between items-start mb-12">
               <div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: C.primary, marginBottom: 6 }}>Stock Movement Analytics</h3>
-                <p style={{ fontSize: 13, color: C.onSurfaceVar }}>Inbound vs. outbound trends across all warehouses</p>
+                <h3 className="text-[18px] font-bold text-bz-text mb-1.5">Stock Movement Analytics</h3>
+                <p className="text-[13px] text-bz-text-muted">Inbound vs. outbound trends across all warehouses</p>
               </div>
-              <span style={{
-                padding: "4px 12px", background: C.surfaceHigh,
-                borderRadius: 6, fontSize: 10, fontWeight: 700, color: C.onSurfaceVar,
-              }}>FY2024</span>
+              <span className="px-3 py-1 bg-bz-bg rounded-bz-sm text-[10px] font-bold text-bz-text-muted">FY2024</span>
             </div>
-
-            <div style={{ position: "relative", height: 220 }}>
+            <div className="relative h-[220px]">
               <svg width="100%" height="100%" viewBox="0 0 800 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#aef831" stopOpacity="0.15" />
-                    <stop offset="100%" stopColor="#aef831" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path d="M0 160C80 160 130 90 200 100C270 110 300 160 370 140C440 120 490 50 560 70C630 90 680 140 750 120L750 200 0 200Z" fill="url(#areaGrad)" />
-                <path d="M0 160C80 160 130 90 200 100C270 110 300 160 370 140C440 120 490 50 560 70C630 90 680 140 750 120" stroke={C.primary} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M0 130C80 130 130 150 200 140C270 130 310 90 380 110C450 130 500 160 560 150C630 140 700 60 750 80" stroke={C.gray} strokeDasharray="8 8" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M0 160C80 160 130 90 200 100C270 110 300 160 370 140C440 120 490 50 560 70C630 90 680 140 750 120L750 200 0 200Z"
+                  fill="var(--bz-accent)"
+                  fillOpacity="0.1"
+                />
+                <path
+                  d="M0 160C80 160 130 90 200 100C270 110 300 160 370 140C440 120 490 50 560 70C630 90 680 140 750 120"
+                  stroke="var(--bz-text)"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M0 130C80 130 130 150 200 140C270 130 310 90 380 110C450 130 500 160 560 150C630 140 700 60 750 80"
+                  stroke="var(--bz-text-muted)"
+                  strokeDasharray="8 8"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
-              <div style={{
-                position: "absolute", top: "28%", left: "50%", transform: "translateX(-50%)",
-                background: C.white, border: `1px solid rgba(197,199,194,0.3)`,
-                boxShadow: "0 4px 16px rgba(0,0,0,0.1)", padding: "10px 18px", borderRadius: 14,
-                textAlign: "center", whiteSpace: "nowrap",
-              }}>
-                <div style={{ fontSize: 8, fontWeight: 700, color: "rgba(68,72,68,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Peak Throughput</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: C.primary }}>12,480 Units</div>
-                <div style={{ fontSize: 8, color: C.zinc400 }}>Zone A · Week 42</div>
+              <div className="absolute top-[28%] left-1/2 -translate-x-1/2 bg-bz-surface border border-bz-border px-4 py-2.5 rounded-bz-xl text-center whitespace-nowrap">
+                <div className="text-[8px] font-bold text-bz-text-muted uppercase tracking-[0.1em] mb-1">Peak Throughput</div>
+                <div className="text-[16px] font-bold text-bz-text">12,480 Units</div>
+                <div className="text-[8px] text-bz-text-muted">Zone A · Week 42</div>
               </div>
             </div>
           </div>
 
-          {/* Stat cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-            {stats.map((s) => (
-              <div key={s.label} style={{
-                background: C.surfaceLow, padding: 20, borderRadius: 24,
-                border: `1px solid rgba(197,199,194,0.2)`,
-              }}>
-                <Ico d={s.icon} size={20} color={C.primary} />
-                <div style={{ marginTop: 18 }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(68,72,68,0.6)", marginBottom: 4 }}>{s.label}</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: C.primary, letterSpacing: "-0.02em" }}>{s.value}</div>
-                  {s.sub && <div style={{ fontSize: 10, fontWeight: 700, color: s.subColor, marginTop: 4 }}>{s.sub}</div>}
+          {/* Stat mini-cards */}
+          <div className="grid grid-cols-2 gap-3.5">
+            {intelStats.map((s) => (
+              <div key={s.label} className="bg-bz-bg rounded-[24px] p-5 border border-bz-border">
+                <s.Icon className="size-5 text-bz-text" />
+                <div className="mt-4">
+                  <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-bz-text-muted mb-1">{s.label}</div>
+                  <div className="text-[20px] font-bold text-bz-text tracking-[-0.02em]">{s.value}</div>
+                  {s.sub && (
+                    <div className={`text-[10px] font-bold mt-1 ${s.positive ? "text-green-700" : "text-bz-text-muted"}`}>{s.sub}</div>
+                  )}
                   {s.bar !== undefined && (
-                    <div style={{ marginTop: 10, height: 4, background: "rgba(197,199,194,0.3)", borderRadius: 99, overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${s.bar}%`, background: C.primary, borderRadius: 99 }} />
+                    <div className="mt-2.5 h-1 bg-bz-border rounded-full overflow-hidden">
+                      <div className="h-full bg-bz-text rounded-full" style={{ width: `${s.bar}%` }} />
                     </div>
                   )}
                 </div>
@@ -555,307 +338,161 @@ function IntelligenceSection() {
             ))}
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
-// ─── 5. CONNECTED SYSTEM ──────────────────────────────────────────────────────
+// ─── CONNECTED SYSTEM ─────────────────────────────────────────────────────────
+
 function ConnectedSystemSection() {
   return (
-    <section style={{ padding: "112px 32px", background: C.dark, color: C.white, position: "relative", overflow: "hidden" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.2em", color: C.zinc500, display: "block", marginBottom: 20 }}>Seamless Connectivity</span>
-        <h2 style={{
-          fontFamily: "Manrope, Inter, sans-serif",
-          fontSize: "clamp(28px, 4vw, 44px)",
-          fontWeight: 600,
-          color: C.white,
-          letterSpacing: "-0.02em",
-          maxWidth: 520,
-          margin: "0 auto 96px",
-          lineHeight: 1.2,
-        }}>Inventory connected directly to purchasing and finance</h2>
+    <Section tone="dark">
+      <Container>
+        <SectionHeading
+          eyebrow="Seamless Connectivity"
+          title={<>Inventory connected directly to<br />purchasing and finance</>}
+          tone="light"
+          align="center"
+          maxWidth={520}
+          className="mb-24"
+        />
+        <div className="flex items-center justify-center flex-wrap">
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0, flexWrap: "wrap" }}>
-          {/* Purchasing node */}
-          <div style={{
-            flex: 1, maxWidth: 280,
-            background: "rgba(24,24,27,0.8)", padding: 36, borderRadius: 36,
-            border: "1px solid rgba(255,255,255,0.05)", textAlign: "left",
-          }}>
-            <div style={{ width: 60, height: 60, borderRadius: 16, background: C.zinc800, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
-              <Ico d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0" size={28} color={C.zinc400} />
+          {/* Purchasing */}
+          <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
+            <div className="w-[60px] h-[60px] rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
+              <ShoppingCart className="size-7 text-white/60" />
             </div>
-            <h4 style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 12 }}>Purchasing</h4>
-            <p style={{ fontSize: 13, color: C.zinc500, lineHeight: 1.65, marginBottom: 28 }}>Auto-generated POs when stock hits reorder thresholds, with full approval routing.</p>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 16px", background: "#000", borderRadius: 10, border: "1px solid rgba(255,255,255,0.05)" }}>
-              <span style={{ fontSize: 9, fontWeight: 700, color: C.zinc500, textTransform: "uppercase" }}>AUTO PO</span>
-              <span style={{ fontSize: 9, fontWeight: 700, color: C.accent }}>Triggered</span>
+            <h4 className="text-[20px] font-bold text-white mb-3">Purchasing</h4>
+            <p className="text-[13px] text-white/50 leading-[1.65] mb-7">
+              Auto-generated POs when stock hits reorder thresholds, with full approval routing.
+            </p>
+            <div className="flex justify-between items-center px-4 py-2 bg-black/30 rounded-bz-lg border border-white/[0.05]">
+              <span className="text-[9px] font-bold text-white/50 uppercase">AUTO PO</span>
+              <span className="text-[9px] font-bold text-bz-accent">Triggered</span>
             </div>
           </div>
 
-          {/* Connector line */}
-          <div style={{ width: 80, height: 1, background: `rgba(174,248,49,0.3)`, flexShrink: 0 }} />
+          <div className="w-20 h-px bg-bz-accent/30 flex-shrink-0" />
 
-          {/* Inventory Hub (center glow) */}
-          <div style={{ position: "relative", flexShrink: 0 }}>
-            <div style={{
-              position: "absolute", inset: "-50px",
-              borderRadius: "50%",
-              background: `radial-gradient(circle, rgba(174,248,49,0.25) 0%, transparent 65%)`,
-              filter: "blur(24px)",
-              zIndex: 0,
-            }} />
-            <div style={{
-              position: "relative", zIndex: 1,
-              width: 120, height: 120, borderRadius: "50%",
-              background: C.accent,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: `0 0 80px rgba(174,248,49,0.35)`,
-            }}>
-              <Ico d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" size={42} color={C.primary} strokeWidth={2} />
+          {/* Inventory Hub */}
+          <div className="flex-shrink-0 flex flex-col items-center gap-4">
+            <div className="w-28 h-28 rounded-full bg-bz-accent flex items-center justify-center">
+              <Warehouse className="size-[42px] text-bz-text" strokeWidth={2} />
             </div>
-            <div style={{ position: "absolute", bottom: -52, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap", textAlign: "center" }}>
-              <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: "0.3em", color: C.accent, textTransform: "uppercase" }}>Inventory Hub</div>
-            </div>
+            <div className="text-[10px] font-black tracking-[0.3em] text-bz-accent uppercase">Inventory Hub</div>
           </div>
 
-          {/* Connector line */}
-          <div style={{ width: 80, height: 1, background: `rgba(174,248,49,0.3)`, flexShrink: 0 }} />
+          <div className="w-20 h-px bg-bz-accent/30 flex-shrink-0" />
 
-          {/* Finance node */}
-          <div style={{
-            flex: 1, maxWidth: 280,
-            background: "rgba(24,24,27,0.8)", padding: 36, borderRadius: 36,
-            border: "1px solid rgba(255,255,255,0.05)", textAlign: "left",
-          }}>
-            <div style={{ width: 60, height: 60, borderRadius: 16, background: C.zinc800, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
-              <Ico d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" size={28} color={C.zinc400} />
+          {/* Finance */}
+          <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
+            <div className="w-[60px] h-[60px] rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
+              <DollarSign className="size-7 text-white/60" />
             </div>
-            <h4 style={{ fontSize: 20, fontWeight: 700, color: C.white, marginBottom: 12 }}>Finance</h4>
-            <p style={{ fontSize: 13, color: C.zinc500, lineHeight: 1.65, marginBottom: 28 }}>Real-time stock valuation feeds directly into the general ledger for instant P&L updates.</p>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 16px", background: "#000", borderRadius: 10, border: "1px solid rgba(255,255,255,0.05)" }}>
-              <span style={{ fontSize: 9, fontWeight: 700, color: C.zinc500, textTransform: "uppercase" }}>VALUATION</span>
-              <span style={{ fontSize: 9, fontWeight: 700, color: C.accent }}>Auto Post</span>
+            <h4 className="text-[20px] font-bold text-white mb-3">Finance</h4>
+            <p className="text-[13px] text-white/50 leading-[1.65] mb-7">
+              Real-time stock valuation feeds directly into the general ledger for instant P&L updates.
+            </p>
+            <div className="flex justify-between items-center px-4 py-2 bg-black/30 rounded-bz-lg border border-white/[0.05]">
+              <span className="text-[9px] font-bold text-white/50 uppercase">VALUATION</span>
+              <span className="text-[9px] font-bold text-bz-accent">Auto Post</span>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
-
-// ─── 6. IMPACT METRICS ────────────────────────────────────────────────────────
-function MetricsSection() {
-  return (
-    <section style={{ padding: "96px 32px", background: C.white, borderBottom: `1px solid rgba(197,199,194,0.3)` }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 72 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.2em", color: "rgba(68,72,68,0.6)", display: "block", marginBottom: 14 }}>Efficiency</span>
-          <h2 style={{
-            fontFamily: "Manrope, Inter, sans-serif",
-            fontSize: "clamp(28px, 4vw, 44px)",
-            fontWeight: 600,
-            color: C.primary,
-            letterSpacing: "-0.02em",
-          }}>Measurable impact on operations</h2>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 50 }}>
-          {[
-            { value: "98%", label: "Inventory Accuracy", desc: "Cycle count discipline and real-time adjustments keep your records consistently reliable." },
-            { value: "40%", label: "Lower Stockouts", desc: "Smart reorder rules prevent stock shortfalls before they impact customer commitments." },
-            { value: "25%", label: "Carrying Cost Reduction", desc: "Optimized reorder quantities and dead-stock alerts cut unnecessary holding expenses." },
-          ].map((m) => (
-            <div key={m.label}
-              style={{
-                padding: 44, background: C.surfaceLow, borderRadius: 28,
-                border: `1px solid rgba(197,199,194,0.2)`, textAlign: "center",
-                transition: "box-shadow 0.2s",
-              }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 48px rgba(0,0,0,0.1)"}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "none"}
-            >
-              <div style={{ fontSize: 52, fontWeight: 900, color: C.primary, marginBottom: 12, letterSpacing: "-0.04em", fontFamily: "Manrope, Inter, sans-serif" }}>{m.value}</div>
-              <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", color: C.onSurfaceVar, marginBottom: 16 }}>{m.label}</div>
-              <p style={{ fontSize: 13, color: "rgba(68,72,68,0.7)", lineHeight: 1.65 }}>{m.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── 7. CTA SECTION ──────────────────────────────────────────────────────────
-// function CTASection() {
-//   return (
-//     <section style={{ background: C.bgDark, padding: "128px 192px", overflow: "hidden", position: "relative" }}>
-//       {/* Subtle glow */}
-//       <div style={{
-//         position: "absolute", bottom: -293, left: -128, right: -128, height: 586,
-//         background: "radial-gradient(ellipse at 50% 50%, rgba(199,255,53,0.03) 0%, transparent 70%)",
-//         pointerEvents: "none",
-//       }} />
-
-//       <div style={{ maxWidth: 896, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 32, position: "relative", zIndex: 1 }}>
-//         <h2 style={{
-//           fontFamily: "Inter", fontWeight: 700,
-//           fontSize: "clamp(36px, 4.5vw, 48px)",
-//           lineHeight: 1.2, letterSpacing: "-1.2px",
-//           color: "#fff", textAlign: "center", margin: 0,
-//         }}>
-//           Ready to transform your<br />purchasing department?
-//         </h2>
-//         <p style={{
-//           fontFamily: "Inter", fontWeight: 400,
-//           fontSize: 20, lineHeight: 1.625,
-//           color: "rgba(255,255,255,0.4)",
-//           textAlign: "center", margin: 0, maxWidth: 580,
-//         }}>
-//           Join the world's most efficient organizations using Bizak to manage their global supply chains.
-//         </p>
-//         <div style={{ display: "flex", gap: 24, justifyContent: "center" }}>
-//           <button style={{
-//             background: C.accent, color: C.dark, border: "none",
-//             borderRadius: 4, padding: "20px 40px",
-//             fontFamily: "Inter", fontWeight: 700, fontSize: 18,
-//             cursor: "pointer", boxShadow: "0 0 20px rgba(199,255,53,0.4)",
-//           }}>Request Demo</button>
-//           <button style={{
-//             background: "transparent", color: "#fff",
-//             border: "1px solid rgba(255,255,255,0.2)", borderRadius: 4,
-//             padding: "20px 41px",
-//             fontFamily: "Inter", fontWeight: 700, fontSize: 18, cursor: "pointer",
-//           }}>Contact Sales</button>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
-
-
-function CTASection() {
-  return (
-    <section className="biz-cta-section" style={{ background: C.deep, padding: "100px 0", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(rgba(199,255,53,0.04) 1px, transparent 1px)`, backgroundSize: "28px 28px", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 800, height: 400, background: "radial-gradient(ellipse, rgba(199,255,53,0.05) 0%, transparent 65%)", pointerEvents: "none" }} />
-
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 40px", textAlign: "center", position: "relative", zIndex: 1 }}>
-        {/* <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            background: C.accentLow,
-            border: `1px solid ${C.accentMid}`,
-            borderRadius: 100,
-            padding: "6px 18px",
-            marginBottom: 32,
-          }}
-        >
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.accent, display: "block" }} />
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 700, color: C.accent, letterSpacing: "0.08em" }}>OPEN TO ALL BACKGROUNDS</span>
-        </div> */}
-
-        <h2
-          style={{
-            fontFamily: "'Manrope', sans-serif",
-            fontSize: "clamp(32px, 4.5vw, 58px)",
-            fontWeight: 800,
-            color: C.white,
-            lineHeight: 1.08,
-            margin: "0 0 20px",
-            letterSpacing: "-0.03em",
-          }}
-        >
-         Master your inventory {" "}<span style={{ color: C.accent }}> operations today</span>
-        </h2>
-
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 18,
-            color: "rgba(255,255,255,0.55)",
-            lineHeight: 1.7,
-            margin: "0 auto 48px",
-            maxWidth: 580,
-          }}
-        >
-      Join 500+ enterprises optimizing their global supply chain with <br></br> Bizak's precision warehouse management system.
-        </p>
-
-        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-          <a
-            href="https://system.bizakerp.com/account/self-register"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: C.accent,
-              color: C.deep,
-              padding: "15px 36px",
-              borderRadius: 10,
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 700,
-              fontSize: 15,
-              textDecoration: "none",
-              transition: "transform 0.2s, box-shadow 0.2s",
-            }}
-            onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = "translateY(-2px)"; el.style.boxShadow = `0 8px 32px rgba(199,255,53,0.35)`; }}
-            onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = ""; el.style.boxShadow = ""; }}
-          >
-      Start Free Trial
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M7 17l9.2-9.2M17 17V7H7" />
-            </svg>
-          </a>
-          <a
-            href="/Contact"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: "transparent",
-              color: C.white,
-              padding: "15px 36px",
-              borderRadius: 10,
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 600,
-              fontSize: 15,
-              textDecoration: "none",
-              border: `1px solid ${C.borderDark}`,
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.25)"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = C.borderDark; }}
-          >
-           Book a demo
-          </a>
-        </div>
-
-       
-      </div>
-    </section>
-  );
-}
-
-
-
 
 // ─── PAGE EXPORT ──────────────────────────────────────────────────────────────
+
 export function InventoryAndWarehousePage() {
   return (
-    <div style={{ fontFamily: "Inter, sans-serif" }}>
-      <HeroSection />
-      <CapabilitiesSection />
+    <>
+      <HeroCentered
+        badge={<HeroBadge>Inventory & Warehouse Module</HeroBadge>}
+        title={<>Real-time inventory control<br />without the chaos</>}
+        description="Track every item across all warehouses in real time. Automate replenishment, manage movements, and close every cycle count with complete audit accuracy."
+        actions={
+          <>
+            <Button variant="primary" size="lg" href="/contact" withArrow>Request Demo</Button>
+            <Button variant="outline" size="lg">View features</Button>
+          </>
+        }
+        visual={<HeroDashboard />}
+      />
+
+      {/* Capabilities */}
+      <Section tone="white">
+        <Container>
+          <SectionHeading
+            eyebrow="Core Capabilities"
+            title={<>Every warehouse operation,<br />precisely under control</>}
+            maxWidth={700}
+            className="mb-14"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+            {CAPABILITIES.map(({ Icon, title, desc }) => (
+              <Card key={title} hover="lift" pad="md">
+                <IconBadge tone="sage" size="md" className="mb-7">
+                  <Icon className="size-5" />
+                </IconBadge>
+                <h3 className="font-bold text-[16px] text-bz-text mb-2.5">{title}</h3>
+                <p className="text-[13px] text-bz-text-muted leading-[1.65]">{desc}</p>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
       <TechShowcaseSection />
       <IntelligenceSection />
       <ConnectedSystemSection />
-      <MetricsSection />
-    <CTASection/>
-    </div>
+
+      {/* Impact Metrics */}
+      <Section tone="white">
+        <Container>
+          <SectionHeading
+            eyebrow="Efficiency"
+            title="Measurable impact on operations"
+            align="center"
+            className="mb-16"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {METRICS.map((m) => (
+              <Card key={m.label} hover="lift" pad="lg" className="text-center">
+                <div className="text-[52px] font-black text-bz-text tracking-[-0.04em] mb-3">{m.value}</div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-bz-text-muted mb-4">{m.label}</div>
+                <p className="text-[13px] text-bz-text-muted leading-[1.65]">{m.desc}</p>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      {/* Closing CTA */}
+      <Section tone="dark">
+        <Container width="narrow">
+          <SectionHeading
+            title={<>Master your inventory<br /><span className="text-bz-accent">operations today</span></>}
+            description="Join 500+ enterprises optimizing their global supply chain with Bizak's precision warehouse management system."
+            tone="light"
+            align="center"
+            maxWidth={580}
+            className="mb-10"
+          />
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button variant="accent" size="lg" href="https://system.bizakerp.com/account/self-register" withArrow>
+              Start Free Trial
+            </Button>
+            <Button variant="ghostDark" size="lg" href="/Contact">
+              Book a demo
+            </Button>
+          </div>
+        </Container>
+      </Section>
+    </>
   );
 }

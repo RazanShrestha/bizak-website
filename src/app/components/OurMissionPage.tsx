@@ -661,7 +661,7 @@ export function OurMissionPage() {
   return (
     <div>
       <Header />
-      <main style={{ paddingTop: 76 }}>
+      <main>
         <HeroSection />
         <PillarsSection />
         <BeliefsSection />

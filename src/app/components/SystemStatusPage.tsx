@@ -1014,7 +1014,7 @@ export function SystemStatusPage() {
   return (
     <div>
       <Header />
-      <main style={{ paddingTop: 76 }}>
+      <main>
         <HeroSection />
         <StatusBanner />
         <MetricsSection />

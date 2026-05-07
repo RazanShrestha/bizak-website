@@ -21,6 +21,7 @@ import {
   SectionHeading,
   Button,
   HeroBadge,
+  HeroCentered,
 } from "./marketing";
 
 const AVATAR_URL = "https://images.unsplash.com/photo-1659353221237-6a1cfb73fd90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25maWRlbnQlMjBtYWxlJTIwQ0VPJTIwZXhlY3V0aXZlJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcyMTY3OTY5fDA&ixlib=rb-4.1.0&q=80&w=1080";
@@ -202,34 +203,26 @@ function HeroDashboard() {
 
 function HeroSection() {
   return (
-    <Section pad="hero" className="biz-mesh overflow-hidden">
-      <Container>
-        <div className="text-center mb-16 relative z-20">
-          <div className="flex justify-center mb-4">
-            <HeroBadge>Now available for global businesses</HeroBadge>
-          </div>
-          <h1 className="font-bold text-bz-text leading-[1.08] tracking-[-0.045em] max-w-[900px] mx-auto mb-7 text-[clamp(2.8rem,6vw,4.5rem)]">
-            The Operating System for Modern Business
-          </h1>
-          <p className="text-[20px] text-bz-text-muted leading-[1.65] max-w-[580px] mx-auto mb-9">
-            A comprehensive ERP for SMEs and mid-market companies built for scale, automation, and total visibility.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3.5">
-            <Button
-              variant="primary"
-              size="lg"
-              href="https://system.bizakerp.com/account/self-register"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Start free trial
-            </Button>
-            <Button variant="outline" size="lg">Book a demo</Button>
-          </div>
-        </div>
-        <HeroDashboard />
-      </Container>
-    </Section>
+    <HeroCentered
+      badge={<HeroBadge>Now available for global businesses</HeroBadge>}
+      title="The Operating System for Modern Business"
+      description="A comprehensive ERP for SMEs and mid-market companies built for scale, automation, and total visibility."
+      actions={
+        <>
+          <Button
+            variant="primary"
+            size="lg"
+            href="https://system.bizakerp.com/account/self-register"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Start free trial
+          </Button>
+          <Button variant="outline" size="lg">Book a demo</Button>
+        </>
+      }
+      visual={<HeroDashboard />}
+    />
   );
 }
 

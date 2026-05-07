@@ -45,6 +45,104 @@ across scopes** — if a non-industry page needs `IndustryHero`, the right move
 is to promote it up to `marketing/` first (see "Scope promotion rule" in
 `/CLAUDE.md`), not to import from another scope's folder.
 
+## Pick a hero option FIRST (before any code)
+
+If the page being redesigned has a hero (or the user explicitly asked to
+"redesign the hero in X"), the **very first action** is to ask the user
+which of the **3 approved hero layouts** to use:
+
+| Option | Primitive | Reference | Feel |
+|---|---|---|---|
+| **1 · Centered** | `<HeroCentered>` | `HomePage.tsx` | Centered copy + a big full-width visual / dashboard below |
+| **2 · Split** | `<HeroSplit>` | `ManufacturingPage.tsx` (uses scoped `<IndustryHero>`) | Two-column: copy left, a domain visual right; light + `.biz-mesh` |
+| **3 · Panel** | `<HeroPanel>` | `CarrersPage.tsx` | Two-column on dark: copy left, a self-contained KPI/list card right |
+
+**Required prompt** (verbatim wording is fine, but the choice must be
+explicit):
+
+> Which hero layout do you want — **Option 1 (Centered, HomePage style)**, **Option 2 (Split, Manufacturing style)**, or **Option 3 (Panel, Careers style)**?
+
+Wait for the answer. Do **not** guess "the closest one" or proceed on the
+old hero shape. After the user picks, compose the corresponding primitive
+from `marketing/` (`HeroCentered` / `HeroSplit` / `HeroPanel`) — see the
+prop tables in `/CLAUDE.md` "The 3 hero options" section. Custom visuals
+(dashboards, diagrams, KPI panels) go into the primitive's slot
+(`visual` / `panel`); the primitive owns the layout, surface, mesh, badge,
+heading, CTAs, and stats row.
+
+This step does **not** apply to:
+- mid-page sections (they use `<SectionHeading>` + `<Section>`),
+- pages with no hero (e.g., a footer-only legal page).
+
+### After picking the hero — strip every `paddingTop: 76` shim
+
+The 3 hero primitives (and any `<Section pad="hero">`) own the full top offset — `pt-[120px]` already accounts for the 76px fixed `<Header>` plus ~44px breathing room. **Adding a separate 76px anywhere else stacks on top and produces 196px of dead space.** This is the bug that made `/SalesCrm` look loose while `/` looked tight; we've also seen it bite `ManufacturingPage`, `DocumentationPage`, `HelpCenter`, `LeadershipTeamPage`, `OurMissionPage`, `PressAndMediaPage`, `SystemStatusPage`. **Single source of truth: vertical hero padding is defined in exactly one place — the `Section` primitive's `pad="hero"` variant. Never re-derive locally.**
+
+**Required check, every time a page is moving onto a hero primitive — must hit BOTH layers:**
+
+1. **The page component itself.** Open the page file you just redesigned. Look for these patterns at the top of the returned JSX:
+
+   ```tsx
+   // ❌ Page-internal shim — typical of HomePage-style pages that render their own Header
+   <Header />
+   <main style={{ paddingTop: 76 }}>
+     <HeroSection />
+     ...
+   </main>
+
+   // ❌ Same bug, slightly different shape
+   <div style={{ paddingTop: 76 }}>
+     <HeroSection />
+     ...
+   </div>
+   ```
+
+   Strip the inline `paddingTop: 76` so it becomes plain `<main>` / `<div>` (or delete the wrapper if it was only there for the offset).
+
+2. **The route layout in `src/app/routes.tsx`.** Find the `*PageLayout` function (or direct route entry) that renders this page. Look for:
+
+   ```tsx
+   // ❌ Routes-level shim
+   <Header />
+   <div style={{ paddingTop: 76 }}>
+     <ThePage />
+   </div>
+   <Footer />
+   ```
+
+   Remove the `<div style={{ paddingTop: 76 }}>` wrapper:
+
+   ```tsx
+   // ✅ After
+   <Header />
+   <ThePage />
+   <Footer />
+   ```
+
+3. **Sweep with grep before declaring done:**
+
+   ```
+   grep -n "paddingTop: 76" <page-file> src/app/routes.tsx
+   ```
+
+   Zero matches inside the page you redesigned and inside its layout. If any match remains, the hero will sit at 196px instead of 120px.
+
+4. Do all of the above in the **same change** as the hero migration — never leave a redesigned hero behind a double-pad shim.
+
+**Counter-rule — when to LEAVE a `paddingTop: 76` shim alone:** if the page being routed does *not* start with one of the 3 hero primitives or a `<Section pad="hero">` (e.g., its top JSX is still a raw `<div>` of legacy content), the shim is the only thing keeping it out from under the fixed header. Remove a shim only when the page's first section is hero-padded.
+
+### Audit pass — while you're in the file, also scan for related drift
+
+Once the active page is clean, before closing the task do a quick read-through of the page for any **other** locally-redefined values that should be coming from the global primitives. The same "single source of truth" rule that catches the 76px shim also catches:
+
+- per-file hex literals that duplicate `var(--bz-*)` tokens (`#7A826D`, `#C7FF35`, `#1A1D19`, …)
+- per-file copies of standard hero/heading sizes / line-heights (`text-[clamp(...)]` outside of the hero primitives, `leading-[1.x]` re-derived per page)
+- per-file `paddingTop` / `marginTop` / `mt-[76px]` magic numbers compensating for the fixed header
+- bespoke hero `<section>`s with hand-rolled layout instead of `HeroCentered` / `HeroSplit` / `HeroPanel`
+- bespoke CTA buttons / badges that mirror `<Button>` / `<HeroBadge>` / `<PillBadge>` shapes
+
+If you find any, flag them in the report and (if scoped to the page you're touching) fix them in the same change. The goal: every page composes the global primitives and adds **only** content — no parallel definitions of the same value.
+
 ## Page-design checklist (run BEFORE editing anything)
 
 This is the non-negotiable preflight. Walk through every item; whatever is
@@ -53,7 +151,7 @@ This is the non-negotiable preflight. Walk through every item; whatever is
 1. **Scope.** Open `src/app/components/Header.tsx` and find this page inside the `megaMenus` object. Which top-level group + sub-heading does it sit under? Does a corresponding scope folder exist (e.g., `solutions/by-industry/`)?
 2. **Section primitives.** If the page belongs to a family with a scope folder, is it composing those scoped section primitives, or duplicating their JSX inline? If a sibling page in the same family has invented a section the primitive doesn't cover yet, **promote that pattern into the scope folder first**, then use it.
 3. **Global primitives.** `Container`, `Section`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `HeroBadge`, `Eyebrow` from `marketing/` — used wherever they fit?
-3a. **Hero pattern (canonical).** If the page has a hero `<section>`: it MUST use `.biz-mesh` for the background and `<HeroBadge>` for the eyebrow pill. No inline `linear-gradient` / `radial-gradient` for the hero bg. No hand-rolled `<div className="...-badge">` with a custom gradient. Spacing baseline: hero top padding ~72px, badge sits ~16px above the `<h1>`. See "Canonical hero pattern" in `/docs/DESIGN_SYSTEM.md` §3.6 and `/CLAUDE.md`.
+3a. **Hero option chosen.** If the page has a hero, you've already asked the user which of the 3 options (Centered / Split / Panel) — see the section above. The hero composes `<HeroCentered>` / `<HeroSplit>` / `<HeroPanel>` from `marketing/`. Do NOT hand-roll a hero `<section>` with bespoke layout. The chosen primitive owns the surface, `.biz-mesh`, the badge slot (`<HeroBadge>` or `<PillBadge tone="accent">`), the heading, CTAs, and stats row. Custom visuals go in the `visual` / `panel` slot.
 4. **Tokens.** No per-file `const C = {...}` color object. No hex literals except in genuinely dynamic style props. All colors via `var(--bz-*)` or Tailwind utilities.
 5. **Icons.** No per-file SVG dictionary `function Icon({ name }) {...}`. Use the global `<Icon name="..." />` from `marketing/` for data-driven loops; import lucide directly (`import { Factory } from "lucide-react"`) for statically known icons.
 6. **Fonts.** Inter only. References to `'Manrope'`, `'Poppins'`, etc. are silent visual bugs.

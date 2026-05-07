@@ -1,3 +1,6 @@
+import { Users, CheckCircle, FileText, ClipboardCheck } from "lucide-react";
+import { HeroCentered, HeroBadge, Button } from "./marketing";
+
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const C = {
      deep: "#1A1D19",
@@ -42,132 +45,99 @@ function Ico({ d, size = 20, color = "currentColor", strokeWidth = 1.8 }: {
 }
 
 // ─── 1. HERO ─────────────────────────────────────────────────────────────────
-function HeroSection() {
-  const workflowSteps = [
-    { label: "Lead", active: true, icon: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8" },
-    { label: "Qualified", active: true, icon: "M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3" },
-    { label: "Proposal", active: false, icon: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8" },
-    { label: "Won", active: false, icon: "M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" },
+function SalesDashboardVisual() {
+  const steps = [
+    { label: "Lead",      active: true,  Icon: Users },
+    { label: "Qualified", active: true,  Icon: CheckCircle },
+    { label: "Proposal",  active: false, Icon: FileText },
+    { label: "Won",       active: false, Icon: ClipboardCheck },
   ];
 
   return (
-    <section style={{ paddingTop: 96, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, background: C.surface }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
-        {/* Badge */}
-        <div style={{
-          display: "inline-block",
-          padding: "6px 18px",
-          background: C.surfaceHigh,
-          borderRadius: 999,
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: "0.2em",
-          color: C.onSurfaceVar,
-          textTransform: "uppercase",
-          marginBottom: 44,
-        }}>Sales Module</div>
-
-        <h1 style={{
-          fontFamily: "Manrope, Inter, sans-serif",
-          fontSize: "clamp(36px, 5.5vw, 62px)",
-          fontWeight: 700,
-          lineHeight: 1.1,
-          letterSpacing: "-0.04em",
-          color: C.primary,
-          maxWidth: 900,
-          margin: "0 auto 28px",
-        }}>
-          Control sales and customer<br />relationships with precision
-        </h1>
-
-        <p style={{ fontSize: 17, color: C.onSurfaceVar, maxWidth: 560, margin: "0 auto 40px", lineHeight: 1.7 }}>
-          Streamline your revenue lifecycle from lead to final payment. Centralize sales communication and automate approval workflows in one high-fidelity interface.
-        </p>
-
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 72 }}>
-          <a href="/contact" style={{
-            padding: "14px 32px", background: C.primary, color: C.white,
-            borderRadius: 10, fontWeight: 700, fontSize: 14, textDecoration: "none",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
-          }}>Request Demo</a>
-          <button style={{
-            padding: "14px 32px", background: C.white,
-            border: `1px solid rgba(197,199,194,0.5)`,
-            borderRadius: 10, fontWeight: 700, fontSize: 14, color: C.primary, cursor: "pointer",
-          }}>View features</button>
+    <div className="max-w-[1100px] mx-auto">
+      <div className="bg-bz-surface rounded-3xl border border-bz-border shadow-[0_25px_60px_-10px_rgba(0,0,0,0.12)] overflow-hidden flex h-[480px]">
+        {/* Sidebar */}
+        <div className="w-[200px] bg-bz-deep flex-shrink-0 p-7 flex flex-col gap-5">
+          {[75, 50, 85, 60].map((w, i) => (
+            <div key={i} className="h-3.5 bg-white/10 rounded" style={{ width: `${w}%` }} />
+          ))}
         </div>
 
-        {/* Dashboard Mockup */}
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{
-            background: C.white,
-            borderRadius: 24,
-            border: `1px solid ${C.border}`,
-            boxShadow: "0 25px 60px -10px rgba(0,0,0,0.12)",
-            overflow: "hidden",
-            display: "flex",
-            height: 480,
-          }}>
-            {/* Sidebar */}
-            <div style={{ width: 200, background: C.primary, padding: 28, flexShrink: 0, display: "flex", flexDirection: "column", gap: 20 }}>
-              {[0.75, 0.5, 0.85, 0.6].map((w, i) => (
-                <div key={i} style={{ height: 14, background: "rgba(255,255,255,0.1)", borderRadius: 4, width: `${w * 100}%` }} />
-              ))}
+        {/* Main content */}
+        <div className="flex-1 p-10 bg-bz-bg flex flex-col">
+          {/* Stats row */}
+          <div className="grid grid-cols-3 mb-10">
+            {[
+              { label: "Open Leads",     value: "142" },
+              { label: "Pipeline Value", value: "$84.2k" },
+              { label: "Avg. Cycle",     value: "4.2 Days" },
+            ].map((s, i) => (
+              <div
+                key={s.label}
+                className={i > 0 ? "pl-7 border-l border-bz-border ml-7" : ""}
+              >
+                <div className="text-[9px] font-bold text-bz-text-muted uppercase tracking-[0.15em] mb-1.5">
+                  {s.label}
+                </div>
+                <div className="text-[36px] font-bold text-bz-text tracking-[-0.03em] tabular-nums">
+                  {s.value}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Workflow strip */}
+          <div className="flex-1 flex flex-col justify-end">
+            <div className="flex justify-between items-center mb-6">
+              <h4 className="font-bold text-bz-text text-sm">Sales Workflow</h4>
+              <span className="bg-bz-accent text-bz-deep text-[9px] font-bold px-2 py-0.5 rounded">LIVE</span>
             </div>
-
-            {/* Content */}
-            <div style={{ flex: 1, padding: 40, background: C.surface, display: "flex", flexDirection: "column" }}>
-              {/* Stats */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0, marginBottom: 40 }}>
-                {[
-                  { label: "Open Leads", value: "142" },
-                  { label: "Pipeline Value", value: "$84.2k" },
-                  { label: "Avg. Cycle", value: "4.2 Days" },
-                ].map((s, i) => (
-                  <div key={s.label} style={{
-                    textAlign: "left",
-                    paddingLeft: i > 0 ? 28 : 0,
-                    borderLeft: i > 0 ? `1px solid rgba(197,199,194,0.3)` : "none",
-                    marginLeft: i > 0 ? 28 : 0,
-                  }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(68,72,68,0.6)", textTransform: "uppercase", letterSpacing: "0.15em", marginBottom: 6 }}>{s.label}</div>
-                    <div style={{ fontSize: 36, fontWeight: 700, color: C.primary, letterSpacing: "-0.03em" }}>{s.value}</div>
+            <div className="relative flex justify-between items-center">
+              <div className="absolute left-0 right-0 h-px bg-bz-border top-5 z-0" />
+              {steps.map(({ label, active, Icon }) => (
+                <div key={label} className="relative z-10 flex flex-col items-center gap-2.5">
+                  <div
+                    className={
+                      active
+                        ? "w-10 h-10 rounded-full bg-bz-deep flex items-center justify-center text-white"
+                        : "w-10 h-10 rounded-full bg-bz-surface border border-bz-border flex items-center justify-center text-bz-text-muted"
+                    }
+                  >
+                    <Icon size={16} />
                   </div>
-                ))}
-              </div>
-
-              {/* Workflow */}
-              <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-                  <h4 style={{ fontWeight: 700, color: C.primary, fontSize: 14 }}>Sales Workflow</h4>
-                  <span style={{ background: C.accent, color: C.primary, fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>LIVE</span>
+                  <span
+                    className={
+                      active
+                        ? "text-[9px] font-bold uppercase text-bz-text"
+                        : "text-[9px] font-bold uppercase text-bz-text-muted"
+                    }
+                  >
+                    {label}
+                  </span>
                 </div>
-                <div style={{ position: "relative", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{
-                    position: "absolute", left: 0, right: 0, height: 2,
-                    background: "rgba(197,199,194,0.3)", top: "50%", transform: "translateY(-50%)", zIndex: 0,
-                  }} />
-                  {workflowSteps.map((step) => (
-                    <div key={step.label} style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-                      <div style={{
-                        width: 40, height: 40, borderRadius: "50%",
-                        background: step.active ? C.primary : C.surfaceHigh,
-                        border: step.active ? "none" : `1px solid rgba(197,199,194,0.5)`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        color: step.active ? C.white : C.onSurfaceVar,
-                      }}>
-                        <Ico d={step.icon} size={16} color={step.active ? C.white : C.onSurfaceVar} />
-                      </div>
-                      <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: step.active ? C.primary : C.onSurfaceVar }}>{step.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  );
+}
+
+function HeroSection() {
+  return (
+    <HeroCentered
+      badge={<HeroBadge>Sales & CRM</HeroBadge>}
+      title={<>From first lead<br />to final payment.</>}
+      description="Centralize your pipeline, automate approvals, and post every sale straight to the ledger. One system — no re-keying, no spreadsheet reconciliation."
+      actions={
+        <>
+          <Button variant="primary" size="lg" href="/contact" withArrow>Request Demo</Button>
+          <Button variant="outline" size="lg" href="#features">View features</Button>
+        </>
+      }
+      visual={<SalesDashboardVisual />}
+    />
   );
 }
 

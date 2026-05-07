@@ -15,7 +15,7 @@ import {
   MapPin,
   type LucideIcon,
 } from "lucide-react";
-import { Container, Section, SectionHeading, Button, Card, Stat, IconBadge, PillBadge } from "./marketing";
+import { Container, Section, SectionHeading, Button, Card, Stat, IconBadge, PillBadge, HeroPanel } from "./marketing";
 import { cn } from "./ui/utils";
 
 const DEPT_BARS = [
@@ -131,123 +131,116 @@ const PROCESS_STEPS = [
 ];
 
 // ─── HERO ─────────────────────────────────────────────────────────────────────
+function TeamPulsePanel() {
+  return (
+    <Card tone="dark" pad="md">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/35">
+            Team Pulse
+          </div>
+          <div className="text-[18px] font-bold mt-0.5">Live Headcount</div>
+        </div>
+        <PillBadge tone="live" dot>LIVE</PillBadge>
+      </div>
+
+      <div className="flex flex-col gap-3.5 mb-6">
+        {DEPT_BARS.map((d) => (
+          <div key={d.name}>
+            <div className="flex justify-between mb-1.5">
+              <span className="text-[13px] font-medium text-white/70">{d.name}</span>
+              <div className="flex gap-3">
+                <span className="text-[12px] text-white/45">{d.count} total</span>
+                <span className="text-[12px] font-semibold text-bz-accent">{d.open} open</span>
+              </div>
+            </div>
+            <div className="h-1 bg-white/10 rounded-bz-pill overflow-hidden">
+              <div
+                className="h-full bg-bz-sage rounded-bz-pill"
+                style={{ width: `${d.pct}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-2 gap-2.5 mb-5">
+        {[
+          { label: "Avg. time to hire", val: "18 days" },
+          { label: "Offer acceptance", val: "94%" },
+          { label: "Internal mobility", val: "38%" },
+          { label: "Employee NPS", val: "72" },
+        ].map((kpi) => (
+          <div
+            key={kpi.label}
+            className="bg-white/[0.04] border border-white/10 rounded-bz-md px-3.5 py-3"
+          >
+            <div className="text-[20px] font-bold">{kpi.val}</div>
+            <div className="text-[11px] text-white/40 mt-0.5">{kpi.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="border-t border-white/10 pt-4">
+        <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/30 mb-3">
+          Recently joined
+        </div>
+        {RECENT_JOINS.map((j, i) => (
+          <div
+            key={j.name}
+            className={cn(
+              "flex items-center gap-2.5",
+              i < RECENT_JOINS.length - 1 && "mb-2.5",
+            )}
+          >
+            <div
+              className="size-7 rounded-full flex items-center justify-center text-[12px] font-bold text-white shrink-0"
+              style={{ background: `hsl(${i * 120}, 55%, 50%)` }}
+            >
+              {j.name[0]}
+            </div>
+            <div className="flex-1">
+              <div className="text-[13px] font-medium">{j.name}</div>
+              <div className="text-[11px] text-white/40">{j.role}</div>
+            </div>
+            <div className="text-[11px] text-bz-accent">{j.days}d ago</div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
 function HeroSection() {
   const totalOpen = OPEN_ROLES.reduce((s, d) => s + d.jobs.length, 0);
   const totalTeam = DEPT_BARS.reduce((s, d) => s + d.count, 0);
 
   return (
-    <Section tone="dark" pad="hero">
-      <Container width="narrow" className="relative">
-        <div className="grid gap-16 lg:gap-[64px] lg:grid-cols-[55fr_45fr] items-center">
-          {/* Left */}
-          <div>
-            <PillBadge tone="accent" dot className="mb-8">
-              {totalOpen} open roles · hiring now
-            </PillBadge>
-
-            <SectionHeading
-              title={<>Build what the <span className="text-bz-accent">world runs on.</span></>}
-              description="Bizak powers over 50,000 businesses across 120+ countries. Join the team making enterprise software feel effortless — and building the next chapter of global commerce."
-              level="h1"
-              tone="light"
-              maxWidth={560}
-            />
-
-            <div className="mt-12 flex gap-4 flex-wrap">
-              <Button variant="accent" size="lg" href="#open-roles" withArrow>
-                View Open Roles
-              </Button>
-              <Button variant="ghostDark" size="lg" href="#culture">
-                Our Culture
-              </Button>
-            </div>
-
-            <div className="mt-14 pt-12 border-t border-white/10 flex gap-10">
-              <Stat value={`${totalTeam}+`} label="Team members" tone="light" size="md" />
-              <Stat value="120+" label="Countries" tone="light" size="md" />
-              <Stat value={`${totalOpen}`} label="Open roles" tone="light" size="md" />
-            </div>
-          </div>
-
-          {/* Right — Team Pulse panel */}
-          <Card tone="dark" pad="md">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/35">
-                  Team Pulse
-                </div>
-                <div className="text-[18px] font-bold mt-0.5">Live Headcount</div>
-              </div>
-              <PillBadge tone="live" dot>LIVE</PillBadge>
-            </div>
-
-            <div className="flex flex-col gap-3.5 mb-6">
-              {DEPT_BARS.map((d) => (
-                <div key={d.name}>
-                  <div className="flex justify-between mb-1.5">
-                    <span className="text-[13px] font-medium text-white/70">{d.name}</span>
-                    <div className="flex gap-3">
-                      <span className="text-[12px] text-white/45">{d.count} total</span>
-                      <span className="text-[12px] font-semibold text-bz-accent">{d.open} open</span>
-                    </div>
-                  </div>
-                  <div className="h-1 bg-white/10 rounded-bz-pill overflow-hidden">
-                    <div
-                      className="h-full bg-bz-sage rounded-bz-pill"
-                      style={{ width: `${d.pct}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-2 gap-2.5 mb-5">
-              {[
-                { label: "Avg. time to hire", val: "18 days" },
-                { label: "Offer acceptance", val: "94%" },
-                { label: "Internal mobility", val: "38%" },
-                { label: "Employee NPS", val: "72" },
-              ].map((kpi) => (
-                <div
-                  key={kpi.label}
-                  className="bg-white/[0.04] border border-white/10 rounded-bz-md px-3.5 py-3"
-                >
-                  <div className="text-[20px] font-bold">{kpi.val}</div>
-                  <div className="text-[11px] text-white/40 mt-0.5">{kpi.label}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="border-t border-white/10 pt-4">
-              <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/30 mb-3">
-                Recently joined
-              </div>
-              {RECENT_JOINS.map((j, i) => (
-                <div
-                  key={j.name}
-                  className={cn(
-                    "flex items-center gap-2.5",
-                    i < RECENT_JOINS.length - 1 && "mb-2.5",
-                  )}
-                >
-                  <div
-                    className="size-7 rounded-full flex items-center justify-center text-[12px] font-bold text-white shrink-0"
-                    style={{ background: `hsl(${i * 120}, 55%, 50%)` }}
-                  >
-                    {j.name[0]}
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-[13px] font-medium">{j.name}</div>
-                    <div className="text-[11px] text-white/40">{j.role}</div>
-                  </div>
-                  <div className="text-[11px] text-bz-accent">{j.days}d ago</div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
-      </Container>
-    </Section>
+    <HeroPanel
+      badge={
+        <PillBadge tone="accent" dot>
+          {totalOpen} open roles · hiring now
+        </PillBadge>
+      }
+      title={<>Build what the <span className="text-bz-accent">world runs on.</span></>}
+      description="Bizak powers over 50,000 businesses across 120+ countries. Join the team making enterprise software feel effortless — and building the next chapter of global commerce."
+      actions={
+        <>
+          <Button variant="accent" size="lg" href="#open-roles" withArrow>
+            View Open Roles
+          </Button>
+          <Button variant="ghostDark" size="lg" href="#culture">
+            Our Culture
+          </Button>
+        </>
+      }
+      stats={[
+        { value: `${totalTeam}+`, label: "Team members" },
+        { value: "120+", label: "Countries" },
+        { value: `${totalOpen}`, label: "Open roles" },
+      ]}
+      panel={<TeamPulsePanel />}
+    />
   );
 }
 
