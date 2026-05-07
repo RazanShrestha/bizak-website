@@ -7,15 +7,15 @@ const footerLinks = [
     items: [
       { label: 'Features', href: '#' },
       { label: 'Pricing', href: '#' },
-      { label: 'Integrations', href: '#' },
+      { label: 'Integrations', href: 'integrations' },
       { label: 'Changelog', href: '#' },
     ],
   },
   {
     heading: 'Resources',
     items: [
-      { label: 'Documentation', href: '#' },
-      { label: 'Help Center', href: '#' },
+      { label: 'Documentation', href: '/documentation' },
+      { label: 'Help Center', href: '/HelpCenter' },
       { label: 'Blog', href: '/blog' },
       { label: 'Customer Stories', href: '#' },
     ],
@@ -24,7 +24,7 @@ const footerLinks = [
     heading: 'Company',
     items: [
       { label: 'About Us', href: '/about' },
-      { label: 'Careers', href: '#' },
+      { label: 'Careers', href: '/careers' },
       { label: 'Contact', href: '/contact' },
       { label: 'Privacy Policy', href: '#' },
     ],
