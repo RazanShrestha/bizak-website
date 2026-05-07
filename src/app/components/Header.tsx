@@ -544,6 +544,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <BookMarked size={15} />,
             title: "Guides & Playbooks",
             description: "Step-by-step implementation guides",
+            href: "/GuidesAndPlaybooks",
           },
         ],
       },
