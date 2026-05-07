@@ -898,8 +898,12 @@ function EventCard({ event }: { event: Event }) {
 
 // ─── On-demand library ──────────────────────────────────────────────────────
 
+const REPLAYS_PREVIEW_COUNT = 3;
+
 function OnDemandSection() {
   const [track, setTrack] = useState<TrackKey>("all");
+  const [expanded, setExpanded] = useState(false);
+  const filtersRef = useRef<HTMLDivElement | null>(null);
 
   const counts = useMemo(() => {
     const map: Record<TrackKey, number> = {
@@ -916,10 +920,20 @@ function OnDemandSection() {
     return map;
   }, []);
 
-  const items = useMemo(
+  const filtered = useMemo(
     () => (track === "all" ? REPLAYS : REPLAYS.filter((r) => r.track === track)),
     [track],
   );
+
+  const canToggle = filtered.length > REPLAYS_PREVIEW_COUNT;
+  const items = expanded && canToggle
+    ? filtered
+    : filtered.slice(0, REPLAYS_PREVIEW_COUNT);
+
+  // Switching tracks resets the "expanded" view so each filter starts collapsed.
+  useEffect(() => {
+    setExpanded(false);
+  }, [track]);
 
   return (
     <Section tone="white" pad="default" id="on-demand">
@@ -945,7 +959,10 @@ function OnDemandSection() {
         </div>
 
         {/* Track filter */}
-        <div className="-mx-6 mt-10 overflow-x-auto px-6 md:mx-0 md:overflow-visible md:px-0">
+        <div
+          ref={filtersRef}
+          className="-mx-6 mt-10 overflow-x-auto px-6 scroll-mt-28 md:mx-0 md:overflow-visible md:px-0"
+        >
           <div className="flex min-w-max flex-nowrap items-center gap-2 md:min-w-0 md:flex-wrap">
             {TRACKS.map((c) => {
               const TrackIcon = c.icon;
@@ -987,18 +1004,64 @@ function OnDemandSection() {
           </div>
         </div>
 
-        {/* Replay grid */}
+        {/* Replay grid — fade-in/slide-up per card, with a stagger on the
+            cards beyond the preview window so newly-revealed replays feel
+            like they're loading in. */}
         <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((replay) => (
-            <ReplayCard key={replay.slug} replay={replay} />
-          ))}
+          {items.map((replay, index) => {
+            const isRevealed = index >= REPLAYS_PREVIEW_COUNT;
+            return (
+              <div
+                key={replay.slug}
+                className={
+                  isRevealed
+                    ? "animate-in fade-in slide-in-from-bottom-3 duration-500 ease-out"
+                    : ""
+                }
+                style={
+                  isRevealed
+                    ? { animationDelay: `${(index - REPLAYS_PREVIEW_COUNT) * 80}ms` }
+                    : undefined
+                }
+              >
+                <ReplayCard replay={replay} />
+              </div>
+            );
+          })}
         </div>
 
-        <div className="mt-10 text-center">
-          <Button variant="outline" size="md" href="#" withArrow>
-            Browse the full library
-          </Button>
-        </div>
+        {canToggle && (
+          <div className="mt-10 flex flex-col items-center gap-2 text-center">
+            <Button
+              variant="outline"
+              size="md"
+              onClick={() => {
+                const willCollapse = expanded;
+                setExpanded((prev) => !prev);
+                if (willCollapse) {
+                  // Scroll the user back up to the track filter so the
+                  // collapsed view starts where they entered it.
+                  requestAnimationFrame(() => {
+                    filtersRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  });
+                }
+              }}
+              withArrow={!expanded}
+            >
+              {expanded
+                ? "Show fewer replays"
+                : `Browse the full library · ${filtered.length} replays`}
+            </Button>
+            {!expanded && (
+              <span className="text-[12px] text-bz-text-soft">
+                Showing {items.length} of {filtered.length} replays
+              </span>
+            )}
+          </div>
+        )}
       </Container>
     </Section>
   );
