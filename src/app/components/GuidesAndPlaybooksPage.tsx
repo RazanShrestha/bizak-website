@@ -16,12 +16,9 @@ import {
   Filter,
   Layers,
   LineChart,
-  PlayCircle,
-  Receipt,
   Rocket,
   Search,
   ShieldCheck,
-  Truck,
   Users,
   Workflow,
   type LucideIcon,
@@ -39,259 +36,51 @@ import {
   Section,
   SectionHeading,
 } from "./marketing";
+import {
+  CATEGORY_META,
+  RESOURCES,
+  formatIcon,
+  formatTone,
+  type CategoryKey,
+  type Format,
+  type Resource,
+} from "./guides/resources";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Local filter type & derived lookups ─────────────────────────────────────
 
-type CategoryKey =
-  | "all"
-  | "implementation"
-  | "finance"
-  | "inventory"
-  | "manufacturing"
-  | "sales"
-  | "people";
+type FilterKey = CategoryKey | "all";
 
-type Format = "Playbook" | "Guide" | "Template" | "Video";
+const CATEGORIES: { key: FilterKey; label: string; icon: LucideIcon }[] = [
+  { key: "all", label: "All resources", icon: Layers },
+  ...(Object.keys(CATEGORY_META) as CategoryKey[]).map((k) => ({
+    key: k as FilterKey,
+    label: CATEGORY_META[k].label,
+    icon: CATEGORY_META[k].icon,
+  })),
+];
 
-type Difficulty = "Foundational" | "Intermediate" | "Advanced";
+// ─── Featured (derived from the registry) ────────────────────────────────────
 
-type Resource = {
-  id: string;
-  category: Exclude<CategoryKey, "all">;
-  format: Format;
-  title: string;
-  description: string;
-  readTime: string;
-  steps?: number;
-  difficulty: Difficulty;
-  updated: string;
-  href: string;
-};
-
-// ─── Featured ────────────────────────────────────────────────────────────────
+const FEATURED_RESOURCE =
+  RESOURCES.find((r) => r.featured) ?? RESOURCES[0];
 
 const FEATURED = {
-  format: "Playbook" as Format,
-  category: "implementation" as Exclude<CategoryKey, "all">,
-  title: "From kickoff to go-live: the 60-day Bizak implementation playbook",
-  description:
-    "A week-by-week field guide for the operations lead running a Bizak rollout — every milestone, owner and decision gate, drawn from 50,000+ live deployments.",
+  format: FEATURED_RESOURCE.format,
+  category: FEATURED_RESOURCE.category,
+  title: FEATURED_RESOURCE.title,
+  description: FEATURED_RESOURCE.summary,
   meta: [
-    { icon: Clock3, label: "60-minute read" },
-    { icon: Layers, label: "12 chapters" },
-    { icon: Users, label: "Roles: Ops, Finance, IT" },
+    { icon: Clock3, label: `${FEATURED_RESOURCE.readTime} read` },
+    { icon: Layers, label: `${FEATURED_RESOURCE.steps ?? FEATURED_RESOURCE.chapters.length} chapters` },
+    { icon: Users,  label: "Roles: Ops, Finance, IT" },
   ],
   highlights: [
     "Phase-by-phase RACI for every workstream",
     "The 14 master-data files you must clean before cutover",
     "Parallel-run scorecard and the go-no-go checklist",
   ],
-  href: "#",
+  href: `/GuidesAndPlaybooks/${FEATURED_RESOURCE.slug}`,
 };
-
-// ─── Library ─────────────────────────────────────────────────────────────────
-
-const RESOURCES: Resource[] = [
-  // Implementation
-  {
-    id: "imp-discovery",
-    category: "implementation",
-    format: "Playbook",
-    title: "Running a clean Bizak discovery workshop",
-    description:
-      "The two-day structured discovery our consultants run with new customers — agenda, worksheets, and the outputs your build team needs.",
-    readTime: "22 min",
-    steps: 9,
-    difficulty: "Foundational",
-    updated: "Apr 2026",
-    href: "#",
-  },
-  {
-    id: "imp-cutover",
-    category: "implementation",
-    format: "Guide",
-    title: "Cutover weekend: the hour-by-hour runbook",
-    description:
-      "Sequence opening balances, freeze legacy data, verify reconciliations, and switch users — without a single missed transaction.",
-    readTime: "18 min",
-    steps: 14,
-    difficulty: "Advanced",
-    updated: "May 2026",
-    href: "#",
-  },
-  {
-    id: "imp-data",
-    category: "implementation",
-    format: "Template",
-    title: "Master-data migration workbook",
-    description:
-      "Pre-formatted XLSX templates for customers, items, vendors, COA, and opening balances — with validation rules baked in.",
-    readTime: "Download",
-    difficulty: "Foundational",
-    updated: "Apr 2026",
-    href: "#",
-  },
-
-  // Finance
-  {
-    id: "fin-close",
-    category: "finance",
-    format: "Playbook",
-    title: "Close the books in 5 days, not 5 weeks",
-    description:
-      "How modern finance teams shorten month-end with auto-posted journals, scheduled reconciliations, and a tight checklist.",
-    readTime: "26 min",
-    steps: 11,
-    difficulty: "Intermediate",
-    updated: "Apr 2026",
-    href: "#",
-  },
-  {
-    id: "fin-multi",
-    category: "finance",
-    format: "Guide",
-    title: "Multi-entity consolidation, step by step",
-    description:
-      "Configure intercompany accounts, FX revaluation, and elimination rules — then produce a consolidated P&L in one click.",
-    readTime: "20 min",
-    steps: 8,
-    difficulty: "Advanced",
-    updated: "Mar 2026",
-    href: "#",
-  },
-  {
-    id: "fin-vat",
-    category: "finance",
-    format: "Template",
-    title: "VAT & TDS reporting templates",
-    description:
-      "Filing-ready tax templates aligned to IRD formats, with formulas wired to Bizak's standard ledger exports.",
-    readTime: "Download",
-    difficulty: "Foundational",
-    updated: "May 2026",
-    href: "#",
-  },
-
-  // Inventory
-  {
-    id: "inv-cycle",
-    category: "inventory",
-    format: "Playbook",
-    title: "Cycle counting that actually keeps stock accurate",
-    description:
-      "Pick the right ABC strategy, schedule counts, reconcile variances, and graduate from yearly audits to continuous accuracy.",
-    readTime: "16 min",
-    steps: 7,
-    difficulty: "Intermediate",
-    updated: "Apr 2026",
-    href: "#",
-  },
-  {
-    id: "inv-multi",
-    category: "inventory",
-    format: "Guide",
-    title: "Multi-warehouse setup for distribution teams",
-    description:
-      "Model bins, transfer routes, reorder rules, and 3PL handoffs in Bizak — without losing the single-source-of-truth.",
-    readTime: "19 min",
-    steps: 10,
-    difficulty: "Intermediate",
-    updated: "Mar 2026",
-    href: "#",
-  },
-
-  // Manufacturing
-  {
-    id: "mfg-bom",
-    category: "manufacturing",
-    format: "Guide",
-    title: "Building a BOM your floor will actually follow",
-    description:
-      "Routings, scrap factors, alternate components, and revisions — modelled so production reflects what really happens at the line.",
-    readTime: "24 min",
-    steps: 9,
-    difficulty: "Advanced",
-    updated: "Apr 2026",
-    href: "#",
-  },
-  {
-    id: "mfg-oee",
-    category: "manufacturing",
-    format: "Playbook",
-    title: "Standing up real-time OEE in 14 days",
-    description:
-      "Wire shop-floor signals into Bizak, define availability/performance/quality, and publish your first live OEE dashboard.",
-    readTime: "21 min",
-    steps: 8,
-    difficulty: "Advanced",
-    updated: "Apr 2026",
-    href: "#",
-  },
-
-  // Sales
-  {
-    id: "sales-pipeline",
-    category: "sales",
-    format: "Playbook",
-    title: "Designing a pipeline that finance trusts",
-    description:
-      "Align stages, weight forecasts, and tie quotes-to-cash so finance and sales share one number — every Monday.",
-    readTime: "17 min",
-    steps: 6,
-    difficulty: "Intermediate",
-    updated: "Mar 2026",
-    href: "#",
-  },
-  {
-    id: "sales-quotes",
-    category: "sales",
-    format: "Template",
-    title: "Quote-to-invoice workflow templates",
-    description:
-      "Pre-built approval flows for discounts, margins, and credit limits — drop into Bizak Workflow Automation.",
-    readTime: "Download",
-    difficulty: "Foundational",
-    updated: "May 2026",
-    href: "#",
-  },
-
-  // People & enablement
-  {
-    id: "ppl-train",
-    category: "people",
-    format: "Playbook",
-    title: "Train 100 users in two weeks",
-    description:
-      "Role-based curricula, certification path, and the 'shadow & switch' rollout that gets adoption above 90%.",
-    readTime: "15 min",
-    steps: 7,
-    difficulty: "Foundational",
-    updated: "Apr 2026",
-    href: "#",
-  },
-  {
-    id: "ppl-video",
-    category: "people",
-    format: "Video",
-    title: "Bizak in 30 minutes — guided product tour",
-    description:
-      "A narrated walkthrough of the modules that matter on day one. Share it with new joiners before their first login.",
-    readTime: "32 min watch",
-    difficulty: "Foundational",
-    updated: "May 2026",
-    href: "#",
-  },
-];
-
-const CATEGORIES: { key: CategoryKey; label: string; icon: LucideIcon }[] = [
-  { key: "all",            label: "All resources",   icon: Layers       },
-  { key: "implementation", label: "Implementation",  icon: Compass      },
-  { key: "finance",        label: "Finance",         icon: Receipt      },
-  { key: "inventory",      label: "Inventory",       icon: Truck        },
-  { key: "manufacturing",  label: "Manufacturing",   icon: Factory      },
-  { key: "sales",          label: "Sales & CRM",     icon: BarChart3    },
-  { key: "people",         label: "People & training", icon: Users      },
-];
 
 const FORMATS: Format[] = ["Playbook", "Guide", "Template", "Video"];
 
@@ -497,26 +286,6 @@ const TEMPLATES: Template[] = [
     href: "#",
   },
 ];
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function formatIcon(format: Format): LucideIcon {
-  switch (format) {
-    case "Playbook": return BookMarked;
-    case "Guide":    return BookOpen;
-    case "Template": return FileText;
-    case "Video":    return PlayCircle;
-  }
-}
-
-function formatTone(format: Format): "sage" | "accent" | "neutral" {
-  switch (format) {
-    case "Playbook": return "accent";
-    case "Guide":    return "sage";
-    case "Template": return "neutral";
-    case "Video":    return "neutral";
-  }
-}
 
 // ─── Hero ────────────────────────────────────────────────────────────────────
 
@@ -724,12 +493,12 @@ function ImplementationSection() {
 // ─── Library (filterable feed) ───────────────────────────────────────────────
 
 function LibrarySection() {
-  const [category, setCategory] = useState<CategoryKey>("all");
+  const [category, setCategory] = useState<FilterKey>("all");
   const [activeFormats, setActiveFormats] = useState<Set<Format>>(new Set());
   const [query, setQuery] = useState("");
 
   const counts = useMemo(() => {
-    const map: Record<CategoryKey, number> = {
+    const map: Record<FilterKey, number> = {
       all: RESOURCES.length,
       implementation: 0,
       finance: 0,
@@ -750,7 +519,7 @@ function LibrarySection() {
       if (category !== "all" && r.category !== category) return false;
       if (activeFormats.size > 0 && !activeFormats.has(r.format)) return false;
       if (trimmed.length > 0) {
-        const haystack = `${r.title} ${r.description}`.toLowerCase();
+        const haystack = `${r.title} ${r.summary}`.toLowerCase();
         if (!haystack.includes(trimmed)) return false;
       }
       return true;
@@ -905,7 +674,7 @@ function LibrarySection() {
         ) : (
           <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
-              <ResourceCard key={item.id} item={item} />
+              <ResourceCard key={item.slug} item={item} />
             ))}
           </div>
         )}
@@ -921,9 +690,10 @@ function LibrarySection() {
 
 function ResourceCard({ item }: { item: Resource }) {
   const FormatIcon = formatIcon(item.format);
+  const href = `/GuidesAndPlaybooks/${item.slug}`;
   return (
     <a
-      href={item.href}
+      href={href}
       className="group flex h-full flex-col overflow-hidden rounded-bz-xl border border-bz-border bg-bz-surface transition-all duration-200 hover:-translate-y-[2px] hover:border-bz-sage-mid hover:shadow-[0_16px_40px_rgba(15,17,14,0.06)]"
     >
       <div className="flex items-center justify-between gap-3 border-b border-bz-border-soft px-6 pt-6 pb-5">
@@ -943,7 +713,7 @@ function ResourceCard({ item }: { item: Resource }) {
           {item.title}
         </h3>
         <p className="mt-2 flex-1 text-[13.5px] leading-[1.65] text-bz-text-muted">
-          {item.description}
+          {item.summary}
         </p>
 
         <div className="mt-6 flex items-center justify-between gap-3 border-t border-bz-border-soft pt-4">
