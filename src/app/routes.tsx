@@ -19,6 +19,14 @@ import { BlogPage } from "./components/BlogPage";
 import { BlogSinglePage } from "./components/BlogSinglePage";
  import { ContactPage } from "./components/ContactPage";
 import { PartnerPage } from "./components/PartnerPage";
+import { ResellersPage } from "./components/partners/ResellersPage";
+import { ConsultantsPage } from "./components/partners/ConsultantsPage";
+import { TechnologyPartnersPage } from "./components/partners/TechnologyPartnersPage";
+import { PartnerPortalPage } from "./components/partners/PartnerPortalPage";
+import { MarketplacePage } from "./components/partners/MarketplacePage";
+import { FindAPartnerPage } from "./components/partners/FindAPartnerPage";
+import { PartnerAwardsPage } from "./components/partners/PartnerAwardsPage";
+import { PartnerEventsPage } from "./components/partners/PartnerEventsPage";
 import { CaseStudiesPage } from "./components/CaseStudiesPage";
 import { WhyBizakPage } from "./components/WhyBizakPage";
 import { WorkflowPage } from "./components/WorkflowPage";
@@ -194,19 +202,6 @@ function BlogSinglePageLayout() {
 
 */
 
-
-
-function PartnerPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <div style={{ paddingTop: 76 }}>
-        <PartnerPage />
-      </div>
-      <Footer />
-    </div>
-  );
-}
 
 
 function CaseStudiesPageLayout() {
@@ -489,7 +484,15 @@ export const router = createBrowserRouter([
       { path: "distribution",  Component: DistributionPage    },
       { path: "about",         Component: AboutPage           },
       { path: "contact",      Component: ContactPage          },
-      { path: "partners",     Component: PartnerPage          },
+      { path: "partners",                Component: PartnerPage              },
+      { path: "partners/resellers",      Component: ResellersPage            },
+      { path: "partners/consultants",    Component: ConsultantsPage          },
+      { path: "partners/technology",     Component: TechnologyPartnersPage   },
+      { path: "partners/portal",         Component: PartnerPortalPage        },
+      { path: "partners/marketplace",    Component: MarketplacePage          },
+      { path: "partners/find",           Component: FindAPartnerPage         },
+      { path: "partners/awards",         Component: PartnerAwardsPage        },
+      { path: "partners/events",         Component: PartnerEventsPage        },
       { path: "case-studies",   Component: CaseStudiesPage      },
             { path: "why-bizak",     Component: WhyBizakPage        },
 
