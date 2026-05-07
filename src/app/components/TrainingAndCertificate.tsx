@@ -43,7 +43,7 @@ import {
 
 // ─── Types & data ────────────────────────────────────────────────────────────
 
-type TrackKey =
+export type TrackKey =
   | "all"
   | "foundations"
   | "finance"
@@ -52,11 +52,11 @@ type TrackKey =
   | "admin"
   | "developer";
 
-type Format = "Self-paced" | "Live cohort" | "Workshop";
+export type Format = "Self-paced" | "Live cohort" | "Workshop";
 
-type Level = "Foundational" | "Intermediate" | "Advanced";
+export type Level = "Foundational" | "Intermediate" | "Advanced";
 
-type Course = {
+export type Course = {
   slug: string;
   track: Exclude<TrackKey, "all">;
   format: Format;
@@ -68,6 +68,7 @@ type Course = {
   cert: string;
   language: "English" | "Multi-lingual";
   popular?: boolean;
+  price?: string;
 };
 
 const TRACKS: { key: TrackKey; label: string; icon: LucideIcon }[] = [
@@ -231,7 +232,7 @@ const TIERS: Tier[] = [
 
 // ─── Course catalogue ────────────────────────────────────────────────────────
 
-const COURSES: Course[] = [
+export const COURSES: Course[] = [
   // Foundations
   {
     slug: "platform-tour",
@@ -418,40 +419,69 @@ const COURSES: Course[] = [
 
 // ─── Live cohorts ────────────────────────────────────────────────────────────
 
-const COHORTS: { date: string; title: string; format: string; instructor: string; seats: string; href: string }[] = [
+export type Cohort = {
+  slug: string;
+  date: string;
+  title: string;
+  format: string;
+  instructor: string;
+  seats: string;
+  startsAt: string;
+  price: string;
+};
+
+export const COHORTS: Cohort[] = [
   {
+    slug: "cohort-five-day-close-may",
     date: "27 May",
     title: "Closing the books in five days",
     format: "Live cohort · 6 weeks",
     instructor: "Renée Yamamoto",
     seats: "12 of 30 seats left",
-    href: "#",
+    startsAt: "27 May 2026 · 14:00 UTC",
+    price: "$1,200 per learner",
   },
   {
+    slug: "cohort-workflow-automation-jun",
     date: "10 Jun",
     title: "Workflow Automation deep dive",
     format: "Live cohort · 5 weeks",
     instructor: "Arjun Shrestha",
     seats: "21 of 30 seats left",
-    href: "#",
+    startsAt: "10 Jun 2026 · 13:00 UTC",
+    price: "$1,400 per learner",
   },
   {
+    slug: "cohort-real-time-oee-jun",
     date: "18 Jun",
     title: "Standing up real-time OEE",
     format: "Workshop · 1 day",
     instructor: "Hiroshi Watanabe",
     seats: "8 of 18 seats left",
-    href: "#",
+    startsAt: "18 Jun 2026 · 09:00 UTC",
+    price: "$650 per learner",
   },
   {
+    slug: "cohort-multi-warehouse-jul",
     date: "02 Jul",
     title: "Multi-warehouse operations",
     format: "Live cohort · 4 weeks",
     instructor: "Marcia Khan",
     seats: "Just opened",
-    href: "#",
+    startsAt: "02 Jul 2026 · 14:00 UTC",
+    price: "$960 per learner",
   },
 ];
+
+export function findCourseBySlug(slug: string | undefined): Course | undefined {
+  if (!slug) return undefined;
+  return COURSES.find((c) => c.slug === slug);
+}
+
+export function findCohortBySlug(slug: string | undefined): Cohort | undefined {
+  if (!slug) return undefined;
+  return COHORTS.find((c) => c.slug === slug);
+}
 
 // ─── Why Bizak Academy ──────────────────────────────────────────────────────
 
@@ -1043,7 +1073,7 @@ function CourseCard({ course }: { course: Course }) {
   const FmtIcon = formatIcon(course.format);
   return (
     <a
-      href="#"
+      href={`/TrainingAndCertification/enrol/${course.slug}`}
       className="group flex h-full flex-col overflow-hidden rounded-bz-xl border border-bz-border bg-bz-surface transition-all duration-200 hover:-translate-y-[2px] hover:border-bz-sage-mid hover:shadow-[0_16px_40px_rgba(15,17,14,0.06)]"
     >
       <div className="flex items-center justify-between gap-3 border-b border-bz-border-soft px-6 pt-6 pb-5">
@@ -1116,7 +1146,7 @@ function CohortsSection() {
           <ul className="divide-y divide-bz-border">
             {COHORTS.map((c) => (
               <li
-                key={`${c.date}-${c.title}`}
+                key={c.slug}
                 className="grid grid-cols-1 gap-4 bg-bz-surface px-5 py-5 transition-colors hover:bg-bz-bg md:grid-cols-[120px_minmax(0,1fr)_auto] md:items-center md:gap-6 md:px-7"
               >
                 {/* Date stamp */}
@@ -1147,7 +1177,12 @@ function CohortsSection() {
 
                 {/* CTA */}
                 <div className="md:text-right">
-                  <Button variant="outline" size="sm" href={c.href} withArrow>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    href={`/TrainingAndCertification/enrol/${c.slug}`}
+                    withArrow
+                  >
                     Reserve seat
                   </Button>
                 </div>
