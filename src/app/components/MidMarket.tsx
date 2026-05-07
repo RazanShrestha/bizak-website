@@ -1,5 +1,5 @@
 import "../../styles/style.css";
-import type { ReactNode } from "react";
+import { useRef, useEffect, type ReactNode } from "react";
 import {
   Layers, ShieldCheck, BarChart3, Plug, Lock,
   CheckSquare, Building2, Puzzle, AlertTriangle, Clock,
@@ -686,29 +686,38 @@ function TestimonialsSection() {
 // ─── Pricing ──────────────────────────────────────────────────────────────────
 
 type PricingPlan = {
-  tier: string; price: string; sub: string;
+  tier: string; price: string; sub: string; subNote?: string;
   features: string[]; highlight: boolean; badge: string | null;
 };
 
 const PRICING_PLANS: PricingPlan[] = [
   {
-    tier: "Growth", price: "$49", sub: "per user / month",
-    features: ["Up to 50 users", "2 Entities", "Advanced Workflows", "Executive Dashboards", "Priority Support"],
+    tier: "Growth", price: "$49", sub: "Includes 5 users", subNote: "+$10/user up to 10",
+    features: ["1 Entity", "Advanced Workflows", "Executive Dashboards", "Standard Integrations", "Priority Support"],
     highlight: false, badge: null,
   },
   {
-    tier: "Scale", price: "$89", sub: "per user / month",
-    features: ["Up to 200 users", "Up to 5 Entities", "Multi-currency", "Audit Trail", "Consolidation Engine", "Dedicated CSM"],
+    tier: "Scale", price: "$89", sub: "Includes 10 users", subNote: "+$10/user up to 20",
+    features: ["Up to 5 Entities", "Multi-currency", "Consolidation Engine", "Audit Trail", "Advanced RBAC", "Dedicated CSM"],
     highlight: true, badge: "Best for Mid-Market",
   },
   {
-    tier: "Enterprise", price: "Custom", sub: "200+ users",
-    features: ["Unlimited entities", "Custom SLA", "SSO & SCIM", "Advanced RBAC", "On-premise option"],
+    tier: "Enterprise", price: "Custom", sub: "50+ users · volume pricing",
+    features: ["Unlimited Entities", "Custom SLA", "SSO & SCIM", "On-premise Option", "Advanced RBAC", "Dedicated Account Manager"],
     highlight: false, badge: null,
   },
 ];
 
 function PricingSection() {
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const scaleCard = el.children[1] as HTMLElement;
+    if (scaleCard) el.scrollLeft = scaleCard.offsetLeft - el.offsetLeft;
+  }, []);
+
   return (
     <Section tone="light">
       <Container>
@@ -720,13 +729,14 @@ function PricingSection() {
           maxWidth={560}
           className="mb-14"
         />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[860px] mx-auto">
+        <div className="-mx-6 px-6 md:mx-0 md:px-0">
+        <div ref={carouselRef} className="flex overflow-x-auto gap-4 pt-5 pb-2 snap-x snap-mandatory md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:pt-0 md:max-w-[860px] md:mx-auto [&::-webkit-scrollbar]:hidden">
           {PRICING_PLANS.map((plan) => (
             <Card
               key={plan.tier}
               tone={plan.highlight ? "dark" : "soft"}
               pad="lg"
-              className={`flex flex-col relative ${plan.highlight ? "border-bz-accent/40" : ""}`}
+              className={`shrink-0 w-[78vw] max-w-[300px] snap-center md:w-auto md:max-w-none flex flex-col relative ${plan.highlight ? "bg-bz-deep border-bz-accent/40" : ""}`}
             >
               {plan.badge && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-bz-accent text-bz-deep text-[10px] font-bold px-3.5 py-1 rounded-full uppercase tracking-[0.06em] whitespace-nowrap">
@@ -738,10 +748,25 @@ function PricingSection() {
               </div>
               <div className={`text-[36px] font-bold leading-tight mb-1 ${plan.highlight ? "text-white" : "text-bz-text"}`}>
                 {plan.price}
+                {plan.price !== "Custom" && (
+                  <span className={`text-[15px] font-medium ml-0.5 ${plan.highlight ? "text-white/40" : "text-bz-text-muted"}`}>/mo</span>
+                )}
               </div>
-              <div className={`text-[13px] mb-7 ${plan.highlight ? "text-white/40" : "text-bz-text-muted"}`}>
-                {plan.sub}
-              </div>
+              {plan.subNote ? (
+                <div className="flex flex-col gap-1.5 mb-7">
+                  <div className={`inline-flex items-center gap-1.5 self-start text-[11px] font-semibold px-2.5 py-1 rounded-md ${plan.highlight ? "bg-bz-accent/15 text-bz-accent" : "bg-bz-sage/10 text-bz-sage"}`}>
+                    <Users size={11} strokeWidth={2} />
+                    {plan.sub}
+                  </div>
+                  <div className={`inline-flex items-center gap-1.5 self-start text-[11px] font-medium px-2.5 py-1 rounded-md ${plan.highlight ? "bg-white/[0.06] text-white/40" : "bg-bz-bg border border-bz-border text-bz-text-muted"}`}>
+                    {plan.subNote}
+                  </div>
+                </div>
+              ) : (
+                <div className={`text-[13px] mb-7 ${plan.highlight ? "text-white/40" : "text-bz-text-muted"}`}>
+                  {plan.sub}
+                </div>
+              )}
               <div className="flex flex-col gap-3 mb-8 flex-1">
                 {plan.features.map((f) => (
                   <div key={f} className="flex items-center gap-2.5">
@@ -757,6 +782,7 @@ function PricingSection() {
               </Button>
             </Card>
           ))}
+        </div>
         </div>
       </Container>
     </Section>

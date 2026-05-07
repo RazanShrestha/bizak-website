@@ -155,7 +155,7 @@ This is the non-negotiable preflight. Walk through every item; whatever is
 3b. **Hero badge — always `<HeroBadge>`.** The eyebrow pill above the hero `<h1>` is **always** `<HeroBadge>`, never `<PillBadge tone="accent">` and never a hand-rolled `<div>`/`<span>` with a custom gradient. Pass `tone="dark"` when the hero surface is dark (`HeroPanel` and any `tone="dark"` `HeroCentered`/`HeroSplit`); omit `tone` (defaults to `"light"`) for the standard light `.biz-mesh` heroes. Light example: `badge={<HeroBadge>Smart Manufacturing Platform</HeroBadge>}` (Manufacturing). Dark example: `badge={<HeroBadge tone="dark">ERP for Startups & SMEs</HeroBadge>}` (StartupsAndSmes). If the page being redesigned currently has `<PillBadge tone="accent" dot>...</PillBadge>` in the hero badge slot, swap it for `<HeroBadge>` (or `<HeroBadge tone="dark">`) in the same change.
 4. **Tokens.** No per-file `const C = {...}` color object. No hex literals except in genuinely dynamic style props. All colors via `var(--bz-*)` or Tailwind utilities.
 5. **Icons.** No per-file SVG dictionary `function Icon({ name }) {...}`. Use the global `<Icon name="..." />` from `marketing/` for data-driven loops; import lucide directly (`import { Factory } from "lucide-react"`) for statically known icons.
-6. **Fonts.** Inter only. References to `'Manrope'`, `'Poppins'`, etc. are silent visual bugs.
+6. **Fonts.** Inter only — end-to-end, **including monospace**. References to `'Manrope'`, `'Poppins'`, etc. are silent visual bugs. Tailwind's `font-mono` utility (and `font-family: monospace` in inline styles) is also banned: Inter inherits from the page root and must reach every leaf — IDs, SKUs, step numbers and code-like identifiers stay Inter, differentiated with letter-spacing / weight / color tint, not a font swap. When you touch a page, strip every `font-mono` you find in the same change.
 7. **Animations / motion.** Reuse the existing global keyframe classes (`biz-pulse-glow`, `biz-float`, `biz-particle`, `biz-flow`, `biz-radar-ping`, …) — don't redeclare keyframes per page.
 8. **className over inline `style`.** Static values in className. Inline `style` only for dynamic values. No `onMouseEnter`/`onMouseLeave` style mutations — use Tailwind `hover:`.
 9. **Promotion check.** A JSX pattern that appears in this page **and** in another nav group's pages with the same shape belongs in `marketing/`, not duplicated. Promote it.
@@ -251,7 +251,7 @@ data + a custom hero visual.
 1. Read the migrated file end-to-end. Sanity-check that no `'#hex'` literals remain (except in genuinely dynamic style props like progress bars).
 2. Grep for forbidden patterns:
    ```
-   Manrope|Poppins|linear-gradient|radial-gradient|material-symbols-outlined|onMouseEnter
+   Manrope|Poppins|font-mono|monospace|linear-gradient|radial-gradient|material-symbols-outlined|onMouseEnter
    ```
    Inside the file you migrated, all results should be 0. **Justified exceptions:** if the file is a hero, it should reference `.biz-mesh` (className) and `<HeroBadge>` instead of inline `linear-gradient`/`radial-gradient` — verify those references are present, not the raw gradient strings.
 3. If non-trivial, ask the user to run `npm run build` and `npm run dev` to verify visually.

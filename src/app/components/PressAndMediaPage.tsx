@@ -21,8 +21,10 @@ import {
   Button,
   Container,
   HeroBadge,
+  HeroSplit,
   PillBadge,
   Section,
+  SectionHeading,
 } from "./marketing";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -275,95 +277,86 @@ function VerifiedBadge({ tone = "sage" }: { tone?: "sage" | "sky" }) {
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
+function FeaturedCover() {
+  return (
+    <a
+      href={FEATURED.href}
+      className="group relative mx-auto block w-full max-w-[440px] overflow-hidden rounded-bz-2xl border border-bz-border bg-bz-deep shadow-[0_24px_64px_rgba(15,17,14,0.18)] transition-transform duration-300 hover:-translate-y-1 lg:mx-0 lg:ml-auto"
+    >
+      <div className="relative aspect-[4/5] w-full overflow-hidden">
+        <ImageWithFallback
+          src={FEATURED.image}
+          alt={FEATURED.title}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+        />
+
+        {/* Top overlay — outlet + tag */}
+        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5">
+          <span className="rounded-bz-pill bg-white/95 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-bz-text">
+            {FEATURED.outlet}
+          </span>
+          <PillBadge tone="accent" dot>
+            {FEATURED.tag}
+          </PillBadge>
+        </div>
+
+        {/* Bottom scrim + headline */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black/85 via-black/40 to-transparent"
+        />
+        <div className="absolute inset-x-0 bottom-0 p-6 md:p-7">
+          <h2 className="text-[clamp(20px,2.4vw,26px)] font-bold leading-[1.2] tracking-[-0.01em] text-white">
+            {FEATURED.title}
+          </h2>
+          <div className="mt-4 flex items-center justify-between">
+            <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-white/70">
+              {FEATURED.date}
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-[13px] font-bold text-bz-accent transition-transform duration-200 group-hover:translate-x-0.5">
+              Read the cover story
+              <ArrowUpRight className="size-[14px]" strokeWidth={2.2} />
+            </span>
+          </div>
+        </div>
+      </div>
+    </a>
+  );
+}
+
 function HeroSection() {
   return (
-    <Section pad="hero" tone="light" className="biz-mesh overflow-hidden">
-      <Container className="relative">
-        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
-          {/* Left — text */}
-          <div className="max-w-[640px]">
-            <HeroBadge>Press &amp; Media</HeroBadge>
-            <h1 className="mt-4 text-[clamp(40px,5.2vw,60px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
-              The{" "}
-              <span className="relative inline-block">
-                Bizak newsroom
-                <span className="absolute inset-x-0 bottom-1 -z-0 h-[10px] rounded-full bg-bz-accent/55" />
-              </span>
-              .
-            </h1>
-            <p className="mt-5 max-w-[560px] text-[17px] leading-[1.7] text-bz-text-muted">
-              Press coverage, official announcements, and the moments people
-              are sharing about Bizak — curated in one feed for journalists,
-              analysts, and partners.
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Button variant="primary" size="md" href="#feed" withArrow>
-                Browse the feed
-              </Button>
-              <Button variant="ghost" size="md" href="#press-contact">
-                Press contact
-              </Button>
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-bz-text-soft">
-              <span className="inline-flex items-center gap-1.5">
-                <Newspaper className="size-[14px] text-bz-sage" strokeWidth={1.8} />
-                240+ features in 2025
-              </span>
-              <span aria-hidden className="size-1 rounded-full bg-bz-text-soft/40" />
-              <span>Updated weekly</span>
-              <span aria-hidden className="size-1 rounded-full bg-bz-text-soft/40" />
-              <span>24-hour press response</span>
-            </div>
-          </div>
-
-          {/* Right — magazine cover */}
-          <a
-            href={FEATURED.href}
-            className="group relative mx-auto block w-full max-w-[440px] overflow-hidden rounded-bz-2xl border border-bz-border bg-bz-deep shadow-[0_24px_64px_rgba(15,17,14,0.18)] transition-transform duration-300 hover:-translate-y-1 lg:mx-0"
-          >
-            <div className="relative aspect-[4/5] w-full overflow-hidden">
-              <ImageWithFallback
-                src={FEATURED.image}
-                alt={FEATURED.title}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-              />
-
-              {/* Top overlay — outlet + tag */}
-              <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5">
-                <span className="rounded-bz-pill bg-white/95 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-bz-text">
-                  {FEATURED.outlet}
-                </span>
-                <PillBadge tone="accent" dot>
-                  {FEATURED.tag}
-                </PillBadge>
-              </div>
-
-              {/* Bottom gradient + headline */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black/85 via-black/40 to-transparent"
-              />
-              <div className="absolute inset-x-0 bottom-0 p-6 md:p-7">
-                <h2 className="text-[clamp(20px,2.4vw,26px)] font-bold leading-[1.2] tracking-[-0.01em] text-white">
-                  {FEATURED.title}
-                </h2>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-white/70">
-                    {FEATURED.date}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 text-[13px] font-bold text-bz-accent transition-transform duration-200 group-hover:translate-x-0.5">
-                    Read the cover story
-                    <ArrowUpRight className="size-[14px]" strokeWidth={2.2} />
-                  </span>
-                </div>
-              </div>
-            </div>
-          </a>
-        </div>
-      </Container>
-    </Section>
+    <HeroSplit
+      badge={<HeroBadge>Press &amp; Media</HeroBadge>}
+      title={
+        <>
+          The{" "}
+          <span className="relative inline-block">
+            Bizak newsroom
+            <span className="absolute inset-x-0 bottom-1 -z-0 h-[10px] rounded-full bg-bz-accent/55" />
+          </span>
+          .
+        </>
+      }
+      description="Press coverage, official announcements, and the moments people are sharing about Bizak — curated in one feed for journalists, analysts, and partners."
+      actions={
+        <>
+          <Button variant="primary" size="md" href="#feed" withArrow>
+            Browse the feed
+          </Button>
+          <Button variant="ghost" size="md" href="#press-contact">
+            Press contact
+          </Button>
+        </>
+      }
+      stats={[
+        { value: "240+", label: "Features in 2025" },
+        { value: "Weekly", label: "Newsroom updates" },
+        { value: "<24 hr", label: "Press response" },
+      ]}
+      visual={<FeaturedCover />}
+      visualClassName=""
+    />
   );
 }
 
@@ -527,10 +520,6 @@ function VideoCard({ item }: { item: Extract<MediaItem, { kind: "video" }> }) {
           alt={item.title}
           className="h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-[1.04]"
         />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/0 to-black/0"
-        />
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="inline-flex size-14 items-center justify-center rounded-full bg-white/95 shadow-[0_12px_32px_rgba(0,0,0,0.25)] transition-transform duration-200 group-hover:scale-110">
             <PlayGlyph className="ml-0.5 size-5 text-bz-deep" />
@@ -599,18 +588,12 @@ function FeedSection() {
       <Container>
         {/* Section header */}
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-10">
-          <div className="max-w-[560px]">
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-bz-sage">
-              The newsroom
-            </span>
-            <h2 className="mt-3 text-[clamp(28px,3.4vw,40px)] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text">
-              What people are saying about Bizak.
-            </h2>
-            <p className="mt-3 text-[15px] leading-[1.7] text-bz-text-muted">
-              Press coverage, official releases, viral moments, and on-camera
-              conversations — all in one chronological wall.
-            </p>
-          </div>
+          <SectionHeading
+            eyebrow="The newsroom"
+            title="What people are saying about Bizak."
+            description="Press coverage, official releases, viral moments, and on-camera conversations — all in one chronological wall."
+            maxWidth={560}
+          />
 
           {/* Filter pills */}
           <div className="-mx-6 overflow-x-auto px-6 md:mx-0 md:overflow-visible md:px-0">
@@ -671,81 +654,64 @@ function FeedSection() {
 
 function PressContactSection() {
   return (
-    <Section tone="light" pad="compact" id="press-contact">
+    <Section tone="dark" pad="default" id="press-contact">
       <Container width="narrow">
-        <div className="relative overflow-hidden rounded-bz-2xl bg-bz-deep p-9 md:p-12">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-24 -top-24 h-[280px] w-[280px] rounded-full bg-bz-accent/10 blur-3xl"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -bottom-20 -left-20 h-[220px] w-[220px] rounded-full bg-bz-sage/15 blur-3xl"
-          />
+        <SectionHeading
+          eyebrow="Press contact"
+          title="Working on a story? We'll help."
+          description="Editorial inquiries, fact-checks, and analyst briefings — answered within one business day. Mark deadlines urgent and we'll move accordingly."
+          tone="light"
+          align="center"
+          maxWidth={520}
+          className="mb-10"
+        />
 
-          <div className="relative grid grid-cols-1 items-end gap-10 md:grid-cols-[1.1fr_1fr]">
-            <div>
-              <PillBadge tone="accent" dot>
-                Press contact
-              </PillBadge>
-              <h2 className="mt-4 text-[clamp(24px,3vw,34px)] font-bold leading-[1.15] tracking-[-0.02em] text-white">
-                Working on a story? We'll help.
-              </h2>
-              <p className="mt-3 max-w-[480px] text-[14.5px] leading-[1.7] text-white/65">
-                Editorial inquiries, fact-checks, and analyst briefings —
-                answered within one business day. Mark deadlines urgent and
-                we'll move accordingly.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <a
-                href="mailto:press@bizakerp.com"
-                className="group flex items-center justify-between gap-4 rounded-bz-xl border border-white/10 bg-white/[0.04] px-5 py-4 transition-colors hover:border-bz-accent/40 hover:bg-white/[0.07]"
-              >
-                <div className="flex items-center gap-4">
-                  <span className="inline-flex size-10 items-center justify-center rounded-bz-md bg-bz-accent/15 text-bz-accent">
-                    <Mail className="size-[16px]" strokeWidth={1.8} />
-                  </span>
-                  <div>
-                    <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">
-                      Editorial &amp; analyst
-                    </div>
-                    <div className="mt-0.5 text-[14px] font-semibold text-white">
-                      press@bizakerp.com
-                    </div>
-                  </div>
+        <div className="mx-auto flex max-w-[480px] flex-col gap-3">
+          <a
+            href="mailto:press@bizakerp.com"
+            className="group flex items-center justify-between gap-4 rounded-bz-xl border border-white/10 bg-white/[0.04] px-5 py-4 transition-colors hover:border-bz-accent/40 hover:bg-white/[0.07]"
+          >
+            <div className="flex items-center gap-4">
+              <span className="inline-flex size-10 items-center justify-center rounded-bz-md bg-bz-accent/15 text-bz-accent">
+                <Mail className="size-[16px]" strokeWidth={1.8} />
+              </span>
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">
+                  Editorial &amp; analyst
                 </div>
-                <ArrowUpRight
-                  className="size-[16px] text-white/55 transition-colors group-hover:text-bz-accent"
-                  strokeWidth={2}
-                />
-              </a>
-
-              <a
-                href="#"
-                className="group flex items-center justify-between gap-4 rounded-bz-xl border border-white/10 bg-white/[0.04] px-5 py-4 transition-colors hover:border-bz-accent/40 hover:bg-white/[0.07]"
-              >
-                <div className="flex items-center gap-4">
-                  <span className="inline-flex size-10 items-center justify-center rounded-bz-md bg-white/10 text-white">
-                    <Linkedin className="size-[16px]" strokeWidth={2} fill="currentColor" />
-                  </span>
-                  <div>
-                    <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">
-                      Follow the newsroom
-                    </div>
-                    <div className="mt-0.5 text-[14px] font-semibold text-white">
-                      @bizakerp on LinkedIn
-                    </div>
-                  </div>
+                <div className="mt-0.5 text-[14px] font-semibold text-white">
+                  press@bizakerp.com
                 </div>
-                <ArrowUpRight
-                  className="size-[16px] text-white/55 transition-colors group-hover:text-bz-accent"
-                  strokeWidth={2}
-                />
-              </a>
+              </div>
             </div>
-          </div>
+            <ArrowUpRight
+              className="size-[16px] text-white/55 transition-colors group-hover:text-bz-accent"
+              strokeWidth={2}
+            />
+          </a>
+
+          <a
+            href="#"
+            className="group flex items-center justify-between gap-4 rounded-bz-xl border border-white/10 bg-white/[0.04] px-5 py-4 transition-colors hover:border-bz-accent/40 hover:bg-white/[0.07]"
+          >
+            <div className="flex items-center gap-4">
+              <span className="inline-flex size-10 items-center justify-center rounded-bz-md bg-white/10 text-white">
+                <Linkedin className="size-[16px]" strokeWidth={2} fill="currentColor" />
+              </span>
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">
+                  Follow the newsroom
+                </div>
+                <div className="mt-0.5 text-[14px] font-semibold text-white">
+                  @bizakerp on LinkedIn
+                </div>
+              </div>
+            </div>
+            <ArrowUpRight
+              className="size-[16px] text-white/55 transition-colors group-hover:text-bz-accent"
+              strokeWidth={2}
+            />
+          </a>
         </div>
       </Container>
     </Section>
