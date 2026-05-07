@@ -346,6 +346,11 @@ const REPLAYS: Replay[] = [
     speaker: "Helen O'Connor",
     highlights: ["Build-vs-buy frame", "Migration risk", "Close cadence"],
   },
+
+
+
+
+  
 ];
 
 // ─── Series strip ────────────────────────────────────────────────────────────
