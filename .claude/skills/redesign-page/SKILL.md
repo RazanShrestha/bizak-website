@@ -161,6 +161,7 @@ This is the non-negotiable preflight. Walk through every item; whatever is
 9. **Promotion check.** A JSX pattern that appears in this page **and** in another nav group's pages with the same shape belongs in `marketing/`, not duplicated. Promote it.
 10. **Delegate-to-atom check.** Walk every `<button>`, `<a>` styled as a button, and styled `<div>`/`<span>` in the file (and inside any scoped section primitive the page composes). If its shape mirrors a global primitive (`<Button>`, `<Card>`, `<IconBadge>`, `<PillBadge>`, `<Stat>`, `<HeroBadge>`, `<Eyebrow>`), replace it with that primitive. If the needed variant doesn't exist yet (e.g., the by-industry "shimmer" CTA), **add the variant on the global primitive first** (`marketing/Button.tsx` etc.), update its prop docs in `/CLAUDE.md` + `/docs/DESIGN_SYSTEM.md`, then delegate. *This applies inside scoped primitives too:* `IndustryHero` should compose `<Button>`, not roll its own `HeroCtaButton`. Known offenders: `IndustryHero.tsx` (local `HeroCtaButton`) and `IndustryCta.tsx` (local `CtaButton`) — when you touch either, fix both.
 11. **Closing-CTA tone.** If the page has a closing CTA section (the "Take full control of …" / "Run your factory floor with …" moment, typically directly above the footer), it MUST sit on `<Section tone="dark">` — the olive-tinted `bg-bz-deep` (`#1A1D19`). **Not** `tone="deeper"` (`bg-bz-deep-2` = `#121212` pure black). Pure black flattens the lime accent CTA button; the olive surface lets it glow. Action pair: `<Button variant="accent" size="lg" withArrow>` + `<Button variant="ghostDark" size="lg">`. This matches what the by-industry pages' `IndustryCta` already renders. The closing CTA isn't always literally the final section — but **whenever a page has one, it lives on `tone="dark"`**. See `/docs/BIZAK_PRODUCT_OVERVIEW.md` §7.1.
+12. **Mobile responsiveness.** Every grid, flex row, fixed width, and hero dashboard visual must work at 375px without horizontal scroll (except overflow-x-auto scrollable tables). Apply the patterns from the "Mobile responsiveness" section below: single-column fallbacks, hidden decorative sidebars, stacked connectivity sections, hidden connector lines. Run the mobile checklist before Step 5 verification. **This is non-negotiable — a page that looks great at 1280px but breaks at 375px is not done.**
 
 If any item fails, the redesign is the work to bring it into compliance.
 The end state of any page edit is "all items pass for the parts of the
@@ -267,6 +268,120 @@ End with a short summary: what sections were migrated, what bespoke pieces remai
 - Don't touch `src/styles/style.css` (the homepage's bespoke CSS) — its color literals were already swapped to tokens.
 - Don't migrate >1 page per session unless the user explicitly asked. One page at a time keeps reviewable diffs.
 
+## Mobile responsiveness (mandatory on every redesign / new page)
+
+Every section of every page must look correct on mobile (≥320px) through tablet (768px) without breaking the desktop view. This is not optional — run the mobile check as part of Step 5 before declaring done.
+
+### Responsive pattern cheatsheet
+
+The patterns below cover every recurring layout in Bizak product pages. Apply them wherever the shape matches — don't wait to be asked.
+
+#### Dark showcase grids (TechShowcaseSection / TransactionEngineSection)
+```tsx
+// 2-col bento
+<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+// 3-col top + 12-col bottom bento
+<div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+  <div className="col-span-full md:col-span-2 ...">  {/* wide card */}
+  <div className="...">                              {/* narrow card */}
+
+<div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+  <div className="col-span-full md:col-span-5 ...">
+  <div className="col-span-full md:col-span-7 ...">
+
+// Inline-style grids (legacy pages) → convert to className
+// ❌  style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:20 }}
+// ✅  className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-5"
+// ❌  style={{ display:"grid", gridTemplateColumns:"5fr 7fr", gap:20 }}
+// ✅  className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-5"
+```
+
+#### Intelligence / reporting sections (always `3fr 1fr`)
+```tsx
+// ❌  grid grid-cols-[3fr_1fr]
+// ✅  grid grid-cols-1 lg:grid-cols-[3fr_1fr]
+```
+
+#### Hero dashboard panels (visual slot of HeroCentered/HeroSplit)
+```tsx
+// Stats row: 3-col
+<div className="grid grid-cols-2 sm:grid-cols-3 ...">
+// Stats row: 4-col
+<div className="grid grid-cols-2 md:grid-cols-4 ...">
+// On 2-col fallback the top-row border logic stays; bottom-row items get a top border:
+className={`...${i >= 2 ? " border-t md:border-t-0 border-bz-border" : ""}`}
+
+// Decorative sidebar (desktop-only UI mock — hide on mobile)
+// ❌  className="w-[200px] shrink-0 flex flex-col ..."
+// ✅  className="hidden md:flex w-[200px] shrink-0 flex-col ..."
+
+// Fixed height panels
+// ❌  className="... flex h-[480px]"
+// ✅  className="... flex h-auto"
+```
+
+#### Connectivity / hub sections
+```tsx
+// Outer flex → stack on mobile, horizontal on desktop
+// ❌  className="flex items-center justify-center flex-wrap"
+// ✅  className="flex flex-col items-center gap-6 md:flex-row md:gap-0 md:flex-wrap md:justify-center"
+
+// Horizontal connector lines → hidden on mobile
+// ❌  <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+// ✅  <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+// Or for gradient connectors inside a component:
+// ✅  <div className="hidden md:flex flex-1 h-px ... bg-gradient-to-r ..." />
+```
+
+#### Stat side-panels with fixed width
+```tsx
+// ❌  className="... w-[360px] flex-shrink-0"
+// ✅  className="... w-full lg:w-[360px] lg:flex-shrink-0"
+// And the outer container:
+// ❌  className="flex gap-5 items-start"
+// ✅  className="flex flex-col gap-5 lg:flex-row lg:items-start"
+```
+
+#### Tables / dense horizontal layouts
+```tsx
+// 5-column journal tables (e.g., GL auto-posting panel):
+// Wrap in overflow-x-auto and set min-w on inner rows so they scroll on mobile
+<div className="rounded-bz-lg border border-white/10 overflow-hidden overflow-x-auto">
+  <div className="hidden md:grid grid-cols-[68px_92px_1fr_120px_72px] ... min-w-[560px]">
+  {rows.map(r => (
+    <div className="grid grid-cols-[68px_92px_1fr_120px_72px] ... min-w-[560px]">
+```
+
+#### OEE formula / horizontal flex chains
+```tsx
+// Multi-factor "A × B × C = result" row
+// ❌  className="flex items-center gap-3 mb-11"
+// ✅  className="flex items-center gap-3 mb-6 md:mb-11 flex-wrap"
+```
+
+#### General padding/spacing on hero dashboard cells
+```tsx
+// Keep desktop padding, reduce on mobile
+// ❌  className="px-8 py-7 ..."
+// ✅  className="px-4 sm:px-8 py-5 sm:py-7 ..."
+```
+
+### Mobile checklist (run before Step 5 verification)
+
+Walk through every section of the page you just wrote or redesigned:
+
+- [ ] **No fixed-column grids without a `grid-cols-1` breakpoint.** Every `grid-cols-N` (N ≥ 2) that isn't already prefixed with `sm:` / `md:` / `lg:` is a bug.
+- [ ] **No inline `display: grid` or `display: flex` layout styles** (use className with responsive prefixes instead).
+- [ ] **No fixed `h-[Npx]` on hero dashboard panels** — use `h-auto`.
+- [ ] **Decorative sidebars in hero visuals are hidden on mobile** (`hidden md:flex`).
+- [ ] **Connectivity sections stack vertically on mobile**, connector lines are `hidden md:block`.
+- [ ] **Dense tables (5+ columns) are wrapped in `overflow-x-auto`** with `min-w-[...]` on rows.
+- [ ] **`grid-cols-[3fr_1fr]` and similar fixed-ratio grids have a `grid-cols-1` mobile fallback.**
+- [ ] **Fixed-width sidepanels (`w-[Npx]`) become `w-full` on mobile** with the desktop value at a breakpoint.
+- [ ] **All `flex` rows that must stack** have `flex-col md:flex-row` (or similar).
+- [ ] **Padding values are either token-based or have a mobile reduction** (`px-4 md:px-8`).
+
 ## Common mistakes to avoid
 
 - **Adding a primitive that already exists.** Check `src/app/components/marketing/index.ts` first.
@@ -276,3 +391,4 @@ End with a short summary: what sections were migrated, what bespoke pieces remai
 - **Passing `tone="light"` to children inside `<Section tone="light">`.** "light" on `Section` means *light surface, dark text*. "light" on `SectionHeading`/`Stat` means *for use on dark surfaces*. Match them carefully:
   - `<Section tone="light">` → children: `tone="dark"` (default)
   - `<Section tone="dark">` → children: `tone="light"`
+- **Writing desktop-only layouts.** Any `grid-cols-N`, `flex` row, or fixed-width element that hasn't been tested at 375px is incomplete work. The mobile checklist above is non-negotiable.

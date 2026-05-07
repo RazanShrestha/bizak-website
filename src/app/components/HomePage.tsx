@@ -26,6 +26,25 @@ import {
 
 const AVATAR_URL = "https://images.unsplash.com/photo-1659353221237-6a1cfb73fd90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25maWRlbnQlMjBtYWxlJTIwQ0VPJTIwZXhlY3V0aXZlJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcyMTY3OTY5fDA&ixlib=rb-4.1.0&q=80&w=1080";
 
+const LOGOS_BASE = "https://raw.githubusercontent.com/gilbarbara/logos/main/logos";
+const TRUST_ROW1 = [
+  { slug: "microsoft",  alt: "Microsoft"  },
+  { slug: "shopify",    alt: "Shopify"    },
+  { slug: "slack",      alt: "Slack"      },
+  { slug: "salesforce", alt: "Salesforce" },
+  { slug: "hubspot",    alt: "HubSpot"    },
+  { slug: "stripe",     alt: "Stripe"     },
+];
+const TRUST_ROW2 = [
+  { slug: "adobe",      alt: "Adobe"      },
+  { slug: "oracle",     alt: "Oracle"     },
+  { slug: "zoom",       alt: "Zoom"       },
+  { slug: "atlassian",  alt: "Atlassian"  },
+  { slug: "mailchimp",  alt: "Mailchimp"  },
+  { slug: "notion",     alt: "Notion"     },
+  { slug: "figma",      alt: "Figma"      },
+];
+
 // ─── HERO ─────────────────────────────────────────────────────────────────────
 function HeroDashboard() {
   return (
@@ -190,11 +209,20 @@ function HeroDashboard() {
 
       {/* Trust logos */}
       <div className="hp-trust">
-        <div className="hp-trust-label">Trusted by 5,000+ scaling companies</div>
-        <div className="hp-logos">
-          {[128,96,144,112,128].map((w, i) => (
-            <div key={i} className="hp-logo-block" style={{ width: w }} />
-          ))}
+        <div className="hp-trust-label">Trusted by the businesses.</div>
+        <div className="hp-marquee-wrap">
+          <div className="hp-marquee-row">
+            <div className="hp-marquee-track">
+              {[...TRUST_ROW1, ...TRUST_ROW2, ...TRUST_ROW1, ...TRUST_ROW2].map(({ slug, alt }, i) => (
+                <img
+                  key={`${slug}-${i}`}
+                  src={`${LOGOS_BASE}/${slug}.svg`}
+                  alt={alt}
+                  className="hp-logo-block"
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -204,9 +232,9 @@ function HeroDashboard() {
 function HeroSection() {
   return (
     <HeroCentered
-      badge={<HeroBadge>Now available for global businesses</HeroBadge>}
-      title="The Operating System for Modern Business"
-      description="A comprehensive ERP for SMEs and mid-market companies built for scale, automation, and total visibility."
+      badge={<HeroBadge>Now live, worldwide.</HeroBadge>}
+      title={<>Your Business.<br className="sm:hidden" /> Your Way.</>}
+      description="Built around your business, not the other way around. One platform that works the way you do."
       actions={
         <>
           <Button

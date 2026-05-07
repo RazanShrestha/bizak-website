@@ -84,7 +84,7 @@ function HeroDashboard() {
                     shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] p-2">
       <div className="rounded-bz-xl bg-bz-bg border border-bz-border p-6 md:p-8 flex gap-8 flex-wrap">
         {/* Sidebar mock */}
-        <div className="w-[200px] shrink-0 flex flex-col gap-4">
+        <div className="hidden md:flex w-[200px] shrink-0 flex-col gap-4">
           <div className="h-10 rounded-bz-md bg-bz-border" />
           <div className="flex flex-col gap-2">
             <div className="h-3 rounded bg-bz-border-soft w-[75%]" />
@@ -99,7 +99,7 @@ function HeroDashboard() {
 
         {/* Content mock */}
         <div className="flex-1 min-w-[280px]">
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6">
             {stats.map((s) => (
               <div
                 key={s.label}
@@ -930,9 +930,9 @@ function ConnectivitySection() {
               </PillBadge>
             </div>
 
-            <div className="rounded-bz-lg border border-white/10 overflow-hidden">
+            <div className="rounded-bz-lg border border-white/10 overflow-hidden overflow-x-auto">
               <div className="hidden md:grid grid-cols-[68px_92px_1fr_120px_72px] gap-3 px-4 py-2.5
-                              bg-white/[0.04] text-[9.5px] font-bold uppercase tracking-[0.08em] text-white/40">
+                              bg-white/[0.04] text-[9.5px] font-bold uppercase tracking-[0.08em] text-white/40 min-w-[560px]">
                 <span>Time</span>
                 <span>Source</span>
                 <span>Debit · Credit</span>
@@ -943,7 +943,7 @@ function ConnectivitySection() {
                 <div
                   key={i}
                   className={[
-                    "grid grid-cols-[68px_92px_1fr_120px_72px] gap-3 px-4 py-3 items-center",
+                    "grid grid-cols-[68px_92px_1fr_120px_72px] gap-3 px-4 py-3 items-center min-w-[560px]",
                     i !== journal.length - 1 && "border-b border-white/[0.06]",
                     j.fresh && "bg-bz-accent/[0.04]",
                   ]

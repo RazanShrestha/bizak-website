@@ -101,7 +101,7 @@ export function HeroSplit({
             {description && (
               <p
                 className={cn(
-                  "mt-6 text-[17px] leading-[1.7] max-w-[560px]",
+                  "mt-6 text-[15px] md:text-[17px] leading-[1.7] max-w-[560px]",
                   isDark ? "text-white/65" : "text-bz-text-muted",
                 )}
               >

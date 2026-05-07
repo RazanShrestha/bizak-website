@@ -1,64 +1,35 @@
 import "../../styles/style.css";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import {
+  Section,
+  Container,
+  SectionHeading,
+  Button,
+  Card,
+  IconBadge,
+  HeroBadge,
+  HeroCentered,
+  Stat,
+} from "./marketing";
+import {
+  Zap,
+  SlidersHorizontal,
+  Eye,
+  Calendar,
+  BarChart2,
+  Layers,
+  Download,
+  RefreshCw,
+  Bell,
+  Share2,
+  Database,
+  TrendingUp,
+  CheckCircle,
+  FileSpreadsheet,
+} from "lucide-react";
 
-const C = {
-  accent: "#C7FF35",
-  deep: "#1A1D19",
-  charcoal: "#333333",
-  grey: "#666666",
-  olive: "#7A826D",
-  offWhite: "#F8F9F7",
-  white: "#ffffff",
-};
-
-const ICON_PATHS: Record<string, string> = {
-  "chart-bar":
-    "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
-  "chart-line": "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
-  zap: "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
-  eye: "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 100 6 3 3 0 000-6z",
-  filter: "M22 3H2l8 9.46V19l4 2v-8.54L22 3z",
-  calendar:
-    "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
-  layers: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
-  download:
-    "M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3",
-  refresh:
-    "M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15",
-  bell: "M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0",
-  share: "M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13",
-  table:
-    "M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18",
-};
-
-function Icon({
-  name,
-  size = 20,
-  style,
-}: {
-  name: string;
-  size?: number;
-  style?: React.CSSProperties;
-}) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      style={style}
-    >
-      <path d={ICON_PATHS[name]} />
-    </svg>
-  );
-}
-
-// ─── HERO ──────────────────────────────────────────────────────────────────────
+// ─── DATA ──────────────────────────────────────────────────────────────────────
 
 const KPI_DATA = [
   { label: "Total Revenue", value: "$2.84M", delta: "+12.4%" },
@@ -67,126 +38,131 @@ const KPI_DATA = [
   { label: "System Uptime", value: "99.2%", delta: "SLA Met" },
 ];
 
+const FEATURES = [
+  {
+    Icon: Zap,
+    title: "Real-time KPIs",
+    desc: "Live metrics that update as transactions occur — no manual refresh, no lag, no guesswork.",
+  },
+  {
+    Icon: SlidersHorizontal,
+    title: "Custom Report Builder",
+    desc: "Drag-and-drop builder with conditional filters, custom groupings, and calculated columns.",
+  },
+  {
+    Icon: Eye,
+    title: "Role-based Views",
+    desc: "Every team member sees exactly the data relevant to their role — nothing beyond their scope.",
+  },
+  {
+    Icon: Calendar,
+    title: "Scheduled Exports",
+    desc: "Auto-deliver reports to any stakeholder by email on a daily, weekly, or custom schedule.",
+  },
+  {
+    Icon: BarChart2,
+    title: "Drill-down Analysis",
+    desc: "Click any KPI to trace it back to the originating transaction — a full audit-ready chain.",
+  },
+  {
+    Icon: Layers,
+    title: "Multi-entity Reporting",
+    desc: "Consolidated and per-entity reports across all branches and subsidiaries in one click.",
+  },
+];
+
+const CHECK_ITEMS = [
+  {
+    title: "Executive Summary View",
+    desc: "Boardroom-ready P&L, revenue trend, and forecast at a glance.",
+  },
+  {
+    title: "Operations Dashboard",
+    desc: "Live inventory levels, order pipeline, and fulfillment velocity.",
+  },
+  {
+    title: "Finance Dashboard",
+    desc: "AP/AR aging, cash position, and budget vs. actual by cost center.",
+  },
+  {
+    title: "Custom Workspace",
+    desc: "Pin the KPIs that matter to your role — drag, resize, personalize.",
+  },
+];
+
+const TREND_ROWS = [
+  { period: "Q2 2024", rev: "$680k", delta: "+9.2%" },
+  { period: "Q3 2024", rev: "$812k", delta: "+19.4%" },
+  { period: "Q4 2024", rev: "$1.01M", delta: "+24.4%" },
+];
+
+const REPORT_TYPES = [
+  { abbr: "P&L", sub: "Income" },
+  { abbr: "BS", sub: "Balance Sheet" },
+  { abbr: "CF", sub: "Cash Flow" },
+  { abbr: "AR", sub: "Aging Report" },
+  { abbr: "BvA", sub: "Budget vs Actual" },
+  { abbr: "TAX", sub: "Tax Summary" },
+];
+
+const FLOW_STEPS = [
+  { Icon: Database, label: "Data Entry" },
+  { Icon: RefreshCw, label: "Auto Sync" },
+  { Icon: Zap, label: "KPI Update" },
+  { Icon: Bell, label: "Alert Trigger" },
+  { Icon: BarChart2, label: "Report Build" },
+  { Icon: Share2, label: "Export & Share" },
+];
+
+// ─── HERO VISUAL ───────────────────────────────────────────────────────────────
+
 function DashboardMockup() {
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto" }}>
-      <div
-        className="biz-glass-dark biz-neon-border"
-        style={{ borderRadius: 20, padding: 6 }}
-      >
-        <div
-          style={{
-            background: "rgba(255,255,255,0.03)",
-            borderRadius: 15,
-            padding: 24,
-            display: "flex",
-            flexDirection: "column",
-            gap: 20,
-          }}
-        >
+    <div className="w-full max-w-[900px] mx-auto">
+      {/* Outer glow ring — adds visible separation from dark hero bg */}
+      <div className="rounded-bz-lg border border-white/20 bg-white/[0.06] p-1.5 shadow-[0_0_60px_rgba(199,255,53,0.12)]">
+        <div className="rounded-bz-md bg-white/[0.04] px-4 py-5 sm:px-6 flex flex-col gap-5">
+
           {/* Window chrome */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div style={{ display: "flex", gap: 6 }}>
+          <div className="flex items-center justify-between">
+            <div className="flex gap-1.5">
               {(["#ff5f57", "#ffbd2e", "#28c840"] as const).map((bg) => (
                 <div
                   key={bg}
-                  style={{ width: 10, height: 10, borderRadius: "50%", background: bg }}
+                  style={{ background: bg }}
+                  className="w-2.5 h-2.5 rounded-full"
                 />
               ))}
             </div>
-            <span
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                color: "rgba(255,255,255,0.45)",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-              }}
-            >
+            {/* Analytics Hub label — prominently white so it reads clearly on dark */}
+            <span className="text-[11px] font-bold text-white uppercase tracking-[0.12em]">
               Analytics Hub
             </span>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div className="flex items-center gap-1.5">
               <div
-                className="biz-pulse-glow"
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  background: C.accent,
-                  boxShadow: "0 0 8px #C7FF35",
-                  flexShrink: 0,
-                }}
+                className="biz-pulse-glow w-1.5 h-1.5 rounded-full bg-bz-accent shrink-0"
+                style={{ boxShadow: "0 0 8px #C7FF35" }}
               />
-              <span
-                style={{
-                  fontSize: 9,
-                  fontWeight: 700,
-                  color: C.accent,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.14em",
-                }}
-              >
+              <span className="text-[9px] font-bold text-bz-accent uppercase tracking-[0.14em]">
                 Live
               </span>
             </div>
           </div>
 
           {/* KPI cards */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: 12,
-            }}
-          >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {KPI_DATA.map((kpi) => (
               <div
                 key={kpi.label}
-                style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: 10,
-                  padding: "14px 16px",
-                }}
+                className="bg-white/[0.07] border border-white/10 rounded-bz-md px-3 py-3.5"
               >
-                <p
-                  style={{
-                    fontSize: 8,
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.12em",
-                    color: "rgba(255,255,255,0.35)",
-                    marginBottom: 8,
-                  }}
-                >
+                <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-white/45 mb-2">
                   {kpi.label}
                 </p>
-                <p
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 700,
-                    color: "#fff",
-                    marginBottom: 6,
-                  }}
-                >
+                <p className="text-[18px] sm:text-[20px] font-bold text-white mb-1.5">
                   {kpi.value}
                 </p>
-                <span
-                  style={{
-                    fontSize: 9,
-                    fontWeight: 700,
-                    background: "rgba(199,255,53,0.12)",
-                    color: C.accent,
-                    padding: "2px 7px",
-                    borderRadius: 4,
-                  }}
-                >
+                <span className="text-[9px] font-bold bg-bz-accent/15 text-bz-accent px-1.5 py-0.5 rounded">
                   {kpi.delta}
                 </span>
               </div>
@@ -194,68 +170,25 @@ function DashboardMockup() {
           </div>
 
           {/* Chart area */}
-          <div
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              borderRadius: 12,
-              padding: "18px 20px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 16,
-              }}
-            >
+          <div className="bg-white/[0.03] border border-white/[0.07] rounded-bz-md px-4 py-4 sm:px-5">
+            <div className="flex justify-between items-center mb-4">
               <div>
-                <p
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: "rgba(255,255,255,0.7)",
-                  }}
-                >
-                  Revenue Trend
-                </p>
-                <p
-                  style={{
-                    fontSize: 9,
-                    color: "rgba(255,255,255,0.3)",
-                    marginTop: 2,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                  }}
-                >
+                <p className="text-[11px] font-bold text-white/85">Revenue Trend</p>
+                <p className="text-[9px] text-white/35 mt-0.5 uppercase tracking-[0.08em]">
                   Q4 2024 · All Entities
                 </p>
               </div>
-              <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+              <div className="hidden sm:flex gap-4 items-center">
                 {[
-                  { color: C.accent, label: "Current" },
+                  { color: "var(--bz-accent)", label: "Current" },
                   { color: "rgba(255,255,255,0.2)", label: "Last Year" },
                 ].map((leg) => (
-                  <div
-                    key={leg.label}
-                    style={{ display: "flex", alignItems: "center", gap: 5 }}
-                  >
+                  <div key={leg.label} className="flex items-center gap-1.5">
                     <div
-                      style={{
-                        width: 20,
-                        height: 2,
-                        background: leg.color,
-                        borderRadius: 1,
-                      }}
+                      style={{ background: leg.color }}
+                      className="w-5 h-0.5 rounded-sm"
                     />
-                    <span
-                      style={{
-                        fontSize: 8,
-                        color: "rgba(255,255,255,0.35)",
-                        fontWeight: 600,
-                      }}
-                    >
+                    <span className="text-[8px] text-white/40 font-semibold">
                       {leg.label}
                     </span>
                   </div>
@@ -263,7 +196,7 @@ function DashboardMockup() {
               </div>
             </div>
 
-            <div style={{ position: "relative", height: 90 }}>
+            <div className="relative h-[90px]">
               <svg
                 width="100%"
                 height="90"
@@ -293,415 +226,140 @@ function DashboardMockup() {
                   strokeWidth="1.5"
                   strokeDasharray="5 4"
                 />
-                <circle
-                  cx="330"
-                  cy="18"
-                  r="4"
-                  fill="#C7FF35"
-                  className="biz-pulse-glow"
-                />
+                <circle cx="330" cy="18" r="4" fill="#C7FF35" className="biz-pulse-glow" />
               </svg>
               <div
-                style={{
-                  position: "absolute",
-                  top: 6,
-                  left: "76%",
-                  transform: "translateX(-50%)",
-                  background: C.deep,
-                  border: "1px solid rgba(199,255,53,0.3)",
-                  borderRadius: 7,
-                  padding: "8px 12px",
-                  whiteSpace: "nowrap",
-                }}
+                className="absolute bg-bz-deep border border-bz-accent/30 rounded-bz-md px-3 py-2 whitespace-nowrap"
+                style={{ top: 6, left: "76%", transform: "translateX(-50%)" }}
               >
-                <p
-                  style={{
-                    fontSize: 8,
-                    color: "rgba(255,255,255,0.4)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                    marginBottom: 2,
-                  }}
-                >
+                <p className="text-[8px] text-white/45 uppercase tracking-[0.08em] mb-0.5">
                   Nov Peak
                 </p>
-                <p style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>
-                  $284k
-                </p>
+                <p className="text-[14px] font-bold text-white">$284k</p>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
   );
 }
 
-function HeroSection() {
+// ─── HERO STATS ────────────────────────────────────────────────────────────────
+
+function HeroStats() {
   return (
-    <section
-      className="biz-dark-section"
-      style={{ paddingTop: 80, paddingBottom: 96 }}
-    >
-      <div className="biz-container" style={{ textAlign: "center" }}>
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "6px 16px",
-            background: "rgba(199,255,53,0.08)",
-            border: "1px solid rgba(199,255,53,0.2)",
-            borderRadius: 999,
-            marginBottom: 28,
-          }}
-        >
-          <div
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: "50%",
-              background: C.accent,
-              boxShadow: "0 0 8px #C7FF35",
-              flexShrink: 0,
-            }}
-          />
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.14em",
-              color: C.accent,
-            }}
-          >
-            Analytics & Reporting
-          </span>
-        </div>
-
-        <h1
-          className="biz-h2-white"
-          style={{
-            fontSize: "clamp(2.6rem, 5.5vw, 4.2rem)",
-            marginBottom: 24,
-            lineHeight: 1.1,
-          }}
-        >
-          Every number.
-          <br />
-          In real time.
-        </h1>
-
-        <p
-          className="biz-hero-sub"
-          style={{
-            color: "rgba(255,255,255,0.45)",
-            maxWidth: 520,
-            margin: "0 auto 36px",
-          }}
-        >
-          Bizak transforms scattered ERP data into instant clarity — live KPI
-          dashboards, scheduled reports, and drill-down analysis built for the
-          decisions that matter.
-        </p>
-
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 16,
-            justifyContent: "center",
-            marginBottom: 56,
-          }}
-        >
-          <button className="biz-shimmer-btn biz-shimmer-lg">
-            Request Demo
-          </button>
-          <button className="biz-btn-ghost">Explore Features</button>
-        </div>
-
-        <div
-          className="biz-hero-stats"
-          style={{
-            justifyContent: "center",
-            marginTop: 0,
-            marginBottom: 56,
-            borderTop: "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
-          <div style={{ textAlign: "center" }}>
-            <div className="biz-stat-value" style={{ color: "#fff" }}>
-              40+
-            </div>
-            <div className="biz-stat-label">Report Templates</div>
-          </div>
-          <div
-            className="biz-divider-v"
-            style={{ background: "rgba(255,255,255,0.1)" }}
-          />
-          <div style={{ textAlign: "center" }}>
-            <div className="biz-stat-value" style={{ color: "#fff" }}>
-              Live
-            </div>
-            <div className="biz-stat-label">Real-time Data</div>
-          </div>
-          <div
-            className="biz-divider-v"
-            style={{ background: "rgba(255,255,255,0.1)" }}
-          />
-          <div style={{ textAlign: "center" }}>
-            <div className="biz-stat-value" style={{ color: "#fff" }}>
-              99.9%
-            </div>
-            <div className="biz-stat-label">Uptime SLA</div>
-          </div>
-        </div>
-
-        <DashboardMockup />
-      </div>
-    </section>
+    <div className="flex flex-wrap justify-center gap-8 md:gap-14 py-6 mb-8 border-y border-white/10">
+      {[
+        { value: "40+", label: "Report Templates" },
+        { value: "Live", label: "Real-time Data" },
+        { value: "99.9%", label: "Uptime SLA" },
+      ].map((s) => (
+        <Stat key={s.label} value={s.value} label={s.label} tone="light" size="md" align="center" />
+      ))}
+    </div>
   );
 }
 
 // ─── FEATURES ──────────────────────────────────────────────────────────────────
 
-const FEATURES = [
-  {
-    icon: "zap",
-    title: "Real-time KPIs",
-    desc: "Live metrics that update as transactions occur — no manual refresh, no lag, no guesswork.",
-    accent: true,
-  },
-  {
-    icon: "filter",
-    title: "Custom Report Builder",
-    desc: "Drag-and-drop builder with conditional filters, custom groupings, and calculated columns.",
-    accent: false,
-  },
-  {
-    icon: "eye",
-    title: "Role-based Views",
-    desc: "Every team member sees exactly the data relevant to their role — nothing beyond their scope.",
-    accent: false,
-  },
-  {
-    icon: "calendar",
-    title: "Scheduled Exports",
-    desc: "Auto-deliver reports to any stakeholder by email on a daily, weekly, or custom schedule.",
-    accent: false,
-  },
-  {
-    icon: "chart-bar",
-    title: "Drill-down Analysis",
-    desc: "Click any KPI to trace it back to the originating transaction — a full audit-ready chain.",
-    accent: false,
-  },
-  {
-    icon: "layers",
-    title: "Multi-entity Reporting",
-    desc: "Consolidated and per-entity reports across all branches and subsidiaries in one click.",
-    accent: false,
-  },
-];
-
 function FeaturesSection() {
   return (
-    <section className="biz-section biz-mesh">
-      <div className="biz-container">
-        <div style={{ marginBottom: 56 }}>
-          <span className="biz-label">Core Capabilities</span>
-          <h2 className="biz-h2" style={{ marginTop: 12, marginBottom: 16 }}>
-            Built for every kind
-            <br />
-            of decision maker
-          </h2>
-          <p className="biz-section-intro">
-            Whether you're a CFO tracking cash flow or an ops manager watching
-            order velocity, Bizak surfaces the right data in the right format.
-          </p>
-        </div>
-
-        <div className="biz-bento-grid">
-          {FEATURES.map((f) => (
-            <div className="biz-bento-card" key={f.title}>
-              <div className="biz-icon-wrap">
-                <Icon name={f.icon} size={22} />
-              </div>
-              <h3 className="biz-card-title">{f.title}</h3>
-              <p className="biz-card-desc">{f.desc}</p>
-              {f.accent && (
-                <div className="biz-card-footer">
-                  <div className="biz-accent-bar" style={{ width: "40%" }} />
-                </div>
-              )}
-            </div>
+    <Section tone="white" id="features">
+      <Container>
+        <SectionHeading
+          eyebrow="Core Capabilities"
+          title={<>Built for every kind<br />of decision maker</>}
+          description="Whether you're a CFO tracking cash flow or an ops manager watching order velocity, Bizak surfaces the right data in the right format."
+          align="center"
+          maxWidth={640}
+          className="mb-14"
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {FEATURES.map(({ Icon: FeatureIcon, title, desc }) => (
+            <Card key={title} hover="lift" pad="md">
+              <IconBadge tone="sage" size="md" className="mb-4">
+                <FeatureIcon className="size-5" />
+              </IconBadge>
+              <h3 className="text-[17px] font-bold text-bz-text mb-2">{title}</h3>
+              <p className="text-bz-text-muted leading-[1.7] text-[14px]">{desc}</p>
+            </Card>
           ))}
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
 // ─── DASHBOARD TYPES ───────────────────────────────────────────────────────────
 
-const TABS = ["Executive", "Operations", "Finance"] as const;
-
-const CHECK_ITEMS = [
-  {
-    title: "Executive Summary View",
-    desc: "Boardroom-ready P&L, revenue trend, and forecast at a glance.",
-  },
-  {
-    title: "Operations Dashboard",
-    desc: "Live inventory levels, order pipeline, and fulfillment velocity.",
-  },
-  {
-    title: "Finance Dashboard",
-    desc: "AP/AR aging, cash position, and budget vs. actual by cost center.",
-  },
-  {
-    title: "Custom Workspace",
-    desc: "Pin the KPIs that matter to your role — drag, resize, personalize.",
-  },
-];
-
-function CheckCircleIcon() {
-  return (
-    <svg
-      width={18}
-      height={18}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  );
-}
-
 function DashboardTypesSection() {
   return (
-    <section className="biz-section" style={{ background: C.white }}>
-      <div className="biz-container">
-        <div className="biz-insights-grid">
-          <div>
-            <span className="biz-label">Dashboard Flexibility</span>
-            <h2 className="biz-h2" style={{ marginTop: 12, marginBottom: 16 }}>
-              One platform,
-              <br />
-              every perspective
-            </h2>
-            <p className="biz-section-intro">
-              Bizak adapts to how your organization works — preconfigured views
-              for every function, fully customizable for any role.
-            </p>
-            <ul className="biz-check-list">
+    <Section tone="light">
+      <Container>
+        <div className="flex flex-col gap-12 lg:flex-row lg:gap-16 items-center">
+          <div className="flex-1">
+            <SectionHeading
+              eyebrow="Dashboard Flexibility"
+              title={<>One platform,<br />every perspective</>}
+              description="Bizak adapts to how your organization works — preconfigured views for every function, fully customizable for any role."
+              align="left"
+              maxWidth={520}
+              className="mb-8"
+            />
+            <ul className="flex flex-col gap-5">
               {CHECK_ITEMS.map((item) => (
-                <li className="biz-check-item" key={item.title}>
-                  <span className="biz-check-icon">
-                    <CheckCircleIcon />
-                  </span>
-                  <div>
-                    <span style={{ fontWeight: 700, color: C.charcoal }}>
-                      {item.title}
-                    </span>
-                    <span style={{ color: C.grey }}> — {item.desc}</span>
+                <li key={item.title} className="flex gap-3 items-start">
+                  <CheckCircle className="size-[18px] text-bz-sage shrink-0 mt-0.5" />
+                  <div className="text-[14px] leading-[1.7]">
+                    <span className="font-bold text-bz-text">{item.title}</span>
+                    <span className="text-bz-text-muted"> — {item.desc}</span>
                   </div>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="biz-chart-frame">
-            <div className="biz-chart-inner">
-              <div className="biz-chart-topbar">
-                {TABS.map((tab, i) => (
+          <div className="w-full lg:w-[480px] lg:flex-shrink-0">
+            <Card tone="soft" pad="md">
+              {/* Tab row */}
+              <div className="flex gap-2 mb-5">
+                {["Executive", "Operations", "Finance"].map((tab, i) => (
                   <span
                     key={tab}
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 700,
-                      padding: "5px 12px",
-                      borderRadius: 6,
-                      cursor: "default",
-                      background: i === 0 ? C.accent : "transparent",
-                      color: i === 0 ? C.deep : C.grey,
-                      border: i === 0 ? "none" : "1px solid #E5E7EB",
-                    }}
+                    className={`text-[11px] font-bold px-3 py-1.5 rounded-bz-md cursor-default ${
+                      i === 0
+                        ? "bg-bz-accent text-bz-deep"
+                        : "text-bz-text-muted border border-bz-border"
+                    }`}
                   >
                     {tab}
                   </span>
                 ))}
               </div>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: 12,
-                  marginBottom: 20,
-                }}
-              >
+              {/* Stats row */}
+              <div className="grid grid-cols-2 gap-3 mb-5">
                 {[
-                  {
-                    label: "Net Revenue",
-                    value: "$2.84M",
-                    delta: "↑ 12.4%",
-                  },
-                  {
-                    label: "Total Expenses",
-                    value: "$1.92M",
-                    delta: "↓ 3.1%",
-                  },
+                  { label: "Net Revenue", value: "$2.84M", delta: "↑ 12.4%" },
+                  { label: "Total Expenses", value: "$1.92M", delta: "↓ 3.1%" },
                 ].map((stat) => (
                   <div
                     key={stat.label}
-                    style={{
-                      padding: 16,
-                      background: "#fff",
-                      borderRadius: 10,
-                      border: "1px solid #E5E7EB",
-                    }}
+                    className="p-4 bg-bz-surface rounded-bz-md border border-bz-border"
                   >
-                    <p
-                      style={{
-                        fontSize: 9,
-                        fontWeight: 700,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.08em",
-                        color: C.grey,
-                        marginBottom: 8,
-                      }}
-                    >
+                    <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-bz-text-muted mb-2">
                       {stat.label}
                     </p>
-                    <p
-                      style={{
-                        fontSize: 22,
-                        fontWeight: 700,
-                        color: C.charcoal,
-                        marginBottom: 4,
-                      }}
-                    >
-                      {stat.value}
-                    </p>
-                    <span
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 700,
-                        color: "#16a34a",
-                      }}
-                    >
-                      {stat.delta}
-                    </span>
+                    <p className="text-[22px] font-bold text-bz-text mb-1">{stat.value}</p>
+                    <span className="text-[10px] font-bold text-green-600">{stat.delta}</span>
                   </div>
                 ))}
               </div>
 
-              <div style={{ position: "relative" }}>
+              {/* Sparkline chart */}
+              <div className="relative">
                 <svg
                   width="100%"
                   height="90"
@@ -709,23 +367,9 @@ function DashboardTypesSection() {
                   preserveAspectRatio="none"
                 >
                   <defs>
-                    <linearGradient
-                      id="dr-spark-fill"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="0%"
-                        stopColor="#C7FF35"
-                        stopOpacity={0.3}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor="#C7FF35"
-                        stopOpacity={0}
-                      />
+                    <linearGradient id="dr-spark-fill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#C7FF35" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="#C7FF35" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <path
@@ -741,85 +385,52 @@ function DashboardTypesSection() {
                   <circle cx="270" cy="10" r="3.5" fill="#C7FF35" />
                 </svg>
                 <div
-                  className="biz-tooltip"
+                  className="absolute bg-bz-surface border border-bz-border rounded-bz-md px-3 py-2 shadow-sm"
                   style={{ top: "8%", left: "72%" }}
                 >
-                  <p style={{ fontWeight: 700, color: C.charcoal }}>
-                    Peak: Nov 14
-                  </p>
-                  <p style={{ color: C.olive, marginTop: 2 }}>
-                    Highest Revenue Day
-                  </p>
+                  <p className="text-[10px] font-bold text-bz-text">Peak: Nov 14</p>
+                  <p className="text-[9px] text-bz-text-muted mt-0.5">Highest Revenue Day</p>
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
-// ─── ANALYTICS ─────────────────────────────────────────────────────────────────
-
-const REPORT_TYPES = [
-  { abbr: "P&L", sub: "Income" },
-  { abbr: "BS", sub: "Balance Sheet" },
-  { abbr: "CF", sub: "Cash Flow" },
-  { abbr: "AR", sub: "Aging Report" },
-  { abbr: "BvA", sub: "Budget vs Actual" },
-  { abbr: "TAX", sub: "Tax Summary" },
-];
-
-const TREND_ROWS = [
-  { period: "Q2 2024", rev: "$680k", delta: "+9.2%" },
-  { period: "Q3 2024", rev: "$812k", delta: "+19.4%" },
-  { period: "Q4 2024", rev: "$1.01M", delta: "+24.4%" },
-];
+// ─── ANALYTICS SHOWCASE ────────────────────────────────────────────────────────
 
 function AnalyticsSection() {
   return (
-    <section className="biz-dark-section">
-      <div className="biz-container">
-        <div style={{ marginBottom: 56 }}>
-          <span className="biz-label" style={{ color: C.olive }}>
-            Deep Analytics
-          </span>
-          <h2 className="biz-h2-white" style={{ marginTop: 12 }}>
-            From raw data to
-            <br />
-            boardroom clarity
-          </h2>
-        </div>
+    <Section tone="dark">
+      <Container>
+        <SectionHeading
+          eyebrow="Deep Analytics"
+          title={<>From raw data to<br />boardroom clarity</>}
+          tone="light"
+          align="left"
+          maxWidth={480}
+          className="mb-12"
+        />
 
-        <div className="biz-caps-grid">
-          {/* Trend chart — span 3 */}
-          <div className="biz-dark-card biz-col-3">
-            <div
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.1)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 20,
-              }}
-            >
-              <Icon name="chart-line" size={16} style={{ color: C.accent }} />
-            </div>
-            <h3>Revenue Intelligence</h3>
-            <p>
-              Multi-period trend analysis with comparative benchmarks against
-              budgets and prior-year actuals.
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+          {/* Revenue Intelligence — span 3 */}
+          <div className="md:col-span-3 bg-white/[0.04] border border-white/10 rounded-bz-lg p-6">
+            <IconBadge tone="darkSurface" size="sm" className="mb-5">
+              <TrendingUp className="size-4" />
+            </IconBadge>
+            <h3 className="text-[17px] font-bold text-white mb-2">Revenue Intelligence</h3>
+            <p className="text-white/55 text-[14px] leading-[1.7] mb-6">
+              Multi-period trend analysis with comparative benchmarks against budgets and prior-year actuals.
             </p>
             <svg
               width="100%"
               height="60"
               viewBox="0 0 300 60"
               preserveAspectRatio="none"
-              style={{ margin: "24px 0 20px" }}
+              className="mb-5"
             >
               <path
                 d="M0,52 C40,42 80,44 120,34 S180,18 210,22 S260,12 300,6"
@@ -835,91 +446,65 @@ function AnalyticsSection() {
                 strokeDasharray="5 4"
               />
             </svg>
-            <div className="biz-mono-table">
-              <div className="biz-mono-header">
-                <span>Period</span>
-                <span>Revenue</span>
-                <span>Δ YoY</span>
+            <div className="rounded-bz-md overflow-hidden border border-white/10 overflow-x-auto">
+              <div className="grid grid-cols-3 px-4 py-2.5 bg-white/[0.05] border-b border-white/10 min-w-[260px]">
+                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.08em]">Period</span>
+                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.08em]">Revenue</span>
+                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.08em]">Δ YoY</span>
               </div>
               {TREND_ROWS.map((row) => (
-                <div className="biz-mono-row" key={row.period}>
-                  <span style={{ color: "rgba(255,255,255,0.6)" }}>
-                    {row.period}
-                  </span>
-                  <span>{row.rev}</span>
-                  <span style={{ color: C.accent }}>{row.delta}</span>
+                <div
+                  key={row.period}
+                  className="grid grid-cols-3 px-4 py-2.5 border-b border-white/[0.06] last:border-0 min-w-[260px]"
+                >
+                  <span className="text-[12px] text-white/60">{row.period}</span>
+                  <span className="text-[12px] text-white font-semibold">{row.rev}</span>
+                  <span className="text-[12px] text-bz-accent font-bold">{row.delta}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Report types — span 3 */}
-          <div className="biz-dark-card biz-col-3">
-            <div
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.1)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 20,
-              }}
-            >
-              <Icon name="table" size={16} style={{ color: C.accent }} />
-            </div>
-            <h3>Built-in Report Library</h3>
-            <p>
-              40+ ready-to-run templates covering every corner of your business
-              — no configuration required.
+          {/* Report Library — span 3 */}
+          <div className="md:col-span-3 bg-white/[0.04] border border-white/10 rounded-bz-lg p-6">
+            <IconBadge tone="darkSurface" size="sm" className="mb-5">
+              <FileSpreadsheet className="size-4" />
+            </IconBadge>
+            <h3 className="text-[17px] font-bold text-white mb-2">Built-in Report Library</h3>
+            <p className="text-white/55 text-[14px] leading-[1.7] mb-6">
+              40+ ready-to-run templates covering every corner of your business — no configuration required.
             </p>
-            <div className="biz-method-grid">
+            <div className="grid grid-cols-3 gap-2.5">
               {REPORT_TYPES.map(({ abbr, sub }) => (
-                <div className="biz-method-box" key={abbr}>
-                  <div className="biz-method-label">{abbr}</div>
-                  <div className="biz-method-sub">{sub}</div>
+                <div
+                  key={abbr}
+                  className="bg-white/[0.05] border border-white/10 rounded-bz-md px-3 py-3 text-center"
+                >
+                  <div className="text-[15px] font-bold text-bz-accent mb-1">{abbr}</div>
+                  <div className="text-[9px] text-white/45 uppercase tracking-[0.06em]">{sub}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Templates count — span 2 */}
-          <div className="biz-dark-card biz-col-2">
-            <div className="biz-mini-stat">40+</div>
-            <div
-              className="biz-method-sub"
-              style={{ marginTop: 8, fontSize: 11 }}
-            >
-              Report Templates
-            </div>
-            <p style={{ marginTop: 16 }}>
-              Preconfigured for finance, ops, HR, and sales — ready in seconds,
-              not hours of setup.
+          {/* 40+ stat — span 2 */}
+          <div className="md:col-span-2 bg-white/[0.04] border border-white/10 rounded-bz-lg p-6">
+            <Stat value="40+" label="Report Templates" tone="light" size="lg" />
+            <p className="text-white/55 text-[14px] leading-[1.7] mt-4">
+              Preconfigured for finance, ops, HR, and sales — ready in seconds, not hours of setup.
             </p>
           </div>
 
           {/* Export formats — span 2 */}
-          <div className="biz-dark-card biz-col-2">
-            <div
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.1)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 20,
-              }}
-            >
-              <Icon name="download" size={16} style={{ color: C.accent }} />
-            </div>
-            <h3 style={{ fontSize: 16 }}>Export Any Format</h3>
-            <p style={{ marginBottom: 20 }}>
+          <div className="md:col-span-2 bg-white/[0.04] border border-white/10 rounded-bz-lg p-6">
+            <IconBadge tone="darkSurface" size="sm" className="mb-5">
+              <Download className="size-4" />
+            </IconBadge>
+            <h3 className="text-[17px] font-bold text-white mb-2">Export Any Format</h3>
+            <p className="text-white/55 text-[14px] mb-5">
               Deliver reports to any system in exactly the format it needs.
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div className="flex flex-col gap-2">
               {[
                 { fmt: "PDF", desc: "Branded, print-ready" },
                 { fmt: "XLS", desc: "Excel with formulas" },
@@ -927,81 +512,52 @@ function AnalyticsSection() {
               ].map((f) => (
                 <div
                   key={f.fmt}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "8px 12px",
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    borderRadius: 8,
-                  }}
+                  className="flex justify-between items-center px-3 py-2.5 bg-white/[0.05] border border-white/[0.07] rounded-bz-md"
                 >
-                  <span
-                    style={{ fontSize: 11, fontWeight: 700, color: C.accent }}
-                  >
-                    {f.fmt}
-                  </span>
-                  <span
-                    style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}
-                  >
-                    {f.desc}
-                  </span>
+                  <span className="text-[11px] font-bold text-bz-accent">{f.fmt}</span>
+                  <span className="text-[10px] text-white/40">{f.desc}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Accuracy stat — span 2 */}
-          <div className="biz-dark-card biz-col-2">
-            <div className="biz-mini-stat">99.9%</div>
-            <div
-              className="biz-method-sub"
-              style={{ marginTop: 8, fontSize: 11 }}
-            >
-              Data Accuracy
-            </div>
-            <p style={{ marginTop: 16 }}>
-              Enterprise-grade reliability with bank-level encryption and
-              zero-data-loss guarantees for every report.
+          {/* 99.9% accuracy stat — span 2 */}
+          <div className="md:col-span-2 bg-white/[0.04] border border-white/10 rounded-bz-lg p-6">
+            <Stat value="99.9%" label="Data Accuracy" tone="light" size="lg" />
+            <p className="text-white/55 text-[14px] leading-[1.7] mt-4">
+              Enterprise-grade reliability with bank-level encryption and zero-data-loss guarantees for every report.
             </p>
-            <button className="biz-read-btn" style={{ marginTop: 20 }}>
-              View SLA
-            </button>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
 // ─── REPORT FLOW ───────────────────────────────────────────────────────────────
 
-const FLOW_STEPS = [
-  { icon: "table", label: "Data Entry" },
-  { icon: "refresh", label: "Auto Sync" },
-  { icon: "zap", label: "KPI Update" },
-  { icon: "bell", label: "Alert Trigger" },
-  { icon: "chart-bar", label: "Report Build" },
-  { icon: "share", label: "Export & Share" },
-];
-
 function ReportFlowSection() {
   return (
-    <section className="biz-workflow-section">
-      <div className="biz-container">
-        <div style={{ textAlign: "center", marginBottom: 16 }}>
-          <span className="biz-label">Data Pipeline</span>
-          <h2 className="biz-h2" style={{ marginTop: 12 }}>
-            From data entry to decision —
-            <br />
-            automatically
-          </h2>
-        </div>
+    <Section tone="white">
+      <Container>
+        <SectionHeading
+          eyebrow="Data Pipeline"
+          title={
+            <>
+              From data entry to decision —
+              <br className="hidden md:block" />
+              {" "}automatically
+            </>
+          }
+          align="center"
+          maxWidth={560}
+          className="mb-14"
+        />
 
-        <div className="biz-workflow-steps">
-          <div className="biz-workflow-line">
-            <svg style={{ width: "80%", height: 2, overflow: "visible" }}>
+        <div className="relative">
+          {/* Animated dashed connector (desktop only) */}
+          <div className="hidden md:block absolute top-7 left-[8%] right-[8%] pointer-events-none">
+            <svg width="100%" height="2" style={{ overflow: "visible" }}>
               <line
                 x1="0%"
                 y1="1"
@@ -1015,180 +571,95 @@ function ReportFlowSection() {
             </svg>
           </div>
 
-          <div className="biz-steps-grid">
-            {FLOW_STEPS.map((step) => (
-              <div className="biz-step-item" key={step.label}>
-                <div className="biz-step-circle">
-                  <Icon name={step.icon} size={24} style={{ color: C.olive }} />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
+            {FLOW_STEPS.map(({ Icon: StepIcon, label }) => (
+              <div key={label} className="flex flex-col items-center gap-3 text-center">
+                <div className="relative z-10 w-14 h-14 rounded-full border-2 border-bz-border bg-bz-surface flex items-center justify-center">
+                  <StepIcon className="size-5 text-bz-sage" />
                 </div>
-                <div className="biz-step-label">{step.label}</div>
+                <span className="text-[13px] font-semibold text-bz-text-muted">{label}</span>
               </div>
             ))}
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
 // ─── CTA ───────────────────────────────────────────────────────────────────────
 
-// function CTASection() {
-//   return (
-//     <section className="biz-cta-section">
-//       <div className="biz-cta-glow" />
-//       <div
-//         className="biz-container"
-//         style={{ position: "relative", zIndex: 1 }}
-//       >
-//         <h2 className="biz-cta-title">
-//           Make data your
-//           <br />
-//           competitive advantage
-//         </h2>
-//         <p className="biz-cta-sub">
-//           Join 10,000+ companies using Bizak to turn raw ERP data into instant
-//           strategic clarity — live dashboards, automated reports, zero manual
-//           effort.
-//         </p>
-//         <div className="biz-cta-btn-row">
-//           <button className="biz-shimmer-btn biz-shimmer-lg">
-//             Request Demo
-//           </button>
-//           <button className="biz-btn-ghost">View Pricing</button>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
-
-
-
 function CTASection() {
   return (
-    <section className="biz-cta-section" style={{ background: C.deep, padding: "100px 0", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(rgba(199,255,53,0.04) 1px, transparent 1px)`, backgroundSize: "28px 28px", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 800, height: 400, background: "radial-gradient(ellipse, rgba(199,255,53,0.05) 0%, transparent 65%)", pointerEvents: "none" }} />
-
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 40px", textAlign: "center", position: "relative", zIndex: 1 }}>
-        {/* <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            background: C.accentLow,
-            border: `1px solid ${C.accentMid}`,
-            borderRadius: 100,
-            padding: "6px 18px",
-            marginBottom: 32,
-          }}
-        >
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.accent, display: "block" }} />
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 700, color: C.accent, letterSpacing: "0.08em" }}>OPEN TO ALL BACKGROUNDS</span>
-        </div> */}
-
-        <h2
-          style={{
-            fontFamily: "'Manrope', sans-serif",
-            fontSize: "clamp(32px, 4.5vw, 58px)",
-            fontWeight: 800,
-            color: C.white,
-            lineHeight: 1.08,
-            margin: "0 0 20px",
-            letterSpacing: "-0.03em",
-          }}
-        >
-           Make data your{" "}<span style={{ color: C.accent }}> competitive advantage</span>
-        </h2>
-
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 18,
-            color: "rgba(255,255,255,0.55)",
-            lineHeight: 1.7,
-            margin: "0 auto 48px",
-            maxWidth: 580,
-          }}
-        >
-                Join 10,000+ companies using Bizak to turn raw ERP data into instant
-         strategic clarity — live dashboards,  <br></br> automated reports, zero manual
-         effort. 
-        </p>
-
-        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-          <a
+    <Section tone="dark">
+      <Container width="narrow">
+        <SectionHeading
+          title={
+            <>
+              Make data your{" "}
+              <span className="text-bz-accent">competitive advantage</span>
+            </>
+          }
+          description="Join 10,000+ companies using Bizak to turn raw ERP data into instant strategic clarity — live dashboards, automated reports, zero manual effort."
+          tone="light"
+          align="center"
+          maxWidth={580}
+          className="mb-10"
+        />
+        <div className="flex flex-wrap justify-center gap-3">
+          <Button
+            variant="accent"
+            size="lg"
             href="https://system.bizakerp.com/account/self-register"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: C.accent,
-              color: C.deep,
-              padding: "15px 36px",
-              borderRadius: 10,
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 700,
-              fontSize: 15,
-              textDecoration: "none",
-              transition: "transform 0.2s, box-shadow 0.2s",
-            }}
-            onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = "translateY(-2px)"; el.style.boxShadow = `0 8px 32px rgba(199,255,53,0.35)`; }}
-            onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = ""; el.style.boxShadow = ""; }}
+            withArrow
           >
-      Start Free Trial
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M7 17l9.2-9.2M17 17V7H7" />
-            </svg>
-          </a>
-          <a
-            href="/contact"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: "transparent",
-              color: C.white,
-              padding: "15px 36px",
-              borderRadius: 10,
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 600,
-              fontSize: 15,
-              textDecoration: "none",
-              border: `1px solid ${C.borderDark}`,
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.25)"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = C.borderDark; }}
-          >
-           Book a demo
-          </a>
+            Start Free Trial
+          </Button>
+          <Button variant="ghostDark" size="lg" href="/contact">
+            Book a Demo
+          </Button>
         </div>
-
-       
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
-
-
-
-
-
-
-
-
-
 
 // ─── PAGE ───────────────────────────────────────────────────────────────────────
 
 export function DashboardAndReportingPage() {
   return (
-    <div className="biz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <main style={{ paddingTop: 76 }}>
-        <HeroSection />
+      <main>
+        <HeroCentered
+          tone="dark"
+          mesh={false}
+          badge={<HeroBadge tone="dark">Analytics & Reporting</HeroBadge>}
+          title={
+            <>
+              Every number.
+              <br />
+              In real time.
+            </>
+          }
+          description="Bizak transforms scattered ERP data into instant clarity — live KPI dashboards, scheduled reports, and drill-down analysis built for the decisions that matter."
+          actions={
+            <>
+              <Button variant="accent" size="lg" href="/contact" withArrow>
+                Request Demo
+              </Button>
+              <Button variant="ghostDark" size="lg" href="#features">
+                Explore Features
+              </Button>
+            </>
+          }
+          visual={
+            <>
+              <HeroStats />
+              <DashboardMockup />
+            </>
+          }
+        />
         <FeaturesSection />
         <DashboardTypesSection />
         <AnalyticsSection />

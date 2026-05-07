@@ -284,7 +284,7 @@ function SalesIntelligenceSection() {
           align="center"
           className="mb-14"
         />
-        <div className="grid grid-cols-[3fr_1fr] gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-5">
           <div className="bg-bz-surface rounded-bz-2xl border border-bz-border p-8 shadow-sm">
             <div className="flex justify-between items-start mb-9">
               <div>
@@ -314,7 +314,7 @@ function SalesIntelligenceSection() {
               ))}
             </div>
 
-            <div className="mt-6 flex gap-8 pt-5 border-t border-bz-border">
+            <div className="mt-6 flex flex-wrap gap-6 md:gap-8 pt-5 border-t border-bz-border">
               {summary.map(s => (
                 <div key={s.label}>
                   <p className="text-[9px] font-bold text-bz-text-muted uppercase tracking-[0.08em] mb-1">{s.label}</p>
@@ -357,7 +357,7 @@ function EcosystemSection() {
     </div>
   );
   const Connector = () => (
-    <div className="flex-1 h-px max-w-[120px] min-w-[40px] bg-gradient-to-r from-transparent via-bz-accent/50 to-transparent" />
+    <div className="hidden md:flex flex-1 h-px max-w-[120px] min-w-[40px] bg-gradient-to-r from-transparent via-bz-accent/50 to-transparent" />
   );
 
   return (
@@ -370,7 +370,7 @@ function EcosystemSection() {
           align="center"
           className="mb-20"
         />
-        <div className="flex items-center justify-center flex-wrap mb-10">
+        <div className="flex flex-col items-center gap-6 md:flex-row md:gap-0 md:flex-wrap md:justify-center mb-10">
           <Node Icon={Package} label="Inventory" sub="Auto Stock-Out" />
           <Connector />
           <div className="relative flex-shrink-0 flex flex-col items-center gap-3">

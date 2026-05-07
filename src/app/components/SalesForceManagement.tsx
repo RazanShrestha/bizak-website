@@ -5,87 +5,161 @@ import {
 import {
   MapPin, Route, ShoppingBag, UserCheck, Map, Smartphone,
   Activity, Workflow, BarChart3, WifiOff, Globe, DollarSign,
-  TrendingUp, Users, Network,
+  TrendingUp, Users, Network, ClipboardList, Send, ArrowRight,
 } from "lucide-react";
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
 const CAPABILITIES = [
-  { Icon: MapPin,     title: "Field Visit Tracking",     desc: "Automated GPS-stamped visits and meeting logs ensure absolute transparency in field execution." },
-  { Icon: Route,      title: "Route Planning",            desc: "Daily route optimization reduces travel time and fuel costs for every field agent." },
-  { Icon: ShoppingBag,title: "Order Booking",             desc: "Capture digital orders on-the-spot with instant cloud synchronization to central inventory." },
-  { Icon: UserCheck,  title: "Attendance & Check-ins",    desc: "Geofenced check-ins eliminate proxy attendance and verify presence at client locations." },
-  { Icon: Map,        title: "Territory Management",      desc: "Dynamic visual mapping for territory balancing and efficient sales force assignment." },
-  { Icon: Smartphone, title: "Mobile App Support",        desc: "Robust offline-first capabilities ensure field reps stay productive even without a signal." },
+  { Icon: MapPin,     title: "Field Visit Tracking",  desc: "GPS-stamped visits and meeting logs flow straight into the customer record — no end-of-day report writing." },
+  { Icon: Route,      title: "Beat & Route Planning", desc: "Daily beat plans optimized for travel time so reps spend the day selling, not driving." },
+  { Icon: ShoppingBag,title: "On-Spot Order Booking", desc: "Capture orders at the counter and reserve inventory the moment they're booked." },
+  { Icon: UserCheck,  title: "Geofenced Attendance",  desc: "Check-ins verified against the actual outlet location — proxy attendance is structurally impossible." },
+  { Icon: Map,        title: "Territory Management",  desc: "Visual territory mapping balances workload across reps and exposes coverage gaps before they cost you." },
+  { Icon: Smartphone, title: "Offline-First Mobile",  desc: "Reps keep working through dead zones; the app delta-syncs the moment a signal returns." },
 ];
 
 const METRICS = [
-  { value: "50%", label: "Better Visibility",        desc: "Transparent tracking across all territories eliminates blind spots in execution." },
-  { value: "30%", label: "Increased Productivity",    desc: "Optimized routes and automated logs allow reps to focus on selling, not travel." },
-  { value: "20%", label: "Higher Conversion",         desc: "Seamless on-spot order booking reduces lead time and increases order accuracy." },
+  { value: "50%", label: "Better Visibility",      desc: "Transparent tracking across every territory eliminates blind spots in execution." },
+  { value: "30%", label: "Increased Productivity", desc: "Optimized beats and automated logs let reps focus on selling, not paperwork." },
+  { value: "20%", label: "Higher Conversion",      desc: "On-spot order booking shortens the cycle and raises order accuracy." },
+];
+
+const FLOW_STEPS = [
+  { Icon: ClipboardList, label: "Plan Beat",     sub: "Assign route" },
+  { Icon: MapPin,        label: "Check-In",      sub: "Geofence verify" },
+  { Icon: ShoppingBag,   label: "Capture Order", sub: "Reserve stock" },
+  { Icon: Send,          label: "Auto-Post",     sub: "To ledger & CRM" },
 ];
 
 // ─── HERO VISUAL ──────────────────────────────────────────────────────────────
 
 function HeroDashboard() {
+  const agents = [
+    { initials: "RK", name: "Rakesh K.",   territory: "North-West",  status: "On Visit",  pct: 86, accent: true  },
+    { initials: "AM", name: "Anita M.",    territory: "South Hub",   status: "In Transit",pct: 64, accent: false },
+    { initials: "SP", name: "Sumit P.",    territory: "Central",     status: "Order Captured", pct: 92, accent: true },
+    { initials: "DV", name: "Divya V.",    territory: "East Bypass", status: "Checked In",pct: 71, accent: false },
+  ];
+
+  const feed = [
+    { tag: "ORDER",   text: "₹84,200 booked at Plaza Hub",   time: "2m" },
+    { tag: "VISIT",   text: "Check-in — Sector 14 Outlet",   time: "5m" },
+    { tag: "ROUTE",   text: "Re-route applied — traffic",    time: "9m" },
+    { tag: "VISIT",   text: "Meeting closed at Greenfield",  time: "12m" },
+  ];
+
   return (
     <div className="max-w-[1100px] mx-auto rounded-bz-2xl border border-bz-border bg-bz-surface overflow-hidden p-2">
-      <div className="bg-bz-bg rounded-[14px] border border-bz-border p-8 flex gap-8 flex-wrap">
-        <div className="w-[200px] flex-shrink-0">
-          <div className="h-9 bg-bz-border rounded-bz-md mb-4" />
-          <div className="h-3 bg-bz-border/50 rounded-bz-sm mb-2 w-3/4" />
-          <div className="h-3 bg-bz-border/50 rounded-bz-sm mb-6 w-1/2" />
-          <div className="h-9 bg-bz-border/40 rounded-bz-md mb-2" />
-          <div className="h-9 bg-bz-border/40 rounded-bz-md" />
+      <div className="bg-bz-bg rounded-[14px] border border-bz-border p-5 md:p-7">
+        {/* Top KPI strip */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5">
+          {[
+            { label: "ACTIVE AGENTS",      value: "124",   accent: false },
+            { label: "VISITS TODAY",       value: "1,284", accent: false },
+            { label: "ORDERS BOOKED",      value: "₹12.8L",accent: true  },
+            { label: "COVERAGE",           value: "94.2%", accent: false },
+          ].map(s => (
+            <div key={s.label} className="p-4 bg-bz-surface rounded-bz-md border border-bz-border">
+              <p className="text-[9px] text-bz-text-muted font-bold uppercase tracking-[0.1em] mb-1.5">{s.label}</p>
+              <p className={`text-[20px] md:text-[22px] font-bold ${s.accent ? "text-bz-sage" : "text-bz-text"}`}>{s.value}</p>
+            </div>
+          ))}
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="grid grid-cols-3 gap-4 mb-5">
-            {[
-              { label: "TOTAL VISITS",       value: "12.4k" },
-              { label: "TERRITORY COVERAGE", value: "94.2%" },
-              { label: "CONVERSION RATE",    value: "22.8%" },
-            ].map(s => (
-              <div key={s.label} className="p-5 bg-bz-surface rounded-bz-md border border-bz-border">
-                <p className="text-[9px] text-bz-text-muted font-bold uppercase tracking-[0.1em] mb-1.5">{s.label}</p>
-                <p className="text-[24px] font-bold text-bz-text">{s.value}</p>
-              </div>
-            ))}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-4 md:gap-5">
+          {/* Active Agents */}
+          <div className="bg-bz-surface rounded-bz-md border border-bz-border p-5 md:p-6">
+            <div className="flex justify-between items-center mb-5">
+              <h4 className="font-bold text-bz-text text-[13px]">Active Agents</h4>
+              <span className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
+                <span className="w-1.5 h-1.5 rounded-full bg-bz-sage biz-pulse-glow" /> Live
+              </span>
+            </div>
+            <div className="flex flex-col gap-2.5">
+              {agents.map(a => (
+                <div key={a.initials} className="flex items-center gap-3 px-3 py-2.5 rounded-bz-md border border-bz-border bg-bz-bg/50">
+                  <div className="w-8 h-8 rounded-full bg-bz-sage/15 text-bz-sage flex items-center justify-center text-[11px] font-bold tracking-tight">
+                    {a.initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px] font-bold text-bz-text leading-tight">{a.name}</p>
+                    <p className="text-[10px] text-bz-text-muted">{a.territory} · {a.status}</p>
+                  </div>
+                  <div className="hidden sm:flex w-[60px] h-1.5 bg-bz-border/60 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${a.accent ? "bg-bz-sage" : "bg-bz-text/40"}`}
+                      style={{ width: `${a.pct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="bg-bz-surface rounded-bz-md border border-bz-border p-7 relative overflow-hidden min-h-[200px]">
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="font-bold text-bz-text text-[14px]">Real-time Coverage Heatmap</h4>
-              <div className="flex gap-1.5">
-                {["bg-red-400", "bg-bz-accent", "bg-bz-text"].map(c => (
-                  <div key={c} className={`w-2 h-2 rounded-full ${c}`} />
-                ))}
-              </div>
+          {/* Live Field Feed */}
+          <div className="bg-bz-surface rounded-bz-md border border-bz-border p-5 md:p-6 flex flex-col">
+            <div className="flex justify-between items-center mb-5">
+              <h4 className="font-bold text-bz-text text-[13px]">Live Field Feed</h4>
+              <span className="text-[9px] font-bold bg-bz-bg px-2 py-1 rounded-bz-sm text-bz-text-muted uppercase tracking-[0.1em]">Auto-Sync</span>
             </div>
-            <div className="h-[120px] rounded-bz-md bg-bz-bg relative overflow-hidden">
-              <svg width="100%" height="100%" className="absolute inset-0">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <line key={`v${i}`} x1={`${i * 16.7}%`} y1="0" x2={`${i * 16.7}%`} y2="100%" stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
-                ))}
-                {[1, 2, 3].map(i => (
-                  <line key={`h${i}`} x1="0" y1={`${i * 25}%`} x2="100%" y2={`${i * 25}%`} stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
-                ))}
-                <circle cx="30%" cy="40%" r="45" fill="var(--bz-sage)" fillOpacity="0.22" />
-                <circle cx="62%" cy="55%" r="58" fill="var(--bz-sage)" fillOpacity="0.10" />
-                <circle cx="78%" cy="28%" r="32" fill="var(--bz-accent)" fillOpacity="0.45" />
-              </svg>
-            </div>
-            <div className="absolute bottom-3 right-3 w-20 bg-bz-deep rounded-[14px] p-1.5 border-2 border-bz-deep-2 shadow-lg">
-              <div className="bg-bz-surface rounded-bz-sm py-2.5 flex flex-col items-center text-center">
-                <UserCheck className="size-4 text-bz-sage" />
-                <p className="text-[6px] font-bold text-bz-text-muted uppercase tracking-[0.08em] mt-1.5">Checked In</p>
-                <p className="text-[7px] font-bold text-bz-text leading-tight mt-0.5">Central Plaza Hub</p>
-              </div>
+            <div className="flex flex-col gap-2.5 flex-1">
+              {feed.map((f, i) => (
+                <div key={i} className="flex items-start gap-3 pb-2.5 border-b border-bz-border/60 last:border-0 last:pb-0">
+                  <div className={`px-1.5 py-0.5 rounded-bz-sm text-[8px] font-black tracking-[0.1em] ${
+                    f.tag === "ORDER" ? "bg-bz-accent text-bz-text" :
+                    f.tag === "VISIT" ? "bg-bz-sage/15 text-bz-sage" :
+                                         "bg-bz-bg text-bz-text-muted border border-bz-border"
+                  }`}>
+                    {f.tag}
+                  </div>
+                  <p className="flex-1 text-[11px] text-bz-text leading-snug">{f.text}</p>
+                  <span className="text-[9px] text-bz-text-muted shrink-0">{f.time}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+// ─── FIELD-TO-LEDGER FLOW ─────────────────────────────────────────────────────
+
+function FlowStripSection() {
+  return (
+    <Section tone="light" pad="compact">
+      <Container>
+        <SectionHeading
+          eyebrow="Field-to-Ledger Flow"
+          title="From beat plan to general ledger — one continuous thread"
+          description="Every field action posts to the same database the rest of your business runs on. No CSVs, no nightly batch, no reconciliation."
+          align="center"
+          maxWidth={680}
+          className="mb-12"
+        />
+        <div className="flex flex-col md:flex-row md:items-stretch gap-3 md:gap-0">
+          {FLOW_STEPS.map((step, i) => (
+            <div key={step.label} className="flex flex-1 items-center gap-3 md:gap-2">
+              <div className="flex-1 flex items-center gap-4 px-5 py-5 rounded-bz-xl bg-bz-surface border border-bz-border">
+                <IconBadge tone="sage" size="md">
+                  <step.Icon className="size-5" />
+                </IconBadge>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold text-bz-text-muted uppercase tracking-[0.1em] mb-0.5">Step {i + 1}</p>
+                  <p className="text-[14px] font-bold text-bz-text leading-tight">{step.label}</p>
+                  <p className="text-[11px] text-bz-text-muted mt-0.5">{step.sub}</p>
+                </div>
+              </div>
+              {i < FLOW_STEPS.length - 1 && (
+                <ArrowRight className="hidden md:block size-4 text-bz-text-muted/40 shrink-0 mx-1" />
+              )}
+            </div>
+          ))}
+        </div>
+      </Container>
+    </Section>
   );
 }
 
@@ -102,14 +176,14 @@ function TechShowcaseSection() {
           maxWidth={640}
           className="mb-16"
         />
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Live Field Tracking */}
           <div className="bg-white/[0.03] rounded-[24px] border border-white/[0.05] p-9 flex flex-col justify-between min-h-[450px]">
             <div>
               <Activity className="size-5 text-bz-accent mb-6" />
               <h3 className="text-[22px] font-bold text-white mb-3">Live Field Tracking</h3>
               <p className="text-[13px] text-white/40 leading-[1.65] mb-12">
-                Real-time telemetry of every agent's movement, including idle time and visit duration metrics.
+                Real-time telemetry of every agent's movement, with idle time and visit-duration metrics surfaced for managers.
               </p>
             </div>
             <div className="bg-white/[0.04] rounded-bz-xl border border-white/[0.08] p-6">
@@ -141,7 +215,7 @@ function TechShowcaseSection() {
               <Workflow className="size-5 text-bz-accent mb-6" />
               <h3 className="text-[22px] font-bold text-white mb-3">Route Optimization</h3>
               <p className="text-[13px] text-white/40 leading-[1.65] mb-8">
-                Dynamic re-routing algorithms respond to real-time traffic conditions and urgent client requests.
+                Dynamic re-routing reacts to live traffic and urgent client requests — the rep just gets the next stop.
               </p>
             </div>
             <div className="flex flex-col gap-2.5">
@@ -167,7 +241,7 @@ function TechShowcaseSection() {
               <BarChart3 className="size-5 text-bz-accent mb-6" />
               <h3 className="text-[22px] font-bold text-white mb-3">Performance Monitoring</h3>
               <p className="text-[13px] text-white/40 leading-[1.65] mb-12">
-                Gamified leaderboards and individual KPI tracking drive healthy competition and team excellence.
+                Gamified leaderboards and per-rep KPI tracking that surface coaching moments before they become missed targets.
               </p>
             </div>
             <div className="bg-white/[0.04] rounded-t-[14px] border border-white/[0.08] border-b-0 p-6 flex-1 flex flex-col justify-end">
@@ -196,7 +270,7 @@ function TechShowcaseSection() {
             </div>
             <h3 className="text-[22px] font-bold text-white mb-3">Offline-first Mobile Sync</h3>
             <p className="text-[13px] text-white/40 leading-[1.65] mb-8">
-              Encrypted local storage with automatic delta-syncing when connectivity is restored.
+              Encrypted local storage with delta-sync the moment connectivity returns — nothing captured in the field is ever lost.
             </p>
             <div>
               <div className="flex justify-between pb-2 border-b border-white/[0.05] text-[9px] font-bold text-white/40 uppercase">
@@ -240,7 +314,7 @@ function IntelligenceSection() {
           align="center"
           className="mb-14"
         />
-        <div className="grid grid-cols-[3fr_1fr] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-6">
           <div className="bg-bz-surface rounded-bz-2xl border border-bz-border p-10 shadow-sm">
             <div className="flex justify-between items-start mb-12">
               <div>
@@ -293,7 +367,7 @@ function ConnectivitySection() {
           maxWidth={560}
           className="mb-24"
         />
-        <div className="flex items-center justify-center flex-wrap">
+        <div className="flex flex-col items-center gap-6 md:flex-row md:gap-0 md:flex-wrap md:justify-center">
           <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
             <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
               <TrendingUp className="size-7 text-white/60" />
@@ -308,7 +382,7 @@ function ConnectivitySection() {
             </div>
           </div>
 
-          <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+          <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
 
           <div className="flex-shrink-0 flex flex-col items-center gap-4">
             <div className="w-28 h-28 rounded-full bg-bz-accent flex items-center justify-center">
@@ -317,7 +391,7 @@ function ConnectivitySection() {
             <div className="text-[10px] font-black tracking-[0.3em] text-bz-accent uppercase">SFA Hub</div>
           </div>
 
-          <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+          <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
 
           <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
             <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
@@ -346,7 +420,7 @@ export function SalesForceManagementPage() {
       <HeroCentered
         badge={<HeroBadge>Field Execution Platform</HeroBadge>}
         title={<>Empower your field sales team<br />to perform at scale</>}
-        description="Track field activity, manage routes, and monitor performance in real time with Bizak's intelligent sales force automation system."
+        description="Track field activity, plan beats, capture orders and post to the ledger in real time — one system from rep's pocket to GL."
         actions={
           <>
             <Button variant="accent" size="lg" href="/contact" withArrow>Start Free Trial</Button>
@@ -378,6 +452,7 @@ export function SalesForceManagementPage() {
         </Container>
       </Section>
 
+      <FlowStripSection />
       <TechShowcaseSection />
       <IntelligenceSection />
       <ConnectivitySection />

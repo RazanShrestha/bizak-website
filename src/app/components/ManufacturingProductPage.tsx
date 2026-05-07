@@ -56,9 +56,9 @@ function HeroDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 border-b border-white/[0.05]">
+      <div className="grid grid-cols-2 md:grid-cols-4 border-b border-white/[0.05]">
         {stats.map((s, i) => (
-          <div key={s.label} className={`px-7 py-6 text-left${i > 0 ? " border-l border-white/[0.05]" : ""}`}>
+          <div key={s.label} className={`px-5 md:px-7 py-5 md:py-6 text-left${i > 0 ? " border-l border-white/[0.05]" : ""}${i === 2 ? " border-t md:border-t-0 border-white/[0.05]" : ""}${i === 3 ? " border-t md:border-t-0 border-white/[0.05]" : ""}`}>
             <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-white/40 mb-2">{s.label}</div>
             <div className={`text-[28px] font-extrabold tracking-[-0.03em] leading-none ${s.accent ? "text-bz-accent" : "text-white"}`}>{s.value}</div>
             <div className="text-[10px] text-white/40 mt-1">{s.unit}</div>
@@ -158,9 +158,9 @@ function TechShowcaseSection() {
           className="mb-16"
         />
 
-        <div className="grid grid-cols-3 gap-5 mb-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
           {/* BOM Exploder */}
-          <div className="col-span-2 bg-white/[0.03] rounded-[28px] border border-white/[0.06] p-11">
+          <div className="col-span-full md:col-span-2 bg-white/[0.03] rounded-[28px] border border-white/[0.06] p-11">
             <Layers className="size-[22px] text-white/30" />
             <h3 className="text-[22px] font-bold text-white mt-4 mb-2.5">BOM Exploder</h3>
             <p className="text-[13px] text-white/40 max-w-[380px] leading-[1.65] mb-8">
@@ -224,8 +224,8 @@ function TechShowcaseSection() {
         </div>
 
         {/* Bottom row: Machine + Quality */}
-        <div className="grid grid-cols-12 gap-5">
-          <div className="col-span-5 bg-white/[0.03] rounded-[28px] border border-white/[0.06] p-9">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+          <div className="col-span-full md:col-span-5 bg-white/[0.03] rounded-[28px] border border-white/[0.06] p-9">
             <Settings className="size-[22px] text-white/30" />
             <h3 className="text-[20px] font-bold text-white mt-4 mb-2.5">Machine Utilization</h3>
             <p className="text-[13px] text-white/40 leading-[1.65] mb-7">
@@ -246,7 +246,7 @@ function TechShowcaseSection() {
             </div>
           </div>
 
-          <div className="col-span-7 bg-white/[0.03] rounded-[28px] border border-white/[0.06] p-9 relative">
+          <div className="col-span-full md:col-span-7 bg-white/[0.03] rounded-[28px] border border-white/[0.06] p-9 relative">
             <div className="absolute top-9 right-9 text-right">
               <div className="text-[9px] font-bold text-white/40 uppercase tracking-[0.1em] mb-1">Pass Rate</div>
               <div className="text-[26px] font-black text-bz-accent">99.2%</div>
@@ -310,7 +310,7 @@ function IntelligenceSection() {
       <Container>
         <SectionHeading eyebrow="Analytics" title="Production Intelligence" align="center" className="mb-16" />
 
-        <div className="grid grid-cols-[3fr_1fr] gap-5 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-5 items-start">
           <div className="bg-bz-surface border border-bz-border rounded-[32px] p-11">
             <div className="flex justify-between items-start mb-12">
               <div>
@@ -320,7 +320,7 @@ function IntelligenceSection() {
               <span className="px-3 py-1 bg-bz-bg rounded-bz-sm text-[10px] font-bold text-bz-text-muted">Week 19</span>
             </div>
 
-            <div className="flex items-center gap-3 mb-11">
+            <div className="flex items-center gap-3 mb-6 md:mb-11 flex-wrap">
               {factors.map((f, i) => (
                 <div key={f.label} className="flex items-center flex-1 gap-3">
                   <div className="flex-1 bg-bz-bg rounded-bz-2xl border border-bz-border p-5 text-center">
@@ -399,7 +399,7 @@ function ConnectivitySection() {
           maxWidth={560}
           className="mb-24"
         />
-        <div className="flex items-center justify-center flex-wrap">
+        <div className="flex flex-col items-center gap-6 md:flex-row md:gap-0 md:flex-wrap md:justify-center">
           <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
             <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
               <Warehouse className="size-7 text-white/60" />
@@ -414,7 +414,7 @@ function ConnectivitySection() {
             </div>
           </div>
 
-          <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+          <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
 
           <div className="flex-shrink-0 flex flex-col items-center gap-4">
             <div className="w-28 h-28 rounded-full bg-bz-accent flex items-center justify-center">
@@ -423,7 +423,7 @@ function ConnectivitySection() {
             <div className="text-[10px] font-black tracking-[0.3em] text-bz-accent uppercase">Manufacturing Hub</div>
           </div>
 
-          <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+          <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
 
           <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
             <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">

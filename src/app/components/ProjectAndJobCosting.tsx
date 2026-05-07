@@ -48,7 +48,7 @@ function HeroDashboard() {
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6">
             {[
               { label: "PROJECT HEALTH", value: "92%",    chip: "STABLE" },
               { label: "BUDGET VS ACTUAL", value: "+$124k", accent: true },
@@ -108,7 +108,7 @@ function TechShowcaseSection() {
           maxWidth={640}
           className="mb-16"
         />
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Real-time Job Costing */}
           <div className="bg-white/[0.03] rounded-[24px] border border-white/[0.05] p-9 flex flex-col justify-between min-h-[450px]">
             <div>
@@ -219,7 +219,7 @@ function IntelligenceSection() {
     <Section tone="light">
       <Container>
         <SectionHeading eyebrow="Reporting" title="Executive Project Analytics" align="center" className="mb-14" />
-        <div className="grid grid-cols-[3fr_1fr] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-6">
           <div className="bg-bz-surface rounded-bz-2xl border border-bz-border p-10 shadow-sm">
             <div className="flex justify-between items-start mb-12">
               <div>
@@ -268,7 +268,7 @@ function ConnectivitySection() {
           align="center"
           className="mb-24"
         />
-        <div className="flex items-center justify-center flex-wrap">
+        <div className="flex flex-col items-center gap-6 md:flex-row md:gap-0 md:flex-wrap md:justify-center">
           <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
             <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
               <DollarSign className="size-7 text-white/60" />
@@ -283,7 +283,7 @@ function ConnectivitySection() {
             </div>
           </div>
 
-          <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+          <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
 
           <div className="flex-shrink-0 flex flex-col items-center gap-4">
             <div className="w-28 h-28 rounded-full bg-bz-accent flex items-center justify-center">
@@ -292,7 +292,7 @@ function ConnectivitySection() {
             <div className="text-[10px] font-black tracking-[0.3em] text-bz-accent uppercase">Project Hub</div>
           </div>
 
-          <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+          <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
 
           <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
             <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">

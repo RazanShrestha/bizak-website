@@ -38,11 +38,11 @@ export function HeroCentered({
     <Section
       tone={tone}
       pad="hero"
-      className={cn(mesh && "biz-mesh", "overflow-hidden", className)}
+      className={cn(mesh && "biz-mesh", "overflow-hidden !pb-12 md:!pb-16", className)}
     >
       <Container width={containerWidth}>
         <div className="text-center relative z-20 mb-12 md:mb-16">
-          {badge && <div className="flex justify-center mb-4">{badge}</div>}
+          {badge && <div className="flex justify-center mb-8">{badge}</div>}
           <h1
             className={cn(
               "font-bold tracking-[-0.02em] max-w-[900px] mx-auto mb-6 md:mb-7 text-[clamp(32px,5vw,56px)] [line-height:1.15]",
@@ -54,7 +54,7 @@ export function HeroCentered({
           {description && (
             <p
               className={cn(
-                "text-[17px] leading-[1.7] max-w-[560px] mx-auto mb-9",
+                "text-[15px] md:text-[17px] leading-[1.7] max-w-[560px] mx-auto mb-9",
                 tone === "dark" ? "text-white/70" : "text-bz-text-muted",
               )}
             >
@@ -62,7 +62,7 @@ export function HeroCentered({
             </p>
           )}
           {actions && (
-            <div className="flex flex-wrap justify-center gap-3.5">{actions}</div>
+            <div className="flex flex-wrap justify-center gap-1.5">{actions}</div>
           )}
         </div>
         {visual && <div className="relative">{visual}</div>}

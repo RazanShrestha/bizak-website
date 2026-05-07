@@ -92,6 +92,16 @@ Never deep-import from another scope's folder (`solutions/by-industry/IndustryHe
 8. **Scope before write.** Before creating a new component, decide which scope it belongs in (global `marketing/` vs scoped `solutions/by-industry/` vs a future `solutions/by-function/` etc.). When in doubt, start narrow — the promotion rule (above) handles the upgrade later.
 9. **Delegate to global atoms — don't reinvent.** Whenever any component (a page, a scoped section primitive, *anything*) renders a raw `<button>` / `<a>` / styled `<div>` whose shape mirrors a global primitive (`<Button>`, `<Card>`, `<IconBadge>`, `<PillBadge>`, `<Stat>`, …), it MUST delegate to the global primitive. If the visual shape isn't expressible by an existing variant, **add a variant on the global primitive first**, then delegate — never fork. This is the same promotion logic as rule 8, applied to atoms instead of layouts: a CTA button shouldn't be reinvented inside `IndustryHero`, a card shouldn't be reinvented inside a scoped grid, a stat shouldn't be reinvented inside a hero. *Known debt:* `solutions/by-industry/IndustryHero.tsx` (`HeroCtaButton`) and `solutions/by-industry/IndustryCta.tsx` (`CtaButton`) currently render bespoke `.biz-shimmer-btn` / `.biz-btn-outline` / `.biz-btn-ghost` instead of `<Button>`. The shimmer treatment is the missing variant — when those files get touched, add a `shimmer` variant on `<Button>` and refactor the local wrappers to delegate.
 10. **Closing-CTA section uses `tone="dark"`.** The bottom-of-page CTA (the "Take full control of …" / "Run your factory floor with …" moment) must use `<Section tone="dark">` — the olive-tinted `bg-bz-deep` (`#1A1D19`) — **not** `tone="deeper"` (`bg-bz-deep-2` = `#121212` pure black). This matches what the by-industry pages' `IndustryCta` already renders (`.biz-cta-section` → `var(--bz-deep)`). The olive undertone is what lets the lime accent CTA button glow against the surface; pure black flattens it. Action pair: `<Button variant="accent">` + `<Button variant="ghostDark">`. The closing CTA isn't always literally the last section, but **whenever a page has one, it lives on `tone="dark"`**. Full pattern in `docs/BIZAK_PRODUCT_OVERVIEW.md` §7.1.
+11. **Every layout must be mobile-responsive.** All pages must look correct from 375px through desktop without horizontal scroll (except explicitly overflow-x-auto scrollable tables). This is non-negotiable for every new page, redesign, and new section. Key rules:
+    - Every `grid-cols-N` (N ≥ 2) must have a `grid-cols-1` mobile fallback: `grid-cols-1 md:grid-cols-N`.
+    - Fixed-ratio grids (`grid-cols-[3fr_1fr]`, `grid-cols-[2fr_1fr]`) need a `grid-cols-1 lg:grid-cols-[3fr_1fr]` fallback.
+    - `col-span-N` in 12-col bentos: `col-span-full md:col-span-N`.
+    - Hero dashboard decorative sidebars are desktop-only: `hidden md:flex`.
+    - Hero dashboard panels must not have a fixed pixel height (`h-auto`, not `h-[480px]`).
+    - Connectivity sections (Inventory ↔ Hub ↔ Finance pattern): `flex flex-col gap-6 md:flex-row md:gap-0`; horizontal connector lines get `hidden md:block`.
+    - Fixed-width stat sidepanels (`w-[360px]`): `w-full lg:w-[360px]`; parent gets `flex-col gap-5 lg:flex-row`.
+    - Dense multi-column tables: wrap in `overflow-x-auto` + `min-w-[Npx]` on rows.
+    - Inline `style` must never be used for layout properties (`display`, `gridTemplateColumns`, `flexDirection`) — use className with responsive prefixes instead. See the full pattern cheatsheet in `.claude/skills/redesign-page/SKILL.md`.
 
 ## Available primitives
 
@@ -446,6 +456,15 @@ Before editing **any** page file, walk through this checklist. If any item is "n
 9. **Promotion check.** If a JSX pattern in this page also exists in another nav group's pages with the same shape, the pattern belongs in `marketing/`, not duplicated. Promote it.
 10. **Delegate-to-atom check.** Walk every `<button>`, `<a>`-styled-as-button, and styled `<div>`/`<span>` in the file. If its shape mirrors a global primitive (`<Button>`, `<Card>`, `<IconBadge>`, `<PillBadge>`, `<Stat>`, `<HeroBadge>`, `<Eyebrow>`), replace it with that primitive. If a needed variant doesn't exist yet (e.g., the by-industry "shimmer" CTA isn't a `<Button>` variant), **add the variant on the global primitive first**, then delegate. This applies equally inside scoped section primitives — `IndustryHero` should compose `<Button>`, not roll its own `HeroCtaButton`.
 11. **Closing-CTA tone.** If the page has a closing CTA section (the "Take full control of …" / "Run your factory floor with …" moment, usually right above the footer), it MUST sit on `<Section tone="dark">` — not `tone="deeper"`. Action pair: `<Button variant="accent">` + `<Button variant="ghostDark">`. See hard rule 10 and `docs/BIZAK_PRODUCT_OVERVIEW.md` §7.1.
+12. **Mobile responsiveness (see hard rule 11).** Walk every grid, flex row, fixed width, and hero visual in the file. For every layout-bearing element ask: *"does this work at 375px?"* Apply the responsive patterns from hard rule 11 and the full cheatsheet in `.claude/skills/redesign-page/SKILL.md`. Quick checklist:
+    - [ ] All `grid-cols-N` (N ≥ 2) have a `grid-cols-1` mobile prefix.
+    - [ ] No inline `style` for `display`/`gridTemplateColumns`/`flexDirection` — use className with breakpoints.
+    - [ ] Hero dashboard decorative sidebars: `hidden md:flex`.
+    - [ ] Hero dashboard panels: no fixed `h-[Npx]` — use `h-auto`.
+    - [ ] Connectivity sections: `flex-col gap-6 md:flex-row md:gap-0`; connector lines `hidden md:block`.
+    - [ ] Fixed-width sidepanels: `w-full lg:w-[Npx] lg:flex-shrink-0`.
+    - [ ] Dense tables: wrapped in `overflow-x-auto` + `min-w-[...]` on rows.
+    - [ ] Padding values reduced on mobile where appropriate (`px-4 md:px-8`).
 
 When in doubt, mirror the canonical reference for the page's family — currently `src/app/components/ManufacturingPage.tsx` for the by-industry family.
 
