@@ -70,9 +70,9 @@ function HeroDashboard() {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-4 border-b border-bz-border bg-bz-surface">
+      <div className="grid grid-cols-2 md:grid-cols-4 border-b border-bz-border bg-bz-surface">
         {heroStats.map((s, i) => (
-          <div key={s.label} className={`px-8 py-7 text-left${i > 0 ? " border-l border-bz-border" : ""}`}>
+          <div key={s.label} className={`px-5 md:px-8 py-5 md:py-7 text-left${i > 0 ? " border-l border-bz-border" : ""}${i === 2 ? " border-t md:border-t-0 border-bz-border" : ""}${i === 3 ? " border-t md:border-t-0 border-bz-border" : ""}`}>
             <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-bz-text-muted mb-2">{s.label}</div>
             <div className="text-[34px] font-extrabold text-bz-text tracking-[-0.03em] leading-none">{s.value}</div>
             <div className="text-[10px] text-bz-text-muted mt-1">{s.unit}</div>
@@ -125,10 +125,10 @@ function TechShowcaseSection() {
         />
 
         {/* Top row: 2/3 + 1/3 */}
-        <div className="grid grid-cols-3 gap-5 mb-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
 
           {/* Warehouse Control */}
-          <div className="col-span-2 bg-white/[0.03] rounded-[28px] p-11 border border-white/[0.06]">
+          <div className="col-span-full md:col-span-2 bg-white/[0.03] rounded-[28px] p-11 border border-white/[0.06]">
             <Warehouse className="size-[22px] text-white/30" />
             <h3 className="text-[22px] font-bold text-white mt-4 mb-2.5">Warehouse Control</h3>
             <p className="text-[13px] text-white/50 max-w-[380px] leading-[1.65] mb-9">
@@ -186,10 +186,10 @@ function TechShowcaseSection() {
         </div>
 
         {/* Bottom row: 5/12 + 7/12 */}
-        <div className="grid grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
 
           {/* Movement Tracking */}
-          <div className="col-span-5 bg-white/[0.03] rounded-[28px] p-9 border border-white/[0.06]">
+          <div className="col-span-full md:col-span-5 bg-white/[0.03] rounded-[28px] p-9 border border-white/[0.06]">
             <ArrowUpDown className="size-[22px] text-white/30" />
             <h3 className="text-[20px] font-bold text-white mt-4 mb-2.5">Movement Tracking</h3>
             <p className="text-[13px] text-white/50 leading-[1.65] mb-8">
@@ -215,7 +215,7 @@ function TechShowcaseSection() {
           </div>
 
           {/* Cycle Counting */}
-          <div className="col-span-7 bg-white/[0.03] rounded-[28px] p-9 border border-white/[0.06] relative">
+          <div className="col-span-full md:col-span-7 bg-white/[0.03] rounded-[28px] p-9 border border-white/[0.06] relative">
             <div className="absolute top-9 right-9 text-right">
               <div className="text-[9px] font-bold text-white/50 uppercase tracking-[0.1em] mb-1">Accuracy</div>
               <div className="text-[26px] font-black text-bz-accent">99.8%</div>
@@ -277,7 +277,7 @@ function IntelligenceSection() {
           align="center"
           className="mb-16"
         />
-        <div className="grid grid-cols-[3fr_1fr] gap-5 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-5 items-start">
           {/* Chart card */}
           <div className="bg-bz-surface rounded-[32px] p-11 border border-bz-border">
             <div className="flex justify-between items-start mb-12">
@@ -357,7 +357,7 @@ function ConnectedSystemSection() {
           maxWidth={520}
           className="mb-24"
         />
-        <div className="flex items-center justify-center flex-wrap">
+        <div className="flex flex-col items-center gap-6 md:flex-row md:gap-0 md:flex-wrap md:justify-center">
 
           {/* Purchasing */}
           <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
@@ -374,7 +374,7 @@ function ConnectedSystemSection() {
             </div>
           </div>
 
-          <div className="w-20 h-px bg-bz-accent/30 flex-shrink-0" />
+          <div className="hidden md:block w-20 h-px bg-bz-accent/30 flex-shrink-0" />
 
           {/* Inventory Hub */}
           <div className="flex-shrink-0 flex flex-col items-center gap-4">
@@ -384,7 +384,7 @@ function ConnectedSystemSection() {
             <div className="text-[10px] font-black tracking-[0.3em] text-bz-accent uppercase">Inventory Hub</div>
           </div>
 
-          <div className="w-20 h-px bg-bz-accent/30 flex-shrink-0" />
+          <div className="hidden md:block w-20 h-px bg-bz-accent/30 flex-shrink-0" />
 
           {/* Finance */}
           <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">

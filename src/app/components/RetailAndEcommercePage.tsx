@@ -1,5 +1,6 @@
 import "../../styles/style.css";
 import { Header } from "./Header";
+import { Footer } from "./Footer";
 import { Icon } from "./marketing/Icon";
 import {
   Section,
@@ -9,6 +10,8 @@ import {
   Eyebrow,
   PillBadge,
   IconBadge,
+  HeroSplit,
+  HeroBadge,
   Button,
 } from "./marketing";
 import {
@@ -22,7 +25,6 @@ import {
   TrendingDown,
 } from "lucide-react";
 import {
-  IndustryHero,
   HeroVisual,
   HeroMainCard,
   HeroInventoryCard,
@@ -40,11 +42,8 @@ import {
   MonoTable,
   MethodGrid,
   MiniStatBlock,
+  IndustryCta,
 } from "./solutions/by-industry";
-// Experimental: light-themed CTA + light footer for this page only.
-// If approved, promote to shared primitives + update docs/skills/memory.
-import bizakLogo from "../../assets/bizaklogo.png";
-import svgPaths from "../../imports/svg-eyvfmiiac4";
 
 // ─── Hero ────────────────────────────────────────────────────────────────────
 
@@ -150,9 +149,10 @@ function RetailHeroVisual() {
                   <span
                     style={{
                       fontSize: 8,
-                      fontFamily: "monospace",
                       color: "rgba(122,130,109,0.7)",
                       minWidth: 72,
+                      letterSpacing: "0.04em",
+                      fontWeight: 600,
                     }}
                   >
                     {o.id}
@@ -232,18 +232,22 @@ function RetailHeroVisual() {
 
 function HeroSection() {
   return (
-    <IndustryHero
-      eyebrow="Unified Retail & Ecommerce ERP"
+    <HeroSplit
+      badge={<HeroBadge>Unified Retail & Ecommerce ERP</HeroBadge>}
       title={
         <>
           Sell Everywhere.
           <br />
-          <span>Fulfil</span> Flawlessly.
+          <span className="text-bz-sage">Fulfil</span> Flawlessly.
         </>
       }
       description="Connect your storefront, marketplace, inventory, and fulfilment into one intelligent retail command center. Drive conversions, eliminate stockouts, and delight every customer — across every channel."
-      primaryCta={{ label: "Request Demo" }}
-      secondaryCta={{ label: "See How It Works" }}
+      actions={
+        <>
+          <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
+          <Button variant="outline" size="lg">See How It Works</Button>
+        </>
+      }
       stats={[
         { value: "3.8×", label: "Faster Fulfilment" },
         { value: "99.1%", label: "Inventory Accuracy" },
@@ -341,7 +345,7 @@ function ChallengesSection() {
           ].map((r, i) => (
             <div key={i}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                <span style={{ fontSize: 8, fontFamily: "monospace", color: "#666" }}>
+                <span style={{ fontSize: 8, color: "#666", letterSpacing: "0.04em", fontWeight: 600 }}>
                   {r.sku} · {r.ch}
                 </span>
                 <span
@@ -807,9 +811,10 @@ function CapabilitiesSection() {
                       <td
                         style={{
                           fontSize: 11,
-                          fontFamily: "monospace",
                           color: "#fff",
                           padding: "10px 0",
+                          letterSpacing: "0.04em",
+                          fontWeight: 600,
                         }}
                       >
                         {row.id}
@@ -1398,7 +1403,7 @@ function TopSkuMarginCard() {
           >
             <div className="min-w-0">
               <p className="text-[12.5px] font-bold text-bz-text truncate">{s.name}</p>
-              <p className="text-[10.5px] font-mono text-bz-text-soft truncate">{s.sku}</p>
+              <p className="text-[10.5px] font-semibold tracking-wide text-bz-text-soft truncate">{s.sku}</p>
             </div>
             <span className="text-right text-[12px] tabular-nums text-bz-text-muted">{s.units}</span>
             <span className="text-right text-[12.5px] font-bold tabular-nums text-bz-text">
@@ -1612,7 +1617,7 @@ function ActiveOrderTracks() {
               className="grid grid-cols-1 md:grid-cols-[140px_1fr_auto] gap-3 md:gap-4 items-center"
             >
               <div className="min-w-0">
-                <p className="text-[11.5px] font-mono text-white">{o.id}</p>
+                <p className="text-[11.5px] font-semibold tracking-wide text-white">{o.id}</p>
                 <p className="text-[10px] text-white/40 truncate">{o.channel}</p>
               </div>
 
@@ -1698,178 +1703,13 @@ function PipelineFooterStats() {
   );
 }
 
-// ─── EXPERIMENTAL: Light-themed CTA ──────────────────────────────────────────
-//   Replacement for <IndustryCta /> on this page only. Light surface with a
-//   soft accent + sage radial mesh applied inline. Primary/Outline button pair
-//   for high contrast on light. Inline gradient is intentionally tunable —
-//   if approved, promote to a `.biz-cta-mesh-light` class in style.css and
-//   formalise in BIZAK_PRODUCT_OVERVIEW.md §7.1 + DESIGN_SYSTEM.md §3.7.
-function LightCtaSection() {
-  return (
-    <Section
-      tone="light"
-      pad="default"
-      className="overflow-hidden"
-      style={{
-        backgroundImage: `
-          radial-gradient(ellipse 70% 60% at 100% 100%, rgba(199,255,53,0.30) 0%, transparent 55%),
-          radial-gradient(ellipse 60% 60% at 0% 0%, rgba(122,130,109,0.12) 0%, transparent 55%)
-        `,
-      }}
-    >
-      <Container width="narrow">
-        <div className="flex flex-col items-center text-center gap-7 relative z-10">
-          <SectionHeading
-            eyebrow="Get started"
-            title={
-              <>
-                Sell smarter across
-                <br />
-                <span className="text-bz-sage">every channel.</span>
-              </>
-            }
-            description="Unify your retail operations with Bizak and turn every touchpoint into a seamless, profitable customer experience."
-            tone="dark"
-            align="center"
-            maxWidth={680}
-          />
-          <div className="mt-2 flex flex-wrap justify-center gap-3">
-            <Button variant="primary" size="lg" href="/contact" withArrow>
-              Request Demo
-            </Button>
-            <Button variant="outline" size="lg" href="/contact">
-              View Pricing
-            </Button>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12px] text-bz-text-muted">
-            {[
-              "No credit card required",
-              "14-day free trial",
-              "Cancel anytime",
-            ].map((t) => (
-              <span key={t} className="inline-flex items-center gap-2">
-                <span className="size-1.5 rounded-full bg-bz-sage" />
-                {t}
-              </span>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── EXPERIMENTAL: Light-themed Footer ───────────────────────────────────────
-//   Replacement for the global <Footer /> on this page only. Mirrors the same
-//   link data and layout but inverted onto a light surface (`bg-bz-bg-alt`)
-//   with charcoal text + sage hover. Uses the header logo (designed for light
-//   bg). If approved, lift this into `marketing/Footer.tsx` with a `tone`
-//   prop and switch the routes/Layouts that want it.
-const RETAIL_FOOTER_LINKS = [
-  {
-    heading: "Product",
-    items: [
-      { label: "Features", href: "#" },
-      { label: "Pricing", href: "#" },
-      { label: "Integrations", href: "#" },
-      { label: "Changelog", href: "#" },
-    ],
-  },
-  {
-    heading: "Resources",
-    items: [
-      { label: "Documentation", href: "#" },
-      { label: "Help Center", href: "#" },
-      { label: "Blog", href: "/blog" },
-      { label: "Customer Stories", href: "#" },
-    ],
-  },
-  {
-    heading: "Company",
-    items: [
-      { label: "About Us", href: "/about" },
-      { label: "Careers", href: "#" },
-      { label: "Contact", href: "/contact" },
-      { label: "Privacy Policy", href: "#" },
-    ],
-  },
-];
-
-function RetailFooterLight() {
-  return (
-    <footer className="bg-bz-bg-alt border-t border-bz-border">
-      <div className="max-w-[1320px] mx-auto px-5 py-16">
-        <div className="flex flex-col lg:flex-row gap-12 justify-between">
-          {/* Brand column */}
-          <div className="lg:w-[464px]">
-            <div className="flex items-center gap-2 mb-6">
-              <img src={bizakLogo} alt="Bizak" className="h-8 w-auto" />
-            </div>
-            <p className="text-bz-text-muted text-[14px] leading-[1.625] max-w-[310px]">
-              Empowering modern businesses with an all-in-one ERP that is flexible, powerful, and
-              easy to use.
-            </p>
-          </div>
-
-          {/* Links columns */}
-          <div className="flex flex-col sm:flex-row gap-12">
-            {RETAIL_FOOTER_LINKS.map((col) => (
-              <div key={col.heading} className="w-52">
-                <h5 className="text-bz-text uppercase mb-6 text-[11px] font-bold tracking-[0.05em]">
-                  {col.heading}
-                </h5>
-                <ul className="space-y-4">
-                  {col.items.map((item) => (
-                    <li key={item.label}>
-                      <a
-                        href={item.href}
-                        className="text-bz-text-muted hover:text-bz-sage transition-colors text-[14px]"
-                      >
-                        {item.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom bar */}
-        <div className="flex items-center justify-between mt-16 pt-8 border-t border-bz-border-soft">
-          <p className="text-bz-text-soft text-[11px] font-medium tracking-[0.05em]">
-            © 2024 BIZAK SYSTEMS INC. ALL RIGHTS RESERVED.
-          </p>
-          <div className="flex items-center gap-6">
-            <a href="#" aria-label="Social link" className="text-bz-text-soft hover:text-bz-sage transition-colors">
-              <svg width="19" height="19" viewBox="0 0 18.9999 18.9999" fill="none">
-                <path d={svgPaths.p1a75c680} fill="currentColor" />
-              </svg>
-            </a>
-            <a href="#" aria-label="Social link" className="text-bz-text-soft hover:text-bz-sage transition-colors">
-              <svg width="19" height="15" viewBox="0 0 18.9999 14.9999" fill="none">
-                <path d={svgPaths.p3f52f0c0} fill="currentColor" />
-              </svg>
-            </a>
-            <a href="#" aria-label="Social link" className="text-bz-text-soft hover:text-bz-sage transition-colors">
-              <svg width="17" height="19" viewBox="0 0 16.9999 18.9999" fill="none">
-                <path d={svgPaths.p9aabd00} fill="currentColor" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export function RetailAndEcommercePage() {
   return (
     <div className="biz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <main style={{ paddingTop: 76 }}>
+      <main>
         <HeroSection />
         <ChallengesSection />
         <SolutionGrid
@@ -1880,9 +1720,12 @@ export function RetailAndEcommercePage() {
         <CapabilitiesSection />
         <RevenueIntelligenceSection />
         <OrderLifecycleSection />
-        <LightCtaSection />
+        <IndustryCta
+          title="Sell smarter across every channel."
+          description="Unify your retail operations with Bizak and turn every touchpoint into a seamless, profitable customer experience."
+        />
       </main>
-      <RetailFooterLight />
+      <Footer />
     </div>
   );
 }

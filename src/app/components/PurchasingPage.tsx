@@ -52,7 +52,7 @@ function HeroDashboard() {
 
       <div className="grid grid-cols-3 border-b border-bz-border bg-bz-surface">
         {stats.map((s, i) => (
-          <div key={s.label} className={`px-8 py-7 text-left${i > 0 ? " border-l border-bz-border" : ""}`}>
+          <div key={s.label} className={`px-4 sm:px-8 py-5 sm:py-7 text-left${i > 0 ? " border-l border-bz-border" : ""}`}>
             <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-bz-text-muted mb-2">{s.label}</div>
             <div className="text-[32px] font-extrabold text-bz-text tracking-[-0.03em] leading-none">{s.value}</div>
           </div>
@@ -116,10 +116,10 @@ function TechShowcaseSection() {
           maxWidth={700}
           className="mb-16"
         />
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
           {/* Vendor Management — tall left */}
-          <div className="row-span-2 bg-white/[0.02] rounded-[28px] border border-white/[0.05] p-11 flex flex-col justify-between min-h-[500px]">
+          <div className="md:row-span-2 bg-white/[0.02] rounded-[28px] border border-white/[0.05] p-11 flex flex-col justify-between min-h-[500px]">
             <div>
               <Building2 className="size-5 text-bz-sage mb-5" />
               <h3 className="text-[28px] font-bold text-white mb-3">Vendor Management</h3>
@@ -217,7 +217,7 @@ function IntelligenceSection() {
     <Section tone="light">
       <Container>
         <SectionHeading eyebrow="Reporting" title="Procurement Intelligence" align="center" className="mb-16" />
-        <div className="flex gap-5 items-start">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
           <div className="flex-1 bg-bz-surface rounded-[32px] border border-bz-border p-10">
             <div className="flex items-start justify-between mb-8">
               <div>
@@ -246,7 +246,7 @@ function IntelligenceSection() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 w-[360px] flex-shrink-0">
+          <div className="grid grid-cols-2 gap-4 w-full lg:w-[360px] lg:flex-shrink-0">
             {cards.map((c, i) => (
               <div key={i} className="bg-bz-bg rounded-[22px] border border-bz-border p-6 flex flex-col justify-between min-h-[140px]">
                 <c.Icon className="size-5 text-bz-text-muted" />
@@ -284,7 +284,7 @@ function ConnectivitySection() {
           maxWidth={520}
           className="mb-24"
         />
-        <div className="flex items-center justify-center flex-wrap">
+        <div className="flex flex-col items-center gap-6 md:flex-row md:gap-0 md:flex-wrap md:justify-center">
           <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
             <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
               <Warehouse className="size-7 text-white/60" />
@@ -299,7 +299,7 @@ function ConnectivitySection() {
             </div>
           </div>
 
-          <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+          <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
 
           <div className="flex-shrink-0 flex flex-col items-center gap-4">
             <div className="w-28 h-28 rounded-full bg-bz-accent flex items-center justify-center">
@@ -308,7 +308,7 @@ function ConnectivitySection() {
             <div className="text-[10px] font-black tracking-[0.3em] text-bz-accent uppercase">Purchasing Hub</div>
           </div>
 
-          <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
+          <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
 
           <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
             <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">

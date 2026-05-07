@@ -602,15 +602,25 @@
 .hp-liq-pill { font-size: 8px; font-weight: 700; background: rgba(122,130,109,0.22); color: var(--bz-sage); border: 1px solid rgba(122,130,109,0.3); border-radius: 999px; padding: 5px 14px; text-align: center; text-transform: uppercase; letter-spacing: 0.1em; }
 
 /* Trust logos */
-.hp-trust { text-align: center; margin-top: 0; padding-top: 140px; opacity: 0.4; }
-.hp-trust-label { font-size: 10px; font-weight: 700; color: rgba(51,51,51,0.4); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 28px; }
-.hp-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; filter: grayscale(1); }
-.hp-logo-block { height: 28px; border-radius: 4px; background: rgba(51,51,51,0.1); }
+.hp-trust { text-align: center; margin-top: 0; padding-top: 140px; opacity: 0.45; }
+.hp-trust-label { font-size: 10px; font-weight: 700; color: rgba(51,51,51,0.4); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 20px; }
+
+/* Two-row infinite marquee */
+.hp-marquee-wrap { overflow: hidden; filter: grayscale(1); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%); }
+.hp-marquee-row { overflow: hidden; }
+.hp-marquee-track { display: flex; align-items: center; gap: 40px; width: max-content; animation: hp-marquee-left 30s linear infinite; will-change: transform; }
+.hp-marquee-track.reverse { animation-name: hp-marquee-right; }
+.hp-marquee-wrap:hover .hp-marquee-track { animation-play-state: paused; }
+.hp-logo-block { height: 16px; width: auto; object-fit: contain; display: block; flex-shrink: 0; }
 
 /* ─── Hero customer-logo marquee ─── */
-@keyframes hp-marquee {
+@keyframes hp-marquee-left {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
+}
+@keyframes hp-marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
 }
 .hp-marquee {
   display: flex;
@@ -618,7 +628,7 @@
   gap: 72px;
   width: max-content;
   white-space: nowrap;
-  animation: hp-marquee 16s linear infinite;
+  animation: hp-marquee-left 16s linear infinite;
   will-change: transform;
 }
 .hp-marquee:hover { animation-play-state: paused; }
@@ -1346,7 +1356,8 @@
   .hp-float-card.bottom-center { display: none; }
 
   /* Trust logos */
-  .hp-logos { gap: 24px; }
+  .hp-marquee-track { gap: 28px; }
+  .hp-logo-block { height: 14px; }
 
   /* Step layout text – align left on mobile */
   .hp-step-text-right { text-align: left; }

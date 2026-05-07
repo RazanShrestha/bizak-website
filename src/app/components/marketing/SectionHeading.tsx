@@ -4,7 +4,7 @@ import { cn } from "../ui/utils";
 import { Eyebrow } from "./Eyebrow";
 
 const headingVariants = cva(
-  "font-bold leading-[1.15] tracking-[-0.02em]",
+  "font-bold [line-height:1.15] tracking-[-0.02em]",
   {
     variants: {
       level: {
@@ -55,7 +55,7 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4",
+        "flex flex-col gap-6",
         align === "center" && "items-center text-center mx-auto",
         className,
       )}

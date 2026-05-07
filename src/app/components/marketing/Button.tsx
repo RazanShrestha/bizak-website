@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { cn } from "../ui/utils";
 
 const btnVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold transition-all duration-150 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-bz-sage",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold transition-all duration-150 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-bz-sage w-full md:w-auto",
   {
     variants: {
       variant: {
@@ -20,9 +20,9 @@ const btnVariants = cva(
           "bg-white/[0.04] text-white border border-white/10 hover:border-white/25",
       },
       size: {
-        sm: "h-9 px-4 text-[13px] rounded-bz-md",
-        md: "h-11 px-6 text-[14px] rounded-bz-md",
-        lg: "h-[52px] px-8 text-[15px] rounded-bz-lg",
+        sm: "h-8 px-3 text-[12px] md:h-9 md:px-4 md:text-[13px] rounded-bz-md",
+        md: "h-9 px-4 text-[13px] md:h-11 md:px-6 md:text-[14px] rounded-bz-md",
+        lg: "h-10 px-5 text-[13px] md:h-[52px] md:px-8 md:text-[15px] rounded-bz-lg",
       },
     },
     defaultVariants: {

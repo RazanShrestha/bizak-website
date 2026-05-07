@@ -301,57 +301,19 @@ function ProjectAndCostingPageLayout() {
 }
 
 
-function RetailAndEcommercePageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <div style={{ paddingTop: 76 }}>
-        <RetailAndEcommercePage />
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
-
-
 function WorkFlowAutomationPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <div style={{ paddingTop: 76 }}>
-        <WorkflowPage />
-      </div>
-      <Footer />
-    </div>
-  );
+  return <WorkflowPage />;
 }
 
 
 
 function DashboardAndReportingPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <div style={{ paddingTop: 76 }}>
-        <DashboardAndReportingPage />
-      </div>
-      <Footer />
-    </div>
-  );
+  return <DashboardAndReportingPage />;
 }
 
 
 function MulticompanyAndBranchesPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <div style={{ paddingTop: 76 }}>
-        <MulticompanyAndBranchesPage />
-      </div>
-      <Footer />
-    </div>
-  );
+  return <MulticompanyAndBranchesPage />;
 }
 
 
