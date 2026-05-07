@@ -8,8 +8,6 @@ import {
   Clock,
   Globe,
   GraduationCap,
-  Mic2,
-  Wrench,
 } from "lucide-react";
 import {
   Container,
@@ -23,92 +21,7 @@ import {
 } from "../marketing";
 import { Header } from "../Header";
 import { Footer } from "../Footer";
-
-type EventType = "Summit" | "Training" | "Webinar" | "Workshop";
-type EventFormat = "In-person" | "Virtual" | "Hybrid";
-
-type Event = {
-  type: EventType;
-  format: EventFormat;
-  title: string;
-  date: string;
-  duration: string;
-  location: string;
-  speakers: string[];
-  desc: string;
-  Icon: typeof Mic2;
-  flagship?: boolean;
-};
-
-const EVENTS: Event[] = [
-  {
-    type: "Summit",
-    format: "Hybrid",
-    title: "BizakConnect 2026",
-    date: "Sep 24–26, 2026",
-    duration: "3 days",
-    location: "Singapore + Live stream",
-    speakers: ["Bizak Leadership", "60+ partners", "Customer panels"],
-    desc: "The annual partner summit. Three days of keynotes, breakouts, hands-on labs, the Partner Awards, and the network's biggest in-person gathering of the year.",
-    Icon: Mic2,
-    flagship: true,
-  },
-  {
-    type: "Training",
-    format: "Virtual",
-    title: "Solution Architect Certification — Cohort 12",
-    date: "Jun 3–28, 2026",
-    duration: "4 wks · 32 hrs",
-    location: "Live online",
-    speakers: ["Bizak Architects", "Industry mentors"],
-    desc: "Cohort-based deep dive into the Bizak data model, multi-entity, integrations, and migration playbooks. Exam on the final day.",
-    Icon: GraduationCap,
-  },
-  {
-    type: "Webinar",
-    format: "Virtual",
-    title: "Closing Books in 5 Days — A Co-Sell Playbook",
-    date: "May 21, 2026",
-    duration: "60 min",
-    location: "Zoom",
-    speakers: ["Bizak Finance team", "Northbeam Consulting"],
-    desc: "How partners are pitching the 'fast close' story to mid-market CFOs. Includes objection-handling scripts and the live demo flow.",
-    Icon: Video,
-  },
-  {
-    type: "Workshop",
-    format: "In-person",
-    title: "APAC Architects Day — Bengaluru",
-    date: "Jun 14, 2026",
-    duration: "1 day",
-    location: "Bengaluru, India",
-    speakers: ["Atlas SI", "Lattice Solutions", "Bizak APAC"],
-    desc: "Whiteboard sessions on complex deployments. Network with regional architects, share migration patterns, get early access to v2.4 features.",
-    Icon: Wrench,
-  },
-  {
-    type: "Webinar",
-    format: "Virtual",
-    title: "Manufacturing Showcase — Live OEE in 30 Minutes",
-    date: "Jun 4, 2026",
-    duration: "45 min",
-    location: "Zoom",
-    speakers: ["Bizak Manufacturing", "Verdant Ops"],
-    desc: "Walk through configuring real-time OEE dashboards. For partners building manufacturing implementations.",
-    Icon: Video,
-  },
-  {
-    type: "Training",
-    format: "Virtual",
-    title: "Implementation Lead — Cutover Bootcamp",
-    date: "Jul 8–10, 2026",
-    duration: "3 days · 18 hrs",
-    location: "Live online",
-    speakers: ["Bizak Hypercare", "Senior partners"],
-    desc: "Cutover, hypercare, and change management for partner-led go-lives. Real cutover replays and post-mortems.",
-    Icon: GraduationCap,
-  },
-];
+import { EVENTS, type EventType, type EventFormat } from "./eventsData";
 
 const TYPES: ("All" | EventType)[] = ["All", "Summit", "Training", "Webinar", "Workshop"];
 const FORMATS: ("All" | EventFormat)[] = ["All", "In-person", "Virtual", "Hybrid"];
@@ -119,6 +32,12 @@ const FORMAT_ICON: Record<EventFormat, typeof Globe> = {
   "Hybrid":    Globe,
 };
 
+function ctaForEvent(slug: string, type: EventType) {
+  return type === "Training"
+    ? { href: `/partners/events/enroll/${slug}`,   label: "Enroll" }
+    : { href: `/partners/events/register/${slug}`, label: "Register" };
+}
+
 const TYPE_TONE: Record<EventType, "accent" | "sage" | "neutral" | "live"> = {
   Summit:   "accent",
   Training: "sage",
@@ -128,9 +47,15 @@ const TYPE_TONE: Record<EventType, "accent" | "sage" | "neutral" | "live"> = {
 
 function FlagshipPanel() {
   const flagship = EVENTS.find((e) => e.flagship)!;
+  const cta = ctaForEvent(flagship.slug, flagship.type);
   return (
-    <Card tone="dark" pad="lg" className="relative overflow-hidden">
-      <div className="absolute -top-24 -right-24 size-72 rounded-full bg-bz-accent/[0.1] blur-3xl pointer-events-none" />
+    <Card
+      tone="dark"
+      pad="lg"
+      className="relative overflow-hidden bg-bz-deep border-white/10 shadow-[0_24px_64px_rgba(0,0,0,0.18)]"
+    >
+      <div className="absolute -top-24 -right-24 size-72 rounded-full bg-bz-accent/[0.18] blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-20 size-64 rounded-full bg-bz-sage/20 blur-3xl pointer-events-none" />
       <div className="relative">
         <div className="flex items-center justify-between mb-6">
           <PillBadge tone="accent" dot>FLAGSHIP</PillBadge>
@@ -160,7 +85,7 @@ function FlagshipPanel() {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button variant="accent" size="md" href="#calendar" withArrow>
+          <Button variant="accent" size="md" href={cta.href} withArrow>
             Save your seat
           </Button>
           <Button variant="ghostDark" size="md" href="#calendar">
@@ -259,8 +184,9 @@ function CalendarSection() {
         <div className="flex flex-col gap-4">
           {filtered.map((e) => {
             const FmtIcon = FORMAT_ICON[e.format];
+            const cta = ctaForEvent(e.slug, e.type);
             return (
-              <Card key={e.title} tone="light" pad="md" hover="lift">
+              <Card key={e.slug} tone="light" pad="md" hover="lift">
                 <div className="grid grid-cols-1 lg:grid-cols-[160px_1fr_auto] gap-6 items-start">
                   <div className="flex lg:flex-col gap-2 items-start">
                     <PillBadge tone={TYPE_TONE[e.type]}>{e.type}</PillBadge>
@@ -297,10 +223,10 @@ function CalendarSection() {
                   </div>
 
                   <div className="flex lg:flex-col gap-2 lg:items-end">
-                    <Button variant={e.flagship ? "accent" : "primary"} size="sm" href="#" withArrow>
-                      {e.type === "Training" ? "Enroll" : "Register"}
+                    <Button variant={e.flagship ? "accent" : "primary"} size="sm" href={cta.href} withArrow>
+                      {cta.label}
                     </Button>
-                    <Button variant="ghost" size="sm" href="#">Add to cal</Button>
+                    <Button variant="ghost" size="sm" href={cta.href}>Add to cal</Button>
                   </div>
                 </div>
               </Card>

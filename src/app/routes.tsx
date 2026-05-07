@@ -27,6 +27,8 @@ import { MarketplacePage } from "./components/partners/MarketplacePage";
 import { FindAPartnerPage } from "./components/partners/FindAPartnerPage";
 import { PartnerAwardsPage } from "./components/partners/PartnerAwardsPage";
 import { PartnerEventsPage } from "./components/partners/PartnerEventsPage";
+import { PartnerEventRegisterPage } from "./components/partners/PartnerEventRegisterPage";
+import { PartnerEventEnrollPage } from "./components/partners/PartnerEventEnrollPage";
 import { CaseStudiesPage } from "./components/CaseStudiesPage";
 import { WhyBizakPage } from "./components/WhyBizakPage";
 import { WorkflowPage } from "./components/WorkflowPage";
@@ -492,7 +494,9 @@ export const router = createBrowserRouter([
       { path: "partners/marketplace",    Component: MarketplacePage          },
       { path: "partners/find",           Component: FindAPartnerPage         },
       { path: "partners/awards",         Component: PartnerAwardsPage        },
-      { path: "partners/events",         Component: PartnerEventsPage        },
+      { path: "partners/events",                          Component: PartnerEventsPage          },
+      { path: "partners/events/register/:slug",           Component: PartnerEventRegisterPage   },
+      { path: "partners/events/enroll/:slug",             Component: PartnerEventEnrollPage     },
       { path: "case-studies",   Component: CaseStudiesPage      },
             { path: "why-bizak",     Component: WhyBizakPage        },
 
