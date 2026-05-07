@@ -51,6 +51,8 @@ import { ResourceDetailPage } from "./components/ResourceDetailPage";
 import { TrainingAndCertificate } from "./components/TrainingAndCertificate";
 import { EnrollmentPage } from "./components/EnrollmentPage";
 import { CommunityForum } from "./components/CommunityForum";
+import { WebinarsAndEvents } from "./components/WebinarsAndEvents";
+import { SaveSeatPage } from "./components/SaveSeatPage";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
 function RootLayout() {
@@ -556,6 +558,8 @@ export const router = createBrowserRouter([
       { path: "TrainingAndCertification", Component: TrainingAndCertificate },
       { path: "TrainingAndCertification/enrol/:slug", Component: EnrollmentPage },
       { path: "CommunityForum", Component: CommunityForum },
+      { path: "WebinarsAndEvents", Component: WebinarsAndEvents },
+      { path: "WebinarsAndEvents/save-seat/:eventId", Component: SaveSeatPage },
       {
         path: "blog",
         Component: () => <Outlet />,

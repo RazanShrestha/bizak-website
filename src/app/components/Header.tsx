@@ -588,6 +588,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <Video size={15} />,
             title: "Webinars & Events",
             description: "Live and on-demand product sessions",
+            href: "/WebinarsAndEvents",
             badge: "Live",
           },
         ],
