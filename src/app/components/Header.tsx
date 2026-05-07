@@ -566,6 +566,7 @@ const megaMenus: Record<string, MegaMenuData> = {
             icon: <GraduationCap size={15} />,
             title: "Training & Certification",
             description: "Self-paced courses and official certifications",
+            href: "/TrainingAndCertification",
           },
         ],
       },
