@@ -251,10 +251,19 @@ function FinancialManagementPageLayout() {
 
 function SalesAndCrmPageLayout() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
       <SalesAndCrmPage />
-      <Footer />
+      <Footer
+        cta={{
+          title: "Take full control of your sales pipeline.",
+          titleMuted: "From first lead to final payment.",
+          description:
+            "Centralise leads, auto-route approvals, and post every sale straight to the ledger — one connected pipeline, zero re-keying.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Talk to sales",
+        }}
+      />
     </div>
   );
 }

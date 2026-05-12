@@ -10,41 +10,31 @@ import {
   ChevronRight,
   CircleDollarSign,
   ClipboardList,
-  Clock,
   Database,
   DollarSign,
   Factory,
+  FileSpreadsheet,
   FileText,
   FolderKanban,
   Landmark,
-  Layers,
   LineChart,
   Package,
-  Scale,
   ShieldCheck,
   ShoppingCart,
   Sparkles,
   TrendingDown,
-  TrendingUp,
 } from "lucide-react";
 import {
-  Accordion,
   BadgeGreen,
   Bento,
   BentoGrid,
   Container,
-  DataRow,
   DotGrid,
   EntityRow,
   Heading,
-  HeroCanvas,
-  HeroCard,
-  JournalRow,
-  MiniBars,
   Pill,
   Section,
   SectionHead,
-  StatTile,
   StatusChip,
 } from "./bz";
 
@@ -112,13 +102,11 @@ function HeroSection() {
     <Section tone="b" pad="hero">
       <Container>
         <div className="flex flex-col items-center text-center">
-          <BadgeGreen style={{ marginBottom: 28 }}>
-            Financial Module · Live, Globally 🎉
-          </BadgeGreen>
+          <BadgeGreen style={{ marginBottom: 28 }}>Financial Module</BadgeGreen>
 
           <Heading level={2} style={{ marginBottom: 36 }}>
-            Control your finances with clarity{" "}
-            <Heading.Muted>and close the books in hours, not weeks.</Heading.Muted>
+            Control your finances with clarity and{" "}{<br/>}
+            <Heading.Muted>close the books in hours, not weeks.</Heading.Muted>
           </Heading>
 
           <div className="flex flex-wrap justify-center gap-[10px]">
@@ -131,42 +119,157 @@ function HeroSection() {
           </div>
         </div>
 
-        <HeroCanvas>
-          <HeroCard
-            icon={<Activity size={12} />}
-            title="Live ledger"
-            badge="Live"
-            badgeVariant="live"
-            eyebrow="Cash position · 4 entities"
-            value="$1,242,180"
-          >
-            <div className="rounded-bz-lg bg-bz-paper-warm p-3">
-              <DataRow
-                label="Today's journal entries"
-                value="247 auto-posted"
-                emphasis
-                className="mb-1.5"
-              />
-              <MiniBars values={[40, 65, 50, 80, 60, 88, 92]} highlightLast />
-            </div>
-          </HeroCard>
-
-          <HeroCard
-            icon={<FileText size={12} />}
-            title="Reconciliation"
-            badge="Posted"
-            badgeVariant="posted"
-            eyebrow="Bank feed · Citi Operating"
-            value="$482,400"
-          >
-            <div className="flex flex-col gap-1.5 rounded-bz-lg bg-bz-paper-warm px-3 py-2.5">
-              <DataRow label="Matched lines" value="184 / 184" />
-              <DataRow label="Variance flagged" value="$0.00" />
-            </div>
-          </HeroCard>
-        </HeroCanvas>
+        {/* Page-specific mock — editorial dark panel + invoice card ─── */}
+        <div className="mx-auto mt-14 grid w-full max-w-[1100px] grid-cols-1 gap-3 sm:mt-20 sm:grid-cols-5">
+          <HeroOlivePanel />
+          <HeroStatementCard />
+        </div>
       </Container>
     </Section>
+  );
+}
+
+function HeroOlivePanel() {
+  return (
+    <div className="relative overflow-hidden rounded-bz-2xl bg-bz-olive p-5 sm:col-span-2 sm:min-h-[460px]">
+      <DotGrid tone="dark" />
+
+      {/* Editorial flat accent block — no gradient, just an offset shape */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-12 -top-12 size-44 rounded-bz-pill bg-bz-olive-soft/40"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-20 -left-10 size-36 rounded-bz-pill bg-bz-olive-soft/30"
+      />
+
+      <div className="relative flex h-full min-h-[280px] flex-col justify-between">
+        <div className="flex items-center gap-2 text-[10.5px] font-medium uppercase tracking-[0.12em] text-white/[0.55]">
+          <span className="size-1.5 rounded-bz-pill bg-bz-fire" />
+          Period close
+        </div>
+
+        <div className="flex flex-col gap-2.5">
+          {/* Floating completion chip */}
+          <div className="flex items-center justify-between rounded-bz-lg bg-bz-paper p-3 shadow-[0_18px_40px_-22px_rgba(0,0,0,0.6)]">
+            <div className="flex items-center gap-2.5">
+              <span className="flex size-7 items-center justify-center rounded-bz-pill border border-bz-line text-bz-text">
+                <CheckCircle2 size={14} strokeWidth={2} />
+              </span>
+              <span className="text-[13px] font-medium text-bz-text">
+                Reconciliation
+              </span>
+            </div>
+            <span className="rounded-bz-pill bg-bz-paper-warm px-2.5 py-1 text-[10.5px] font-medium text-bz-text-muted">
+              Complete
+            </span>
+          </div>
+
+          {/* Primary action — pill-dark button */}
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 rounded-bz-lg bg-bz-deep py-3.5 text-[13.5px] font-medium text-bz-text-on-dark transition-colors hover:bg-bz-olive-dark"
+          >
+            Close the period
+            <ArrowUpRight size={14} strokeWidth={2} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HeroStatementCard() {
+  const rows = [
+    { label: "Revenue",          value: "$4,820,000" },
+    { label: "Operating expenses", value: "$1,840,000", muted: true },
+    { label: "VAT (10%)",        value: "$298,400",   muted: true },
+  ];
+  return (
+    <div className="relative overflow-hidden rounded-bz-2xl bg-bz-paper sm:col-span-3 sm:min-h-[460px]">
+      {/* Dark olive header strip */}
+      <div className="flex items-center justify-between bg-bz-olive px-5 py-4">
+        <span className="text-[16px] font-medium tracking-tight text-bz-text-on-dark">
+          Bizak
+          <sup className="ml-0.5 text-[8px] opacity-60">®</sup>
+        </span>
+        <div className="flex flex-col items-end gap-1.5">
+          <span className="block h-[3px] w-9 rounded-bz-pill bg-white/30" />
+          <span className="block h-[3px] w-7 rounded-bz-pill bg-white/20" />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 p-5">
+        {/* Period / Entities pair */}
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: "Period from", value: "Q3 · 2024" },
+            { label: "Entities",    value: "4 consolidated" },
+          ].map((p) => (
+            <div
+              key={p.label}
+              className="rounded-bz-md border border-bz-line-soft p-3"
+            >
+              <p className="text-[10px] uppercase tracking-[0.08em] text-bz-text-muted">
+                {p.label}
+              </p>
+              <p className="mt-1.5 text-[13px] font-medium text-bz-text">
+                {p.value}
+              </p>
+              <span className="mt-2 block h-[3px] w-12 rounded-bz-pill bg-bz-line-soft" />
+            </div>
+          ))}
+        </div>
+
+        <p className="text-[10.5px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
+          Live income statement
+        </p>
+
+        {/* Statement rows */}
+        <div className="flex flex-col gap-2">
+          {rows.map((r, i) => (
+            <div
+              key={r.label}
+              className={
+                i === 0
+                  ? "flex items-center justify-between rounded-bz-md border border-bz-line-soft p-3"
+                  : "flex items-center justify-between px-1"
+              }
+            >
+              {i === 0 ? (
+                <>
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-7 items-center justify-center rounded-bz-sm bg-bz-paper-warm text-bz-text">
+                      <FileText size={13} strokeWidth={1.8} />
+                    </span>
+                    <span className="text-[12.5px] font-medium text-bz-text">
+                      {r.label}
+                    </span>
+                  </div>
+                  <span className="text-[13px] font-medium tabular-nums text-bz-text">
+                    {r.value}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="text-[12px] text-bz-text-muted">{r.label}</span>
+                  <span className="block h-[3px] w-16 rounded-bz-pill bg-bz-line-soft" />
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Net income — emphasized total row */}
+        <div className="mt-1 flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-4 py-3.5">
+          <span className="text-[13px] text-bz-text-muted">Net income</span>
+          <span className="text-[22px] font-medium tabular-nums text-bz-text">
+            $812,000
+          </span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -397,369 +500,203 @@ function ReportingSection() {
           titleMaxWidth={780}
         />
 
-        <BentoGrid cols={12}>
-          <Bento tone="paper" span={7} minHeight={460}>
-            <LivePnLPanel />
-          </Bento>
-          <Bento tone="paper" span={5} minHeight={460}>
-            <PreBuiltReportsPanel />
-          </Bento>
-          <Bento tone="paper" span={5} minHeight={420}>
-            <AnomalyAlertsPanel />
-          </Bento>
-          <Bento tone="paper" span={7} minHeight={420}>
-            <DrillTrailPanel />
-          </Bento>
+        <BentoGrid cols={2} gap={20}>
+          <ReportingCell
+            title="One-click financial statements"
+            body="Income, balance sheet and cash flow — auto-consolidated across every entity and refreshed the moment a transaction posts."
+            visual={<StatementMockVisual />}
+          />
+          <ReportingCell
+            title="Drill from totals to journals"
+            body="Every number resolves to its source journal entry in a single click. A full audit trail behind every figure, by default."
+            visual={<DrillTrailVisual />}
+          />
+          <ReportingCell
+            title="Anomaly detection, built-in"
+            body="Variance from budget, aged AR, expense outliers — surfaced automatically the moment they emerge, not at month-end."
+            visual={<AnomalyVisual />}
+          />
+          <ReportingCell
+            title="Export the way auditors want it"
+            body="GAAP, IFRS and locale-specific formats — ready out of the box, exported as PDF, XBRL or Excel without template chasing."
+            visual={<ExportVisual />}
+          />
         </BentoGrid>
       </Container>
     </Section>
   );
 }
 
-type PnLRow = {
-  label: string;
-  value: string;
-  delta: string;
-  trend: "up" | "down";
-  intent: "good" | "bad" | "neutral";
-  emphasis?: boolean;
-};
-
-function LivePnLPanel() {
-  const rows: PnLRow[] = [
-    { label: "Revenue",            value: "$4.82M",   delta: "+12.4%",        trend: "up",   intent: "good"    },
-    { label: "Gross Profit",       value: "$2.91M",   delta: "60.3% margin",  trend: "up",   intent: "neutral" },
-    { label: "Operating Expenses", value: "($1.84M)", delta: "+4.1%",         trend: "up",   intent: "bad"     },
-    { label: "EBITDA",             value: "$1.07M",   delta: "+18.6%",        trend: "up",   intent: "good"    },
-    { label: "Net Income",         value: "$812K",    delta: "+22.1%",        trend: "up",   intent: "good", emphasis: true },
-  ];
-
-  return (
-    <>
-      <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <div className="mb-1.5 flex items-center gap-2">
-            <span className="inline-flex size-7 items-center justify-center rounded-bz-md bg-bz-leaf text-[#1F3422]">
-              <FileText size={14} strokeWidth={1.8} />
-            </span>
-            <h3 className="text-[15px] font-medium text-bz-text">Income Statement</h3>
-          </div>
-          <p className="text-[12px] text-bz-text-muted">
-            Auto-consolidated from 4 entities · synced 2 minutes ago
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <StatusChip variant="posted">FY2024 · Q3</StatusChip>
-          <StatusChip variant="live">Live</StatusChip>
-        </div>
-      </div>
-
-      <div className="overflow-hidden rounded-bz-lg border border-bz-line-soft">
-        {rows.map((r, i) => (
-          <div
-            key={r.label}
-            className={[
-              "flex items-center justify-between gap-3 px-4 py-3.5",
-              i !== rows.length - 1 && "border-b border-bz-line-soft",
-              r.emphasis && "bg-bz-paper-warm",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-          >
-            <div className="flex min-w-0 items-center gap-2.5">
-              <span
-                className={[
-                  "size-1.5 shrink-0 rounded-bz-pill",
-                  r.emphasis ? "bg-bz-fire" : "bg-bz-line",
-                ].join(" ")}
-              />
-              <span
-                className={[
-                  "truncate text-[13.5px]",
-                  r.emphasis ? "font-medium text-bz-text" : "text-bz-text",
-                ].join(" ")}
-              >
-                {r.label}
-              </span>
-            </div>
-            <div className="flex shrink-0 items-center gap-2.5">
-              <span
-                className={[
-                  "tabular-nums",
-                  r.emphasis ? "text-[17px] font-medium text-bz-text" : "text-[13.5px] font-medium text-bz-text",
-                ].join(" ")}
-              >
-                {r.value}
-              </span>
-              <DeltaChip delta={r.delta} trend={r.trend} intent={r.intent} />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
-        <div className="flex items-center gap-2">
-          <StatusChip variant="posted">PDF</StatusChip>
-          <StatusChip variant="posted">XBRL</StatusChip>
-          <StatusChip variant="posted">Excel</StatusChip>
-        </div>
-        <a
-          href="#"
-          className="inline-flex items-center gap-1 text-[12px] font-medium text-bz-text hover:text-bz-text-muted"
-        >
-          Drill into accounts
-          <ArrowUpRight size={13} strokeWidth={2} />
-        </a>
-      </div>
-    </>
-  );
-}
-
-function DeltaChip({
-  delta,
-  trend,
-  intent,
+function ReportingCell({
+  title,
+  body,
+  visual,
 }: {
-  delta: string;
-  trend: "up" | "down";
-  intent: "good" | "bad" | "neutral";
+  title: string;
+  body: string;
+  visual: React.ReactNode;
 }) {
-  const TrendIcon = trend === "up" ? TrendingUp : TrendingDown;
-  const cls =
-    intent === "good"
-      ? "bg-bz-leaf text-[#1F3422]"
-      : intent === "bad"
-      ? "bg-rose-500/10 text-rose-600"
-      : "bg-bz-paper-warm text-bz-text-muted";
   return (
-    <span
-      className={[
-        "inline-flex items-center gap-1 rounded-bz-pill px-2 py-0.5",
-        "text-[10.5px] font-medium tabular-nums",
-        cls,
-      ].join(" ")}
+    <Bento
+      tone="paper"
+      hover
+      minHeight={460}
+      style={{ background: "var(--bz-section-b)" }}
     >
-      <TrendIcon size={11} strokeWidth={2.4} />
-      {delta}
-    </span>
+      <div className="flex h-full flex-col items-center text-center">
+        <h3 className="bz-bento-title max-w-[440px] text-balance">{title}</h3>
+
+        <div className="my-auto flex w-full items-center justify-center py-8">
+          {visual}
+        </div>
+
+        <p className="max-w-[420px] text-[13.5px] leading-[1.65] text-bz-text-muted">
+          {body}
+        </p>
+      </div>
+    </Bento>
   );
 }
 
-function PreBuiltReportsPanel() {
-  const reports = [
-    { icon: FileText, name: "Income Statement", sub: "Live · streaming",   live: true  },
-    { icon: Scale,    name: "Balance Sheet",    sub: "Updated 2m ago"                  },
-    { icon: Activity, name: "Cash Flow",        sub: "Updated 5m ago"                  },
-    { icon: Clock,    name: "AR Aging Report",  sub: "Updated 8m ago"                  },
-    { icon: Clock,    name: "AP Aging Report",  sub: "Updated 12m ago"                 },
+// ── Reporting visuals ────────────────────────────────────────────────────────
+
+function StatementMockVisual() {
+  return (
+    <div className="w-full max-w-[300px] overflow-hidden rounded-bz-2xl bg-bz-paper-warm shadow-[0_18px_40px_-28px_rgba(0,0,0,0.18)]">
+      <div className="flex items-center justify-between bg-bz-olive px-4 py-3">
+        <span className="text-[13px] font-medium tracking-tight text-bz-text-on-dark">
+          Bizak<sup className="ml-0.5 text-[7px] opacity-60">®</sup>
+        </span>
+        <div className="flex flex-col items-end gap-1">
+          <span className="block h-[3px] w-7 rounded-bz-pill bg-white/30" />
+          <span className="block h-[3px] w-5 rounded-bz-pill bg-white/20" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-3 bg-bz-paper p-4">
+        <div className="flex items-center justify-between">
+          <span className="block h-[3px] w-20 rounded-bz-pill bg-bz-line-soft" />
+          <span className="text-[10.5px] uppercase tracking-[0.08em] text-bz-text-soft">
+            Net income
+          </span>
+        </div>
+        <div className="flex items-center justify-between rounded-bz-md bg-bz-paper-warm px-3 py-2.5">
+          <span className="block h-[3px] w-14 rounded-bz-pill bg-bz-line" />
+          <span className="text-[18px] font-medium tabular-nums text-bz-text">
+            $812K
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DrillTrailVisual() {
+  const path = [
+    { label: "Net income" },
+    { label: "OpEx"       },
+    { label: "Marketing"  },
+    { label: "JE-2024-8721", final: true },
   ];
   return (
-    <>
-      <div className="mb-4 flex items-start justify-between">
-        <div>
-          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
-            Always-on reports
-          </div>
-          <h3 className="mt-1.5 text-[15px] font-medium text-bz-text">Pre-built statements</h3>
-        </div>
-        <StatusChip variant="posted">38 total</StatusChip>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        {reports.map(({ icon: Icon, name, sub, live }) => (
-          <div
-            key={name}
+    <div className="flex max-w-[340px] flex-wrap items-center justify-center gap-1.5">
+      {path.map((p, i) => (
+        <React.Fragment key={p.label}>
+          <span
             className={[
-              "group flex items-center gap-3 rounded-bz-lg border px-3.5 py-3 transition-colors",
-              live
-                ? "border-bz-line bg-bz-paper-warm"
-                : "border-bz-line-soft bg-bz-paper hover:border-bz-line",
+              "rounded-bz-md px-2.5 py-1.5 text-[11.5px] font-medium tabular-nums",
+              p.final
+                ? "bg-bz-olive text-bz-text-on-dark"
+                : "border border-bz-line-soft bg-bz-paper text-bz-text",
             ].join(" ")}
           >
-            <span
-              className={[
-                "flex size-9 shrink-0 items-center justify-center rounded-bz-md",
-                live ? "bg-bz-fire text-[#1F3422]" : "bg-bz-paper-warm text-bz-text",
-              ].join(" ")}
-            >
-              <Icon size={14} strokeWidth={1.8} />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-[13px] font-medium text-bz-text">{name}</p>
-              <p className="text-[11px] text-bz-text-muted">{sub}</p>
-            </div>
-            {live ? (
-              <StatusChip variant="live">Live</StatusChip>
-            ) : (
-              <ChevronRight size={15} strokeWidth={2} className="text-bz-text-soft" />
-            )}
-          </div>
-        ))}
-      </div>
-    </>
+            {p.label}
+          </span>
+          {i !== path.length - 1 && (
+            <ChevronRight size={12} strokeWidth={2.2} className="text-bz-text-soft" />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
   );
 }
 
-function AnomalyAlertsPanel() {
-  const alerts: Array<{
-    icon: React.ElementType;
-    title: string;
-    sub: string;
-    delta: string;
-    intent: "bad" | "good" | "neutral";
-  }> = [
-    {
-      icon: TrendingUp,
-      title: "Marketing OpEx",
-      sub: "Review Q3 brand campaigns",
-      delta: "+18.4% vs budget",
-      intent: "bad",
-    },
+function AnomalyVisual() {
+  const alerts = [
     {
       icon: AlertTriangle,
-      title: "AR aged 60+ rising",
-      sub: "12 invoices · $284k overdue",
-      delta: "Action needed",
-      intent: "bad",
+      title: "Marketing OpEx",
+      delta: "+18%",
+      tone: "bad" as const,
     },
     {
       icon: TrendingDown,
-      title: "Travel expense",
-      sub: "Tracking under target",
-      delta: "−22% MoM",
-      intent: "good",
+      title: "Travel spend",
+      delta: "−22%",
+      tone: "good" as const,
     },
   ];
-
   return (
-    <>
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
-            Anomaly detection
-          </div>
-          <h3 className="mt-1.5 text-[15px] font-medium text-bz-text">Variance, surfaced for you</h3>
-        </div>
-        <span className="inline-flex items-center gap-1.5 text-[10.5px] font-medium uppercase tracking-[0.08em] text-bz-text-muted">
-          <span className="size-1.5 rounded-bz-pill bg-bz-fire" />
-          Watching
-        </span>
-      </div>
-
-      <div className="flex flex-col gap-2.5">
-        {alerts.map(({ icon: Icon, title, sub, delta, intent }) => {
-          const cls =
-            intent === "bad"
-              ? "bg-rose-500/10 text-rose-600"
-              : intent === "good"
-              ? "bg-bz-leaf text-[#1F3422]"
-              : "bg-bz-paper-warm text-bz-text-muted";
-          return (
-            <div
-              key={title}
-              className="flex items-center gap-3 rounded-bz-lg border border-bz-line-soft bg-bz-paper px-3.5 py-3"
+    <div className="flex w-full max-w-[300px] flex-col gap-2">
+      {alerts.map(({ icon: Icon, title, delta, tone }) => {
+        const chip =
+          tone === "bad"
+            ? "bg-rose-500/10 text-rose-600"
+            : "bg-bz-leaf text-[#1F3422]";
+        return (
+          <div
+            key={title}
+            className="flex items-center gap-3 rounded-bz-lg border border-bz-line-soft bg-bz-paper px-3.5 py-3"
+          >
+            <span
+              className={`flex size-8 shrink-0 items-center justify-center rounded-bz-md ${chip}`}
             >
-              <span className={`flex size-9 shrink-0 items-center justify-center rounded-bz-md ${cls}`}>
-                <Icon size={15} strokeWidth={2} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-medium text-bz-text">{title}</p>
-                <p className="text-[11px] text-bz-text-muted">{sub}</p>
-              </div>
-              <span
-                className={[
-                  "shrink-0 rounded-bz-pill px-2 py-0.5 text-[10.5px] font-medium tabular-nums",
-                  cls,
-                ].join(" ")}
-              >
-                {delta}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </>
+              <Icon size={14} strokeWidth={2} />
+            </span>
+            <span className="flex-1 text-left text-[12.5px] font-medium text-bz-text">
+              {title}
+            </span>
+            <span
+              className={`rounded-bz-pill px-2 py-0.5 text-[10.5px] font-medium tabular-nums ${chip}`}
+            >
+              {delta}
+            </span>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
-function DrillTrailPanel() {
-  const path = [
-    { label: "Net Income",         value: "$812K"                  },
-    { label: "Operating Expenses", value: "$1.84M"                 },
-    { label: "Marketing",          value: "$284K"                  },
-    { label: "Q3 Brand Campaign",  value: "$48,200", final: true   },
-  ];
-  const journal = [
-    { date: "14 · Sep", ref: "JE-2024-8412", desc: "Brand agency · Sept retainer",  amt: "$24,000" },
-    { date: "21 · Sep", ref: "JE-2024-8593", desc: "Digital ads · Q3 LinkedIn",     amt: "$18,400" },
-    { date: "28 · Sep", ref: "JE-2024-8721", desc: "Event sponsorship · DXTalks",   amt: "$5,800"  },
+function ExportVisual() {
+  const formats = [
+    { icon: FileText,        label: "PDF",   active: true  },
+    { icon: FileSpreadsheet, label: "Excel"                },
+    { icon: BookOpen,        label: "XBRL"                 },
   ];
   return (
-    <>
-      <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
-            Audit trail
-          </div>
-          <h3 className="mt-1.5 text-[15px] font-medium text-bz-text">
-            Every number resolves to its source
-          </h3>
-        </div>
-        <span className="inline-flex items-center gap-1.5 rounded-bz-pill bg-bz-leaf px-2.5 py-1 text-[10.5px] font-medium text-[#1F3422]">
-          <Sparkles size={11} strokeWidth={2} />
-          One click
-        </span>
-      </div>
-
-      <div className="mb-5 flex flex-wrap items-center gap-2">
-        {path.map((p, i) => (
-          <div key={p.label} className="flex items-center gap-2">
-            <div
-              className={[
-                "flex items-center gap-2 rounded-bz-md px-3 py-2 text-[11.5px] font-medium tabular-nums",
-                p.final
-                  ? "bg-bz-olive text-bz-text-on-dark"
-                  : "border border-bz-line-soft bg-bz-paper text-bz-text",
-              ].join(" ")}
-            >
-              <span className={p.final ? "text-white/[0.62]" : "text-bz-text-muted"}>{p.label}</span>
-              <span>{p.value}</span>
-            </div>
-            {i !== path.length - 1 && (
-              <ChevronRight size={13} strokeWidth={2.2} className="text-bz-text-soft" />
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="overflow-hidden rounded-bz-lg border border-bz-line-soft">
-        <div className="hidden grid-cols-[80px_1fr_100px] gap-3 bg-bz-paper-warm px-4 py-2.5 text-[10px] font-medium uppercase tracking-[0.08em] text-bz-text-soft sm:grid">
-          <span>Date</span>
-          <span>Reference · Description</span>
-          <span className="text-right">Amount</span>
-        </div>
-        {journal.map((j, i) => (
-          <div
-            key={j.ref}
+    <div className="flex w-full max-w-[320px] items-center justify-center gap-2.5">
+      {formats.map(({ icon: Icon, label, active }) => (
+        <div
+          key={label}
+          className={[
+            "flex w-[88px] flex-col items-center gap-2 rounded-bz-lg border px-3 py-4 transition-colors",
+            active
+              ? "border-bz-olive bg-bz-olive text-bz-text-on-dark"
+              : "border-bz-line-soft bg-bz-paper text-bz-text",
+          ].join(" ")}
+        >
+          <span
             className={[
-              "grid grid-cols-[60px_1fr_90px] items-center gap-3 px-4 py-3 sm:grid-cols-[80px_1fr_100px]",
-              i !== journal.length - 1 && "border-b border-bz-line-soft",
-            ]
-              .filter(Boolean)
-              .join(" ")}
+              "flex size-9 items-center justify-center rounded-bz-md",
+              active ? "bg-white/[0.08]" : "bg-bz-paper-warm",
+            ].join(" ")}
           >
-            <span className="text-[11px] text-bz-text-muted">{j.date}</span>
-            <div className="min-w-0">
-              <p className="text-[12px] font-medium text-bz-text">{j.ref}</p>
-              <p className="truncate text-[11px] text-bz-text-muted">{j.desc}</p>
-            </div>
-            <span className="text-right text-[12.5px] font-medium tabular-nums text-bz-text">
-              {j.amt}
-            </span>
-          </div>
-        ))}
-      </div>
-    </>
+            <Icon size={15} strokeWidth={1.8} />
+          </span>
+          <span className="text-[11.5px] font-medium">{label}</span>
+        </div>
+      ))}
+    </div>
   );
 }
 

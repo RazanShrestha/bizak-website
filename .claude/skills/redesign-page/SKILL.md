@@ -81,8 +81,9 @@ Walk through every item; whatever is "no" becomes part of this redesign.
 8. **className over inline `style`.** Static values in className. Inline `style` only for truly dynamic values. No `onMouseEnter`/`onMouseLeave` style mutations — use `hover:` utilities or `:hover` on the primitive's CSS class.
 9. **Closing-CTA pattern.** Page does NOT render its own closing CTA section. CTA goes in `<Footer cta={…}>` in `routes.tsx`. See `FinancialManagementPageLayout` for the reference.
 10. **Header offset shim.** Grep `paddingTop: 76|pt-\[76|mt-\[76` inside the page file AND its `*PageLayout` in `routes.tsx`. Both must be zero. The header is no longer fixed.
-11. **Section alternation.** Consecutive content sections alternate `tone="a"` / `tone="b"`. Dark sections sparing and intentional.
-12. **Mobile responsiveness.** Every grid, flex row, fixed width, hero visual works at 375px without horizontal scroll. See the mobile cheatsheet below.
+11. **`bz-page` wrapper.** The page's `*PageLayout` outer `<div>` MUST have `className="bz-page"` (matches `HomeLayout`). That class carries `overflow-x: clip` + `text-wrap: balance` — the project's canonical mobile-overflow guard. Missing it produces a few-px horizontal scroll on 375px viewports even when every section looks correct in isolation. Grep `routes.tsx` for the `*PageLayout`: if the outer `<div>` lacks `bz-page`, add it.
+12. **Section alternation.** Consecutive content sections alternate `tone="a"` / `tone="b"`. Dark sections sparing and intentional.
+13. **Mobile responsiveness.** Every grid, flex row, fixed width, hero visual works at 375px without horizontal scroll. See the mobile cheatsheet below.
 
 If any item fails, the redesign is the work to bring it into compliance.
 
@@ -179,6 +180,7 @@ For each section, identify:
 ### Step 6 — Update the route layout
 
 Open `src/app/routes.tsx`. Find the page's `*PageLayout`. Confirm:
+- The outermost wrapper `<div>` has **`className="bz-page"`** (matches `HomeLayout`). **This is not optional** — `.bz-page` in `style.css` carries `overflow-x: clip` + `text-wrap: balance`, the project's canonical mobile-overflow guard. Without it, long `.bz-h1` / `.bz-h2` titles and any wide nested viz will trigger horizontal scroll at 375px. Symptom: page scrolls sideways a few px on mobile even though every individual section looks fine. Fix: add `className="bz-page"` to the layout's outer `<div>`. (The legacy inline `style={{fontFamily: "'Inter', sans-serif"}}` can stay or be removed — `.bz-page` already sets the body font.)
 - It renders `<Header />`, the page, `<Footer cta={…}>` — in that order.
 - It does NOT have a `<div style={{paddingTop: 76}}>` wrapper.
 - The `cta` prop on `<Footer>` reflects this page's specific closing copy (or is omitted to use the generic default).
@@ -238,6 +240,7 @@ Every section must look correct from 375px through desktop without horizontal sc
 
 ### Mobile checklist (run before Step 5)
 
+- [ ] **The `*PageLayout` wrapper in `routes.tsx` has `className="bz-page"`.** This is the #1 cause of "small horizontal scroll on mobile" complaints — `.bz-page` carries `overflow-x: clip` + `text-wrap: balance` and is mandatory. Without it, even a perfectly responsive page scrolls sideways a few px on 375px viewports because long headings or nested viz nudge past the viewport.
 - [ ] All `grid-cols-N` (N ≥ 2) have a `grid-cols-1` mobile prefix.
 - [ ] No inline `display: grid` / `display: flex` layout styles.
 - [ ] No fixed `h-[Npx]` on hero panels — use `h-auto`.
@@ -255,6 +258,7 @@ Every section must look correct from 375px through desktop without horizontal sc
 - **Wrapping `<Section>` in another wrapper for padding.** `<Section>` already provides padding; `<Container>` provides horizontal gutter.
 - **Writing a `<Section tone="dark">` closing CTA above `<Footer>`.** The CTA lives inside `<Footer cta={…}>`.
 - **Adding `paddingTop: 76`** anywhere. Header is no longer fixed.
+- **Forgetting `className="bz-page"`** on the new `*PageLayout` wrapper in `routes.tsx`. `.bz-page` carries `overflow-x: clip` + `text-wrap: balance` — the project's mobile-overflow guard. Forgetting it produces "a tiny horizontal scroll on mobile" even when the page itself is perfectly responsive. The class is set on the outermost `<div>` of the layout, alongside the `Inter` font-family inline style.
 - **Reaching for the legacy `marketing/` heroes** (`HeroCentered`, `HeroSplit`, `HeroPanel`). They're pre-rebrand. New heroes use `<Section tone="b">` + `<BadgeGreen>` + `<HeroCanvas>`.
 - **Adding `.biz-mesh`** or `<HeroBadge>`. Both retired.
 - **Per-page `<style>{@media …}</style>` blocks.** Means a primitive's breakpoint is missing — fix the primitive.
