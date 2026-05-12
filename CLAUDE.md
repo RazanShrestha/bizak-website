@@ -223,7 +223,33 @@ Canonical hero rhythm:
 
 This is the **only place** inline `style` for static spacing is sanctioned. Mid-page sections, bentos, etc. use `BentoGrid` / `SectionHead` / `Section pad` / built-in primitive spacing — no inline styles there.
 
-## Anatomy of a marketing page (canonical reference: `src/app/components/HomePage.tsx`)
+## Anatomy of a marketing page
+
+`src/app/components/HomePage.tsx` is **one valid composition** — the
+reference for how primitives fit together, not a template every other
+page must mirror.
+
+What every page must share — **the design language**:
+
+- The palette, tokens and Inter type scale from `theme.css`.
+- The `bz/` primitive vocabulary (`Section`, `Container`, `SectionHead`, `Pill`, `Heading`, `Bento`, etc.) — composition over forks.
+- Alternating `tone="a"` / `tone="b"` between consecutive content sections; dark sections sparingly.
+- The hero *shell* — `<Section tone="b" pad="hero">` + centered `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs, optionally with `<HeroCanvas>` below.
+- Closing-CTA owned by `<Footer cta={…}>` — never a page-level dark CTA section.
+- Clean, minimalistic, no gradients, single lime accent per surface.
+
+What every page may vary — **the design choices**:
+
+- Which sections the page has, in what order, and what each section *is* (bento grid, step card row, custom dashboard mock, streaming-data panel, something invented for this page).
+- The page-specific mocks inside the hero and showcase blocks — these should feel **invented for this page**, not copied from HomePage or another module.
+- Which canonical narratives (`docs/BIZAK_PRODUCT_OVERVIEW.md` §4) and stats (§5.4) the page leans on.
+
+**Rule of thumb:** if two redesigned pages feel like the same page with
+different copy, the structure is too rigid — invent the next one
+differently. The design *language* is the constant; the design
+*choices* are the variable.
+
+Reference composition (HomePage's shape — useful as a starting point):
 
 ```tsx
 import {

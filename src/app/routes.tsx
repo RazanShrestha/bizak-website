@@ -151,10 +151,19 @@ function ProductPageLayout() {
 
 function PurchasingPageLayout() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
       <PurchasingPage />
-      <Footer />
+      <Footer
+        cta={{
+          title: "Take full control of your procurement operations.",
+          titleMuted: "From RFQ to receipt, all on one ledger.",
+          description:
+            "Centralise vendors, auto-route approvals, and 3-way match every PO straight to the ledger — zero re-keying, full audit trail.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Talk to procurement team",
+        }}
+      />
     </div>
   );
 }
@@ -273,10 +282,18 @@ function SalesAndCrmPageLayout() {
 
 function InventoryAndWarehousePageLayout() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
       <InventoryAndWarehousePage />
-      <Footer />
+      <Footer
+        cta={{
+          title: "Take full control of your",
+          titleMuted: "inventory and warehouse.",
+          description: "Track every SKU in real time, automate replenishment.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Talk to operations team",
+        }}
+      />
     </div>
   );
 }

@@ -20,9 +20,10 @@ session):
 
 Phase 0 (foundation), Phase 1 (28 primitives), and Phase 2 (HomePage
 refactor onto primitives) are **done**. **Phase 3 is the per-page
-migration loop** — one PR per page, mirroring `HomePage.tsx`'s structure.
+migration loop** — one PR per page, applying the same *design language*
+as `HomePage.tsx` while inventing each page's *section structure* fresh.
 
-- **Canonical reference page**: `src/app/components/HomePage.tsx`. Read it before any redesign.
+- **Reference page (one valid composition, not a template)**: `src/app/components/HomePage.tsx`. Read it to see how primitives fit together — then design *this* page's sections for *this* page's story. Don't replicate HomePage's section list section-by-section.
 - **Primitive library**: 28 primitives in `src/app/components/bz/`. Barrel: `bz/index.ts`. Catalogue: `bz/README.md`.
 - **Never import from `marketing/` in new code** — that folder is legacy and slated for deletion in Phase 4.
 
@@ -31,6 +32,27 @@ you'll need already exists. If you encounter a shape that ISN'T covered
 by an existing primitive, **add it to `bz/` first** (with paint in
 `style.css`, React wrapper in `bz/`, export in `bz/index.ts`), then use
 it on the page.
+
+### What's fixed vs what's free
+
+**Fixed across every page** (the design language — non-negotiable):
+- Palette, tokens, Inter type scale from `theme.css`.
+- `bz/` primitive vocabulary; composition over forks.
+- Alternating `tone="a"`/`tone="b"`; dark sections sparing.
+- Hero shell — `<Section tone="b" pad="hero">` + centered `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs, optionally with `<HeroCanvas>` below.
+- Closing CTA via `<Footer cta={…}>` — never a page-level dark section.
+- Clean, minimalistic, no gradients, single lime accent per surface.
+
+**Free per page** (the design choices — invent these):
+- Which sections, in what order, with what content.
+- What each section *is* (bento grid, step row, custom dashboard, streaming-data panel, something invented for this page).
+- The page-specific mock inside `<HeroCanvas>` and inside marquee/showcase blocks — should feel invented for this page, not copied from HomePage.
+- Which canonical narratives (`docs/BIZAK_PRODUCT_OVERVIEW.md` §4) and stats (§5.4) the page leans on.
+
+If two redesigned pages feel like the same page with different copy,
+the structure was too rigid. **Clean and minimalistic comes first;
+creative reinvention within the locked design language comes second;
+copying HomePage's exact section list is never required.**
 
 ## Conventions learned from the HomePage refactor (read before editing)
 
@@ -116,16 +138,30 @@ bespoke visuals.
 
 ### Step 2 — Plan section-by-section
 
-For each section, identify:
+First decide *which sections this page needs* — driven by the page's
+story (the module / capability / industry it sells, the narratives from
+`docs/BIZAK_PRODUCT_OVERVIEW.md` §4 it leans on). Do NOT reach for
+HomePage's section list as a template; invent what the page needs.
+
+Then for each section, pick from this toolkit — they are the moves
+available within the design language, not a prescribed sequence:
 
 - **Wrapper** — `<Section tone="a|b|dark">`.
 - **Width** — `<Container width="default|narrow">`.
 - **Heading block** — `<SectionHead index? label title titleMuted? actions?>`.
 - **CTAs** — `<Pill variant="..." withTick? withArrow? href>`.
 - **Cards / grids** — `<BentoGrid cols={N}>` + `<Bento tone=... hover>` (compound: `<Bento.Header>`, `<Bento.Desc>`, `<Bento.Cta>`, `<Bento.Footer>`).
-- **Stats** — `<DataRow>` or `<EntityRow>` inside a `<Bento.Footer>`.
+- **Marquee feature** — `<BigCard>` for a 2-col text+visual marquee block.
+- **Stepped narrative** — `<StepCard>` rows for "how it works" stories.
+- **Stats** — `<DataRow>` / `<EntityRow>` / `<JournalRow>` / `<MiniBars>` / `<StatTile>` inside footers or as standalone tiles.
 - **Eyebrow / pills** — `<Eyebrow index="..." label="...">`.
-- **Hero** — `<Section tone="b"><Container><BadgeGreen>…</BadgeGreen><Heading level={1}>…</Heading><div>{pills}</div><HeroCanvas>{heroCards}</HeroCanvas></Container></Section>`.
+- **Hero shell** (always this shape) — `<Section tone="b" pad="hero"><Container><BadgeGreen>…</BadgeGreen><Heading level={1}>…</Heading><div>{pills}</div>{page-specific mock}</Container></Section>`. The mock below the copy — typically inside `<HeroCanvas>` — should be **invented for this page**, not copied from HomePage's ledger+invoice pair or FinancialManagement's olive+invoice pair.
+- **Closing CTA** — passed via `<Footer cta={…}>` in `routes.tsx`; never as a page-level section.
+
+A section that doesn't fit any of these patterns is fine if it composes
+the same primitives, palette and tokens and reads clean and minimal.
+The toolkit is the *vocabulary*; the section is the *sentence* — write
+it for this page, don't paste it from another.
 
 ### Step 3 — Replace, don't rewrite from scratch
 

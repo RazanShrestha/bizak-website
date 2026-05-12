@@ -264,15 +264,42 @@ Body sections alternate between `--bz-section-a` (paper `#FCFCF7`) and
 rhythm. Dark sections (`bg-bz-olive`) appear sparingly for showcase
 blocks. The closing CTA is in the Footer, not in the page.
 
-A good rhythm for a module page (Financial Management, Sales/CRM, etc.):
+#### What's fixed vs what's free
 
-1. Hero (`tone="b"`) — paper-warm bg, `<HeroCanvas>` below copy.
+**Fixed across every page (the *design language*):**
+- The palette, tokens and Inter type scale from `theme.css`.
+- The `bz/` primitive vocabulary — `<Section>`, `<Container>`, `<SectionHead>`, `<Pill>`, `<Heading>`, `<Bento>`, etc.
+- Alternating `tone="a"` / `tone="b"` between consecutive content sections; dark sections sparing.
+- Hero shell: `<Section tone="b" pad="hero">` + centered `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs. The hero *visual below the copy* is page-specific and should be reinvented per page (see §7.2).
+- The closing CTA is owned by `<Footer cta={…}>` — never a `<Section tone="dark">` in the page.
+- Clean, minimalistic, no gradients, single accent (`--bz-fire`) per surface.
+
+**Free per page (the *design choices*):**
+- Which sections the page has, in what order, with what content.
+- Whether a section is a `<BentoGrid>`, a `<BigCard>`, a `<StepCard>` row, a custom dashboard mock, a streaming-data panel, or something invented for that page's story.
+- Which canonical narratives (§4) and stats (§5.4) the page leans on.
+- The page-specific mock inside `<HeroCanvas>` and inside marquee/showcase sections — these should feel *invented for this page*, not copied from another.
+
+#### A known-good template (not a requirement)
+
+The rhythm below is what HomePage uses. It is **one valid composition**,
+not a spec. Reach for it when nothing about the page suggests a better
+structure; depart from it the moment the page's story would be told
+better another way.
+
+1. Hero (`tone="b"`) — paper-warm bg, page-specific mock below copy.
 2. How-it-works (`tone="a"`) — 3 `<StepCard>`s.
-3. Platform (`tone="b"`) — `<PlatformDashboard>` mock + `<BentoGrid cols={4}>` summary.
-4. Exclusive / capabilities (`tone="a"`) — `<BentoGrid cols={3}>` + a `<BigCard>` marquee feature.
-5. Testimonials (`tone="b"`) — `<Carousel>` + 3 stat tiles.
+3. Platform / showcase (`tone="b"`) — a marquee mock + summary bentos.
+4. Exclusive / capabilities (`tone="a"`) — `<BentoGrid>` + a `<BigCard>` marquee feature.
+5. Testimonials (`tone="b"`) — `<Carousel>` + stat tiles.
 6. FAQ (`tone="a"`) — `<Accordion>`.
 7. (Footer renders the closing CTA via its `cta` prop — no page-level CTA section.)
+
+A page may use 4 sections instead of 6, or 8 instead of 6, or invent a
+section type that doesn't exist on HomePage — as long as the design
+language above stays constant and the result is clean, minimal, and
+unmistakably Bizak. **If two redesigned pages feel like the same page
+with different copy, the structure is too rigid — vary it.**
 
 ---
 
@@ -285,7 +312,7 @@ When the user says "**redesign X**" or "**design a new page for Y**":
 3. **Read `/docs/DESIGN_SYSTEM.md`** for primitive APIs.
 4. **Run the page-design checklist** in the redesign-page skill.
 5. **For copy**: pull from the narratives in §4 and the voice in §5. Use the canonical stats in §5.4 unless the page genuinely needs a new one.
-6. **For section structure**: follow the rhythm in §7.3 — alternate `tone="a"`/`tone="b"` between content sections, dark sections sparingly.
+6. **For section structure**: lock the design language from §7.3 ("what's fixed") — palette, tokens, primitives, alternating `tone="a"`/`tone="b"`, hero shell, closing-CTA-via-Footer. **Then invent the actual sections** for this page's story — don't copy HomePage's section list section-by-section. The §7.3 template is a fallback when nothing else is called for.
 7. **For the closing CTA**: pass it via `<Footer cta={…}>` in the route layout — never as a `<Section tone="dark">` block in the page. See §7.1.
 8. **Confirm the page composes primitives**, not bespoke inline JSX. If a primitive is missing, build it first (see DESIGN_SYSTEM §6).
 
