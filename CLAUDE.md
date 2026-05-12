@@ -249,6 +249,38 @@ different copy, the structure is too rigid — invent the next one
 differently. The design *language* is the constant; the design
 *choices* are the variable.
 
+**Concrete anti-patterns (do not repeat):**
+
+*Section-list clone* — `src/app/components/FinancialManagement.tsx` and
+`src/app/components/SalesCrm.tsx` were both migrated and ended up with
+the **same six section function names in the same order** —
+`HeroSection`, `FoundationsSection`, `TechnicalShowcaseSection`,
+`ReportingSection`, `ConnectivitySection`, `MetricsSection` — with
+content swapped (multi-entity → pipeline-intelligence, financial-control
+→ smart-followups, etc.). Two different products, one identical page
+shape.
+
+*Hero-mock clone* — `SalesCrm.tsx`'s hero is a literal label-swap of
+the *original* HomePage hero: `<HeroCanvas>` wrapping **two
+`<HeroCard>`s** with identical prop shapes (`icon`/`title`/`badge`/
+`badgeVariant`/`eyebrow`/`value` + `<DataRow>` + `<MiniBars>` footer).
+"Live ledger" → "Live pipeline", "Invoice INV-2046" → "Sales Order
+SO-1041". Same shape, swapped strings. **The hero mock — the visual
+below badge/heading/pills — must be invented per page.** `<HeroCard>`
+is one option among many; `<HeroCanvas>` is optional too. Valid
+alternatives include: a single big feature mock, a 3-card row with
+distinct shapes, a vertical streaming feed, a before/after split, a
+process-flow diagram, a map, a document mock, or no mock at all. See
+`.claude/skills/redesign-page/SKILL.md` "Hero mock" section for the
+full taken-mock register and the alternatives list.
+
+When redesigning a page, do not look at the most-recently-redesigned
+page and re-use its section function names, section order, or
+section types. Look at the *legacy file* of the page you're redesigning,
+understand what the page is actually selling, and design *its* sections
+for *its* story. The primitive vocabulary is shared; the sentences
+written with that vocabulary should not be.
+
 Reference composition (HomePage's shape — useful as a starting point):
 
 ```tsx

@@ -1,0 +1,545 @@
+═══════════════════════════════════════════════════════════════════════════════
+BIZAK DESIGN BRIEF — for feeding to a design LLM
+═══════════════════════════════════════════════════════════════════════════════
+
+This document is the complete, self-contained design language for Bizak. It
+covers both the marketing site (bizakerp.com) and the product app
+(system.bizakerp.com). Read it end-to-end before designing anything.
+
+
+───────────────────────────────────────────────────────────────────────────────
+1. WHAT BIZAK IS
+───────────────────────────────────────────────────────────────────────────────
+
+Bizak ERP — "The Operating System for Modern Business." A unified cloud ERP
+that replaces the spreadsheet + 6-SaaS-subs stack most SMEs accumulate.
+
+Always sold as a platform, never a point-tool. Even module pages (Finance,
+Inventory, Sales, etc.) frame their module as a piece of a unified whole.
+
+Audience. Finance director / ops lead / COO at a ~50-person manufacturing,
+distribution, services or retail company. They've outgrown spreadsheets but
+don't want NetSuite/SAP. They want real-time visibility, not feature lists.
+
+Product surface:
+  • Core Modules: Financial Management, Sales & CRM, Purchasing, Inventory &
+    Warehouse, Manufacturing, Projects & Job Costing, Sales Force Management,
+    Point of Sale.
+  • Platform Capabilities: Dashboards & Reporting, Workflow Automation,
+    Integrations, Multi-company & Multi-branch, Document Management.
+  • By-Industry: Manufacturing, Distribution & Logistics, Professional
+    Services, Retail & E-Commerce.
+
+
+───────────────────────────────────────────────────────────────────────────────
+2. THE SIX PRODUCT NARRATIVES (every page leans on a subset)
+───────────────────────────────────────────────────────────────────────────────
+
+1. Real-time, not month-end — every transaction posts the moment it happens.
+   Phrases: "Live", "As of now", "Month-end in hours, not weeks."
+
+2. Single source of truth — one DB, every module, no integration tax.
+   Phrases: "One ledger, every module", "Connected by design."
+
+3. No manual coding — events auto-post journals. Shipment → COGS / Inventory;
+   Invoice → AR / Revenue + Tax. Phrases: "Auto-posted", "0 manual entries."
+
+4. Full audit trail — every figure resolves to its source transaction.
+   Phrases: "Click any number to see its source", "Compliance-ready."
+
+5. Multi-entity & multi-currency native — designed from day 1 for global
+   subsidiaries. Phrases: "Auto-consolidated", "FX translation applied."
+
+6. Replaces the spreadsheet stack — the honest foil is "Excel + QuickBooks +
+   Trello + 4 SaaS subs", not NetSuite. Phrases: "Beyond Excel."
+
+
+───────────────────────────────────────────────────────────────────────────────
+3. BRAND VOICE
+───────────────────────────────────────────────────────────────────────────────
+
+• Confident, terse, technical-but-accessible. Short sentences. Specific
+  numbers. No hedge words ("could", "may help to", "potentially").
+• Outcomes over features. "60% faster month-end" beats "powerful close
+  engine." Anchor numbers ("99%" of what? — always say).
+• Show, don't tell. A live-streaming journal panel says "real-time" louder
+  than the word "real-time." Prefer mockups + data over adjectives.
+• No AI-magic clichés. Refer to AI features concretely ("AI-driven bank
+  statement matching"), never as "AI-powered platform" wash.
+• Never call Bizak a "tool" or "app" — it's a platform / operating system.
+• If a sentence works equally well for Salesforce/NetSuite/HubSpot, rewrite.
+
+Canonical statistics (reuse rather than invent):
+  50,000+ companies powered by Bizak
+  60%     faster month-end close
+  40%     reduction in manual data-entry errors
+  100%    audit compliance
+  87.4%   average OEE (manufacturing)
+  96.2%   on-time delivery
+  99.8%   consolidation accuracy
+  247     journal entries auto-posted in a day (live-demo number)
+
+
+───────────────────────────────────────────────────────────────────────────────
+4. VISUAL SIGNATURE
+───────────────────────────────────────────────────────────────────────────────
+
+1. Palette: paper-cream base + olive dark + lime accent + pistachio
+   secondary. No sage, no gradients, ever.
+
+2. Alternating section backgrounds (marketing only). Consecutive content
+   sections alternate paper #FCFCF7 and warm cream #efefe9. Dark sections
+   (#1A2D20 olive) are sparing showcase blocks.
+
+3. Hero pattern (marketing only). Centered copy on warm-cream surface;
+   pistachio confetti pill above h1; two pill CTAs; optional dark olive
+   "HeroCanvas" panel below with floating cards. Dot-grid texture overlay,
+   never a gradient.
+
+4. Live data over static screenshots. Mocks show flowing data — pulsing
+   "Live" pills, streaming journal rows, OEE gauges, auto-posting feeds.
+   This is the visual language of "real-time."
+
+5. Bento layouts. Asymmetric column spans, not uniform N-column grids.
+
+6. DotGrid for depth on dark. Texture comes from a 1px grid overlay in
+   rgba(252,252,247,0.05). Never gradients.
+
+7. Single font: Inter. Everywhere — body, headings, IDs, SKUs, numerical
+   readouts. Differentiate with letter-spacing or weight, never a font swap.
+   Default heading weight is 500 (calmer than 700).
+
+8. Single accent: lime #d3f969. Pistachio #DBE9B8 is the soft secondary.
+   Everything else is paper / olive / muted-grey.
+
+9. Pills carry meaning. Pill variants and status chips are semantic
+   functional labels, not decoration.
+
+
+───────────────────────────────────────────────────────────────────────────────
+5. DESIGN TOKENS (single source of truth — never redeclare in components)
+───────────────────────────────────────────────────────────────────────────────
+
+SURFACES
+  --bz-paper            #FCFCF7   Primary page bg (light). Section tone A.
+  --bz-paper-warm       #F4F4ED   Cards on paper.
+  --bz-section-a        #FCFCF7   Alternating tone A (= paper).
+  --bz-section-b        #efefe9   Alternating tone B (warm cream).
+  --bz-surface          #FFFFFF   Elevated card on light.
+  --bz-olive            #1A2D20   Dark sections, hero canvas, dark bento.
+  --bz-olive-soft       #243A2D   Lighter olive variant.
+  --bz-olive-dark       #0A100D   Footer chrome.
+  --bz-deep             #0F1411   Pill-dark button fill.
+
+ACCENTS
+  --bz-fire             #d3f969   THE single canonical pop colour (lime).
+  --bz-fire-soft        rgba(211,249,105,0.10)
+  --bz-fire-mid         rgba(211,249,105,0.20)
+  --bz-leaf             #DBE9B8   Pistachio — soft secondary.
+  --bz-leaf-deep        #A8C76C   Pistachio deep (sparing).
+
+TEXT
+  --bz-text             #1A1D19   Body + headings on light.
+  --bz-text-muted       #6E7466   Description copy, meta labels.
+  --bz-text-soft        #A2A296   The muted span inside headings.
+  --bz-text-on-dark     #FCFCF7   Body on dark.
+  --bz-text-on-dark-muted  rgba(252,252,247,0.62)
+  --bz-text-on-dark-soft   rgba(252,252,247,0.45)
+
+LINES
+  --bz-line             #D8D9D3   Primary divider on light.
+  --bz-line-soft        #E5E5E0   Soft divider.
+  --bz-border-on-dark   rgba(252,252,247,0.08)
+
+TYPE SCALE (all Inter)
+  --bz-text-h1          clamp(32px, 4.5vw, 56px)   Hero headline
+  --bz-text-h2          clamp(26px, 3.4vw, 36px)   Section heading
+  --bz-text-h3          clamp(20px, 2.6vw, 28px)   Card/bento title
+  --bz-text-xl          20px   Lead paragraph
+  --bz-text-lg          17px   Description copy
+  --bz-text-base        15px   Body
+  --bz-text-sm          13px   Meta labels
+  --bz-text-eyebrow     12px   "[01] LABEL" eyebrows
+
+TRACKING / LEADING
+  --bz-tracking-eyebrow   0.22em   uppercase eyebrows
+  --bz-tracking-tight    -0.018em  h2/h3
+  --bz-tracking-tighter  -0.022em  h1
+  Leading: 1.7 body, 1.12 heading.
+
+RADII
+  --bz-radius-sm   6     --bz-radius-md  10    --bz-radius-lg  12
+  --bz-radius-xl   18    --bz-radius-2xl 22    --bz-radius-3xl 28
+  --bz-radius-pill 9999
+  Tailwind utilities: rounded-bz-sm / md / lg / xl / 2xl / 3xl / pill.
+  Never use Tailwind's default rounded-md/lg (different scale).
+
+SPACING
+  --bz-section-y         140px desktop / 110px tablet / 80px mobile
+  --bz-section-y-tight   96px
+  --bz-section-x         24px page gutter
+  --bz-container         1320px content max-width
+  --bz-container-narrow  1200px
+  Hero special: pad="hero" = flat 56px top / 96px bottom (no responsive).
+
+SHADOWS
+  --bz-shadow-card   default cards
+  --bz-shadow-lift   hover state
+  --bz-shadow-deep   floating hero cards
+  Depth comes from flat fills + shadows + dot-grid overlays. Never gradients.
+
+
+───────────────────────────────────────────────────────────────────────────────
+6. THE `tone` PROP CONVENTION
+───────────────────────────────────────────────────────────────────────────────
+
+`tone` describes the SURFACE the element sits on, not its text colour.
+
+  tone="light"   (default)  element sits on a light surface → dark text/paint
+  tone="dark"               element sits on a dark surface → paper text/paint
+  tone="a"  (Section)       paper #FCFCF7
+  tone="b"  (Section)       warm cream #efefe9
+  tone="dark" (Section)     olive #1A2D20
+
+Applied identically across Section, Heading, Eyebrow, SectionHead, DataRow,
+EntityRow, JournalRow, MiniBars, ModuleListItem, StatTile, StripeBar,
+Marquee.
+
+
+───────────────────────────────────────────────────────────────────────────────
+7. THE PRIMITIVE LIBRARY (src/app/components/bz/ — marketing site)
+───────────────────────────────────────────────────────────────────────────────
+
+Every new marketing page imports only from `bz/`. The library is the
+vocabulary — sections are sentences you compose, not paste.
+
+ATOMS
+  <Pill variant="dark|light|ghost|ghostDark|accent|leaf" size="sm|md|lg"
+        href? withTick? withArrow? iconLeft? iconRight?>
+  <Eyebrow index?="01" tone?="light|dark">      "[01] LABEL" uppercase
+  <Heading level={1|2|3}>                       Compound: <Heading.Muted>
+  <BadgeGreen>                                  Pistachio confetti pill (hero)
+  <Flag>🇺🇸</Flag>                              Small flag chip
+  <StatusChip variant="live|posted|neutral">    Small status pill
+  <StripeBar pct={44}/>                         Horizontal progress
+  <Tick/>                                       Green check
+  <DotGrid tone="dark|light"/>                  1px grid overlay texture
+
+LAYOUT
+  <Section tone="a|b|dark|paper" pad="default|tight|hero|none">
+  <Container width="default|narrow">           1320 / 1200, mx-auto
+  <HeroCanvas>                                 Dark olive panel + grid overlay
+  <SectionHead index? label title description? actions? tone? titleMaxWidth? spacing?>
+  <BentoGrid cols={2|3|4|12} gap?>             Owns its own breakpoints
+
+CARD SHELLS
+  <Bento tone="dark|fire|leaf|paper" hover? dotGrid? span? minHeight?>
+    Compound: Bento.Header / Bento.Desc / Bento.Cta / Bento.Footer
+  <BigCard text={{title, body, bullets, cta}} visual={…}/>
+  <StepCard number tag title bullets cta visual/>
+  <HeroCard icon title badge badgeVariant eyebrow value>{footer}</HeroCard>
+
+PATTERNS
+  <Marquee speed pauseOnHover tone>
+  <Carousel items autoAdvance render>
+  <Accordion><Accordion.Item question>…</Accordion.Item></Accordion>
+  <FlagsRow prefix flags suffix/>
+
+MICRO-VIZ (fills card footers + step visuals)
+  <DataRow label value emphasis? tone?/>            "label : value" row
+  <MiniBars values highlightLast? tone? height?/>   Tiny bar chart
+  <EntityRow flag name amount tone?/>               🇺🇸 Bizak US $1.24M
+  <JournalRow txn debit credit tone?/>              Auto-posting journal row
+  <ModuleListItem active? tone?>                    Sidebar nav row
+  <StatTile value desc tone?/>                      Big number + label
+
+
+───────────────────────────────────────────────────────────────────────────────
+8. HERO PATTERN — ONE SHAPE FOR ALL MARKETING PAGES
+───────────────────────────────────────────────────────────────────────────────
+
+  <Section tone="b" pad="hero">
+    <Container>
+      <div className="flex flex-col items-center text-center">
+        <BadgeGreen style={{ marginBottom: 28 }}>Now Live, Globally 🎉</BadgeGreen>
+
+        <Heading level={2} style={{ marginBottom: 36 }}>
+          The operating system for modern business,{" "}
+          <Heading.Muted>finance and ops in one place.</Heading.Muted>
+        </Heading>
+
+        <div className="flex flex-wrap justify-center gap-[10px]">
+          <Pill variant="dark" withTick href="...">Get Started</Pill>
+          <Pill variant="light" iconLeft={<Sparkles size={13}/>} href="...">
+            Book a demo
+          </Pill>
+        </div>
+      </div>
+
+      <HeroCanvas>
+        {/* 1–3 floating HeroCards — INVENTED for THIS page */}
+      </HeroCanvas>
+    </Container>
+  </Section>
+
+Hero spacing rules (the only sanctioned inline `style` for static spacing):
+  • BadgeGreen → Heading:   marginBottom: 28
+  • Heading → CTA row:      marginBottom: 36
+  • Section padding:        pad="hero" → 56/96 flat
+
+The hero mock inside HeroCanvas must be invented for the page's story —
+HomePage uses live-ledger + invoice cards; Manufacturing might show OEE +
+work-order cards; Sales would show pipeline + closing-cadence cards.
+
+
+───────────────────────────────────────────────────────────────────────────────
+9. CLOSING CTA — OWNED BY <Footer cta={…}>, NEVER A PAGE SECTION
+───────────────────────────────────────────────────────────────────────────────
+
+The "Take full control of…" moment is rendered by Footer via its `cta` prop.
+Pages override the default by passing `cta` from their *PageLayout in
+routes.tsx. Never add a separate <Section tone="dark"> closing-CTA block
+above <Footer> — that's the legacy pattern.
+
+  <Footer cta={{
+    title: "Take full control of your sales operations.",
+    titleMuted: "Quote to cash in hours, not days.",
+    description: "One order, auto-posted journals, live margin — and a full audit trail.",
+    primaryLabel: "Start free trial",
+    primaryHref: "https://system.bizakerp.com/account/self-register",
+    secondaryLabel: "Talk to sales",
+    secondaryHref: "/contact",
+  }}/>
+
+
+───────────────────────────────────────────────────────────────────────────────
+10. SECTION RHYTHM — WHAT'S FIXED vs FREE (MARKETING PAGES)
+───────────────────────────────────────────────────────────────────────────────
+
+FIXED across every page (the design LANGUAGE):
+  • Palette + tokens + Inter type scale from theme.css
+  • bz/ primitive vocabulary — composition over forks
+  • Alternating tone="a" / tone="b" between consecutive content sections
+  • Dark sections sparing
+  • Hero shell exactly as above
+  • Closing CTA via <Footer cta={…}>
+  • Clean, minimalistic, no gradients, single lime accent per surface
+
+FREE per page (the design CHOICES — invent these):
+  • Which sections, in what order
+  • What each section IS (bento grid, step row, custom dashboard mock,
+    streaming-data panel, something invented)
+  • The page-specific mocks inside HeroCanvas and showcase blocks
+  • Which narratives (§2) and stats (§3) this page leans on
+
+Rule of thumb: if two redesigned pages feel like the same page with
+different copy, the structure is too rigid.
+
+A known-good rhythm (HomePage — ONE valid composition, not a spec):
+  1. Hero (tone="b", pad="hero") — centered copy + 2 pills + HeroCanvas + logo Marquee
+  2. How-it-works (tone="a") — SectionHead + 3× StepCard + FlagsRow
+  3. Platform/showcase (tone="b") — SectionHead with actions + custom dashboard + BentoGrid cols=4
+  4. Exclusive/capabilities (tone="a") — SectionHead + BentoGrid cols=3 + BigCard marquee feature
+  5. Testimonials (tone="b") — Carousel + 3× StatTile column
+  6. FAQ (tone="a") — 2-col: dark olive intro panel (DotGrid + dark SectionHead + 2 pills) left, Accordion right
+
+
+───────────────────────────────────────────────────────────────────────────────
+11. HARD RULES (NON-NEGOTIABLE)
+───────────────────────────────────────────────────────────────────────────────
+
+ 1. Inter only, everywhere. No Hedvig, Manrope, Poppins, font-mono,
+    font-family: monospace. IDs, SKUs, step numbers all stay Inter —
+    differentiate with letter-spacing, weight, or color, never a font swap.
+
+ 2. Lucide icons only. Import lucide-react directly. No @mui/icons-material.
+    No <span className="material-symbols-outlined">. No per-file SVG dictionary.
+
+ 3. No gradients. Period. No linear-gradient / radial-gradient /
+    conic-gradient for cards, buttons, glows, dividers, badges, hero
+    backgrounds, anything. Depth = flat fills + shadows + DotGrid.
+
+ 4. className over inline style. The only legitimate inline `style` is
+    (a) hero spacing (marginBottom: 28/36), (b) genuinely dynamic values
+    (width: ${pct}%). Never onMouseEnter/onMouseLeave style mutations —
+    use hover: utilities or :hover on the primitive's CSS class.
+
+ 5. No per-file color objects. No `const C = {...}` at the top of a page
+    file. Use tokens (var(--bz-fire)) or Tailwind utilities (text-bz-fire).
+
+ 6. Pages stay small. Composition + data arrays. ~150–400 lines TSX. Any
+    section past ~80 lines of JSX = extract a primitive.
+
+ 7. Scope before write. New global primitives go in bz/. Never add to
+    marketing/ — that folder is being deleted in Phase 4.
+
+ 8. Delegate to atoms — never reinvent. A raw <button>/<a>/styled <div>
+    whose shape mirrors a primitive must delegate to that primitive. If the
+    visual shape isn't expressible by an existing variant, add the variant
+    on the primitive first, then delegate.
+
+ 9. Closing CTA goes in <Footer cta={…}> — never a page-level dark section.
+
+10. Header is non-fixed. No paddingTop: 76, pt-[76px], mt-[76px] — legacy shims.
+
+11. Sections alternate tone="a"/tone="b" between consecutive content blocks.
+
+12. Mobile responsive from 375px. Every grid-cols-N (N ≥ 2) needs a
+    grid-cols-1 mobile fallback. No fixed pixel heights on hero panels.
+    Decorative sidebars hidden md:flex. Dense tables wrapped in
+    overflow-x-auto + min-w-[…].
+
+13. *PageLayout outer <div> MUST have className="bz-page". That class
+    carries overflow-x: clip + text-wrap: balance — the canonical
+    mobile-overflow guard.
+
+14. No per-page <style>{@media …}</style> blocks. Responsive logic lives
+    in the primitive that owns the layout.
+
+
+───────────────────────────────────────────────────────────────────────────────
+12. APPLYING THIS LANGUAGE TO PRODUCT APP SCREENS (system.bizakerp.com)
+───────────────────────────────────────────────────────────────────────────────
+
+The marketing primitives (Section, BentoGrid, HeroCanvas, BadgeGreen,
+StepCard, BigCard) are for marketing rhythm. They DO NOT fit data-table
+pages, transaction-detail pages, or entry forms. The following carries
+over to the product app; the rest is reinvented.
+
+CARRIES OVER (the design language is global):
+  • Palette: paper #FCFCF7 base, olive #1A2D20 dark surfaces, lime #d3f969
+    accent, pistachio #DBE9B8 soft secondary. Same hex values, same usage.
+  • Inter only, with the same scale and tracking tokens.
+  • No gradients, no exceptions.
+  • Lucide icons only.
+  • Radii: rounded-bz-md (10) for cards/inputs, rounded-bz-lg (12) for
+    panels, rounded-bz-pill for status chips.
+  • <StatusChip variant="live|posted|neutral"> for inline status (extend
+    with more semantic variants per module: draft, confirmed, shipped,
+    invoiced, paid, void, overdue).
+  • <Pill variant="dark|light|leaf|accent"> for action buttons. Primary
+    actions use variant="dark"; secondary use variant="light" or
+    variant="ghost".
+  • <DotGrid tone="dark"> for any dark surface in the app (sidebar,
+    drawer headers, KPI strip backgrounds).
+  • Mono-style numerical readouts use Inter with tabular-nums +
+    letter-spacing -0.01em + weight 500. Never a mono font.
+  • Lime accent is sparing — used ONLY for the single most important
+    affordance on screen (the primary CTA, an active state, a positive
+    delta). Never for body chrome.
+
+DOES NOT CARRY OVER:
+  • Section alternation tone="a"/tone="b" — app screens are continuous
+    surfaces, not rhythmic marketing sections.
+  • The hero shell — app screens have a page header bar, not a hero.
+  • Closing CTA via Footer — app screens don't have a marketing footer.
+  • BentoGrid composition for storytelling — app screens use functional
+    layouts (data tables, two-column form+sidebar, three-pane workbench).
+  • BadgeGreen confetti pill — used only for marketing hero.
+
+APP SCREEN ANATOMY (the recurring shapes):
+
+  PAGE HEADER BAR (fixed top of content area, NOT the marketing header)
+    • Left: breadcrumb (Module › Submodule › Page) + page title (h2 size,
+      weight 500, --bz-text).
+    • Right: action cluster — <Pill variant="dark">New X</Pill> primary,
+      plus filter/export/settings icon-buttons.
+    • Bottom border: 1px border-bz-line-soft.
+    • Padding: 24px horizontal, 20px vertical.
+
+  KPI STRIP (optional, under the page header)
+    • Row of 3–5 stat tiles on bg-bz-section-b or bg-bz-paper-warm.
+    • Each tile: meta-label (text-bz-text-muted, 11px, uppercase tracking
+      0.18em), big number (Inter 500, 26px, tabular-nums), delta chip
+      using StatusChip variant.
+
+  DATA TABLE (the list-view core)
+    • Outer wrapper: rounded-bz-lg border border-bz-line-soft bg-bz-surface.
+    • Toolbar row at top: search input (left), filter chips, view density,
+      column settings, export, bulk-action menu.
+    • Table headers: bg-bz-paper-warm, text-bz-text-muted, 11.5px,
+      uppercase tracking 0.12em, weight 500, sortable arrow icons.
+    • Rows: 56–64px height, separator border-bz-line-soft, hover
+      bg-bz-paper-warm/60, click → detail view.
+    • Status cells use <StatusChip>. Money cells right-aligned, tabular-nums,
+      slightly darker than --bz-text.
+    • Selected row: bg-bz-fire-soft border-l-2 border-bz-fire.
+    • Pagination footer: row count left, page controls right.
+
+  DETAIL VIEW (the transaction view)
+    • Two columns: main content (8/12) + sidebar (4/12) on desktop;
+      stacks on mobile.
+    • Header card at top: doc# + status chip + primary actions on the
+      right (Confirm / Cancel / More).
+    • Main: tabs (Overview, Items, Shipments, Invoices, Activity), each
+      tab a panel with rounded-bz-lg border on bg-bz-surface.
+    • Sidebar: meta panels — Customer, Addresses, Totals, Audit Trail.
+      Each panel is a small card with section title + key/value DataRows.
+    • Activity / Audit panel uses JournalRow-style entries: actor avatar
+      circle + "Sara confirmed SO-1041" + relative timestamp + drilldown
+      chevron. The audit trail is the embodiment of narrative #4.
+
+  CREATE/EDIT FORM (the entry form)
+    • Single column, max-w-[920px], left-aligned (NOT centered).
+    • Sticky form header at top: title (e.g. "New Sales Order") + Save
+      Draft (variant="light") + Confirm (variant="dark") on the right.
+    • Sections grouped as cards: rounded-bz-lg border-bz-line-soft
+      bg-bz-surface, 28px internal padding, 20px gap between sections.
+    • Each section has a small icon-badge (24px square,
+      rounded-bz-md, bg-bz-paper-warm) + section title + helper text
+      underneath.
+    • Fields: label above input. Labels are 12.5px text-bz-text-muted
+      uppercase tracking-0.10em. Inputs: 40px height, rounded-bz-md,
+      border-bz-line, bg-bz-surface, 14px Inter, focus ring is
+      ring-2 ring-bz-fire/40.
+    • Line-items grid (for an order): inline table inside the form
+      section, with add-row at the bottom. Quantity / Rate / Tax / Total
+      columns auto-compute the line total; running total at the bottom.
+    • Validation: error text below the field, 12px text-[#B7393A] (red
+      not yet tokenized — propose --bz-danger #B7393A).
+    • Sticky totals card at the bottom-right of long forms.
+
+  EMPTY STATE
+    • Centered, illustration-less. Lucide icon at 40px in text-bz-text-soft,
+      h3-sized title, paragraph subtext, primary <Pill> CTA.
+
+  SIDE DRAWER (for quick-create / row preview)
+    • Slides from the right, 480–560px wide.
+    • Header bar with title + close X. Body uses the same form patterns
+      as the full create view but compressed.
+
+  COMMAND PALETTE (Cmd-K)
+    • Floating panel, 640px wide, rounded-bz-xl border-bz-line-soft
+      bg-bz-surface shadow-[0_20px_60px_rgba(15,20,17,0.18)].
+
+THE PRODUCT APP'S LEFT NAV (persistent shell)
+  • Width: 240px expanded / 64px collapsed.
+  • bg-bz-olive, text-bz-text-on-dark, DotGrid overlay at 0.05 opacity.
+  • Sections: Workspace switcher (top) → primary modules (Finance, Sales,
+    Inventory, Manufacturing, Projects) → admin (Settings, Users) at bottom.
+  • Active item: bg-white/[0.06] + 2px left border-bz-fire + lime icon.
+  • Module group headers: 10.5px text-white/[0.55] uppercase tracking 0.18em.
+
+THE PRODUCT APP'S TOP BAR
+  • 56px tall, bg-bz-surface, border-b border-bz-line-soft.
+  • Left: workspace name + branch/entity selector chip.
+  • Center: command-palette trigger (Search… ⌘K) in a 360px input pill.
+  • Right: notifications icon + help icon + user avatar.
+
+
+───────────────────────────────────────────────────────────────────────────────
+13. THE ONE MENTAL MODEL
+───────────────────────────────────────────────────────────────────────────────
+
+Pages are composition + data. Primitives own colour, spacing, type, hover,
+breakpoints. Tokens own all values. Header/footer + closing CTA are owned
+by the route layout. Hero is one shape; marketing section structure is
+freely invented within a fixed design language. Real-time live data over
+static screenshots. Single lime accent per surface. Inter and only Inter.
+No gradients, no exceptions.
+
+That's the system. Anything that violates it isn't Bizak.
+
+═══════════════════════════════════════════════════════════════════════════════
+END OF BRIEF
+═══════════════════════════════════════════════════════════════════════════════

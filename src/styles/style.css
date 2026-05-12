@@ -8458,6 +8458,17 @@
 }
 .bz-footer-card > * { position: relative; z-index: 1; }
 
+.bz-footer-card--light {
+  background: var(--bz-section-b); 
+  color: var(--bz-text);
+  border: 1px solid var(--bz-line);
+}
+.bz-footer-card--light::before {
+  background-image:
+    linear-gradient(rgba(15,20,17,0.04) 1px, transparent 1px),
+    linear-gradient(to right, rgba(15,20,17,0.04) 1px, transparent 1px);
+}
+
 /* Flag chip */
 .bz-flag {
   width: 24px;

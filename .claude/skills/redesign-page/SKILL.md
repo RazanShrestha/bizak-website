@@ -131,20 +131,127 @@ If any item fails, the redesign is the work to bring it into compliance.
 
 ## The migration
 
-### Step 1 — Read the page
+### ⛔ The cloning trap — read this before anything else
 
-Read the entire file end-to-end. Note sections, content data, icons,
-bespoke visuals.
+The single most common failure mode of this skill is **copying the
+section structure of the most-recently-redesigned page into the new
+page**. Concrete example from this codebase:
 
-### Step 2 — Plan section-by-section
+> `src/app/components/FinancialManagement.tsx` and
+> `src/app/components/SalesCrm.tsx` ended up with **the same six
+> section function names in the same order** — `HeroSection`,
+> `FoundationsSection`, `TechnicalShowcaseSection`, `ReportingSection`,
+> `ConnectivitySection`, `MetricsSection` — with content swapped
+> (multi-entity → pipeline-intelligence, financial-control →
+> smart-followups, etc.). Two different products, one identical page.
+> **This is the failure we are fixing.**
 
-First decide *which sections this page needs* — driven by the page's
-story (the module / capability / industry it sells, the narratives from
-`docs/BIZAK_PRODUCT_OVERVIEW.md` §4 it leans on). Do NOT reach for
-HomePage's section list as a template; invent what the page needs.
+Hard rules to avoid this:
 
-Then for each section, pick from this toolkit — they are the moves
-available within the design language, not a prescribed sequence:
+1. **Do not read another page file (`HomePage.tsx`, `FinancialManagement.tsx`, `SalesCrm.tsx`, etc.) as a *structural* reference.** Read them only to see *how primitives compose at the JSX level* — never to decide what sections this page should have. The moment you find yourself thinking "I'll do a `FoundationsSection` like FM has", stop.
+2. **Forbidden: identical section function names across pages.** If you're about to write `function FoundationsSection()` because FM has one, rename it to something that describes *this page's* job (e.g. `PipelineOverviewSection`, `QuotingFlowSection`) AND redesign what's inside. Same name + different content = still a clone.
+3. **Forbidden: identical hero mocks across pages — see the dedicated "Hero mock" section below.** This is the second-most-common failure (after the section-list clone) and gets its own callout because the `<HeroCard>` primitive's prop shape is a magnet for label-swap cloning.
+4. **Forbidden: cloning the dense 4-bento "TechnicalShowcase" + dense "Reporting" + "Connectivity hub" + "Metrics" arc.** That's FM's arc. If it shows up in another page, the redesign hasn't earned its sections.
+5. **Read the existing page first** (Step 1). The legacy content tells you what this page is actually selling. The redesign's section list should be driven by *that*, not by what FM happens to do.
+
+### ⛔ Hero mock — the most-copied component on the site
+
+The hero *shell* (`<Section tone="b" pad="hero">` + centered
+`<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs) is **fixed**.
+
+The hero *mock* — the visual below the CTAs — is **per-page-invented**.
+The LLM keeps cloning it. Concrete evidence:
+
+> `src/app/components/SalesCrm.tsx`'s hero is a literal label-swap of
+> the *original* HomePage hero: `<HeroCanvas>` wrapping **two
+> `<HeroCard>`s** sharing identical prop shapes (`icon` + `title` +
+> `badge` + `badgeVariant` + `eyebrow` + `value` + a `<DataRow>` +
+> `<MiniBars>` footer). The only differences are the strings —
+> "Live ledger" → "Live pipeline", "Invoice INV-2046" → "Sales Order
+> SO-1041". Two different products, one identical hero card pair.
+> This is the *next* clone failure to fix.
+
+**Mocks already in use — taken, do not re-use:**
+
+| Page | Hero mock |
+|---|---|
+| `HomePage.tsx` (current) | `<HeroCanvas>` with a 12-col split: live auto-posting journal stream (col-7) + stacked cash-position + dual-stats panel (col-5). |
+| `FinancialManagement.tsx` | Two-card editorial split on a paper section (no `<HeroCanvas>`): dark olive panel with "Reconciliation ✓ Complete" chip + "Close the period" CTA, paired with a Bizak-branded paper income-statement card. |
+| `SalesCrm.tsx` (current — TO BE REPLACED on its next redesign) | `<HeroCanvas>` + two `<HeroCard>`s (the original HomePage pattern). |
+
+If you would write a hero mock that fits one of those three rows
+above, **stop**. Pick a different composition.
+
+**Valid hero mock alternatives** (pick one, or invent your own — the
+list is illustrative, not exhaustive):
+
+- A **single full-width feature panel** — one big mock that owns the canvas, e.g. a sprawling Gantt chart, a multi-warehouse stock map, a manufacturing OEE gauge cluster.
+- A **3-card horizontal row** with distinct shapes (not three uniform `<HeroCard>`s) — e.g. a tall stat tile + a wide chart panel + a small status feed.
+- A **vertical timeline / streaming feed** filling the canvas — e.g. a "today's activity" timeline for an ops page.
+- A **before/after split** — left half "spreadsheet hell" mock, right half Bizak's unified view. Strong for pages leaning on narrative §4.6.
+- A **dashboard sidebar + main panel** mock — like `PlatformDashboard` but as the hero, used to show breadth.
+- A **horizontal marquee/carousel** of mini KPI tiles flowing through the canvas — when the page sells "many things in one place."
+- A **headline statistic** owning the centre — one huge number with a small live-data row beneath it (good for pages with one canonical stat like 87.4% OEE).
+- A **process-flow diagram** — boxes + connectors showing the page's workflow (good for `/workflow`, `/Integrations`, `/MulticompanyAndBranches`).
+- A **map / geographic mock** — for pages touching multi-branch, distribution, global subsidiaries.
+- A **document mock** — a single styled invoice, BoM, quote, work-order, lease — when the page sells a specific artefact.
+- A **no-mock hero** — just badge + heading + pills + a tasteful divider or short feature row. Sometimes the strongest hero is restraint. Valid for narrative pages (`/why-bizak`, `/about`).
+
+**Rules for picking:**
+
+1. **The mock must visualise THIS page's core narrative.** A Manufacturing page's hero should make floor-ops feel tactile. A Distribution page's hero should make routing/throughput feel kinetic. A Projects page's hero should make project-P&L feel legible. If the mock could equally appear on any other module page, it's wrong.
+2. **The `<HeroCard>` primitive is one option, not the default.** Reach for it only when its specific shape (small floating card with icon-title-badge-eyebrow-value-footer) is the BEST fit for this page's story. If you're using it because HomePage/SalesCrm used it, that's the trap — use a different shape.
+3. **`<HeroCanvas>` itself is also optional.** A page can have a hero mock directly on the `bz-section-b` surface (as `FinancialManagement.tsx` does) — no dark canvas required. Match the canvas/no-canvas choice to whether the mock benefits from a dark backdrop.
+4. **Card count is not magical.** 2 cards is not the canon. The mock might be 1 panel, or 3, or 5, or a single composite. Let the story decide.
+
+Hero mocks belong in the Step 2 design brief (next) — write the mock's
+shape and *why it serves this page specifically* before opening any
+primitive file.
+
+### Step 1 — Read the page AND understand what it sells
+
+Read the entire legacy file end-to-end. Note sections, content data,
+icons, bespoke visuals.
+
+Then, before touching primitives, answer (out loud, in your reply):
+
+- **What is this page selling, in one sentence?** (Pull from `docs/BIZAK_PRODUCT_OVERVIEW.md` §3 — module / capability / industry.)
+- **Which 2–3 narratives from §4 does it lean hardest on?** (e.g. `/SalesCrm` leans on §4.2 single-source-of-truth and §4.6 spreadsheet-replacement; `/InventoryAndWarehouse` leans on §4.1 real-time; `/manufacturing` leans on operational-control / OEE.)
+- **What's the user emotional payoff?** (For FM it's "close in hours, not weeks." For SalesCrm it would be "every deal in one place, every follow-up automatic." For Manufacturing it's "command the floor.")
+- **What does THIS page need to show that no other Bizak page needs to show?** This is the section that should make the page feel unmistakably *this* page.
+
+### Step 2 — Section design brief (write this BEFORE picking primitives)
+
+For *each* section you plan to include, fill in this three-line brief
+out loud in your reply:
+
+- **Section purpose** — one sentence: what story does it tell on *this* page?
+- **Why this design** — one sentence: what visual / layout / data-mock makes that story land? (Bento grid? A custom dashboard mock? A live streaming feed? A side-by-side compare? A timeline?)
+- **Why this is NOT a copy of another page's section** — one sentence: how does this section differ from the same-position section on HomePage, FinancialManagement, SalesCrm, etc.?
+
+If the third line is hard to write, you're cloning. Stop and invent
+something else.
+
+#### The hero section gets an extra line
+
+Because the hero mock is the most-cloned component on the site, the
+hero's brief is **four** lines, not three:
+
+- **Section purpose** — what does the hero need to communicate in 3 seconds?
+- **Hero mock shape** — describe the visual composition you're planning *before* picking primitives. Example shapes: "a single 600px-wide BoM document mock", "a 3-stop horizontal timeline", "a Gantt chart filling the canvas", "a before/after split (spreadsheet vs. Bizak view)", "a multi-warehouse stock map." Reach for one of the alternatives listed in the "Hero mock" section above, OR invent a new shape that fits this page's story.
+- **Why this serves THIS page** — one sentence: what about this page's narrative makes this mock the right choice (and not, say, a `<HeroCanvas>` with two `<HeroCard>`s)?
+- **Why this is NOT a copy** — one sentence: how does it differ from HomePage's live ledger stream + cash position, FinancialManagement's olive panel + invoice card, SalesCrm's two-`<HeroCard>` pair, and any other page's hero mock?
+
+If you cannot write the 4th line without it being "different labels on
+the same shape," the mock is still a clone. Pick another shape.
+
+Only after the brief is written, reach for the primitive toolkit below.
+
+### Step 3 — Compose the sections using the primitive toolkit
+
+The primitives are the design language's *vocabulary* — the section
+brief above is the *sentence*. Pick from this toolkit; do not let the
+toolkit decide which sections you have:
 
 - **Wrapper** — `<Section tone="a|b|dark">`.
 - **Width** — `<Container width="default|narrow">`.
@@ -163,7 +270,7 @@ the same primitives, palette and tokens and reads clean and minimal.
 The toolkit is the *vocabulary*; the section is the *sentence* — write
 it for this page, don't paste it from another.
 
-### Step 3 — Replace, don't rewrite from scratch
+### Step 4 — Replace, don't rewrite from scratch
 
 - Lift inline content into `const ARRAY = [...]` data structures.
 - Convert each inline `style={...}` into a token reference or className.
@@ -188,7 +295,7 @@ it for this page, don't paste it from another.
 - Replace gradients with flat colours, shadows, or `<DotGrid>` overlays. No exceptions.
 - Replace `<svg>` icons with lucide equivalents (or `<Icon name>` for data-driven arrays).
 
-### Step 4 — Remove dead code
+### Step 5 — Remove dead code
 
 - Delete `const C = { ... }` objects.
 - Delete unused imports.
@@ -198,7 +305,7 @@ it for this page, don't paste it from another.
 - Delete `<Section tone="dark">` closing CTAs — move copy into `<Footer cta={…}>`.
 - Do **not** leave `// removed` comments.
 
-### Step 5 — Verify
+### Step 6 — Verify
 
 1. Read the migrated file end-to-end. Sanity-check that no `'#hex'` literals remain (except dynamic).
 2. Grep for forbidden patterns:
@@ -213,7 +320,7 @@ it for this page, don't paste it from another.
    Should be 0 (the legacy aliases still resolve, but new code should use the descriptive tokens).
 4. If non-trivial, run `npm run build` + `npm run dev`.
 
-### Step 6 — Update the route layout
+### Step 7 — Update the route layout
 
 Open `src/app/routes.tsx`. Find the page's `*PageLayout`. Confirm:
 - The outermost wrapper `<div>` has **`className="bz-page"`** (matches `HomeLayout`). **This is not optional** — `.bz-page` in `style.css` carries `overflow-x: clip` + `text-wrap: balance`, the project's canonical mobile-overflow guard. Without it, long `.bz-h1` / `.bz-h2` titles and any wide nested viz will trigger horizontal scroll at 375px. Symptom: page scrolls sideways a few px on mobile even though every individual section looks fine. Fix: add `className="bz-page"` to the layout's outer `<div>`. (The legacy inline `style={{fontFamily: "'Inter', sans-serif"}}` can stay or be removed — `.bz-page` already sets the body font.)
@@ -221,7 +328,7 @@ Open `src/app/routes.tsx`. Find the page's `*PageLayout`. Confirm:
 - It does NOT have a `<div style={{paddingTop: 76}}>` wrapper.
 - The `cta` prop on `<Footer>` reflects this page's specific closing copy (or is omitted to use the generic default).
 
-### Step 7 — Report
+### Step 8 — Report
 
 End with a short summary: what sections were migrated, what bespoke
 pieces remained (if any), what primitives were added/extended as a side
@@ -274,7 +381,7 @@ Every section must look correct from 375px through desktop without horizontal sc
 <div className="px-4 md:px-8 py-5 md:py-7">
 ```
 
-### Mobile checklist (run before Step 5)
+### Mobile checklist (run before Step 6 — Verify)
 
 - [ ] **The `*PageLayout` wrapper in `routes.tsx` has `className="bz-page"`.** This is the #1 cause of "small horizontal scroll on mobile" complaints — `.bz-page` carries `overflow-x: clip` + `text-wrap: balance` and is mandatory. Without it, even a perfectly responsive page scrolls sideways a few px on 375px viewports because long headings or nested viz nudge past the viewport.
 - [ ] All `grid-cols-N` (N ≥ 2) have a `grid-cols-1` mobile prefix.

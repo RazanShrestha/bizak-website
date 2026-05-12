@@ -1,11 +1,15 @@
 import { ArrowUpRight, Instagram, Twitter, Facebook, Linkedin, Sparkles } from "lucide-react";
 import bizakLogoFooter from "../../assets/bizaklogo-footer.png";
+import bizakLogoLight from "../../assets/bizaklogo.png";
 import footerBgImage from "../../assets/footerimg.png";
 
 // ─── Footer CTA — dynamic per page ────────────────────────────────────────────
 //
 // Pages render <Footer cta={{...}} /> to override the closing CTA. Without a
 // prop, Footer falls back to the homepage default.
+//
+// Pass `isLightMode` to render the footer on a paper surface (no warehouse
+// background image, dark text, light card, dark logo).
 
 export interface FooterCta {
   title: React.ReactNode;          // e.g. "Take full control of your operations."
@@ -66,47 +70,86 @@ const footerCols: { heading: string; links: { label: string; href: string }[] }[
   },
 ];
 
-const FOOTER_LINK_STYLE: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 6,
-  color: "rgba(252,252,247,0.62)",
-  textDecoration: "none",
-  fontFamily: "Inter",
-  fontSize: 14,
-  fontWeight: 400,
-  padding: "4px 0",
-  transition: "color 0.18s ease",
-};
-
-export function Footer({ cta }: { cta?: FooterCta } = {}) {
+export function Footer({ cta, isLightMode = false }: { cta?: FooterCta; isLightMode?: boolean } = {}) {
   const c: FooterCta = { ...DEFAULT_CTA, ...(cta ?? {}) };
+
+  const p = isLightMode
+    ? {
+        heading: "var(--bz-text)",
+        headingMuted: "var(--bz-text-soft)",
+        body: "var(--bz-text-muted)",
+        link: "var(--bz-text-muted)",
+        linkHover: "var(--bz-text)",
+        colHeading: "var(--bz-text-soft)",
+        meta: "var(--bz-text-muted)",
+        divider: "var(--bz-line)",
+        socialBg: "rgba(15,20,17,0.04)",
+        socialBgHover: "rgba(15,20,17,0.08)",
+        socialBorder: "var(--bz-line)",
+        socialIcon: "var(--bz-text-muted)",
+        socialIconHover: "var(--bz-text)",
+      }
+    : {
+        heading: "#FCFCF7",
+        headingMuted: "rgba(252,252,247,0.55)",
+        body: "rgba(252,252,247,0.62)",
+        link: "rgba(252,252,247,0.62)",
+        linkHover: "#FCFCF7",
+        colHeading: "rgba(252,252,247,0.55)",
+        meta: "rgba(252,252,247,0.45)",
+        divider: "rgba(252,252,247,0.08)",
+        socialBg: "rgba(252,252,247,0.06)",
+        socialBgHover: "rgba(252,252,247,0.12)",
+        socialBorder: "rgba(252,252,247,0.08)",
+        socialIcon: "rgba(252,252,247,0.62)",
+        socialIconHover: "#FCFCF7",
+      };
+
+  const linkStyle: React.CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    color: p.link,
+    textDecoration: "none",
+    fontFamily: "Inter",
+    fontSize: 14,
+    fontWeight: 400,
+    padding: "4px 0",
+    transition: "color 0.18s ease",
+  };
+
+  const wrapperStyle: React.CSSProperties = isLightMode
+    ? {
+        position: "relative",
+        background: "#ffffff",
+        padding: "0 16px 24px",
+      }
+    : {
+        position: "relative",
+        backgroundImage: `url(${footerBgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        padding: "0 16px 24px",
+      };
+
   return (
     <footer>
-      {/* ─── Single wrapper: warehouse image + olive tint covers BOTH the CTA and the framed card ─── */}
-      <div
-        style={{
-          position: "relative",
-          backgroundImage: `url(${footerBgImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          padding: "0 16px 24px",
-        }}
-      >
-        {/* Olive tint over the warehouse image — covers the entire footer area */}
-        <div
-          aria-hidden
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(26,45,32,0.55)",
-            pointerEvents: "none",
-          }}
-        />
+      <div style={wrapperStyle}>
+        {!isLightMode && (
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(26,45,32,0.55)",
+              pointerEvents: "none",
+            }}
+          />
+        )}
 
         <div style={{ position: "relative", maxWidth: 1320, margin: "0 auto" }}>
-          {/* CTA block — sits on the tinted warehouse bg, light text */}
+          {/* CTA block */}
           <div
             style={{
               textAlign: "center",
@@ -117,12 +160,12 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
               padding: "96px 16px 72px",
             }}
           >
-            <h2 className="bz-h2" style={{ maxWidth: 720, color: "#FCFCF7" }}>
+            <h2 className="bz-h2" style={{ maxWidth: 720, color: p.heading }}>
               {c.title}
               {c.titleMuted && (
                 <>
                   {" "}
-                  <span style={{ color: "rgba(252,252,247,0.55)" }}>{c.titleMuted}</span>
+                  <span style={{ color: p.headingMuted }}>{c.titleMuted}</span>
                 </>
               )}
             </h2>
@@ -131,7 +174,7 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
                 style={{
                   fontFamily: "var(--bz-body-font)",
                   fontSize: 15,
-                  color: "rgba(252,252,247,0.62)",
+                  color: p.body,
                   margin: 0,
                   maxWidth: 520,
                   lineHeight: 1.55,
@@ -153,17 +196,20 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
                 {c.primaryLabel}
                 <ArrowUpRight size={14} />
               </a>
-              <a href={c.secondaryHref} className="bz-pill bz-pill-ghost-dark">
+              <a
+                href={c.secondaryHref}
+                className={`bz-pill ${isLightMode ? "bz-pill-ghost" : "bz-pill-ghost-dark"}`}
+              >
                 <Sparkles size={13} />
                 {c.secondaryLabel}
               </a>
             </div>
           </div>
 
-          {/* Framed card — sits on top of the same tinted bg */}
+          {/* Framed card */}
           <div style={{ position: "relative" }}>
             <div style={{ position: "relative" }}>
-          <div className="bz-footer-card">
+          <div className={`bz-footer-card${isLightMode ? " bz-footer-card--light" : ""}`}>
           {/* Top row: link columns */}
           <div
             style={{
@@ -177,7 +223,7 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
             {/* Brand col */}
             <div>
               <img
-                src={bizakLogoFooter}
+                src={isLightMode ? bizakLogoLight : bizakLogoFooter}
                 alt="Bizak ERP"
                 style={{ height: 48, width: "auto", marginBottom: 24 }}
               />
@@ -186,7 +232,7 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
                   fontFamily: "Inter",
                   fontSize: 14,
                   fontWeight: 400,
-                  color: "rgba(252,252,247,0.62)",
+                  color: p.body,
                   lineHeight: 1.65,
                   maxWidth: 280,
                   margin: 0,
@@ -207,7 +253,7 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
                 </a>
                 <a
                   href="/contact"
-                  className="bz-pill bz-pill-ghost-dark"
+                  className={`bz-pill ${isLightMode ? "bz-pill-ghost" : "bz-pill-ghost-dark"}`}
                   style={{ padding: "10px 16px", fontSize: 13 }}
                 >
                   Talk to sales
@@ -225,7 +271,7 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
                     fontWeight: 500,
                     letterSpacing: "0.16em",
                     textTransform: "uppercase",
-                    color: "rgba(252,252,247,0.55)",
+                    color: p.colHeading,
                     margin: 0,
                     paddingBottom: 18,
                   }}
@@ -237,9 +283,9 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
                     <li key={link.label}>
                       <a
                         href={link.href}
-                        style={FOOTER_LINK_STYLE}
-                        onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#FCFCF7")}
-                        onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(252,252,247,0.62)")}
+                        style={linkStyle}
+                        onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = p.linkHover)}
+                        onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = p.link)}
                       >
                         {link.label}
                         <ArrowUpRight size={13} style={{ opacity: 0.45 }} />
@@ -256,7 +302,7 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
             style={{
               marginTop: 56,
               height: 1,
-              background: "rgba(252,252,247,0.08)",
+              background: p.divider,
             }}
           />
 
@@ -276,7 +322,7 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
                 fontFamily: "Inter",
                 fontSize: 12.5,
                 fontWeight: 400,
-                color: "rgba(252,252,247,0.45)",
+                color: p.meta,
                 lineHeight: 1.7,
               }}
             >
@@ -305,22 +351,22 @@ export function Footer({ cta }: { cta?: FooterCta } = {}) {
                     width: 38,
                     height: 38,
                     borderRadius: 999,
-                    background: "rgba(252,252,247,0.06)",
-                    border: "1px solid rgba(252,252,247,0.08)",
+                    background: p.socialBg,
+                    border: `1px solid ${p.socialBorder}`,
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "rgba(252,252,247,0.62)",
+                    color: p.socialIcon,
                     transition: "background 0.18s ease, color 0.18s ease",
                     textDecoration: "none",
                   }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = "rgba(252,252,247,0.12)";
-                    (e.currentTarget as HTMLElement).style.color = "#FCFCF7";
+                    (e.currentTarget as HTMLElement).style.background = p.socialBgHover;
+                    (e.currentTarget as HTMLElement).style.color = p.socialIconHover;
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = "rgba(252,252,247,0.06)";
-                    (e.currentTarget as HTMLElement).style.color = "rgba(252,252,247,0.62)";
+                    (e.currentTarget as HTMLElement).style.background = p.socialBg;
+                    (e.currentTarget as HTMLElement).style.color = p.socialIcon;
                   }}
                 >
                   <Icon size={16} />

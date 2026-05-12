@@ -1,311 +1,739 @@
+import * as React from "react";
 import {
-  Section, Container, SectionHeading, Button, Card,
-  IconBadge, HeroBadge, HeroCentered,
-} from "./marketing";
-import {
-  CalendarClock, Calculator, BarChart3, Users, Clock, FileText,
-  DollarSign, CheckSquare, Grid3x3, TrendingUp, Package, Network,
+  Sparkles,
+  HardHat,
+  ClipboardList,
+  Receipt,
+  CheckCircle2,
+  GitBranch,
+  Layers,
+  CalendarRange,
+  CircleDot,
 } from "lucide-react";
+import {
+  Section,
+  Container,
+  SectionHead,
+  Pill,
+  Heading,
+  BadgeGreen,
+  StatusChip,
+  StripeBar,
+  StepCard,
+  Bento,
+  BentoGrid,
+  DataRow,
+  StatTile,
+  Tick,
+  DotGrid,
+} from "./bz";
 
-// ─── DATA ─────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// CONTENT DATA
+// ════════════════════════════════════════════════════════════════════════════
 
-const CAPABILITIES = [
-  { Icon: CalendarClock, title: "Project Planning",         desc: "Multi-phase milestone tracking with dynamic Gantt visualization and dependency modeling." },
-  { Icon: Calculator,    title: "Budgeting & Estimation",    desc: "Hierarchical cost modeling and automated margin guardrails powered by historical analysis." },
-  { Icon: BarChart3,     title: "Cost Tracking",             desc: "Real-time ledger integration captures every project expense the moment it's committed in the field." },
-  { Icon: Users,         title: "Resource Allocation",       desc: "Optimize workforce and specialized equipment across the entire project portfolio for maximum utilization." },
-  { Icon: Clock,         title: "Timesheets",                desc: "High-precision labor tracking linked to job cost codes and site-specific burden multipliers." },
-  { Icon: FileText,      title: "Project Billing",           desc: "Automated AIA-style progress billing based on verified site milestones or time-and-materials data." },
+const SCOREBOARD_KPIS = [
+  { label: "Budget",    value: "$4.20M", sub: "Approved" },
+  { label: "Committed", value: "$3.18M", sub: "76% of budget" },
+  { label: "Actual",    value: "$2.74M", sub: "Posted to GL" },
+  { label: "Margin",    value: "+19.4%", sub: "↑ 2.1% vs. estimate", accent: true },
+] as const;
+
+const SCOREBOARD_PHASES = [
+  { code: "PLAN",  label: "Plan",     done: true  },
+  { code: "EST",   label: "Estimate", done: true  },
+  { code: "TRACK", label: "Track",    active: true },
+  { code: "BILL",  label: "Bill" },
+] as const;
+
+const SCOREBOARD_FEED: { txn: string; code: string; amount: string }[] = [
+  { txn: "PO #8841 — Concrete (Suncrest Aggregates)", code: "Cost code 03-300", amount: "+$1,200.00" },
+  { txn: "Timesheet — Grade II crew, 18h × $48",      code: "Cost code 01-115", amount: "+$4,500.00" },
+  { txn: "Material draw — Rebar (Bay 4 inventory)",   code: "Cost code 03-210", amount: "+$2,180.00" },
 ];
 
-const METRICS = [
-  { value: "20%",  label: "Profitability Increase", desc: "Automated tracking and reconciliation workflows capture leaked revenue immediately." },
-  { value: "35%",  label: "Better Cost Control",     desc: "Reduce uncaptured site expenses and labor variances with real-time field data." },
-  { value: "100%", label: "Cost Visibility",         desc: "Real-time margin visibility across the entire project lifecycle, from site to C-suite." },
+const CAPTURE_STEPS: {
+  number: string;
+  tag: string;
+  title: React.ReactNode;
+  bullets: string[];
+  visualKind: "po" | "time" | "material";
+}[] = [
+  {
+    number: "01",
+    tag: "Field PO",
+    title: (
+      <>
+        Every PO is tagged to a project before it&apos;s approved,{" "}
+        <Heading.Muted>so cost lands on the right job.</Heading.Muted>
+      </>
+    ),
+    bullets: [
+      "Project + cost code are required fields on the PO header.",
+      "3-way match against the project budget — over-runs route for approval.",
+      "Vendor invoice posts to AP and the project at the same moment.",
+    ],
+    visualKind: "po",
+  },
+  {
+    number: "02",
+    tag: "Timesheet",
+    title: (
+      <>
+        Crew hours flow straight into job cost,{" "}
+        <Heading.Muted>burdened with the right multiplier.</Heading.Muted>
+      </>
+    ),
+    bullets: [
+      "Mobile timesheets capture hours by project + cost code, no re-keying.",
+      "Burden rates (PTO, payroll tax, equipment) auto-apply per crew.",
+      "Approved hours hit Labor Cost on the project P&L the same day.",
+    ],
+    visualKind: "time",
+  },
+  {
+    number: "03",
+    tag: "Material",
+    title: (
+      <>
+        Material draws charge directly to the project,{" "}
+        <Heading.Muted>not the warehouse cost centre.</Heading.Muted>
+      </>
+    ),
+    bullets: [
+      "Pick from inventory against a project code — stock decrements, cost moves.",
+      "Item master + project BOM keeps unit costs consistent across runs.",
+      "Returns reverse cleanly; the project P&L stays accurate every step.",
+    ],
+    visualKind: "material",
+  },
 ];
 
-// ─── HERO VISUAL ──────────────────────────────────────────────────────────────
+const RESOURCE_CREW = [
+  { name: "Grade II — Civil",   load: [0.9, 1.0, 1.0, 0.8, 0.6, 0.3, 0.2] },
+  { name: "MEP — Electrical",   load: [0.4, 0.6, 0.9, 1.0, 1.0, 0.7, 0.5] },
+  { name: "Finish — Carpentry", load: [0.1, 0.2, 0.4, 0.6, 0.8, 1.0, 1.0] },
+  { name: "Equipment — Cranes", load: [0.6, 0.8, 0.5, 0.3, 0.2, 0.4, 0.6] },
+];
+const RESOURCE_WEEKS = ["W21", "W22", "W23", "W24", "W25", "W26", "W27"];
 
-function HeroDashboard() {
-  const steps = [
-    { code: "PLAN",  label: "Planning"   },
-    { code: "EST",   label: "Estimation" },
-    { code: "TRACK", label: "Tracking", active: true },
-    { code: "BILL",  label: "Billing"    },
-  ];
+const SCHEDULE_PROJECTS = [
+  { name: "Metropolis Tower",    pctStart: 8,  pctEnd: 76, status: "On track", chip: "live" as const   },
+  { name: "Bridge Deck A",        pctStart: 22, pctEnd: 88, status: "Watch",     chip: "neutral" as const },
+  { name: "Riverside Warehouse",  pctStart: 4,  pctEnd: 54, status: "On track", chip: "posted" as const  },
+  { name: "Helio Plant Retrofit", pctStart: 40, pctEnd: 96, status: "Ahead",    chip: "live" as const   },
+];
+
+const PNL_TREE = [
+  { label: "Revenue (T&M + Progress)", value: "$3.42M",       depth: 0 },
+  { label: "Direct Labor",              value: "$1.18M",       depth: 1 },
+  { label: "Materials",                 value: "$0.94M",       depth: 1 },
+  { label: "Subcontractors",            value: "$0.42M",       depth: 1 },
+  { label: "Equipment",                 value: "$0.20M",       depth: 1, active: true },
+  { label: "Direct Costs",              value: "$2.74M",       depth: 0 },
+  { label: "Margin",                    value: "+19.4%",       depth: 0, accent: true },
+];
+
+const DRILL_TRAIL = [
+  { label: "Account",      value: "Equipment Hire" },
+  { label: "Project",      value: "Metropolis Tower" },
+  { label: "Cost code",    value: "01-540 · Cranes" },
+  { label: "Source PO",    value: "PO #8841" },
+  { label: "Vendor",       value: "Suncrest Aggregates" },
+  { label: "Approver",     value: "M. Ortiz · 18 Apr 10:42" },
+];
+
+const BILLING_SCHEDULE = [
+  { period: "Apr — App. #04", billed: "$420,000", earned: "$438,500", chip: "Posted" },
+  { period: "May — App. #05", billed: "$510,000", earned: "$502,200", chip: "Posted" },
+  { period: "Jun — App. #06", billed: "$430,000", earned: "$447,800", chip: "Draft"  },
+];
+
+const WIP_ROWS = [
+  { label: "Opening WIP",       value: "$1.84M" },
+  { label: "+ Costs to date",   value: "$2.74M" },
+  { label: "− Recognised",      value: "$3.18M" },
+  { label: "= Closing WIP",     value: "$1.40M", emphasis: true },
+];
+
+const PORTFOLIO_STATS = [
+  { value: "20%",  desc: "Lift in project margin once every cost lands on a project code in real time." },
+  { value: "35%",  desc: "Reduction in uncaptured field cost — timesheets, materials, PO leakage." },
+  { value: "100%", desc: "Drill-through audit coverage from margin down to the originating PO." },
+];
+
+// ════════════════════════════════════════════════════════════════════════════
+// HERO — project P&L scoreboard on paper (no HeroCanvas, no HeroCard)
+// ════════════════════════════════════════════════════════════════════════════
+
+function ProjectScoreboardCard() {
   return (
-    <div className="max-w-[1100px] mx-auto rounded-bz-2xl border border-bz-border bg-bz-surface overflow-hidden p-2">
-      <div className="bg-bz-bg rounded-[14px] border border-bz-border p-8 flex gap-8 flex-wrap">
-        <div className="w-[200px] flex-shrink-0">
-          <div className="h-10 bg-bz-border rounded-bz-md mb-4" />
-          <div className="h-3.5 bg-bz-border/50 rounded-bz-sm mb-2 w-3/4" />
-          <div className="h-3.5 bg-bz-border/50 rounded-bz-sm mb-5 w-1/2" />
-          <div className="flex flex-col gap-2">
-            {[0, 1, 2].map(i => (
-              <div key={i} className="h-8 bg-bz-surface border border-bz-border rounded-bz-sm" />
-            ))}
+    <div className="mt-12 md:mt-16 mx-auto w-full max-w-[1140px] rounded-bz-3xl border border-bz-line bg-bz-surface p-5 md:p-8 shadow-[0_24px_56px_-30px_rgba(15,20,17,0.18)]">
+      {/* Header row */}
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="grid size-10 place-items-center rounded-bz-md bg-bz-olive text-bz-fire">
+            <HardHat size={18} strokeWidth={1.8} />
+          </span>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-muted">
+              Project · PRJ-0481
+            </p>
+            <p className="text-[15px] font-semibold text-bz-text">
+              Metropolis Tower · Foundations + Core
+            </p>
           </div>
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <StatusChip variant="live">Live margin</StatusChip>
+          <StatusChip variant="posted">FY26 · Q2</StatusChip>
+        </div>
+      </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6">
-            {[
-              { label: "PROJECT HEALTH", value: "92%",    chip: "STABLE" },
-              { label: "BUDGET VS ACTUAL", value: "+$124k", accent: true },
-              { label: "COST BREAKDOWN", value: "4 Active" },
-            ].map(s => (
-              <div key={s.label} className="p-5 bg-bz-surface rounded-bz-md border border-bz-border">
-                <p className="text-[9px] text-bz-text-muted font-bold uppercase tracking-[0.1em] mb-1.5">{s.label}</p>
-                <p className={`text-[22px] font-bold flex items-center gap-2 ${s.accent ? "text-bz-sage" : "text-bz-text"}`}>
-                  {s.value}
-                  {s.chip && (
-                    <span className="text-[9px] bg-bz-accent/15 text-bz-text px-1.5 py-0.5 rounded-bz-sm font-bold">{s.chip}</span>
-                  )}
-                </p>
+      {/* KPI strip */}
+      <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+        {SCOREBOARD_KPIS.map((k) => (
+          <div
+            key={k.label}
+            className="rounded-bz-lg border border-bz-line-soft bg-bz-paper px-4 py-4"
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-bz-text-muted">
+              {k.label}
+            </p>
+            <p
+              className={
+                "mt-1.5 text-[22px] font-semibold leading-none " +
+                (k.accent ? "text-bz-leaf-deep" : "text-bz-text")
+              }
+            >
+              {k.value}
+            </p>
+            <p className="mt-2 text-[11px] text-bz-text-muted">{k.sub}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Phase tracker */}
+      <div className="mt-6 rounded-bz-lg border border-bz-line-soft bg-bz-paper px-5 py-5">
+        <div className="flex items-center justify-between">
+          <p className="text-[12px] font-semibold text-bz-text">
+            Phase tracker
+          </p>
+          <p className="text-[11px] text-bz-text-muted">
+            54 days remaining · cost forecast at 92% of budget
+          </p>
+        </div>
+        <div className="mt-4">
+          <div className="relative flex justify-between">
+            <div
+              className="absolute left-[18px] right-[18px] top-[14px] h-px bg-bz-line"
+              aria-hidden="true"
+            />
+            {SCOREBOARD_PHASES.map((p) => {
+              const filled = p.done || p.active;
+              return (
+                <div key={p.code} className="relative z-10 flex flex-col items-center gap-2">
+                  <span
+                    className={
+                      "grid size-7 place-items-center rounded-full text-[9px] font-semibold tracking-[0.04em] " +
+                      (p.active
+                        ? "bg-bz-olive text-bz-fire"
+                        : p.done
+                        ? "bg-bz-leaf text-bz-text"
+                        : "bg-bz-line-soft text-bz-text-muted")
+                    }
+                  >
+                    {p.done && !p.active ? <CheckCircle2 size={13} strokeWidth={2.2} /> : p.code.slice(0, 1)}
+                  </span>
+                  <span
+                    className={
+                      "text-[10.5px] " +
+                      (filled ? "font-medium text-bz-text" : "text-bz-text-muted")
+                    }
+                  >
+                    {p.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-4">
+            <StripeBar pct={62} />
+          </div>
+        </div>
+      </div>
+
+      {/* Today's cost feed */}
+      <div className="mt-6">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-[12px] font-semibold text-bz-text">
+            Today on this project
+          </p>
+          <span className="inline-flex items-center gap-1 text-[11px] text-bz-text-muted">
+            <CircleDot size={9} className="text-bz-leaf-deep" /> streaming
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          {SCOREBOARD_FEED.map((row) => (
+            <div
+              key={row.txn}
+              className="flex flex-col gap-1 rounded-bz-lg border border-bz-line-soft bg-bz-paper-warm px-4 py-3 md:flex-row md:items-center md:justify-between"
+            >
+              <div className="flex flex-col">
+                <span className="text-[12px] font-medium text-bz-text">{row.txn}</span>
+                <span className="text-[10.5px] text-bz-text-muted">{row.code}</span>
               </div>
-            ))}
-          </div>
-
-          <div className="p-8 bg-bz-surface rounded-bz-md border border-bz-border">
-            <div className="flex justify-between items-center mb-9">
-              <h4 className="font-bold text-bz-text text-[14px]">Project Workflow: #PX-904</h4>
-              <span className="text-[9px] bg-bz-accent text-bz-text px-2 py-0.5 rounded-bz-sm font-bold">LIVE</span>
+              <span className="text-[12px] font-semibold text-bz-text">{row.amount}</span>
             </div>
-            <div className="relative flex justify-between items-center px-4">
-              <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-bz-border -translate-y-1/2 z-0" />
-              {steps.map(s => (
-                <div key={s.code} className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center text-[9px] font-bold ${
-                  s.active
-                    ? "bg-bz-text text-bz-surface border-4 border-bz-surface shadow-md"
-                    : "bg-bz-bg text-bz-text-muted border border-bz-border"
-                }`}>{s.code}</div>
-              ))}
-            </div>
-            <div className="flex justify-between mt-3 px-2">
-              {steps.map(s => (
-                <span key={s.code} className={`text-[9px] font-bold uppercase tracking-[0.05em] ${
-                  s.active ? "text-bz-text" : "text-bz-text-muted"
-                }`}>{s.label}</span>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-// ─── DARK SHOWCASE ────────────────────────────────────────────────────────────
-
-function TechShowcaseSection() {
+function ProjectScoreboardHero() {
   return (
-    <Section tone="dark">
+    <Section tone="b" pad="hero">
       <Container>
-        <SectionHeading
-          eyebrow="Technical Showcase"
-          title={<>High-fidelity tools for the<br />modern project team</>}
-          tone="light"
-          maxWidth={640}
-          className="mb-16"
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Real-time Job Costing */}
-          <div className="bg-white/[0.03] rounded-[24px] border border-white/[0.05] p-9 flex flex-col justify-between min-h-[450px]">
-            <div>
-              <DollarSign className="size-5 text-bz-accent mb-6" />
-              <h3 className="text-[22px] font-bold text-white mb-3">Real-time Job Costing</h3>
-              <p className="text-[13px] text-white/40 leading-[1.65] mb-12">
-                Track every PO and labor shift against project codes with live reconciliation.
-              </p>
-            </div>
-            <div className="bg-white/[0.04] rounded-bz-xl border border-white/[0.08] p-6">
-              {[
-                { label: "PO #8841: Concrete",     value: "+$1,200" },
-                { label: "Labor Shift: Grade II",  value: "+$4,500" },
-                { label: "Logistics: Haulage",     value: "+$890"   },
-              ].map((row, i) => (
-                <div key={row.label} className={`flex justify-between items-center ${i < 2 ? "pb-4 mb-4 border-b border-white/[0.05]" : ""}`}>
-                  <span className="text-[12px] text-white/60">{row.label}</span>
-                  <span className="text-[13px] font-bold text-bz-accent">{row.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Project Control */}
-          <div className="bg-white/[0.03] rounded-[24px] border border-white/[0.05] p-9 flex flex-col justify-between min-h-[450px]">
-            <div>
-              <CheckSquare className="size-5 text-bz-accent mb-6" />
-              <h3 className="text-[22px] font-bold text-white mb-3">Project Control</h3>
-              <p className="text-[13px] text-white/40 leading-[1.65] mb-8">
-                Maintain strict project hygiene with intelligent approval workflows and margin guardrails.
-              </p>
-            </div>
-            <div className="flex flex-col gap-2.5">
-              {[
-                { abbr: "PM", label: "PM Approval",          dot: "bg-green-500"  },
-                { abbr: "EX", label: "Exec Review > $100k",  dot: "bg-amber-500"  },
-              ].map(row => (
-                <div key={row.label} className="px-4 py-3.5 bg-white/[0.04] rounded-bz-lg border border-white/[0.08] flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-bz-sm bg-bz-accent/15 text-bz-accent flex items-center justify-center text-[9px] font-bold">{row.abbr}</div>
-                    <span className="text-[12px] font-semibold text-white/60">{row.label}</span>
-                  </div>
-                  <div className={`w-2 h-2 rounded-full ${row.dot}`} />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Resource Heatmap */}
-          <div className="bg-white/[0.03] rounded-[24px] border border-white/[0.05] p-9 flex flex-col justify-between min-h-[400px]">
-            <div>
-              <Grid3x3 className="size-5 text-bz-accent mb-6" />
-              <h3 className="text-[22px] font-bold text-white mb-3">Resource Heatmap</h3>
-              <p className="text-[13px] text-white/40 leading-[1.65] mb-12">
-                Dynamic workforce utilization across all active job sites.
-              </p>
-            </div>
-            <div className="bg-white/[0.04] rounded-t-[14px] border border-white/[0.08] border-b-0 p-6 flex-1 flex items-center">
-              <div className="grid grid-cols-4 gap-2 w-full">
-                {[1, 0.4, 0.1, 0.8, 0.6, 0.9, 0.3, 0.5, 0.2, 0.7, 1, 0.4].map((opacity, i) => (
-                  <div key={i} className="aspect-square rounded-bz-sm" style={{ background: `rgba(199,255,53,${opacity})` }} />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Profitability */}
-          <div className="bg-white/[0.03] rounded-[24px] border border-white/[0.05] p-9 min-h-[400px]">
-            <div className="flex justify-between items-start mb-6">
-              <TrendingUp className="size-5 text-bz-accent" />
-              <div className="text-right">
-                <p className="text-[9px] text-white/40 font-bold uppercase tracking-[0.15em] mb-1">NET ROI</p>
-                <p className="text-[24px] font-bold text-bz-accent">+24.5%</p>
-              </div>
-            </div>
-            <h3 className="text-[22px] font-bold text-white mb-3">Profitability Analysis</h3>
-            <p className="text-[13px] text-white/40 leading-[1.65] mb-8">
-              Direct job costing linked to automated revenue recognition for absolute margin integrity.
-            </p>
-            <div>
-              {[
-                { project: "Metropolis Tower", health: "A+ Health" },
-                { project: "Bridge Deck A",    health: "B+ Health" },
-              ].map((row, i) => (
-                <div key={row.project} className={`flex justify-between items-center py-3 ${i === 0 ? "border-b border-white/[0.05]" : ""}`}>
-                  <span className="text-[12px] font-bold text-white">{row.project}</span>
-                  <span className="text-[11px] font-bold text-bz-accent">{row.health}</span>
-                </div>
-              ))}
-            </div>
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>
+            Project margin, live every day
+          </BadgeGreen>
+          <Heading level={2} style={{ marginBottom: 36 }}>
+            See every project&apos;s margin while the work{" "}{<br/>}
+            <Heading.Muted>
+              is happening not after billing closes.
+            </Heading.Muted>
+          </Heading>
+          <div className="flex flex-wrap justify-center gap-[10px]">
+            <Pill
+              variant="dark"
+              withTick
+              href="https://system.bizakerp.com/account/self-register"
+            >
+              Start free trial
+            </Pill>
+            <Pill
+              variant="light"
+              iconLeft={<Sparkles size={13} />}
+              href="/contact"
+            >
+              Book a demo
+            </Pill>
           </div>
         </div>
+        <ProjectScoreboardCard />
       </Container>
     </Section>
   );
 }
 
-// ─── INTELLIGENCE ─────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// CAPTURE FLOW — three StepCards: PO, Timesheet, Material draw
+// ════════════════════════════════════════════════════════════════════════════
 
-function IntelligenceSection() {
-  const metrics = [
-    { label: "MARGIN PER PROJECT", value: "+19.4%", sub: "↑ 2.1%",     pos: true,  accent: true  },
-    { label: "COST VARIANCE",       value: "−2.1%",  sub: "Optimized",  pos: false, accent: false },
-    { label: "UTILIZATION %",       value: "88.5%",  accent: false },
-    { label: "COMPLETION RATE",     value: "94.2%",  accent: false },
+function CaptureVisualPO() {
+  return (
+    <div className="flex h-full flex-col gap-2 p-2">
+      <div className="rounded-bz-lg border border-bz-line-soft bg-bz-surface p-4">
+        <p className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-bz-text-muted">
+          Purchase order
+        </p>
+        <p className="mt-1 text-[15px] font-semibold text-bz-text">PO #8841</p>
+        <div className="mt-3 flex flex-col gap-1.5">
+          <DataRow label="Project"   value="Metropolis Tower" />
+          <DataRow label="Cost code" value="03-300 · Concrete" />
+          <DataRow label="Vendor"    value="Suncrest Aggregates" />
+          <DataRow label="Amount"    value="+$1,200.00" emphasis />
+        </div>
+      </div>
+      <div className="flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-4 py-2.5">
+        <span className="text-[10.5px] font-medium text-bz-text">3-way match</span>
+        <span className="inline-flex items-center gap-1 text-[10.5px] font-medium text-bz-leaf-deep">
+          <Tick size="sm" /> matched
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function CaptureVisualTime() {
+  const hours = [4, 7, 8, 8, 9, 6, 4];
+  return (
+    <div className="flex h-full flex-col gap-2 p-2">
+      <div className="rounded-bz-lg border border-bz-line-soft bg-bz-surface p-4">
+        <div className="flex items-center justify-between">
+          <p className="text-[12.5px] font-semibold text-bz-text">
+            Crew · Grade II — Civil
+          </p>
+          <StatusChip variant="live">Approved</StatusChip>
+        </div>
+        <p className="mt-1 text-[10.5px] text-bz-text-muted">
+          Hours by day · burden 1.42×
+        </p>
+        <div className="mt-4 flex items-end gap-1.5" style={{ height: 56 }}>
+          {hours.map((h, i) => (
+            <div key={i} className="flex flex-1 flex-col items-center gap-1">
+              <div
+                className={
+                  "w-full rounded-[3px] " +
+                  (i === hours.length - 2 ? "bg-bz-olive" : "bg-bz-leaf")
+                }
+                style={{ height: `${(h / 10) * 100}%` }}
+              />
+              <span className="text-[8.5px] text-bz-text-muted">M{i + 1}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-bz-lg bg-bz-paper-warm px-3 py-2">
+          <p className="text-[9.5px] uppercase tracking-[0.12em] text-bz-text-muted">Hours</p>
+          <p className="text-[13px] font-semibold text-bz-text">46.0h</p>
+        </div>
+        <div className="rounded-bz-lg bg-bz-paper-warm px-3 py-2">
+          <p className="text-[9.5px] uppercase tracking-[0.12em] text-bz-text-muted">Burdened</p>
+          <p className="text-[13px] font-semibold text-bz-text">$3,134.40</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CaptureVisualMaterial() {
+  const rows = [
+    { item: "Rebar #5 · 600 ft",      stock: "Bay 4", amount: "$2,180.00" },
+    { item: "Anchor bolts · 240 ea",   stock: "Bay 2", amount: "$ 410.00" },
+    { item: "Tie wire spool · 12 ea",  stock: "Bay 4", amount: "$  72.00" },
   ];
   return (
-    <Section tone="light">
+    <div className="flex h-full flex-col gap-2 p-2">
+      <div className="flex items-center justify-between rounded-bz-lg border border-bz-line-soft bg-bz-surface px-4 py-2.5">
+        <span className="text-[11px] font-semibold text-bz-text">
+          Material draw · Metropolis Tower
+        </span>
+        <StatusChip variant="live">Posted</StatusChip>
+      </div>
+      <div className="rounded-bz-lg border border-bz-line-soft bg-bz-surface">
+        {rows.map((r, i) => (
+          <div
+            key={r.item}
+            className={
+              "flex items-center justify-between gap-3 px-4 py-2.5 " +
+              (i < rows.length - 1 ? "border-b border-bz-line-soft" : "")
+            }
+          >
+            <div>
+              <p className="text-[11.5px] font-medium text-bz-text">{r.item}</p>
+              <p className="text-[10px] text-bz-text-muted">From {r.stock}</p>
+            </div>
+            <span className="text-[11.5px] font-semibold text-bz-text">{r.amount}</span>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-4 py-2.5">
+        <span className="text-[10.5px] font-medium text-bz-text">
+          Inventory ↓ &nbsp;·&nbsp; Project cost ↑
+        </span>
+        <span className="text-[10.5px] font-semibold text-bz-leaf-deep">
+          $2,662.00
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function CaptureVisual({ kind }: { kind: "po" | "time" | "material" }) {
+  if (kind === "po") return <CaptureVisualPO />;
+  if (kind === "time") return <CaptureVisualTime />;
+  return <CaptureVisualMaterial />;
+}
+
+function CostCaptureFlow() {
+  return (
+    <Section tone="a">
       <Container>
-        <SectionHeading eyebrow="Reporting" title="Executive Project Analytics" align="center" className="mb-14" />
-        <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-6">
-          <div className="bg-bz-surface rounded-bz-2xl border border-bz-border p-10 shadow-sm">
-            <div className="flex justify-between items-start mb-12">
-              <div>
-                <h3 className="text-[18px] font-bold text-bz-text mb-1.5">Margin Trends &amp; Variances</h3>
-                <p className="text-[11px] text-bz-text-muted">Consolidated performance across 12 active sites</p>
-              </div>
-              <span className="text-[9px] font-bold bg-bz-bg px-3 py-1 rounded-bz-sm text-bz-text-muted">FY2024</span>
-            </div>
-            <div className="relative h-[240px]">
-              <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-full">
-                <path d="M0,80 Q50,20 100,60 T200,40 T300,70 T400,20" fill="none" stroke="var(--bz-sage)" strokeWidth="3" strokeLinecap="round" />
-                <path d="M0,90 Q50,50 100,80 T200,60 T300,90 T400,50" fill="none" stroke="var(--bz-border)" strokeDasharray="4 4" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-              <div className="absolute top-[20%] left-1/2 -translate-x-1/2 bg-bz-deep text-white px-5 py-3 rounded-bz-xl shadow-lg text-center whitespace-nowrap">
-                <p className="text-[7px] uppercase tracking-[0.15em] opacity-60 mb-1">Peak Margin</p>
-                <p className="text-[18px] font-bold">19.4%</p>
-                <p className="text-[7px] opacity-60">Project: Metropolis</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            {metrics.map(m => (
-              <div key={m.label} className="p-6 bg-bz-surface border border-bz-border rounded-bz-xl shadow-sm">
-                <p className="text-[9px] text-bz-text-muted font-bold uppercase tracking-[0.1em] mb-1">{m.label}</p>
-                <p className={`text-[20px] font-bold ${m.accent ? "text-bz-sage" : "text-bz-text"}`}>{m.value}</p>
-                {m.sub && <p className={`text-[9px] font-bold mt-1 ${m.pos ? "text-green-700" : "text-bz-text-muted"}`}>{m.sub}</p>}
-              </div>
-            ))}
-          </div>
+        <SectionHead
+          index="01"
+          label="No leak"
+          title={
+            <>
+              Every project cost lands on its project code{" "}
+              <Heading.Muted>the moment it&apos;s committed.</Heading.Muted>
+            </>
+          }
+          description="Field POs, crew hours and material draws all carry a project + cost code as a required field — so margin updates the same day, not after month-end reconciliation."
+          titleMaxWidth={780}
+        />
+        <div className="flex flex-col gap-5">
+          {CAPTURE_STEPS.map((s) => (
+            <StepCard
+              key={s.number}
+              number={s.number}
+              tag={s.tag}
+              title={s.title}
+              bullets={s.bullets}
+              visual={<CaptureVisual kind={s.visualKind} />}
+            />
+          ))}
         </div>
       </Container>
     </Section>
   );
 }
 
-// ─── CONNECTIVITY ─────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// PORTFOLIO COMMAND — resource heatmap + milestone Gantt (12-col bento)
+// ════════════════════════════════════════════════════════════════════════════
 
-function ConnectivitySection() {
+function ResourceHeatmap() {
+  return (
+    <div className="overflow-x-auto">
+      <div className="min-w-[480px]">
+        <div className="mb-3 grid grid-cols-[140px_repeat(7,minmax(0,1fr))] gap-1.5">
+          <div />
+          {RESOURCE_WEEKS.map((w) => (
+            <div
+              key={w}
+              className="text-center text-[9.5px] font-semibold uppercase tracking-[0.1em] text-bz-text-muted"
+            >
+              {w}
+            </div>
+          ))}
+        </div>
+        {RESOURCE_CREW.map((crew) => (
+          <div
+            key={crew.name}
+            className="mb-1.5 grid grid-cols-[140px_repeat(7,minmax(0,1fr))] gap-1.5"
+          >
+            <div className="flex items-center text-[11px] font-medium text-bz-text">
+              {crew.name}
+            </div>
+            {crew.load.map((load, i) => {
+              const isHot = load > 0.95;
+              const tint = isHot
+                ? "bg-bz-olive"
+                : "bg-bz-leaf";
+              return (
+                <div
+                  key={i}
+                  className={"aspect-square rounded-bz-sm " + tint}
+                  style={{ opacity: Math.max(0.18, load) }}
+                  title={`${Math.round(load * 100)}% utilised`}
+                />
+              );
+            })}
+          </div>
+        ))}
+        <div className="mt-4 flex items-center gap-4 text-[10.5px] text-bz-text-muted">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="inline-block size-2.5 rounded-[2px] bg-bz-leaf" /> nominal
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="inline-block size-2.5 rounded-[2px] bg-bz-olive" /> over 95%
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MilestoneSchedule() {
+  return (
+    <div className="flex flex-col gap-3">
+      {SCHEDULE_PROJECTS.map((p) => {
+        const width = Math.max(8, p.pctEnd - p.pctStart);
+        return (
+          <div key={p.name}>
+            <div className="mb-1.5 flex items-center justify-between">
+              <span className="text-[11.5px] font-medium text-bz-text">{p.name}</span>
+              <StatusChip variant={p.chip}>{p.status}</StatusChip>
+            </div>
+            <div className="relative h-3 w-full overflow-hidden rounded-bz-pill bg-bz-paper-warm">
+              <div
+                className="absolute top-0 h-full rounded-bz-pill bg-bz-olive"
+                style={{ left: `${p.pctStart}%`, width: `${width}%` }}
+              />
+            </div>
+          </div>
+        );
+      })}
+      <div className="mt-2 flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-3 py-2 text-[10.5px] text-bz-text-muted">
+        <span className="inline-flex items-center gap-1.5">
+          <CalendarRange size={12} /> Window: W21 — W34
+        </span>
+        <span>4 active · 1 ahead · 1 watch</span>
+      </div>
+    </div>
+  );
+}
+
+function PortfolioCommand() {
+  return (
+    <Section tone="b">
+      <Container>
+        <SectionHead
+          index="02"
+          label="Portfolio command"
+          title={
+            <>
+              One view across crews, equipment and milestones,{" "}
+              <Heading.Muted>so the next bottleneck doesn&apos;t hit you blind.</Heading.Muted>
+            </>
+          }
+          titleMaxWidth={820}
+        />
+        <BentoGrid cols={12} gap={20}>
+          <Bento tone="paper" span={7} minHeight={420}>
+            <Bento.Header
+              title={<>Resource heatmap</>}
+              icon={<Layers size={18} className="text-bz-text-muted" strokeWidth={1.7} />}
+            />
+            <Bento.Desc>
+              Crew and equipment load across the next seven weeks. Bizak flags any
+              cell over 95% so you can re-balance before it shows up as overtime.
+            </Bento.Desc>
+            <div className="mt-6">
+              <ResourceHeatmap />
+            </div>
+          </Bento>
+
+          <Bento tone="paper" span={5} minHeight={420}>
+            <Bento.Header
+              title={<>Milestone schedule</>}
+              icon={<CalendarRange size={18} className="text-bz-text-muted" strokeWidth={1.7} />}
+            />
+            <Bento.Desc>
+              Every active project on one timeline — start, finish, slack — coloured
+              by status from the same data your cost ledger sees.
+            </Bento.Desc>
+            <div className="mt-6">
+              <MilestoneSchedule />
+            </div>
+          </Bento>
+        </BentoGrid>
+      </Container>
+    </Section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// DRILL-THROUGH MARGIN — dark olive, one composite drill-down mock
+// ════════════════════════════════════════════════════════════════════════════
+
+function PnLTree() {
+  return (
+    <div className="flex flex-col gap-1.5">
+      {PNL_TREE.map((row, i) => {
+        const isHeader = row.depth === 0;
+        return (
+          <div
+            key={i}
+            className={
+              "flex items-center justify-between rounded-bz-lg px-4 py-3 " +
+              (row.active
+                ? "bg-bz-fire/20 ring-1 ring-bz-fire/60"
+                : isHeader
+                ? "bg-white/[0.06]"
+                : "bg-white/[0.03]")
+            }
+            style={{ paddingLeft: 16 + row.depth * 18 }}
+          >
+            <span
+              className={
+                "text-[12.5px] " +
+                (isHeader ? "font-semibold text-bz-text-on-dark" : "text-white/[0.78]")
+              }
+            >
+              {row.label}
+            </span>
+            <span
+              className={
+                "text-[12.5px] font-semibold " +
+                (row.accent ? "text-bz-fire" : "text-bz-text-on-dark")
+              }
+            >
+              {row.value}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function DrillPanel() {
+  return (
+    <div className="rounded-bz-2xl border border-white/[0.08] bg-white/[0.04] p-6">
+      <div className="flex items-center justify-between">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">
+          Source of truth
+        </p>
+        <StatusChip variant="live">Drilling</StatusChip>
+      </div>
+      <p className="mt-2 text-[16px] font-semibold text-bz-text-on-dark">
+        Equipment Hire · $42,800
+      </p>
+      <p className="mt-1 text-[11.5px] text-white/[0.6]">
+        One click on the project P&amp;L resolves to the exact transaction that
+        booked the cost — vendor, approver, timestamp, everything.
+      </p>
+      <div className="mt-5 flex flex-col gap-2">
+        {DRILL_TRAIL.map((row) => (
+          <DataRow
+            key={row.label}
+            label={row.label}
+            value={row.value}
+            tone="dark"
+          />
+        ))}
+      </div>
+      <div className="mt-5 flex items-center justify-between rounded-bz-lg bg-white/[0.05] px-3 py-2.5">
+        <span className="inline-flex items-center gap-1.5 text-[11px] text-white/[0.72]">
+          <Receipt size={12} /> Linked: AP voucher AP-1748
+        </span>
+        <span className="text-[10.5px] text-bz-fire">Open →</span>
+      </div>
+    </div>
+  );
+}
+
+function DrillThroughMargin() {
   return (
     <Section tone="dark">
+      <DotGrid tone="dark" />
       <Container>
-        <SectionHeading
-          eyebrow="Connected System"
-          title="Project Intelligence Node"
-          tone="light"
-          align="center"
-          className="mb-24"
-        />
-        <div className="flex flex-col items-center gap-6 md:flex-row md:gap-0 md:flex-wrap md:justify-center">
-          <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
-            <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
-              <DollarSign className="size-7 text-white/60" />
+        <div className="relative">
+          <SectionHead
+            index="03"
+            label="Audit trail"
+            tone="dark"
+            title={
+              <>
+                Click any number on the project P&amp;L,{" "}
+                <Heading.Muted>land on the transaction that booked it.</Heading.Muted>
+              </>
+            }
+            description="No spreadsheet exports, no support tickets to finance — every figure on the project margin resolves to its source PO, timesheet, or material draw."
+            titleMaxWidth={820}
+          />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div className="rounded-bz-2xl border border-white/[0.08] bg-white/[0.04] p-6">
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">
+                  Project P&amp;L · Metropolis Tower
+                </p>
+                <span className="text-[11px] text-white/[0.6]">FY26 · YTD</span>
+              </div>
+              <div className="mt-4">
+                <PnLTree />
+              </div>
+              <p className="mt-4 text-[10.5px] text-white/[0.55]">
+                Click <span className="text-bz-fire">Equipment</span> →
+              </p>
             </div>
-            <h4 className="text-[20px] font-bold text-white mb-3">Finance</h4>
-            <p className="text-[13px] text-white/50 leading-[1.65] mb-7">
-              Project costs flow into the GL the moment they're committed — no batch syncs, no end-of-month surprises.
-            </p>
-            <div className="flex justify-between items-center px-4 py-2 bg-black/30 rounded-bz-lg border border-white/[0.05]">
-              <span className="text-[9px] font-bold text-white/50 uppercase">ERP SYNC</span>
-              <span className="text-[9px] font-bold text-bz-accent">Real-time</span>
-            </div>
-          </div>
-
-          <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
-
-          <div className="flex-shrink-0 flex flex-col items-center gap-4">
-            <div className="w-28 h-28 rounded-full bg-bz-accent flex items-center justify-center">
-              <Network className="size-10 text-bz-text" strokeWidth={1.8} />
-            </div>
-            <div className="text-[10px] font-black tracking-[0.3em] text-bz-accent uppercase">Project Hub</div>
-          </div>
-
-          <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
-
-          <div className="flex-1 max-w-[280px] bg-white/[0.04] p-9 rounded-[36px] border border-white/[0.05]">
-            <div className="w-14 h-14 rounded-bz-xl bg-white/10 flex items-center justify-center mb-6">
-              <Package className="size-7 text-white/60" />
-            </div>
-            <h4 className="text-[20px] font-bold text-white mb-3">Inventory</h4>
-            <p className="text-[13px] text-white/50 leading-[1.65] mb-7">
-              Material drawdowns charge directly to project codes — every part used is reconciled in real time.
-            </p>
-            <div className="flex justify-between items-center px-4 py-2 bg-black/30 rounded-bz-lg border border-white/[0.05]">
-              <span className="text-[9px] font-bold text-white/50 uppercase">ASSET SYNC</span>
-              <span className="text-[9px] font-bold text-bz-accent">Live</span>
-            </div>
+            <DrillPanel />
           </div>
         </div>
       </Container>
@@ -313,85 +741,119 @@ function ConnectivitySection() {
   );
 }
 
-// ─── PAGE EXPORT ──────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// WIP + BILLING + PORTFOLIO METRICS — combined section
+// ════════════════════════════════════════════════════════════════════════════
+
+function BillingScheduleVisual() {
+  return (
+    <div className="flex flex-col gap-2">
+      {BILLING_SCHEDULE.map((p, i) => (
+        <div
+          key={p.period}
+          className="flex items-center justify-between rounded-bz-lg bg-[#F4F5EF] px-4 py-3"
+        >
+          <div>
+            <p className="text-[11.5px] font-semibold text-bz-text">{p.period}</p>
+            <p className="text-[10.5px] text-bz-text-muted">
+              Billed {p.billed} · earned {p.earned}
+            </p>
+          </div>
+          <StatusChip variant={i === BILLING_SCHEDULE.length - 1 ? "neutral" : "posted"}>
+            {p.chip}
+          </StatusChip>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WipRollForward() {
+  return (
+    <div className="flex flex-col gap-2">
+      {WIP_ROWS.map((row) => (
+        <DataRow
+          key={row.label}
+          label={row.label}
+          value={row.value}
+          emphasis={row.emphasis}
+        />
+      ))}
+      <div className="mt-2 rounded-bz-lg bg-[#F4F5EF] px-3 py-2.5 text-[10.5px] text-bz-text-muted">
+        <span className="font-semibold text-bz-text">Percent-complete</span> on
+        cost-to-cost — recalculated nightly from the live cost ledger.
+      </div>
+    </div>
+  );
+}
+
+function WipAndBilling() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="04"
+          label="Billing & WIP"
+          title={
+            <>
+              Progress billing posts on schedule,{" "}
+              <Heading.Muted>WIP rolls forward from the same ledger.</Heading.Muted>
+            </>
+          }
+          description="AIA-style applications, retention, and revenue recognition all run off the project cost ledger — one set of numbers from estimate to final invoice."
+          titleMaxWidth={780}
+        />
+        <BentoGrid cols={2} gap={20}>
+          <Bento tone="paper" minHeight={360}>
+            <Bento.Header
+              title={<>Progress billing schedule</>}
+              icon={<ClipboardList size={18} className="text-bz-text-muted" strokeWidth={1.7} />}
+            />
+            <Bento.Desc>
+              Application-style billings flow on the milestone schedule, with
+              retention held back automatically until the final draw.
+            </Bento.Desc>
+            <div className="mt-6">
+              <BillingScheduleVisual />
+            </div>
+          </Bento>
+          <Bento tone="paper" minHeight={360}>
+            <Bento.Header
+              title={<>WIP roll-forward</>}
+              icon={<GitBranch size={18} className="text-bz-text-muted" strokeWidth={1.7} />}
+            />
+            <Bento.Desc>
+              Costs to date, earned revenue and recognised margin — drawn from
+              the same project cost ledger your PMs already work in.
+            </Bento.Desc>
+            <div className="mt-6">
+              <WipRollForward />
+            </div>
+          </Bento>
+        </BentoGrid>
+
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {PORTFOLIO_STATS.map((s) => (
+            <StatTile key={String(s.value)} value={s.value} desc={s.desc} />
+          ))}
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// PAGE EXPORT
+// ════════════════════════════════════════════════════════════════════════════
 
 export function ProjectAndJobCostingPage() {
   return (
     <>
-      <HeroCentered
-        badge={<HeroBadge>Enterprise Project Control</HeroBadge>}
-        title={<>Track every cost.<br />Protect every project margin.</>}
-        description="Manage budgets, allocate resources, and monitor real-time project profitability with precision intelligence."
-        actions={
-          <>
-            <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
-            <Button variant="outline" size="lg">View features</Button>
-          </>
-        }
-        visual={<HeroDashboard />}
-      />
-
-      <Section tone="white">
-        <Container>
-          <SectionHeading
-            eyebrow="Capabilities"
-            title="Precision engineering for projects"
-            maxWidth={680}
-            className="mb-14"
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
-            {CAPABILITIES.map(({ Icon, title, desc }) => (
-              <Card key={title} hover="lift" pad="md">
-                <IconBadge tone="sage" size="md" className="mb-6">
-                  <Icon className="size-5" />
-                </IconBadge>
-                <h3 className="font-bold text-[16px] text-bz-text mb-2.5">{title}</h3>
-                <p className="text-[13px] text-bz-text-muted leading-[1.65]">{desc}</p>
-              </Card>
-            ))}
-          </div>
-        </Container>
-      </Section>
-
-      <TechShowcaseSection />
-      <IntelligenceSection />
-      <ConnectivitySection />
-
-      <Section tone="white">
-        <Container>
-          <SectionHeading eyebrow="Impact" title="Measurable impact on project margins" align="center" className="mb-16" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {METRICS.map(m => (
-              <Card key={m.label} hover="lift" pad="lg" className="text-center">
-                <div className="text-[52px] font-black text-bz-text tracking-[-0.04em] mb-3">{m.value}</div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-bz-text-muted mb-4">{m.label}</div>
-                <p className="text-[13px] text-bz-text-muted leading-[1.65]">{m.desc}</p>
-              </Card>
-            ))}
-          </div>
-        </Container>
-      </Section>
-
-      <Section tone="dark">
-        <Container width="narrow">
-          <SectionHeading
-            title={<>Take control of your<br /><span className="text-bz-accent">project margins today</span></>}
-            description="Join 50,000+ companies running real-time project P&Ls with Bizak — from estimate to final billing."
-            tone="light"
-            align="center"
-            maxWidth={580}
-            className="mb-10"
-          />
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button variant="accent" size="lg" href="https://system.bizakerp.com/account/self-register" withArrow>
-              Start Free Trial
-            </Button>
-            <Button variant="ghostDark" size="lg" href="/contact">
-              Book a Demo
-            </Button>
-          </div>
-        </Container>
-      </Section>
+      <ProjectScoreboardHero />
+      <CostCaptureFlow />
+      <PortfolioCommand />
+      <DrillThroughMargin />
+      <WipAndBilling />
     </>
   );
 }

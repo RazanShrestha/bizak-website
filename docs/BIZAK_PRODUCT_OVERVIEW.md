@@ -252,10 +252,38 @@ Reference: `FinancialManagementPageLayout` in `routes.tsx`.
 
 ### 7.2 Hero
 
-Centered on a paper-cream surface (typically `bg-bz-section-b`).
-`<BadgeGreen>` above `<h1>`, two `<Pill>` CTAs, optional `<HeroCanvas>`
-below with floating `<HeroCard>`s. No more `.biz-mesh` radial-gradient
-backdrop. See `/docs/DESIGN_SYSTEM.md` §3.6.
+The hero has a **fixed shell** and a **per-page-invented mock**.
+
+**Fixed shell** (same on every page):
+- Centered on `bg-bz-section-b` (paper-cream surface, `<Section tone="b" pad="hero">`).
+- `<BadgeGreen>` above `<Heading>`, two `<Pill>` CTAs (`variant="dark" withTick` + `variant="light"`).
+- No `.biz-mesh` radial-gradient backdrop (retired).
+
+**Per-page-invented mock** (the visual below the CTAs):
+The mock is **never** copied from another page. `<HeroCanvas>` + two
+`<HeroCard>`s is *one* possible composition — not the canonical one.
+Pages should pick a hero mock shape that *visualises that page's
+specific narrative*: a Manufacturing hero should make floor-ops feel
+tactile; a Distribution hero should make routing feel kinetic; a
+Projects hero should make project-P&L feel legible; a Why-Bizak hero
+might use no mock at all (just badge + heading + pills).
+
+**Mocks already taken — do not re-use:**
+- `HomePage.tsx` — `<HeroCanvas>` with a 12-col split: live journal stream + cash position + dual-stats panel.
+- `FinancialManagement.tsx` — two-card editorial split on paper: dark olive panel with reconciliation chip + "Close the period" CTA, paired with a Bizak income-statement card.
+- `SalesCrm.tsx` (current — will be reinvented on its next redesign) — `<HeroCanvas>` + two `<HeroCard>`s in the original HomePage shape. This is the canonical *bad* example of hero-mock cloning.
+
+**Valid alternative shapes** include: a single full-width feature panel
+(BoM, stock map, OEE gauge cluster), a 3-card row with distinct shapes,
+a vertical streaming feed, a before/after split, a dashboard with
+sidebar, a horizontal KPI marquee, a single headline statistic with
+live row, a process-flow diagram, a map, a document mock, or no mock
+at all. The list is illustrative; invent new shapes when the page's
+story calls for them.
+
+See `.claude/skills/redesign-page/SKILL.md` "Hero mock" section for the
+full alternatives list and the 4-line design brief the LLM must write
+before building a hero mock.
 
 ### 7.3 Section rhythm
 
@@ -300,6 +328,37 @@ section type that doesn't exist on HomePage — as long as the design
 language above stays constant and the result is clean, minimal, and
 unmistakably Bizak. **If two redesigned pages feel like the same page
 with different copy, the structure is too rigid — vary it.**
+
+#### Concrete anti-pattern (the failure to avoid)
+
+`/FinancialManagement` and `/SalesCrm` were both migrated to the new
+design language. They ended up with **the same six section function
+names in the same order** — `HeroSection`, `FoundationsSection`,
+`TechnicalShowcaseSection`, `ReportingSection`, `ConnectivitySection`,
+`MetricsSection` — with content swapped (multi-entity →
+pipeline-intelligence, financial-control → smart-followups,
+audit-integration → customer-insights, etc.). Two different products,
+one identical page shape. **This is the canonical failure mode** — the
+LLM looked at the most-recent migration and cloned its structure
+instead of designing for the new page's story.
+
+To avoid it:
+
+- **Each section is designed individually for THIS page.** "Sales & CRM
+  needs a pipeline visualisation" is a section. "Sales & CRM needs the
+  same section that Financial Management has at position 2" is not.
+- **Do not look at the most-recent migration as a structural reference.**
+  Look at it only to understand how primitives compose at the JSX level.
+- **Section function names should describe THIS page's content**, not
+  generic positions. `PipelineOverviewSection` ✓ ·
+  `FoundationsSection` ✗ (the second name is so generic it could apply
+  to any page — which is why it gets cloned across pages).
+- **If you find yourself writing the same hero mock, the same dense
+  4-bento "TechnicalShowcase", the same dense "Reporting" tabular
+  panel, the same hub-and-spoke "Connectivity" diagram, the same
+  3-metric closing summary that another page already has** — the page
+  hasn't earned its sections. Stop and ask: what does THIS page need
+  to show that no other Bizak page needs to show? Build that instead.
 
 ---
 

@@ -56,7 +56,7 @@ export function BigCard({
           {text.body && (
             <p
               className="text-[14.5px] leading-[1.6] text-white/[0.72]"
-              style={{ maxWidth: 460, marginBottom: text.bullets ? 24 : 0 }}
+              style={{ maxWidth: 460, marginBottom: text.bullets ? 36 : 0 }}
             >
               {text.body}
             </p>

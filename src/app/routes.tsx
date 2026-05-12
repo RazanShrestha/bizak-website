@@ -286,6 +286,7 @@ function InventoryAndWarehousePageLayout() {
       <Header />
       <InventoryAndWarehousePage />
       <Footer
+        isLightMode
         cta={{
           title: "Take full control of your",
           titleMuted: "inventory and warehouse.",
@@ -300,10 +301,19 @@ function InventoryAndWarehousePageLayout() {
 
 function ManufacturingProductPageLayout() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
       <ManufacturingProductPage />
-      <Footer />
+      <Footer
+        cta={{
+          title: "Run your factory floor with complete precision.",
+          titleMuted: "From raw material to finished good, on time, every run.",
+          description:
+            "Plan production, manage BOMs, schedule work orders and post manufacturing cost straight to the ledger — one connected operating system, zero re-keying.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Talk to ops team",
+        }}
+      />
     </div>
   );
 }
@@ -324,10 +334,19 @@ function SalesForceManagementPageLayout() {
 
 function ProjectAndCostingPageLayout() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
       <ProjectAndJobCostingPage />
-      <Footer />
+      <Footer
+        cta={{
+          title: "Take full control of every project's margin.",
+          titleMuted: "From estimate to final billing, on one ledger.",
+          description:
+            "Capture every PO, timesheet and material draw on a project code the moment it's committed — and watch margin update the same day.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Talk to projects team",
+        }}
+      />
     </div>
   );
 }
