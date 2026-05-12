@@ -25,7 +25,7 @@ codebase is in the migration plan (`CLAUDE.md` §"Migration plan"):
 - **Phase 1 (primitive library)**: build `<Pill>`, `<Bento>`, `<BentoGrid>`, `<SectionHead>`, `<HeroCanvas>`, `<HeroCard>`, `<StepCard>`, `<BigCard>`, `<Carousel>`, `<Accordion>`, `<Marquee>`, `<Heading>`, `<Eyebrow>`, `<BadgeGreen>`, `<Flag>`, `<StatusChip>`, `<DotGrid>`, etc.
 - **Phase 2 (HomePage refactor)**: rewrite the staged HomePage onto primitives — canonical reference.
 - **Phase 3 (per-page migration)**: one PR per page, in megaMenu order.
-- **Phase 4 (retire legacy)**: delete `hp-*`/`biz-*` CSS classes, old `marketing/` primitives, `@mui/*`.
+- **Phase 4 (retire legacy)**: delete `hp-*`/`biz-*` CSS classes, the entire `marketing/` folder, `@mui/*`.
 
 **If you're being asked to redesign a page and Phase 1 isn't done yet**, stop and tell the user. Migrating pages onto primitives that don't exist yet creates parallel inline JSX that has to be re-migrated later. Phase 1 first.
 
@@ -47,7 +47,7 @@ NetSuite or HubSpot, you skipped this step.
 Walk through every item; whatever is "no" becomes part of this redesign.
 
 1. **Scope.** Open `src/app/components/Header.tsx` and find this page inside the `megaMenus` object. Which top-level group + sub-heading?
-2. **Primitives available?** The new primitive library lives in `marketing/`. If `<Pill>` / `<Bento>` / `<SectionHead>` etc. don't exist yet, Phase 1 isn't complete — flag and stop.
+2. **Primitives available?** The new primitive library lives in **`src/app/components/bz/`**. Confirm `<Pill>` / `<Bento>` / `<SectionHead>` / `<Section>` / `<Container>` / `<Heading>` etc. exist there. If any are missing, Phase 1 isn't complete — flag and stop (build the primitive in `bz/` FIRST). **Never import primitives from `marketing/` in new code** — that folder is legacy and slated for deletion in Phase 4.
 3. **Primitive composition.** Is the page composing the new primitives, or duplicating their JSX inline? Inline duplication = migration work.
 4. **Tokens.** No per-file `const C = {...}`. No hex literals (except dynamic style props). All colours via `var(--bz-fire)` / `var(--bz-paper)` / etc. or Tailwind utilities (`text-bz-fire`, `bg-bz-paper`).
 5. **Icons.** No per-file SVG dictionary. Use `lucide-react` directly for new code.
@@ -76,7 +76,8 @@ If any item fails, the redesign is the work to bring it into compliance.
   - a local `function FooButton(...)` / `function FooCard(...)` / `function FooBadge(...)` mirroring a primitive's shape
   - `paddingTop: 76` / `pt-[76px]` / `mt-[76px]` anywhere — the header is no longer fixed
   - a `<Section tone="dark">` block above `<Footer>` posing as a closing CTA — moved into Footer
-  - `<HeroCentered>`, `<HeroSplit>`, or `<HeroPanel>` from the legacy `marketing/` — those are pre-rebrand
+  - `<HeroCentered>`, `<HeroSplit>`, or `<HeroPanel>` imported from `../marketing` — those are pre-rebrand legacy primitives; new pages use `<Section tone="b">` + `<BadgeGreen>` + `<HeroCanvas>` from `../bz` instead
+  - any other import from `../marketing/*` or `../marketing` in a page file — new pages must import from `../bz`
   - `.biz-mesh` or `<HeroBadge>` (legacy) — replaced by `<BadgeGreen>` on a flat surface
   - any reference to `--bz-sage*` tokens (deprecated) — use `--bz-fire` / `--bz-paper` / etc.
 
@@ -223,7 +224,7 @@ Every section must look correct from 375px through desktop without horizontal sc
 
 ## Common mistakes to avoid
 
-- **Adding a primitive that already exists.** Check `src/app/components/marketing/index.ts` first.
+- **Adding a primitive that already exists.** Check `src/app/components/bz/index.ts` first.
 - **Adding new tokens without updating `docs/DESIGN_SYSTEM.md` and `/CLAUDE.md`.**
 - **Using `rounded-md` / `rounded-lg`.** Use `rounded-bz-md` / `rounded-bz-lg`.
 - **Wrapping `<Section>` in another wrapper for padding.** `<Section>` already provides padding; `<Container>` provides horizontal gutter.

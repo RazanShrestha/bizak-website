@@ -12,14 +12,18 @@ Everything below is the *why* and *how* — read this when you're adding a
 new primitive, adjusting tokens, or migrating a legacy page.
 
 > **Status note.** The site is mid-rebrand. Phase 0 (foundation) is
-> complete — tokens, fonts, and docs reflect the new direction (paper +
-> olive + lime + pistachio). Phase 1 (build the new primitive library) is
-> next. Until Phase 1 ships, the `marketing/` folder contains the OLD
-> primitives (`HeroCentered`, `Button`, `Card`, …) — they still work for
-> un-migrated pages but new pages should hold off until the new
-> primitives land. The `.bz-*` CSS classes in `style.css` are the *paint*
-> for the new primitives; they exist now and the primitive React
-> components will be layered on top.
+> complete. Phase 1 (build the new primitive library) is in progress.
+>
+> **The new primitive library lives in `src/app/components/bz/`** — that's
+> the canonical folder going forward. The OLD `marketing/` folder
+> (`HeroCentered`, `Button`, `Card`, …) is kept un-touched so un-migrated
+> legacy pages still render, but **new code never imports from
+> `marketing/`**. The `marketing/` folder will be deleted in Phase 4 once
+> every page is migrated.
+>
+> The `.bz-*` CSS classes in `style.css` are the *paint* for the new
+> primitives in `bz/`; both layers — CSS class + React wrapper — live in
+> lockstep.
 
 ---
 
@@ -34,9 +38,10 @@ src/
 │   ├── theme.css        — DESIGN TOKENS (the single source of truth)
 │   └── style.css        — paint layer: .bz-* (new) + hp-* / biz-* (legacy)
 ├── app/components/
-│   ├── marketing/                 — GLOBAL primitives (any page may use)
+│   ├── bz/                        — CANONICAL primitive library (new — used by every new page)
+│   ├── marketing/                 — LEGACY primitives (kept for un-migrated pages; deleted in Phase 4)
 │   ├── solutions/
-│   │   └── by-industry/           — SCOPED primitives (legacy — 4 industry pages)
+│   │   └── by-industry/           — SCOPED primitives (legacy — 4 industry pages; re-pointed at bz/ in Phase 3)
 │   ├── ui/                        — shadcn primitives (Button, Card, Dialog, …)
 │   └── *Page.tsx                  — pages: composition + content data
 └── ...
@@ -48,8 +53,9 @@ The design system has **three layers and two scopes**:
    Defined as CSS custom properties (`--bz-*`) and re-exposed as Tailwind 4
    utilities via `@theme inline { ... }`. Truly global.
 2. **Primitives** — small React components.
-   - `marketing/` — generic atoms used by *any* page (`Pill`, `Eyebrow`, `Heading`, `Container`, `Section`, `Bento`, `BentoGrid`, `SectionHead`, `HeroCanvas`, `HeroCard`, `StepCard`, `BigCard`, `Marquee`, `Carousel`, `Accordion`, `Flag`, `StatusChip`, `StripeBar`, `Tick`, `DotGrid`, `BadgeGreen`, `DataRow`, `MiniBars`, `EntityRow`, `JournalRow`, `ModuleListItem`). Some of these exist today (legacy generation: `Container`, `Section`, `Button`, `Card`, `HeroCentered`, etc.); the rest land in Phase 1.
-   - `solutions/by-industry/` — page-family-specific layouts for the 4 industry pages (legacy generation: `IndustryHero`, `HeroVisual`, `ChallengesGrid`, etc.). These will be re-pointed at the new global primitives in Phase 3.
+   - **`bz/`** — the canonical primitive library, used by every new page. Atoms (`Pill`, `Eyebrow`, `Heading`, `BadgeGreen`, `Flag`, `StatusChip`, `StripeBar`, `Tick`, `DotGrid`), layout (`Container`, `Section`, `HeroCanvas`, `SectionHead`, `BentoGrid`), card shells (`Bento`, `BigCard`, `StepCard`, `HeroCard`), patterns (`Marquee`, `Carousel`, `Accordion`, `FlagsRow`), micro-viz (`DataRow`, `MiniBars`, `EntityRow`, `JournalRow`, `ModuleListItem`).
+   - `marketing/` — **legacy** primitive library. The OLD generation (`Container`, `Section`, `Button`, `Card`, `SectionHeading`, `Eyebrow`, `IconBadge`, `PillBadge`, `HeroBadge`, `Icon`, `Stat`, `HeroCentered`, `HeroSplit`, `HeroPanel`). Kept un-touched so un-migrated pages keep rendering. **Do not add new files here.** Deleted in Phase 4.
+   - `solutions/by-industry/` — page-family-specific layouts for the 4 industry pages (legacy generation: `IndustryHero`, `HeroVisual`, `ChallengesGrid`, etc.). These will be re-pointed at `bz/` in Phase 3.
 3. **Pages** — content data + composition. No styling decisions live here.
    No hex literals, no per-file `const C = {...}` objects, no per-file
    `Icon` SVG dictionaries, no `<style>{@media …}</style>` blocks.
@@ -64,7 +70,7 @@ it.**
 
 The rule: **start narrow.** A primitive begins in the smallest scope where
 it's used. The moment a *second* nav group needs the same shape, **promote**
-it up to `marketing/`. Don't deep-import across scopes.
+it up to `bz/`. Don't deep-import across scopes.
 
 ### Scoped components delegate to global atoms
 
@@ -73,7 +79,7 @@ The promotion rule above is about *layouts*. There's a parallel rule for
 `<div>` whose shape mirrors a global primitive, it must delegate — never
 fork.** This applies inside scoped section primitives too: a scoped
 primitive's job is the *page-family-specific layout*; its CTAs, cards,
-badges, and stats are still atoms and still belong to `marketing/`.
+badges, and stats are still atoms and still belong to `bz/`.
 
 If the visual you need isn't expressible by an existing variant on the
 global primitive: add a new variant on the global primitive first, update
@@ -212,7 +218,7 @@ texture. Use shadows + flat fills + DotGrid for depth.
 
 ## 3. Primitives — the planned library (Phase 1)
 
-When the new primitive library lands in `marketing/`, every page will
+When the new primitive library lands in `bz/`, every page will
 compose these. The current Phase 0 state is "tokens + CSS paint ready,
 React primitives next." Until they ship, the staged HomePage uses raw
 `<a className="bz-pill bz-pill-dark">` style class references; once a
@@ -388,7 +394,7 @@ flat, paper, with optional HeroCanvas below.
 ### Why the new pattern is simpler
 
 The previous spec offered three hero variants because the legacy
-`marketing/` primitives served two visually-different families (HomePage's
+legacy `marketing/` primitives served two visually-different families (HomePage's
 floating-card hero vs Manufacturing's split-with-visual hero vs Careers'
 dark KPI-panel hero). Under the new direction, **all heroes share the
 same shape** — paper surface, centered copy, `BadgeGreen`, two pills,
@@ -520,7 +526,7 @@ The site is being migrated in five phases.
 ### Phase 1 — Build the primitive library
 
 Extract every recurring shape from the staged HomePage into a React
-primitive in `src/app/components/marketing/`. List in §3 above. Each
+primitive in `src/app/components/bz/`. List in §3 above. Each
 primitive is paint (CSS class) + structure (React component) + slots
 (typed props or compound children).
 
@@ -551,7 +557,7 @@ Each PR follows the `redesign-page` skill.
 
 - Delete `hp-*` classes from `style.css` (homepage debt).
 - Delete `biz-*` classes from `style.css` if `solutions/by-industry/` no longer references them.
-- Delete or thin out the OLD-generation `marketing/` primitives (`HeroCentered`, `HeroSplit`, `HeroPanel`, `Button`, `Card`, etc.) once nothing imports them.
+- Delete the entire `marketing/` folder once no page imports from it.
 - Delete `--bz-sage*` legacy aliases from `theme.css`.
 - Delete `src/imports/svg-eyvfmiiac4.ts`.
 - Drop `@mui/icons-material` / `@mui/material` from `package.json` if unreferenced.
@@ -562,7 +568,7 @@ Each PR follows the `redesign-page` skill.
 
 Step one is always **scope**. Decide which folder it belongs in:
 
-- **`marketing/`** — pattern serves *any* marketing page. Tokens, fonts, generic atoms.
+- **`bz/`** — pattern serves *any* marketing page. Tokens, fonts, generic atoms. This is the canonical home for new primitives.
 - **`solutions/by-industry/`** — specific to the 4 industry pages (legacy; new scoped folders use the same pattern).
 - **A new sibling scope** — if a page family needs its own rhythm.
 
@@ -585,7 +591,7 @@ When you do add one:
 ### Promotion rule
 
 If a primitive in a scoped folder is needed by a *second* nav group,
-**promote it up to `marketing/`** rather than copying or deep-importing
+**promote it up to `bz/`** rather than copying or deep-importing
 across scopes.
 
 ---
@@ -595,7 +601,7 @@ across scopes.
 - **Phase 1.** Build the primitive library. Track in CLAUDE.md.
 - **Phase 2.** Refactor the HomePage onto primitives.
 - **Phase 3.** Migrate the legacy pages one by one.
-- **Phase 4.** Retire legacy CSS and the OLD-generation `marketing/` primitives.
+- **Phase 4.** Retire legacy CSS and the entire `marketing/` folder.
 - The duplicate `/Manufacturing` route registration in `routes.tsx` (both `Manufacturing.tsx` and `ManufacturingPage.tsx` map there) still needs reconciling. Flag with user before touching.
 - Mixed casing in route paths (`/distribution` vs Header's `/Distribution` etc.) — case-sensitive in react-router 7. Flag with user.
 - The HomePage currently renders its own `<Header>` / `<Footer>` (legacy pattern). In Phase 2, normalize: routes own the layout, pages own the content. This is also how the closing-CTA-via-`<Footer cta={…}>` pattern is consistently applied.

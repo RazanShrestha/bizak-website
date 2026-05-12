@@ -21,8 +21,15 @@ The site is **mid-rebrand**: legacy pages still use the old sage/lime/charcoal
 palette + the `marketing/` primitive library (Container, Section, Button,
 HeroCentered, etc.). The new direction — paper cream + olive + lime
 (`#d3f969`) + pistachio, with alternating section backgrounds — landed on
-the HomePage, Header, and Footer in the most recent change. The migration
-plan to bring every page onto the new system is in §"Migration plan" below.
+the HomePage, Header, and Footer in the most recent change.
+
+**The new primitive library lives in `src/app/components/bz/`** (matches
+the `.bz-*` CSS class prefix). All new pages import from `bz/`. The old
+`marketing/` folder stays untouched until Phase 4. **Future sessions: use
+`bz/` for everything new. Never add to `marketing/`.**
+
+The migration plan to bring every page onto the new system is in
+§"Migration plan" below.
 
 For the full product brief — modules, audience, narratives, brand voice,
 canonical statistics — see **`docs/BIZAK_PRODUCT_OVERVIEW.md`**. Read it
@@ -96,13 +103,13 @@ Radii: `--bz-radius-sm` 6, `--bz-radius-md` 10, `--bz-radius-lg` 12,
 ## Hard rules
 
 1. **One font family: Inter — end-to-end, no exceptions.** It's the only family loaded in `fonts.css`. No Hedvig, no Manrope, no Poppins, no `font-mono`/`font-family: monospace`. Inter inherits from `<body>` and must reach every leaf (IDs, SKUs, step numbers, code-like identifiers — all stay Inter; differentiate with letter-spacing, weight, or color tint, not a font swap). The CSS variables `--bz-heading-font` and `--bz-body-font` both resolve to Inter and exist only for backward compat with inline `style={{fontFamily: "var(--bz-…)"}}` references; new code should not reference them.
-2. **One icon library: `lucide-react`.** Wrapped by the global `<Icon>` registry at `marketing/Icon.tsx` for legacy data-driven name aliases. Do not redefine an `Icon` component inside a page. Do not import `@mui/icons-material`. Do not add `<span className="material-symbols-outlined">` in new code.
+2. **One icon library: `lucide-react`.** For new code, import lucide icons directly. The legacy `<Icon name>` registry in `marketing/Icon.tsx` is only for data-driven loops in legacy pages. Do not redefine an `Icon` component inside a page. Do not import `@mui/icons-material`. Do not add `<span className="material-symbols-outlined">` in new code.
 3. **No gradients. Period.** The previous "gradient carve-out for `.biz-mesh`" is **retired** — the new hero pattern is a flat paper-cream surface with a `<DotGrid>` overlay (or a flat olive `<HeroCanvas>`), not a radial mesh. No `linear-gradient` / `radial-gradient` / `conic-gradient` anywhere — for cards, buttons, glows, dividers, badges, hero backgrounds, anything.
 4. **`className` over inline `style`.** Never use `onMouseEnter`/`onMouseLeave` to mutate `e.currentTarget.style` — use Tailwind `hover:` utilities or `:hover` rules on `.bz-*` classes. The only legitimate inline `style` is a *dynamic* value that can't be expressed in className (computed `width: ${pct}%`, prop-derived `maxWidth`). **Inline `style={{fontFamily, padding, margin, display, gridTemplateColumns, color, background}}` for static values is a code smell — extract to a primitive or a className.**
 5. **No per-file color objects.** No `const C = {...}` at the top of a page file. Use tokens (`var(--bz-fire)`) or Tailwind utilities (`text-bz-fire`).
 6. **Keep page files small.** Pages should be composition + data arrays. If a section grows past ~80 lines of JSX, extract it into a primitive. The end-state for a page is ~150–300 lines: imports, data arrays, section composition.
 7. **No new files/styles in `src/styles/style.css`.** That file is currently the paint layer for the `.bz-*` primitives and the legacy `hp-*` / `biz-*` classes. Once a primitive wraps a `.bz-*` rule, leave the CSS alone — new visual behavior goes in the primitive's component file (Tailwind `className`) or a new `.bz-*` class consumed by exactly one primitive.
-8. **Scope before write.** Before creating a new component, decide which scope it belongs in (global `marketing/` for atoms used by any page, `solutions/by-industry/` for layout-specific section primitives for the 4 industry pages, etc.). When in doubt, start narrow; promote up when a second nav group needs it.
+8. **Scope before write.** Before creating a new component, decide which scope it belongs in. New global primitives go in **`bz/`** (the canonical folder). Scoped section primitives (e.g., for the 4 industry pages, currently in `solutions/by-industry/`) stay scoped until a second nav group needs them, then promote up to `bz/`. **Never add new files to `marketing/`** — that folder is being retired in Phase 4.
 9. **Delegate to atoms — don't reinvent.** Any raw `<button>` / `<a>` / styled `<div>` whose shape mirrors a primitive MUST delegate to that primitive. If the visual shape isn't expressible by an existing variant, *add a variant on the primitive first*, then delegate — never fork. The `.bz-pill *` and `.bz-bento *` CSS classes are the paint of the future `<Pill>` and `<Bento>` primitives; once those primitives ship, raw `className="bz-pill bz-pill-dark"` on an `<a>` is a code smell — wrap it.
 10. **Closing-CTA section lives in `<Footer cta={…}>`, not in the page.** The bottom-of-page CTA (the "Take full control of …" moment) is rendered by `<Footer>` via its `cta?: FooterCta` prop. Pages override the default by passing a `cta` prop from their `*PageLayout` in `routes.tsx`. Do NOT add a separate `<Section tone="dark">` closing-CTA block above `<Footer>`. The `FooterCta` interface is in `src/app/components/Footer.tsx`. See `docs/BIZAK_PRODUCT_OVERVIEW.md` §7.1.
 11. **Header is no longer `position: fixed`.** It sits in normal document flow on a `bz-section-b` strip at the top of the page. Do NOT add `paddingTop: 76`, `pt-[76px]`, `mt-[76px]`, or any offset compensating for a fixed header — those are legacy shims from before this change. When you touch a page that has one, strip it in the same change. Grep for `paddingTop: 76|pt-\[76`.
@@ -116,14 +123,23 @@ The site is being migrated in five phases. **Where we are right now: Phase 0 is 
 | Phase | What | Status |
 |---|---|---|
 | 0 | Foundation: token reconciliation in `theme.css`, Hedvig removed, docs updated. | ✅ Phase 0 lands the foundation. After this PR, future Claude sessions read the new palette and primitive plan from the docs. |
-| 1 | Build the primitive library in `marketing/` (see §"Planned primitive library" below). | Pending. |
+| 1 | Build the primitive library in `bz/` (see §"Planned primitive library" below). | In progress. |
 | 2 | Refactor the staged HomePage onto the new primitives — proves the system works, becomes the canonical reference. | Pending. |
 | 3 | Migrate every other page onto the new primitives, one PR per page, in megaMenu order. | Pending. |
-| 4 | Retire legacy: `hp-*` and `biz-*` classes in `style.css`, the old `marketing/Hero*` primitives if obsolete, `src/imports/svg-*.ts`, `@mui/*` deps. | Pending. |
+| 4 | Retire legacy: `hp-*` and `biz-*` classes in `style.css`, the entire `marketing/` folder (all old primitives), `src/imports/svg-*.ts`, `@mui/*` deps. | Pending. |
 
 ## Planned primitive library (Phase 1)
 
-Every recurring shape in the staged HomePage becomes a React primitive in `src/app/components/marketing/`. The contract: pages compose primitives with data + slot children. No inline `style={{}}` for static values; no `onMouseEnter`/`onMouseLeave` mutations; no media-query `<style>{…}</style>` strings.
+Every recurring shape in the staged HomePage becomes a React primitive in `src/app/components/bz/`. The contract: pages compose primitives with data + slot children. No inline `style={{}}` for static values; no `onMouseEnter`/`onMouseLeave` mutations; no media-query `<style>{…}</style>` strings.
+
+```tsx
+import {
+  Section, Container, SectionHead, BentoGrid, Bento, Pill, Heading,
+  BadgeGreen, HeroCanvas, HeroCard, StepCard, Marquee, Carousel, Accordion,
+} from "../bz";
+```
+
+**Never import from `marketing/` in new code.** That folder is the legacy generation; it will be deleted in Phase 4.
 
 ### Atoms
 
@@ -269,7 +285,8 @@ Before editing **any** page file, walk through this checklist. If any item is "n
 - `src/styles/style.css` — the paint layer. Contains: the new `.bz-*` classes (Phase 0+), the homepage's legacy `hp-*` classes (Phase 4 to retire), the by-industry `biz-*` classes (Phase 4 to retire). Do not add new page-level CSS here; new visual logic goes in a primitive.
 - `src/app/components/ui/` — shadcn primitives. Use them when you need form controls, dialogs, dropdowns.
 - `src/imports/` — auto-generated SVG paths from the original Figma export. Treat as legacy; prefer lucide.
-- `src/app/components/marketing/` — the primitive library. Mid-rebuild (Phase 1). Existing primitives (`Container`, `Section`, `SectionHeading`, `Button`, `Card`, `HeroCentered`, `HeroSplit`, `HeroPanel`, etc.) are the OLD generation; new primitives will live here too once Phase 1 lands.
+- `src/app/components/bz/` — **the canonical primitive library.** All new pages import from here. See its `README.md` for the catalogue.
+- `src/app/components/marketing/` — **legacy primitive library.** Old generation (`Container`, `Section`, `SectionHeading`, `Button`, `Card`, `HeroCentered`, `HeroSplit`, `HeroPanel`, `Eyebrow`, `IconBadge`, `PillBadge`, `HeroBadge`, `Icon`, `Stat`). Kept un-touched so un-migrated legacy pages keep rendering. **Do not add new files here.** Slated for deletion in Phase 4.
 - `src/app/components/solutions/by-industry/` — scoped primitives for the 4 industry pages. Will be re-pointed at the new global primitives in Phase 3.
 
 ## Common gotchas
