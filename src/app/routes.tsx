@@ -232,7 +232,7 @@ function WhyBizakPageLayout() {
 
 function FinancialManagementPageLayout() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
       <FinancialManagementPage />
       <Footer

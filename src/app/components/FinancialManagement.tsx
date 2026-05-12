@@ -1,163 +1,57 @@
+import "../../styles/style.css";
+import * as React from "react";
 import {
-  Container,
-  Section,
-  SectionHeading,
-  Card,
-  Button,
-  IconBadge,
-  PillBadge,
-  HeroBadge,
-  Eyebrow,
-  HeroCentered,
-} from "./marketing";
-import {
-  ClipboardList,
-  DollarSign,
-  CheckCircle2,
-  Building2,
-  Package,
-  LineChart,
-  ShieldCheck,
-  FileText,
-  Clock,
-  TrendingUp,
-  TrendingDown,
-  Sparkles,
+  Activity,
   AlertTriangle,
+  ArrowUpRight,
+  BookOpen,
+  Building2,
+  CheckCircle2,
   ChevronRight,
-  ShoppingCart,
+  CircleDollarSign,
+  ClipboardList,
+  Clock,
+  Database,
+  DollarSign,
   Factory,
+  FileText,
   FolderKanban,
   Landmark,
-  Activity,
+  Layers,
+  LineChart,
+  Package,
   Scale,
-  ArrowUpRight,
-  Database,
-  CircleDollarSign,
-  BookOpen,
+  ShieldCheck,
+  ShoppingCart,
+  Sparkles,
+  TrendingDown,
+  TrendingUp,
 } from "lucide-react";
+import {
+  Accordion,
+  BadgeGreen,
+  Bento,
+  BentoGrid,
+  Container,
+  DataRow,
+  DotGrid,
+  EntityRow,
+  Heading,
+  HeroCanvas,
+  HeroCard,
+  JournalRow,
+  MiniBars,
+  Pill,
+  Section,
+  SectionHead,
+  StatTile,
+  StatusChip,
+} from "./bz";
 
-// ─── 1. HERO ──────────────────────────────────────────────────────────────────
-function HeroSection() {
-  return (
-    <HeroCentered
-      containerWidth="narrow"
-      badge={<HeroBadge>Financial Module</HeroBadge>}
-      title={
-        <>
-          Control your finances with
-          <br />
-          <span className="text-bz-sage">clarity</span> and confidence
-        </>
-      }
-      description="Streamline financial operations from ledger to report. Centralise cash flow, automate reconciliation and manage vendor payments in one high-fidelity interface."
-      actions={
-        <>
-          <Button variant="accent" size="lg" href="/contact" withArrow>
-            Request Demo
-          </Button>
-          <Button variant="outline" size="lg" href="#features">
-            View features
-          </Button>
-        </>
-      }
-      visual={<HeroDashboard />}
-    />
-  );
-}
+// ════════════════════════════════════════════════════════════════════════════
+// CONTENT DATA
+// ════════════════════════════════════════════════════════════════════════════
 
-function HeroDashboard() {
-  const stats = [
-    { label: "Cash Position", value: "$1.24M" },
-    { label: "Total Liabilities", value: "$482.4k" },
-    { label: "Avg. DPO", value: "34.2 Days" },
-  ];
-  const nodes: Array<{ label: string; sub: string; active: boolean }> = [
-    { label: "JE", sub: "Entry", active: false },
-    { label: "AP", sub: "Approval", active: false },
-    { label: "RECO", sub: "Reconciliation", active: true },
-    { label: "BS", sub: "Reporting", active: false },
-  ];
-
-  return (
-    <div className="mt-16 max-w-[1100px] mx-auto rounded-bz-2xl bg-bz-surface border border-bz-border
-                    shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] p-2">
-      <div className="rounded-bz-xl bg-bz-bg border border-bz-border p-6 md:p-8 flex gap-8 flex-wrap">
-        {/* Sidebar mock */}
-        <div className="hidden md:flex w-[200px] shrink-0 flex-col gap-4">
-          <div className="h-10 rounded-bz-md bg-bz-border" />
-          <div className="flex flex-col gap-2">
-            <div className="h-3 rounded bg-bz-border-soft w-[75%]" />
-            <div className="h-3 rounded bg-bz-border-soft w-[50%]" />
-            <div className="h-3 rounded bg-bz-border-soft w-[65%]" />
-          </div>
-          <div className="pt-2 flex flex-col gap-2">
-            <div className="h-8 rounded-bz-sm bg-bz-border-soft" />
-            <div className="h-8 rounded-bz-sm bg-bz-border-soft" />
-          </div>
-        </div>
-
-        {/* Content mock */}
-        <div className="flex-1 min-w-[280px]">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6">
-            {stats.map((s) => (
-              <div
-                key={s.label}
-                className="px-5 py-4 rounded-bz-lg bg-bz-surface border border-bz-border"
-              >
-                <p className="text-[9px] font-bold text-bz-text-soft uppercase tracking-[0.08em] mb-1.5">
-                  {s.label}
-                </p>
-                <p className="text-[22px] font-bold text-bz-text">{s.value}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="px-7 py-7 rounded-bz-lg bg-bz-surface border border-bz-border">
-            <div className="flex justify-between items-center mb-8">
-              <h4 className="font-bold text-bz-text text-[14px]">Financial Workflow</h4>
-              <PillBadge tone="accent" dot>
-                LIVE
-              </PillBadge>
-            </div>
-
-            <div className="relative flex justify-between items-center px-4">
-              <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-px bg-bz-border" />
-              {nodes.map((n) => (
-                <div
-                  key={n.label}
-                  className={[
-                    "relative z-10 size-11 rounded-full flex items-center justify-center text-[9px] font-bold",
-                    n.active
-                      ? "bg-bz-deep text-white shadow-[0_4px_12px_rgba(0,0,0,0.2)] ring-4 ring-white"
-                      : "bg-bz-bg text-bz-text-soft border border-bz-border",
-                  ].join(" ")}
-                >
-                  {n.label}
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-between mt-3 px-2">
-              {nodes.map((n) => (
-                <span
-                  key={n.sub}
-                  className={[
-                    "text-[9px] font-bold uppercase tracking-[0.08em]",
-                    n.active ? "text-bz-text" : "text-bz-text-soft",
-                  ].join(" ")}
-                >
-                  {n.sub}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── 2. FEATURE GRID ──────────────────────────────────────────────────────────
 const FEATURES = [
   {
     icon: ClipboardList,
@@ -189,306 +83,334 @@ const FEATURES = [
     title: "Real-time Reporting",
     desc: "Generate GAAP and IFRS compliant financial statements instantly at the click of a button.",
   },
-];
+] as const;
 
-function FeatureGridSection() {
+const METRICS = [
+  {
+    value: "60%",
+    label: "Faster month-end",
+    desc: "Automated reconciliation and intercompany elimination cut close times in half.",
+  },
+  {
+    value: "40%",
+    label: "Fewer errors",
+    desc: "Direct bank feeds and auto-posted journals replace manual data entry.",
+  },
+  {
+    value: "100%",
+    label: "Audit coverage",
+    desc: "A complete digital paper trail behind every figure, ready for regulatory review.",
+  },
+] as const;
+
+// ════════════════════════════════════════════════════════════════════════════
+// [HERO]
+// ════════════════════════════════════════════════════════════════════════════
+
+function HeroSection() {
   return (
-    <Section tone="white" id="features">
+    <Section tone="b" pad="hero">
       <Container>
-        <SectionHeading
-          eyebrow="Overview"
-          title={
-            <>
-              A structured financial system
-              <br />
-              built for operational control
-            </>
-          }
-          maxWidth={680}
-          className="mb-14"
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {FEATURES.map(({ icon: Icon, title, desc }) => (
-            <Card key={title} tone="soft" pad="lg" hover="lift">
-              <IconBadge tone="sage" size="md" className="mb-5">
-                <Icon className="size-5" strokeWidth={1.8} />
-              </IconBadge>
-              <h3 className="font-bold text-[15px] text-bz-text mb-2">{title}</h3>
-              <p className="text-[13px] text-bz-text-muted leading-[1.65]">{desc}</p>
-            </Card>
-          ))}
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>
+            Financial Module · Live, Globally 🎉
+          </BadgeGreen>
+
+          <Heading level={2} style={{ marginBottom: 36 }}>
+            Control your finances with clarity{" "}
+            <Heading.Muted>and close the books in hours, not weeks.</Heading.Muted>
+          </Heading>
+
+          <div className="flex flex-wrap justify-center gap-[10px]">
+            <Pill variant="dark" withTick href="/contact">
+              Request Demo
+            </Pill>
+            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="#features">
+              View features
+            </Pill>
+          </div>
         </div>
+
+        <HeroCanvas>
+          <HeroCard
+            icon={<Activity size={12} />}
+            title="Live ledger"
+            badge="Live"
+            badgeVariant="live"
+            eyebrow="Cash position · 4 entities"
+            value="$1,242,180"
+          >
+            <div className="rounded-bz-lg bg-bz-paper-warm p-3">
+              <DataRow
+                label="Today's journal entries"
+                value="247 auto-posted"
+                emphasis
+                className="mb-1.5"
+              />
+              <MiniBars values={[40, 65, 50, 80, 60, 88, 92]} highlightLast />
+            </div>
+          </HeroCard>
+
+          <HeroCard
+            icon={<FileText size={12} />}
+            title="Reconciliation"
+            badge="Posted"
+            badgeVariant="posted"
+            eyebrow="Bank feed · Citi Operating"
+            value="$482,400"
+          >
+            <div className="flex flex-col gap-1.5 rounded-bz-lg bg-bz-paper-warm px-3 py-2.5">
+              <DataRow label="Matched lines" value="184 / 184" />
+              <DataRow label="Variance flagged" value="$0.00" />
+            </div>
+          </HeroCard>
+        </HeroCanvas>
       </Container>
     </Section>
   );
 }
 
-// ─── 3. TECHNICAL SHOWCASE (dark) ─────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// [01] FOUNDATIONS
+// ════════════════════════════════════════════════════════════════════════════
+
+function FoundationsSection() {
+  return (
+    <Section tone="a" id="features">
+      <Container>
+        <SectionHead
+          index="01"
+          label="Overview"
+          title={
+            <>
+              A structured financial system,{" "}
+              <Heading.Muted>built for operational control.</Heading.Muted>
+            </>
+          }
+          titleMaxWidth={760}
+        />
+
+        <BentoGrid cols={3}>
+          {FEATURES.map(({ icon: Icon, title, desc }) => (
+            <Bento key={title} tone="paper" hover minHeight={220}>
+              <Bento.Header
+                title={title}
+                icon={<Icon size={26} strokeWidth={1.4} color="#1F3422" />}
+              />
+              <Bento.Desc>{desc}</Bento.Desc>
+            </Bento>
+          ))}
+        </BentoGrid>
+      </Container>
+    </Section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [02] TECHNICAL SHOWCASE
+// ════════════════════════════════════════════════════════════════════════════
+
 function TechnicalShowcaseSection() {
   return (
-    <Section tone="dark">
+    <Section tone="b">
       <Container>
-        <SectionHeading
-          eyebrow="Technical Showcase"
-          eyebrowTone="accent"
+        <SectionHead
+          index="02"
+          label="Technical showcase"
           title={
             <>
-              High-fidelity tools for the
-              <br />
-              modern finance team
+              High-fidelity tools{" "}
+              <Heading.Muted>for the modern finance team.</Heading.Muted>
             </>
           }
-          tone="light"
-          maxWidth={680}
-          className="mb-14"
+          titleMaxWidth={720}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <MultiEntityCard />
-          <FinancialControlCard />
-          <CashFlowCard />
-          <FinancialIntegrationCard />
-        </div>
+        <BentoGrid cols={2}>
+          <MultiEntityBento />
+          <FinancialControlBento />
+          <CashFlowBento />
+          <AuditIntegrationBento />
+        </BentoGrid>
       </Container>
     </Section>
   );
 }
 
-function MultiEntityCard() {
-  const m = [
-    { label: "Consolidated", value: "99.8%", accent: true },
-    { label: "Tax Compl.", value: "A+" },
-    { label: "Eliminations", value: "100%" },
+function MultiEntityBento() {
+  const rows = [
+    { ccy: "USD", flag: "🇺🇸", amount: "$2.14M" },
+    { ccy: "EUR", flag: "🇪🇺", amount: "€1.28M" },
+    { ccy: "GBP", flag: "🇬🇧", amount: "£820k" },
   ];
   return (
-    <Card tone="dark" pad="lg" className="min-h-[420px] flex flex-col justify-between">
-      <div>
-        <IconBadge tone="darkSurface" size="sm" className="mb-5">
-          <Building2 className="size-4 text-bz-accent" strokeWidth={1.8} />
-        </IconBadge>
-        <h3 className="text-[18px] font-bold mb-2.5">Multi-Entity Management</h3>
-        <p className="text-[13px] text-white/60 leading-[1.65] mb-9">
-          Consolidate multiple subsidiaries with varying currencies into a single source of truth in
-          seconds.
-        </p>
-      </div>
-      <div className="bg-white/[0.04] rounded-bz-xl border border-white/10 p-5">
-        <div className="flex items-center gap-3.5 mb-5">
-          <div className="size-10 rounded-full bg-white/[0.06] flex items-center justify-center text-bz-accent font-bold text-[12px]">
-            GL
-          </div>
-          <div>
-            <p className="text-[13px] font-bold">Global Entities</p>
-            <p className="text-[10px] text-white/40 uppercase tracking-[0.08em]">
-              4 Active Markets
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-3 text-center">
-          {m.map((x) => (
-            <div key={x.label}>
-              <p className="text-[9px] text-white/40 uppercase tracking-[0.08em] mb-1">
-                {x.label}
-              </p>
-              <p
-                className={[
-                  "text-[17px] font-bold",
-                  x.accent ? "text-bz-accent" : "text-white",
-                ].join(" ")}
-              >
-                {x.value}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Card>
+    <Bento tone="paper" hover minHeight={360}>
+      <Bento.Header
+        title="Multi-entity management"
+        icon={<Building2 size={26} strokeWidth={1.4} color="#1F3422" />}
+      />
+      <Bento.Desc>
+        Consolidate subsidiaries across currencies into a single source of truth — FX translation and
+        intercompany eliminations included.
+      </Bento.Desc>
+      <Bento.Footer tone="light" className="flex flex-col gap-1.5">
+        {rows.map((r) => (
+          <EntityRow key={r.ccy} flag={r.flag} name={r.ccy} amount={r.amount} />
+        ))}
+      </Bento.Footer>
+    </Bento>
   );
 }
 
-function FinancialControlCard() {
+function FinancialControlBento() {
   const rows: Array<{
     abbr: string;
     label: string;
-    chipBg: string;
-    chipColor: string;
-    status: "green" | "yellow" | null;
+    status: "ok" | "review" | "muted";
   }> = [
-    { abbr: "M", label: "Manager Approval", chipBg: "bg-blue-500/20", chipColor: "text-blue-400", status: "green" },
-    { abbr: "CF", label: "CFO Review > $50k", chipBg: "bg-bz-accent-mid", chipColor: "text-bz-accent", status: "yellow" },
-    { abbr: "L", label: "Compliance Log", chipBg: "bg-white/[0.06]", chipColor: "text-white/40", status: null },
+    { abbr: "M", label: "Manager approval", status: "ok" },
+    { abbr: "CF", label: "CFO review > $50k", status: "review" },
+    { abbr: "L", label: "Compliance log", status: "muted" },
   ];
   return (
-    <Card tone="dark" pad="lg" className="min-h-[420px] flex flex-col justify-between">
-      <div>
-        <IconBadge tone="darkSurface" size="sm" className="mb-5">
-          <ShieldCheck className="size-4 text-bz-accent" strokeWidth={1.8} />
-        </IconBadge>
-        <h3 className="text-[18px] font-bold mb-2.5">Financial Control</h3>
-        <p className="text-[13px] text-white/60 leading-[1.65] mb-7">
-          Maintain strict fiscal hygiene with intelligent conditional routing and budget checks.
-        </p>
-      </div>
-      <div className="flex flex-col gap-2.5">
+    <Bento tone="dark" hover dotGrid minHeight={360}>
+      <Bento.Header
+        title="Financial control"
+        icon={<ShieldCheck size={26} strokeWidth={1.4} color="#DBE9B8" />}
+      />
+      <Bento.Desc>
+        Maintain strict fiscal hygiene with conditional routing, budget checks and full approval logs
+        on every payment.
+      </Bento.Desc>
+      <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
         {rows.map((r) => (
           <div
             key={r.label}
-            className={[
-              "px-4 py-3.5 rounded-bz-md bg-white/[0.04] border border-white/10",
-              "flex items-center justify-between",
-              r.status === null && "opacity-50",
-            ]
-              .filter(Boolean)
-              .join(" ")}
+            className="flex items-center justify-between rounded-bz-md bg-white/[0.04] px-3 py-2"
           >
-            <div className="flex items-center gap-3">
-              <div
-                className={[
-                  "size-7 rounded-bz-sm flex items-center justify-center text-[9px] font-bold",
-                  r.chipBg,
-                  r.chipColor,
-                ].join(" ")}
-              >
+            <div className="flex items-center gap-2.5">
+              <span className="inline-flex size-6 items-center justify-center rounded-bz-sm bg-white/[0.06] text-[9.5px] font-semibold text-bz-leaf">
                 {r.abbr}
-              </div>
-              <span className="text-[12px] font-medium text-white">{r.label}</span>
+              </span>
+              <span className="text-[12px] text-bz-text-on-dark">{r.label}</span>
             </div>
-            {r.status && (
-              <div
-                className={[
-                  "size-4 rounded-full flex items-center justify-center",
-                  r.status === "green" ? "bg-emerald-500/20" : "bg-yellow-500/20",
-                ].join(" ")}
-              >
-                <div
-                  className={[
-                    "size-1.5 rounded-full",
-                    r.status === "green" ? "bg-emerald-500" : "bg-yellow-400",
-                  ].join(" ")}
-                />
-              </div>
-            )}
+            <span
+              className={
+                r.status === "ok"
+                  ? "size-1.5 rounded-bz-pill bg-emerald-400"
+                  : r.status === "review"
+                  ? "size-1.5 rounded-bz-pill bg-bz-fire"
+                  : "size-1.5 rounded-bz-pill bg-white/[0.22]"
+              }
+            />
           </div>
         ))}
-      </div>
-    </Card>
+      </Bento.Footer>
+    </Bento>
   );
 }
 
-function CashFlowCard() {
+function CashFlowBento() {
   const bars = [
-    { pct: 75, color: "bg-bz-accent" },
-    { pct: 50, color: "bg-white/40" },
-    { pct: 25, color: "bg-blue-400" },
+    { label: "Inflow · AR", pct: 78 },
+    { label: "Outflow · AP", pct: 54 },
+    { label: "Forecast · 30d", pct: 26 },
   ];
   return (
-    <Card tone="dark" pad="lg" className="min-h-[360px] flex flex-col justify-between">
-      <div>
-        <IconBadge tone="darkSurface" size="sm" className="mb-5">
-          <FileText className="size-4 text-bz-accent" strokeWidth={1.8} />
-        </IconBadge>
-        <h3 className="text-[18px] font-bold mb-2.5">Cash Flow Management</h3>
-        <p className="text-[13px] text-white/60 leading-[1.65] mb-9">
-          Dynamic forecasting and debt management with real-time aging reports.
-        </p>
-      </div>
-      <div className="bg-white/[0.04] rounded-t-bz-xl border border-white/10 border-b-0 p-5">
-        <div className="flex flex-col gap-3.5">
-          {bars.map((b, i) => (
-            <div
-              key={i}
-              className="h-2 bg-white/[0.06] rounded-bz-pill relative overflow-hidden"
-            >
+    <Bento tone="leaf" hover minHeight={300}>
+      <Bento.Header
+        title="Cash flow management"
+        icon={<FileText size={26} strokeWidth={1.4} color="#1F3422" />}
+      />
+      <Bento.Desc style={{ color: "#1F3422", opacity: 0.78 }}>
+        Dynamic forecasting and aged-debt tracking with real-time AR / AP visibility.
+      </Bento.Desc>
+      <Bento.Footer className="bg-[rgba(31,52,34,0.08)] flex flex-col gap-2.5">
+        {bars.map((b) => (
+          <div key={b.label}>
+            <div className="mb-1 flex items-center justify-between text-[11px] text-[#1F3422]">
+              <span>{b.label}</span>
+              <span className="font-medium">{b.pct}%</span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-bz-pill bg-[rgba(31,52,34,0.12)]">
               <div
-                className={`absolute inset-y-0 left-0 rounded-bz-pill ${b.color}`}
+                className="h-full rounded-bz-pill bg-[#1F3422]"
                 style={{ width: `${b.pct}%` }}
               />
             </div>
-          ))}
-        </div>
-
-       
-      </div>
-    </Card>
+          </div>
+        ))}
+      </Bento.Footer>
+    </Bento>
   );
 }
 
-function FinancialIntegrationCard() {
+function AuditIntegrationBento() {
   const trail = [
     { trail: "Journal_Entry", ref: "#JE-2024-8821" },
     { trail: "Bank_Statement", ref: "#BS-990-22" },
     { trail: "Vendor_Invoice", ref: "#INV-AX-402" },
   ];
   return (
-    <Card tone="dark" pad="lg" className="min-h-[360px]">
-      <div className="flex justify-between items-start mb-5">
-        <IconBadge tone="darkSurface" size="sm">
-          <ClipboardList className="size-4 text-bz-accent" strokeWidth={1.8} />
-        </IconBadge>
-        <div className="text-right">
-          <p className="text-[9px] font-bold text-white/40 uppercase tracking-[0.08em] mb-1">
-            Audit Score
-          </p>
-          <p className="text-[26px] font-bold text-bz-accent leading-none">100%</p>
-        </div>
-      </div>
-      <h3 className="text-[18px] font-bold mb-2.5">Financial Integration</h3>
-      <p className="text-[13px] text-white/60 leading-[1.65] mb-7">
-        Direct ledger posting and automated 3-way matching for absolute financial integrity.
-      </p>
-      <div>
-        <div className="flex justify-between pb-2.5 border-b border-white/[0.06]
-                        text-[9px] font-bold text-white/40 uppercase tracking-[0.08em]">
-          <span>Digital Trail</span>
-          <span>Source Node</span>
-          <span>State</span>
-        </div>
+    <Bento tone="dark" hover minHeight={300}>
+      <Bento.Header
+        title="Financial integration"
+        icon={<ClipboardList size={26} strokeWidth={1.4} color="#DBE9B8" />}
+      />
+      <Bento.Desc>
+        Direct ledger posting and automated 3-way matching across every connected system, with a
+        100% audit score on every transaction.
+      </Bento.Desc>
+      <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
         {trail.map((r) => (
           <div
-            key={r.trail}
-            className="flex justify-between items-center py-2.5 border-b border-white/[0.04]
-                       text-[10px] font-bold"
+            key={r.ref}
+            className="flex items-center justify-between rounded-bz-md bg-white/[0.04] px-3 py-2"
           >
-            <span className="text-white">{r.trail}</span>
-            <span className="text-white/60">{r.ref}</span>
-            <div className="size-3 rounded-full bg-emerald-500/15 flex items-center justify-center">
-              <div className="size-1 rounded-full bg-emerald-500" />
-            </div>
+            <span className="text-[11.5px] text-bz-text-on-dark">{r.trail}</span>
+            <span className="text-[10.5px] text-white/[0.62]">{r.ref}</span>
           </div>
         ))}
-      </div>
-    </Card>
+      </Bento.Footer>
+    </Bento>
   );
 }
 
-// ─── 4. REPORTING — creative redesign ─────────────────────────────────────────
-//   Concept: "Click any number, see its source."
-//   12-col bento. Row 1: Live P&L (7) + Pre-built reports (5).
-//   Row 2: Anomaly detection (5) + Drill-down audit trail (7).
+// ════════════════════════════════════════════════════════════════════════════
+// [03] REPORTING — "Click any number, see its source."
+// ════════════════════════════════════════════════════════════════════════════
+
 function ReportingSection() {
   return (
-    <Section tone="light">
+    <Section tone="a">
       <Container>
-        <SectionHeading
-          eyebrow="Reporting"
+        <SectionHead
+          index="03"
+          label="Reporting"
           title={
             <>
-              Click any number,
-              <br />
-              <span className="text-bz-sage">see its source.</span>
+              Click any number,{" "}
+              <Heading.Muted>see its source.</Heading.Muted>
             </>
           }
           description="From the income statement down to the originating journal entry — every figure is live, traceable and audit-ready."
-          maxWidth={720}
-          className="mb-14"
+          titleMaxWidth={780}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          <LivePnLCard />
-          <PreBuiltReportsCard />
-          <AnomalyAlertsCard />
-          <DrillTrailCard />
-        </div>
+        <BentoGrid cols={12}>
+          <Bento tone="paper" span={7} minHeight={460}>
+            <LivePnLPanel />
+          </Bento>
+          <Bento tone="paper" span={5} minHeight={460}>
+            <PreBuiltReportsPanel />
+          </Bento>
+          <Bento tone="paper" span={5} minHeight={420}>
+            <AnomalyAlertsPanel />
+          </Bento>
+          <Bento tone="paper" span={7} minHeight={420}>
+            <DrillTrailPanel />
+          </Bento>
+        </BentoGrid>
       </Container>
     </Section>
   );
@@ -503,111 +425,97 @@ type PnLRow = {
   emphasis?: boolean;
 };
 
-function LivePnLCard() {
+function LivePnLPanel() {
   const rows: PnLRow[] = [
-    { label: "Revenue",            value: "$4.82M",  delta: "+12.4%", trend: "up",   intent: "good"    },
-    { label: "Gross Profit",       value: "$2.91M",  delta: "60.3% margin", trend: "up", intent: "neutral" },
-    { label: "Operating Expenses", value: "($1.84M)",delta: "+4.1%",  trend: "up",   intent: "bad"     },
-    { label: "EBITDA",             value: "$1.07M",  delta: "+18.6%", trend: "up",   intent: "good"    },
-    { label: "Net Income",         value: "$812K",   delta: "+22.1%", trend: "up",   intent: "good", emphasis: true },
+    { label: "Revenue",            value: "$4.82M",   delta: "+12.4%",        trend: "up",   intent: "good"    },
+    { label: "Gross Profit",       value: "$2.91M",   delta: "60.3% margin",  trend: "up",   intent: "neutral" },
+    { label: "Operating Expenses", value: "($1.84M)", delta: "+4.1%",         trend: "up",   intent: "bad"     },
+    { label: "EBITDA",             value: "$1.07M",   delta: "+18.6%",        trend: "up",   intent: "good"    },
+    { label: "Net Income",         value: "$812K",    delta: "+22.1%",        trend: "up",   intent: "good", emphasis: true },
   ];
 
   return (
-    <Card pad="lg" className="lg:col-span-7">
-      <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
+    <>
+      <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <IconBadge tone="sage" size="sm">
-              <FileText className="size-4" strokeWidth={1.8} />
-            </IconBadge>
-            <h3 className="text-[16px] font-bold text-bz-text">Income Statement</h3>
+          <div className="mb-1.5 flex items-center gap-2">
+            <span className="inline-flex size-7 items-center justify-center rounded-bz-md bg-bz-leaf text-[#1F3422]">
+              <FileText size={14} strokeWidth={1.8} />
+            </span>
+            <h3 className="text-[15px] font-medium text-bz-text">Income Statement</h3>
           </div>
           <p className="text-[12px] text-bz-text-muted">
             Auto-consolidated from 4 entities · synced 2 minutes ago
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <PillBadge tone="neutral">FY2024 · Q3</PillBadge>
-          <PillBadge tone="accent" dot>
-            LIVE
-          </PillBadge>
+          <StatusChip variant="posted">FY2024 · Q3</StatusChip>
+          <StatusChip variant="live">Live</StatusChip>
         </div>
       </div>
 
-      <div className="rounded-bz-lg border border-bz-border overflow-hidden">
+      <div className="overflow-hidden rounded-bz-lg border border-bz-line-soft">
         {rows.map((r, i) => (
           <div
             key={r.label}
             className={[
-              "flex items-center justify-between px-5 py-4",
-              i !== rows.length - 1 && "border-b border-bz-border-soft",
-              r.emphasis && "bg-bz-bg",
+              "flex items-center justify-between gap-3 px-4 py-3.5",
+              i !== rows.length - 1 && "border-b border-bz-line-soft",
+              r.emphasis && "bg-bz-paper-warm",
             ]
               .filter(Boolean)
               .join(" ")}
           >
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="flex min-w-0 items-center gap-2.5">
               <span
                 className={[
-                  "size-1.5 rounded-full shrink-0",
-                  r.emphasis ? "bg-bz-accent" : "bg-bz-border",
+                  "size-1.5 shrink-0 rounded-bz-pill",
+                  r.emphasis ? "bg-bz-fire" : "bg-bz-line",
                 ].join(" ")}
               />
               <span
                 className={[
-                  "text-[14px] truncate",
-                  r.emphasis ? "font-bold text-bz-text" : "font-medium text-bz-text",
+                  "truncate text-[13.5px]",
+                  r.emphasis ? "font-medium text-bz-text" : "text-bz-text",
                 ].join(" ")}
               >
                 {r.label}
               </span>
             </div>
-
-            <div className="flex items-center gap-3 shrink-0">
-              {r.emphasis && (
-                <svg width="64" height="20" viewBox="0 0 64 20" className="hidden sm:block">
-                  <path
-                    d="M0,15 L10,12 L20,14 L30,9 L40,10 L50,5 L64,2"
-                    fill="none"
-                    stroke="var(--bz-sage)"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              )}
+            <div className="flex shrink-0 items-center gap-2.5">
               <span
                 className={[
                   "tabular-nums",
-                  r.emphasis ? "text-[18px] font-bold text-bz-text" : "text-[14px] font-semibold text-bz-text",
+                  r.emphasis ? "text-[17px] font-medium text-bz-text" : "text-[13.5px] font-medium text-bz-text",
                 ].join(" ")}
               >
                 {r.value}
               </span>
-              <DeltaPill delta={r.delta} trend={r.trend} intent={r.intent} />
+              <DeltaChip delta={r.delta} trend={r.trend} intent={r.intent} />
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center justify-between mt-5 flex-wrap gap-3">
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
         <div className="flex items-center gap-2">
-          <PillBadge tone="neutral">PDF</PillBadge>
-          <PillBadge tone="neutral">XBRL</PillBadge>
-          <PillBadge tone="neutral">Excel</PillBadge>
+          <StatusChip variant="posted">PDF</StatusChip>
+          <StatusChip variant="posted">XBRL</StatusChip>
+          <StatusChip variant="posted">Excel</StatusChip>
         </div>
         <a
           href="#"
-          className="inline-flex items-center gap-1 text-[12px] font-bold text-bz-sage hover:text-bz-sage-hover"
+          className="inline-flex items-center gap-1 text-[12px] font-medium text-bz-text hover:text-bz-text-muted"
         >
           Drill into accounts
-          <ArrowUpRight className="size-3.5" strokeWidth={2} />
+          <ArrowUpRight size={13} strokeWidth={2} />
         </a>
       </div>
-    </Card>
+    </>
   );
 }
 
-function DeltaPill({
+function DeltaChip({
   delta,
   trend,
   intent,
@@ -617,27 +525,27 @@ function DeltaPill({
   intent: "good" | "bad" | "neutral";
 }) {
   const TrendIcon = trend === "up" ? TrendingUp : TrendingDown;
-  const tone =
+  const cls =
     intent === "good"
-      ? "bg-bz-sage-soft text-bz-sage"
+      ? "bg-bz-leaf text-[#1F3422]"
       : intent === "bad"
-      ? "bg-rose-500/10 text-rose-500"
-      : "bg-bz-bg text-bz-text-muted border border-bz-border";
+      ? "bg-rose-500/10 text-rose-600"
+      : "bg-bz-paper-warm text-bz-text-muted";
   return (
     <span
       className={[
-        "inline-flex items-center gap-1 px-2 py-1 rounded-bz-pill",
-        "text-[10.5px] font-bold tabular-nums",
-        tone,
+        "inline-flex items-center gap-1 rounded-bz-pill px-2 py-0.5",
+        "text-[10.5px] font-medium tabular-nums",
+        cls,
       ].join(" ")}
     >
-      <TrendIcon className="size-3" strokeWidth={2.4} />
+      <TrendIcon size={11} strokeWidth={2.4} />
       {delta}
     </span>
   );
 }
 
-function PreBuiltReportsCard() {
+function PreBuiltReportsPanel() {
   const reports = [
     { icon: FileText, name: "Income Statement", sub: "Live · streaming",   live: true  },
     { icon: Scale,    name: "Balance Sheet",    sub: "Updated 2m ago"                  },
@@ -646,13 +554,15 @@ function PreBuiltReportsCard() {
     { icon: Clock,    name: "AP Aging Report",  sub: "Updated 12m ago"                 },
   ];
   return (
-    <Card pad="lg" className="lg:col-span-5">
-      <div className="flex items-start justify-between mb-5">
+    <>
+      <div className="mb-4 flex items-start justify-between">
         <div>
-          <Eyebrow>Always-on reports</Eyebrow>
-          <h3 className="text-[16px] font-bold text-bz-text mt-1.5">Pre-built statements</h3>
+          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
+            Always-on reports
+          </div>
+          <h3 className="mt-1.5 text-[15px] font-medium text-bz-text">Pre-built statements</h3>
         </div>
-        <PillBadge tone="neutral">38 total</PillBadge>
+        <StatusChip variant="posted">38 total</StatusChip>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -660,39 +570,37 @@ function PreBuiltReportsCard() {
           <div
             key={name}
             className={[
-              "group flex items-center gap-4 px-4 py-3.5 rounded-bz-lg border transition-colors",
+              "group flex items-center gap-3 rounded-bz-lg border px-3.5 py-3 transition-colors",
               live
-                ? "bg-bz-bg border-bz-accent-mid"
-                : "bg-bz-surface border-bz-border-soft hover:border-bz-border",
+                ? "border-bz-line bg-bz-paper-warm"
+                : "border-bz-line-soft bg-bz-paper hover:border-bz-line",
             ].join(" ")}
           >
-            <div
+            <span
               className={[
-                "size-9 rounded-bz-md flex items-center justify-center shrink-0",
-                live ? "bg-bz-accent text-bz-deep" : "bg-bz-bg text-bz-sage",
+                "flex size-9 shrink-0 items-center justify-center rounded-bz-md",
+                live ? "bg-bz-fire text-[#1F3422]" : "bg-bz-paper-warm text-bz-text",
               ].join(" ")}
             >
-              <Icon className="size-4" strokeWidth={1.8} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[13.5px] font-semibold text-bz-text truncate">{name}</p>
+              <Icon size={14} strokeWidth={1.8} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[13px] font-medium text-bz-text">{name}</p>
               <p className="text-[11px] text-bz-text-muted">{sub}</p>
             </div>
             {live ? (
-              <PillBadge tone="accent" dot>
-                LIVE
-              </PillBadge>
+              <StatusChip variant="live">Live</StatusChip>
             ) : (
-              <ChevronRight className="size-4 text-bz-text-soft group-hover:text-bz-sage transition-colors" strokeWidth={2} />
+              <ChevronRight size={15} strokeWidth={2} className="text-bz-text-soft" />
             )}
           </div>
         ))}
       </div>
-    </Card>
+    </>
   );
 }
 
-function AnomalyAlertsCard() {
+function AnomalyAlertsPanel() {
   const alerts: Array<{
     icon: React.ElementType;
     title: string;
@@ -724,42 +632,44 @@ function AnomalyAlertsCard() {
   ];
 
   return (
-    <Card pad="lg" className="lg:col-span-5">
-      <div className="flex items-center justify-between mb-5">
+    <>
+      <div className="mb-4 flex items-center justify-between">
         <div>
-          <Eyebrow>Anomaly detection</Eyebrow>
-          <h3 className="text-[16px] font-bold text-bz-text mt-1.5">Variance, surfaced for you</h3>
+          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
+            Anomaly detection
+          </div>
+          <h3 className="mt-1.5 text-[15px] font-medium text-bz-text">Variance, surfaced for you</h3>
         </div>
-        <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">
-          <span className="size-1.5 rounded-full bg-bz-accent biz-pulse-glow" />
+        <span className="inline-flex items-center gap-1.5 text-[10.5px] font-medium uppercase tracking-[0.08em] text-bz-text-muted">
+          <span className="size-1.5 rounded-bz-pill bg-bz-fire" />
           Watching
         </span>
       </div>
 
       <div className="flex flex-col gap-2.5">
         {alerts.map(({ icon: Icon, title, sub, delta, intent }) => {
-          const tone =
+          const cls =
             intent === "bad"
-              ? "bg-rose-500/10 text-rose-500"
+              ? "bg-rose-500/10 text-rose-600"
               : intent === "good"
-              ? "bg-bz-sage-soft text-bz-sage"
-              : "bg-bz-bg text-bz-text-muted";
+              ? "bg-bz-leaf text-[#1F3422]"
+              : "bg-bz-paper-warm text-bz-text-muted";
           return (
             <div
               key={title}
-              className="flex items-center gap-3.5 px-4 py-3.5 rounded-bz-lg bg-bz-surface border border-bz-border"
+              className="flex items-center gap-3 rounded-bz-lg border border-bz-line-soft bg-bz-paper px-3.5 py-3"
             >
-              <div className={`size-9 rounded-bz-md flex items-center justify-center shrink-0 ${tone}`}>
-                <Icon className="size-4" strokeWidth={2} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-bold text-bz-text">{title}</p>
+              <span className={`flex size-9 shrink-0 items-center justify-center rounded-bz-md ${cls}`}>
+                <Icon size={15} strokeWidth={2} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[13px] font-medium text-bz-text">{title}</p>
                 <p className="text-[11px] text-bz-text-muted">{sub}</p>
               </div>
               <span
                 className={[
-                  "shrink-0 px-2 py-1 rounded-bz-pill text-[10.5px] font-bold tabular-nums",
-                  tone,
+                  "shrink-0 rounded-bz-pill px-2 py-0.5 text-[10.5px] font-medium tabular-nums",
+                  cls,
                 ].join(" ")}
               >
                 {delta}
@@ -768,61 +678,62 @@ function AnomalyAlertsCard() {
           );
         })}
       </div>
-    </Card>
+    </>
   );
 }
 
-function DrillTrailCard() {
+function DrillTrailPanel() {
   const path = [
-    { label: "Net Income",       value: "$812K"   },
-    { label: "Operating Expenses", value: "$1.84M" },
-    { label: "Marketing",        value: "$284K"   },
-    { label: "Q3 Brand Campaign", value: "$48,200", final: true },
+    { label: "Net Income",         value: "$812K"                  },
+    { label: "Operating Expenses", value: "$1.84M"                 },
+    { label: "Marketing",          value: "$284K"                  },
+    { label: "Q3 Brand Campaign",  value: "$48,200", final: true   },
   ];
   const journal = [
-    { date: "14 · Sep", ref: "JE-2024-8412", desc: "Brand agency · Sept retainer", amt: "$24,000" },
-    { date: "21 · Sep", ref: "JE-2024-8593", desc: "Digital ads · Q3 LinkedIn", amt: "$18,400" },
-    { date: "28 · Sep", ref: "JE-2024-8721", desc: "Event sponsorship · DXTalks", amt: "$5,800" },
+    { date: "14 · Sep", ref: "JE-2024-8412", desc: "Brand agency · Sept retainer",  amt: "$24,000" },
+    { date: "21 · Sep", ref: "JE-2024-8593", desc: "Digital ads · Q3 LinkedIn",     amt: "$18,400" },
+    { date: "28 · Sep", ref: "JE-2024-8721", desc: "Event sponsorship · DXTalks",   amt: "$5,800"  },
   ];
   return (
-    <Card pad="lg" className="lg:col-span-7">
-      <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
+    <>
+      <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <Eyebrow>Audit Trail</Eyebrow>
-          <h3 className="text-[16px] font-bold text-bz-text mt-1.5">
+          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
+            Audit trail
+          </div>
+          <h3 className="mt-1.5 text-[15px] font-medium text-bz-text">
             Every number resolves to its source
           </h3>
         </div>
-        <PillBadge tone="sage">
-          <Sparkles className="size-3 mr-0.5" strokeWidth={2} />
+        <span className="inline-flex items-center gap-1.5 rounded-bz-pill bg-bz-leaf px-2.5 py-1 text-[10.5px] font-medium text-[#1F3422]">
+          <Sparkles size={11} strokeWidth={2} />
           One click
-        </PillBadge>
+        </span>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 mb-6">
+      <div className="mb-5 flex flex-wrap items-center gap-2">
         {path.map((p, i) => (
           <div key={p.label} className="flex items-center gap-2">
             <div
               className={[
-                "px-3 py-2 rounded-bz-md text-[11.5px] font-bold tabular-nums flex items-center gap-2",
+                "flex items-center gap-2 rounded-bz-md px-3 py-2 text-[11.5px] font-medium tabular-nums",
                 p.final
-                  ? "bg-bz-deep text-white"
-                  : "bg-bz-bg text-bz-text border border-bz-border",
+                  ? "bg-bz-olive text-bz-text-on-dark"
+                  : "border border-bz-line-soft bg-bz-paper text-bz-text",
               ].join(" ")}
             >
-              <span className={p.final ? "text-white/50" : "text-bz-text-muted"}>{p.label}</span>
+              <span className={p.final ? "text-white/[0.62]" : "text-bz-text-muted"}>{p.label}</span>
               <span>{p.value}</span>
             </div>
             {i !== path.length - 1 && (
-              <ChevronRight className="size-3.5 text-bz-text-soft" strokeWidth={2.2} />
+              <ChevronRight size={13} strokeWidth={2.2} className="text-bz-text-soft" />
             )}
           </div>
         ))}
       </div>
 
-      <div className="rounded-bz-lg border border-bz-border-soft overflow-hidden">
-        <div className="grid grid-cols-[80px_1fr_100px] gap-3 px-4 py-2.5 bg-bz-bg
-                        text-[9.5px] font-bold uppercase tracking-[0.08em] text-bz-text-soft">
+      <div className="overflow-hidden rounded-bz-lg border border-bz-line-soft">
+        <div className="hidden grid-cols-[80px_1fr_100px] gap-3 bg-bz-paper-warm px-4 py-2.5 text-[10px] font-medium uppercase tracking-[0.08em] text-bz-text-soft sm:grid">
           <span>Date</span>
           <span>Reference · Description</span>
           <span className="text-right">Amount</span>
@@ -831,188 +742,182 @@ function DrillTrailCard() {
           <div
             key={j.ref}
             className={[
-              "grid grid-cols-[80px_1fr_100px] gap-3 px-4 py-3 items-center",
-              i !== journal.length - 1 && "border-b border-bz-border-soft",
+              "grid grid-cols-[60px_1fr_90px] items-center gap-3 px-4 py-3 sm:grid-cols-[80px_1fr_100px]",
+              i !== journal.length - 1 && "border-b border-bz-line-soft",
             ]
               .filter(Boolean)
               .join(" ")}
           >
-            <span className="text-[11px] font-medium text-bz-text-muted">{j.date}</span>
+            <span className="text-[11px] text-bz-text-muted">{j.date}</span>
             <div className="min-w-0">
-              <p className="text-[12px] font-bold text-bz-text">{j.ref}</p>
-              <p className="text-[11px] text-bz-text-muted truncate">{j.desc}</p>
+              <p className="text-[12px] font-medium text-bz-text">{j.ref}</p>
+              <p className="truncate text-[11px] text-bz-text-muted">{j.desc}</p>
             </div>
-            <span className="text-right text-[13px] font-bold text-bz-text tabular-nums">
+            <span className="text-right text-[12.5px] font-medium tabular-nums text-bz-text">
               {j.amt}
             </span>
           </div>
         ))}
       </div>
-    </Card>
+    </>
   );
 }
 
-// ─── 5. CONNECTIVITY — creative redesign ──────────────────────────────────────
-//   Concept: "One ledger. Every module."
-//   Six source-module chips (3 top + 3 bottom) feed a centered Live General Ledger
-//   panel that streams 5 auto-posted journal rows.
+// ════════════════════════════════════════════════════════════════════════════
+// [04] CONNECTIVITY — "One ledger. Every module."
+// ════════════════════════════════════════════════════════════════════════════
+
+const SOURCES_TOP = [
+  { icon: ShoppingCart, label: "Sales",      sub: "Invoice · Cash"     },
+  { icon: Database,     label: "Purchasing", sub: "PO · 3-way match"   },
+  { icon: Package,      label: "Inventory",  sub: "COGS · Asset sync"  },
+] as const;
+
+const SOURCES_BOTTOM = [
+  { icon: Factory,      label: "Manufacturing", sub: "Work order · WIP" },
+  { icon: FolderKanban, label: "Projects",      sub: "Timesheet · Cost" },
+  { icon: Landmark,     label: "Banking",       sub: "Reconcile · Fees" },
+] as const;
+
+const GL_ROWS = [
+  { time: "14:32", source: "Sales · SO-1041",   debit: "AR",         credit: "Revenue · VAT", amt: "$48,200",  fresh: true  },
+  { time: "14:28", source: "Purch · PO-882",    debit: "Inventory",  credit: "AP",            amt: "$12,450"               },
+  { time: "14:25", source: "Payroll · Sept",    debit: "Wages",      credit: "Cash",          amt: "$284,100"              },
+  { time: "14:21", source: "Bank · Fees",       debit: "Bank Fees",  credit: "Cash",          amt: "$182"                  },
+  { time: "14:18", source: "Inventory · SH-77", debit: "COGS",       credit: "Inventory",     amt: "$36,800"               },
+];
+
 function ConnectivitySection() {
-  const sourcesTop = [
-    { icon: ShoppingCart,   label: "Sales",        sub: "Invoice · Cash" },
-    { icon: Database,       label: "Purchasing",   sub: "PO · 3-way match" },
-    { icon: Package,        label: "Inventory",    sub: "COGS · Asset sync" },
-  ];
-  const sourcesBottom = [
-    { icon: Factory,       label: "Manufacturing", sub: "Work order · WIP" },
-    { icon: FolderKanban,  label: "Projects",      sub: "Timesheet · Cost" },
-    { icon: Landmark,      label: "Banking",       sub: "Reconcile · Fees" },
-  ];
-
-  const journal = [
-    { time: "14:32", source: "SALES",    sourceTone: "sage",    dr: "AR", cr: "Revenue · Tax",       amt: "$48,200",  fresh: true  },
-    { time: "14:28", source: "PURCH",    sourceTone: "accent",  dr: "Inventory", cr: "AP",            amt: "$12,450"               },
-    { time: "14:25", source: "PAYROLL",  sourceTone: "neutral", dr: "Wages", cr: "Cash",              amt: "$284,100"              },
-    { time: "14:21", source: "BANK",     sourceTone: "neutral", dr: "Bank Fees", cr: "Cash",          amt: "$182"                  },
-    { time: "14:18", source: "INVENT",   sourceTone: "sage",    dr: "COGS", cr: "Inventory",          amt: "$36,800"               },
-  ];
-
   return (
     <Section tone="dark">
       <Container width="narrow">
-        <SectionHeading
-          eyebrow="Connected by design"
-          eyebrowTone="accent"
+        <SectionHead
+          index="04"
+          label="Connected by design"
+          tone="dark"
           title={
             <>
-              One ledger.
-              <br />
-              <span className="text-bz-accent">Every module.</span>
+              One ledger.{" "}
+              <Heading.Muted>Every module.</Heading.Muted>
             </>
           }
           description="Every event in Bizak — a shipment, a payment, a payroll run — auto-posts to the General Ledger in real time. No manual coding. No month-end catch-up."
-          tone="light"
-          align="center"
-          maxWidth={720}
-          className="mb-16"
+          titleMaxWidth={760}
         />
 
-        <div className="relative max-w-[1100px] mx-auto">
+        <div className="relative mx-auto max-w-[1100px]">
           {/* Top row of sources */}
-          <div className="grid grid-cols-3 gap-3 sm:gap-5 mb-3">
-            {sourcesTop.map((s) => (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+            {SOURCES_TOP.map((s) => (
               <SourceChip key={s.label} icon={s.icon} label={s.label} sub={s.sub} />
             ))}
           </div>
 
-          {/* Connector row top */}
-          <div className="grid grid-cols-3 gap-3 sm:gap-5 h-8">
-            {sourcesTop.map((_, i) => (
-              <Connector key={i} direction="down" />
+          {/* Connector row */}
+          <div className="hidden h-8 grid-cols-3 gap-4 sm:grid">
+            {SOURCES_TOP.map((_, i) => (
+              <Connector key={i} />
             ))}
           </div>
 
-          {/* Live General Ledger panel */}
-          <Card tone="dark" pad="lg" className="overflow-hidden">
-            <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
-              <div className="flex items-center gap-3">
-                <div className="size-9 rounded-bz-md bg-bz-accent flex items-center justify-center text-bz-deep">
-                  <BookOpen className="size-4" strokeWidth={2} />
+          {/* Live GL panel */}
+          <div className="relative my-4 overflow-hidden rounded-bz-2xl bg-bz-olive-soft p-5 sm:my-0 sm:p-7">
+            <DotGrid tone="dark" />
+            <div className="relative">
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="flex size-9 items-center justify-center rounded-bz-md bg-bz-fire text-[#1F3422]">
+                    <BookOpen size={15} strokeWidth={2} />
+                  </span>
+                  <div>
+                    <p className="text-[14px] font-medium text-bz-text-on-dark">General Ledger</p>
+                    <p className="text-[10.5px] uppercase tracking-[0.08em] text-white/[0.55]">
+                      Auto-posting engine
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[14px] font-bold text-white">General Ledger</p>
-                  <p className="text-[10.5px] text-white/40 uppercase tracking-[0.08em]">
-                    Auto-posting engine
-                  </p>
+                <StatusChip variant="live">Live</StatusChip>
+              </div>
+
+              <div className="overflow-x-auto rounded-bz-lg border border-white/[0.08]">
+                <div className="flex flex-col">
+                  {GL_ROWS.map((r, i) => (
+                    <div
+                      key={i}
+                      className={[
+                        "flex items-center gap-3 px-4 py-3 min-w-[480px]",
+                        i !== GL_ROWS.length - 1 && "border-b border-white/[0.06]",
+                        r.fresh && "bg-white/[0.04]",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    >
+                      <span className="w-[52px] shrink-0 text-[11px] tabular-nums text-white/[0.55]">
+                        {r.time}
+                      </span>
+                      <span className="w-[140px] shrink-0 text-[11.5px] text-white/[0.72]">
+                        {r.source}
+                      </span>
+                      <p className="min-w-0 flex-1 truncate text-[12px] text-white/[0.85]">
+                        <span className="font-medium text-bz-text-on-dark">{r.debit}</span>
+                        <span className="mx-1.5 text-white/[0.4]">→</span>
+                        <span>{r.credit}</span>
+                      </p>
+                      <span className="w-[90px] shrink-0 text-right text-[12.5px] font-medium tabular-nums text-bz-text-on-dark">
+                        {r.amt}
+                      </span>
+                      <span className="w-[60px] shrink-0 text-right">
+                        {r.fresh ? (
+                          <StatusChip variant="live">Just</StatusChip>
+                        ) : (
+                          <CheckCircle2 size={14} strokeWidth={1.8} className="ml-auto text-emerald-400/70" />
+                        )}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <PillBadge tone="accent" dot>
-                LIVE
-              </PillBadge>
-            </div>
 
-            <div className="rounded-bz-lg border border-white/10 overflow-hidden overflow-x-auto">
-              <div className="hidden md:grid grid-cols-[68px_92px_1fr_120px_72px] gap-3 px-4 py-2.5
-                              bg-white/[0.04] text-[9.5px] font-bold uppercase tracking-[0.08em] text-white/40 min-w-[560px]">
-                <span>Time</span>
-                <span>Source</span>
-                <span>Debit · Credit</span>
-                <span className="text-right">Amount</span>
-                <span></span>
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[11px] text-white/[0.55]">
+                <span className="inline-flex items-center gap-2">
+                  <CircleDollarSign size={13} strokeWidth={2} className="text-bz-fire" />
+                  <span className="font-medium tabular-nums text-bz-text-on-dark">247</span> entries
+                  auto-posted today
+                </span>
+                <span className="text-[10.5px] font-medium uppercase tracking-[0.08em]">
+                  0 manual journal entries
+                </span>
               </div>
-              {journal.map((j, i) => (
-                <div
-                  key={i}
-                  className={[
-                    "grid grid-cols-[68px_92px_1fr_120px_72px] gap-3 px-4 py-3 items-center min-w-[560px]",
-                    i !== journal.length - 1 && "border-b border-white/[0.06]",
-                    j.fresh && "bg-bz-accent/[0.04]",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                >
-                  <span className="text-[11px] tabular-nums text-white/50">{j.time}</span>
-                  <SourceTag tone={j.sourceTone as "sage" | "accent" | "neutral"} label={j.source} />
-                  <p className="text-[12px] text-white/80 truncate">
-                    <span className="text-white font-semibold">{j.dr}</span>
-                    <span className="mx-1.5 text-white/30">↔</span>
-                    <span>{j.cr}</span>
-                  </p>
-                  <span className="text-right text-[13px] font-bold text-white tabular-nums">
-                    {j.amt}
-                  </span>
-                  <span className="text-right">
-                    {j.fresh ? (
-                      <PillBadge tone="accent">JUST</PillBadge>
-                    ) : (
-                      <CheckCircle2 className="size-4 text-emerald-400/70 ml-auto" strokeWidth={1.8} />
-                    )}
-                  </span>
-                </div>
-              ))}
             </div>
+          </div>
 
-            <div className="flex items-center justify-between mt-5 flex-wrap gap-3
-                            text-[11px] text-white/50">
-              <span className="inline-flex items-center gap-2">
-                <CircleDollarSign className="size-3.5 text-bz-accent" strokeWidth={2} />
-                <span className="font-bold tabular-nums text-white">247</span> entries auto-posted today
-              </span>
-              <span className="font-bold tracking-[0.08em] uppercase text-[10.5px]">
-                0 manual journal entries
-              </span>
-            </div>
-          </Card>
-
-          {/* Connector row bottom */}
-          <div className="grid grid-cols-3 gap-3 sm:gap-5 h-8">
-            {sourcesBottom.map((_, i) => (
-              <Connector key={i} direction="up" />
+          {/* Connector row */}
+          <div className="hidden h-8 grid-cols-3 gap-4 sm:grid">
+            {SOURCES_BOTTOM.map((_, i) => (
+              <Connector key={i} />
             ))}
           </div>
 
           {/* Bottom row of sources */}
-          <div className="grid grid-cols-3 gap-3 sm:gap-5 mt-3">
-            {sourcesBottom.map((s) => (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+            {SOURCES_BOTTOM.map((s) => (
               <SourceChip key={s.label} icon={s.icon} label={s.label} sub={s.sub} />
             ))}
           </div>
         </div>
 
-        {/* Trust pills */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
           {[
-            { icon: ShieldCheck, label: "No manual coding"      },
-            { icon: Activity,    label: "Real-time posting"     },
-            { icon: ClipboardList, label: "Full audit trail"    },
-            { icon: Building2,   label: "Multi-entity ready"    },
+            { icon: ShieldCheck,    label: "No manual coding"  },
+            { icon: Activity,       label: "Real-time posting" },
+            { icon: ClipboardList,  label: "Full audit trail"  },
+            { icon: Building2,      label: "Multi-entity ready" },
           ].map(({ icon: Icon, label }) => (
             <span
               key={label}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-bz-pill
-                         bg-white/[0.04] border border-white/10
-                         text-[11px] font-bold uppercase tracking-[0.08em] text-white/70"
+              className="inline-flex items-center gap-2 rounded-bz-pill border border-white/[0.08] bg-white/[0.04] px-3.5 py-2 text-[11px] font-medium uppercase tracking-[0.08em] text-white/[0.72]"
             >
-              <Icon className="size-3.5 text-bz-accent" strokeWidth={2} />
+              <Icon size={13} strokeWidth={2} className="text-bz-fire" />
               {label}
             </span>
           ))}
@@ -1032,168 +937,78 @@ function SourceChip({
   sub: string;
 }) {
   return (
-    <div className="px-4 py-3.5 rounded-bz-lg bg-white/[0.04] border border-white/10
-                    flex items-center gap-3 min-w-0">
-      <div className="size-9 rounded-bz-md bg-white/[0.06] border border-white/10
-                      flex items-center justify-center text-white/80 shrink-0">
-        <Icon className="size-4" strokeWidth={1.8} />
-      </div>
+    <div className="flex min-w-0 items-center gap-3 rounded-bz-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3.5">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-bz-md border border-white/[0.08] bg-white/[0.06] text-white/[0.85]">
+        <Icon size={15} strokeWidth={1.8} />
+      </span>
       <div className="min-w-0">
-        <p className="text-[12.5px] font-bold text-white truncate">{label}</p>
-        <p className="text-[10px] uppercase tracking-[0.08em] text-white/40 truncate">{sub}</p>
+        <p className="truncate text-[12.5px] font-medium text-bz-text-on-dark">{label}</p>
+        <p className="truncate text-[10px] uppercase tracking-[0.08em] text-white/[0.55]">{sub}</p>
       </div>
     </div>
   );
 }
 
-function Connector({ direction }: { direction: "up" | "down" }) {
+function Connector() {
   return (
     <div className="relative flex items-center justify-center">
-      <span className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-white/10" />
-      <span
-        className={[
-          "absolute size-1.5 rounded-full bg-bz-accent biz-pulse-glow",
-          direction === "down" ? "bottom-0" : "top-0",
-        ].join(" ")}
-      />
+      <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-white/[0.12]" />
+      <span className="absolute bottom-0 size-1.5 rounded-bz-pill bg-bz-fire" />
     </div>
   );
 }
 
-function SourceTag({
-  tone,
-  label,
-}: {
-  tone: "sage" | "accent" | "neutral";
-  label: string;
-}) {
-  const cls =
-    tone === "sage"
-      ? "bg-bz-sage-soft text-bz-sage border border-bz-sage-mid"
-      : tone === "accent"
-      ? "bg-bz-accent-soft text-bz-accent border border-bz-accent-mid"
-      : "bg-white/[0.06] text-white/70 border border-white/10";
-  return (
-    <span
-      className={[
-        "inline-flex items-center justify-center w-fit px-2 py-0.5 rounded-bz-sm",
-        "text-[9.5px] font-bold uppercase tracking-[0.08em] tabular-nums",
-        cls,
-      ].join(" ")}
-    >
-      {label}
-    </span>
-  );
-}
+// ════════════════════════════════════════════════════════════════════════════
+// [05] METRICS
+// ════════════════════════════════════════════════════════════════════════════
 
-// ─── 6. METRICS ──────────────────────────────────────────────────────────────
 function MetricsSection() {
-  const metrics = [
-    {
-      value: "60%",
-      label: "Faster Month-End",
-      desc: "Automated reconciliation and elimination workflows reduce close times by more than half.",
-    },
-    {
-      value: "40%",
-      label: "Reduced Errors",
-      desc: "Eliminate manual data entry errors with direct bank feeds and automated ledger posting.",
-    },
-    {
-      value: "100%",
-      label: "Audit Compliance",
-      desc: "A complete digital paper trail for every transaction, ensuring effortless regulatory reporting.",
-    },
-  ];
   return (
-    <Section tone="white">
+    <Section tone="b">
       <Container>
-        <SectionHeading
-          eyebrow="Efficiency"
-          title="Measurable impact on financial operations"
-          align="center"
-          maxWidth={780}
-          className="mb-14"
+        <SectionHead
+          index="05"
+          label="Efficiency"
+          title={
+            <>
+              Measurable impact{" "}
+              <Heading.Muted>on financial operations.</Heading.Muted>
+            </>
+          }
+          titleMaxWidth={720}
         />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {metrics.map((m) => (
-            <Card key={m.label} pad="lg" hover="lift" className="text-center">
-              <p className="text-[clamp(40px,4vw,52px)] font-bold text-bz-text tracking-[-0.03em] mb-3">
+
+        <BentoGrid cols={3}>
+          {METRICS.map((m) => (
+            <Bento key={m.label} tone="paper" hover minHeight={220}>
+              <div className="bz-stat-num" style={{ fontSize: 48, marginBottom: 12 }}>
                 {m.value}
-              </p>
-              <p className="text-[10px] font-bold text-bz-text-soft uppercase tracking-[0.12em] mb-4">
+              </div>
+              <div className="mb-3 text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
                 {m.label}
-              </p>
-              <p className="text-[13px] text-bz-text-muted leading-[1.65]">{m.desc}</p>
-            </Card>
+              </div>
+              <Bento.Desc>{m.desc}</Bento.Desc>
+            </Bento>
           ))}
-        </div>
+        </BentoGrid>
       </Container>
     </Section>
   );
 }
 
-// ─── 7. CTA ──────────────────────────────────────────────────────────────────
-//   Closing CTA must use tone="dark" (the olive-tinted bz-deep) for visual
-//   consistency with the by-industry pages' IndustryCta. See
-//   /docs/BIZAK_PRODUCT_OVERVIEW.md §7.1.
-function CTASection() {
-  return (
-    <Section tone="dark" pad="default">
-      <Container width="narrow">
-        <div className="flex flex-col items-center text-center gap-7">
-          <SectionHeading
-            title={
-              <>
-                Take full control of
-                <br />
-                your financial operations
-              </>
-            }
-            description="Join 50,000+ companies scaling with Bizak. Start your 14-day free trial today."
-            tone="light"
-            align="center"
-            maxWidth={640}
-          />
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button variant="accent" size="lg" href="/contact" withArrow>
-              Request Demo
-            </Button>
-            <Button variant="ghostDark" size="lg" href="/contact">
-              Contact Sales
-            </Button>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-2 text-[12px] text-white/45">
-            <span className="inline-flex items-center gap-2">
-              <CheckCircle2 className="size-3.5 text-bz-accent" strokeWidth={2} />
-              GAAP &amp; IFRS ready
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <CheckCircle2 className="size-3.5 text-bz-accent" strokeWidth={2} />
-              SOC 2 Type II
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <CheckCircle2 className="size-3.5 text-bz-accent" strokeWidth={2} />
-              Multi-currency
-            </span>
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
+// ════════════════════════════════════════════════════════════════════════════
+// PAGE
+// ════════════════════════════════════════════════════════════════════════════
 
-// ─── PAGE EXPORT ──────────────────────────────────────────────────────────────
 export function FinancialManagementPage() {
   return (
-    <>
+    <main>
       <HeroSection />
-      <FeatureGridSection />
+      <FoundationsSection />
       <TechnicalShowcaseSection />
       <ReportingSection />
       <ConnectivitySection />
       <MetricsSection />
-      <CTASection />
-    </>
+    </main>
   );
 }
