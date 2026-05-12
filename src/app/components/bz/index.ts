@@ -100,3 +100,6 @@ export type { JournalRowProps } from "./JournalRow";
 
 export { ModuleListItem } from "./ModuleListItem";
 export type { ModuleListItemProps } from "./ModuleListItem";
+
+export { StatTile } from "./StatTile";
+export type { StatTileProps } from "./StatTile";

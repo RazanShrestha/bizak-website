@@ -14,7 +14,7 @@
      for elevated cards, olive family for dark surfaces.
      ───────────────────────────────────────────────────────────────── */
   --bz-paper:        #FCFCF7;   /* primary page background (light) */
-  --bz-paper-warm:   #F4F4ED;   /* slightly warmer cream — cards on paper */
+  --bz-paper-warm:   #F4F5EF;   /* slightly warmer cream — cards/insets on paper */
   --bz-section-a:    #FCFCF7;   /* alternating section bg — tone A */
   --bz-section-b:    #efefe9;   /* alternating section bg — tone B */
   --bz-surface:      #FFFFFF;   /* elevated card on light */

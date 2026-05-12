@@ -347,7 +347,13 @@ function PointOfSalesPageLayout() {
 
 
 function HomeLayout() {
-  return <HomePage />;
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <HomePage />
+      <Footer />
+    </div>
+  );
 }
 
 
