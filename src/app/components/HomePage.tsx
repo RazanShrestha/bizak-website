@@ -366,8 +366,6 @@ function PlatformSection() {
             );
           })}
         </BentoGrid>
-
-        <BanksRow />
       </Container>
     </Section>
   );
@@ -429,26 +427,6 @@ function PlatformDashboard() {
   );
 }
 
-function BanksRow() {
-  return (
-    <div className="mt-10">
-      <p className="mb-[18px] text-center text-[12.5px] text-bz-text-muted">
-        Works with the systems you already use.
-      </p>
-      <Marquee speed="44s">
-        {BANKS.map((slug) => (
-          <img
-            key={slug}
-            src={`${LOGOS_BASE}/${slug}.svg`}
-            alt={slug}
-            className="bz-marquee-logo"
-          />
-        ))}
-      </Marquee>
-    </div>
-  );
-}
-
 // ════════════════════════════════════════════════════════════════════════════
 // [03] EXCLUSIVE
 // ════════════════════════════════════════════════════════════════════════════
@@ -477,7 +455,6 @@ function ExclusiveSection() {
             <Bento.Desc className="mb-[22px]">
               247 entries auto-coded yesterday — finance teams stop coding transactions.
             </Bento.Desc>
-            <Pill variant="leaf" href="/FinancialManagement" className="self-start">Learn more</Pill>
             <Bento.Footer tone="dark" className="flex flex-col justify-center gap-1.5">
               <DataRow tone="dark" label="Shipment → COGS / Inventory" value="auto" />
               <DataRow tone="dark" label="Invoice → AR / Revenue" value="auto" />
@@ -490,7 +467,6 @@ function ExclusiveSection() {
             <Bento.Desc className="mb-[22px]">
               Every figure resolves to its source transaction with user and timestamp.
             </Bento.Desc>
-            <Pill variant="dark" href="/DocumentManagement" className="self-start">Learn more</Pill>
             <Bento.Footer tone="light" className="flex flex-col justify-center gap-1.5">
               <AuditRow initial="S" name="Sara" what="Approved INV-2046" t="1m" />
               <AuditRow initial="J" name="James" what="Updated SK-402" t="3m" />
@@ -503,7 +479,6 @@ function ExclusiveSection() {
             <Bento.Desc className="mb-[22px]" style={{ color: "#1F3422", opacity: 0.78 }}>
               AI-driven matching that learns your transactions — 40% fewer manual fixes.
             </Bento.Desc>
-            <Pill variant="dark" href="/DashboardAndReporting" className="self-start">Learn more</Pill>
             <Bento.Footer className="bg-[rgba(31,52,34,0.08)] flex flex-col justify-center gap-2">
               <div className="flex items-center gap-2">
                 <Sparkles size={12} color="#1F3422" />

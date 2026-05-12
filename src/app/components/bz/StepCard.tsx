@@ -55,7 +55,7 @@ export function StepCard({
 
         <h3
           className="bz-h2"
-          style={{ fontSize: "clamp(22px, 2.6vw, 30px)", marginBottom: 24 }}
+          style={{ fontSize: "clamp(16px, 2.6vw, 20px)", marginBottom: 24 }}
         >
           {title}
         </h3>
