@@ -235,7 +235,16 @@ function FinancialManagementPageLayout() {
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
       <FinancialManagementPage />
-      <Footer />
+      <Footer
+        cta={{
+          title: "Take full control of your financial operations.",
+          titleMuted: "Close month-end in hours, not weeks.",
+          description:
+            "One ledger, auto-posted journals, real-time P&L — and a full audit trail behind every figure.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Talk to finance team",
+        }}
+      />
     </div>
   );
 }

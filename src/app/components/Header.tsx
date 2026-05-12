@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   ChevronDown,
   Menu,
   X,
   ArrowRight,
+  ArrowUpRight,
   LayoutDashboard,
   Shield,
   Layers,
@@ -21,7 +22,6 @@ import {
   Store,
   Users,
   Calculator,
-  Tag,
   BookOpen,
   FileText,
   HeadphonesIcon,
@@ -40,10 +40,8 @@ import {
   UserCheck,
   Calendar,
   Mail,
-  CheckCircle,
   Activity,
 } from "lucide-react";
-import svgPaths from "../../imports/svg-eyvfmiiac4";
 import bizakLogo from "../../assets/bizaklogo.png";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -53,8 +51,7 @@ interface MenuItem {
   title: string;
   description: string;
   badge?: string;
-   href?: string; // ← Add this
- 
+  href?: string;
 }
 
 interface MenuColumn {
@@ -67,155 +64,46 @@ interface MegaMenuData {
   cta?: {
     label: string;
     buttonLabel: string;
-    highlight?: string;
+    href?: string;
   };
 }
 
-interface MegaMenuPanelProps {
-  data: MegaMenuData;
-  visible: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
-}
-
-// ─── Mega Menu Content Data ───────────────────────────────────────────────────
+// ─── Mega Menu Data ───────────────────────────────────────────────────────────
 
 const megaMenus: Record<string, MegaMenuData> = {
   Product: {
     columns: [
       {
-        heading: "Overview",
+        heading: "Main Flow",
         items: [
-          {
-            icon: <Layers size={15} />,
-            title: "Bizak ERP Platform",
-            description: "Unified system to manage finance, inventory, sales, and operations",
-             href: "/product",
-           
-          },
-          {
-            icon: <Target size={15} />,
-            title: "Why Bizak",
-            description: "Replace spreadsheets and disconnected legacy systems",
-                 href: "/why-bizak", // ← Add this
-          },
-          {
-            icon: <Shield size={15} />,
-            title: "Architecture & Security",
-            description: "Enterprise-grade infrastructure and reliability",
-          },
+          { icon: <Layers size={16} />, title: "Bizak ERP Platform", description: "One system for finance, inventory, sales, operations", href: "/product" },
+          { icon: <Target size={16} />, title: "Why Bizak", description: "Replace spreadsheets, unify your stack", href: "/why-bizak" },
+          { icon: <Shield size={16} />, title: "Architecture & Security", description: "Enterprise-grade infrastructure" },
         ],
       },
       {
         heading: "Core Modules",
         items: [
-          {
-            icon: <DollarSign size={15} />,
-            title: "Financial Management",
-            description: "General ledger, receivables, payables, reporting",
-             href: "/FinancialManagement", 
-          },
-          {
-            icon: <ShoppingCart size={15} />,
-            title: "Sales & CRM",
-            description: "Quotes, sales orders, invoicing, customer tracking",
-            badge: "Popular",
-           href: "/SalesCrm", 
-          },
-          {
-            icon: <Truck size={15} />,
-            title: "Purchasing",
-            description: "Vendor management and procurement workflows",
-              href: "/purchasing",
-          },
-          {
-            icon: <Package size={15} />,
-            title: "Inventory & Warehouse",
-            description: "Real-time stock and warehouse control",
-                 href: "/InventoryAndWarehouse",
-          },
-          {
-            icon: <Factory size={15} />,
-            title: "Manufacturing",
-            description: "Production planning and costing",
-           href: "/ManufacturingProduct",
-          },
-          {
-            icon: <FolderKanban size={15} />,
-            title: "Projects & Job Costing",
-            description: "Track project profitability and resources",
-               href: "/ProjectAndCosting",
-          },
-
-   {
-            icon: <Target size={15} />,
-            title: "Sales Force Management",
-            description: "Improve productivity and track performance",
-                 href: "/SalesForceManagement",
-          },
-
-
-             {
-            icon: <Store size={15} />,
-            title: "Point Of Sales",
-            description: "Process in-store transactions, manage cashiers, and print receipts",
-                 href: "/PointOfSales",
-          },
-
-
+          { icon: <DollarSign size={16} />, title: "Financial Management", description: "Ledger, AR, AP, reporting", href: "/FinancialManagement" },
+          { icon: <ShoppingCart size={16} />, title: "Sales & CRM", description: "Quotes, orders, invoicing", badge: "Popular", href: "/SalesCrm" },
+          { icon: <Truck size={16} />, title: "Purchasing", description: "Vendor and procurement", href: "/purchasing" },
+          { icon: <Package size={16} />, title: "Inventory", description: "Real-time stock control", href: "/InventoryAndWarehouse" },
+          { icon: <Factory size={16} />, title: "Manufacturing", description: "Production planning", href: "/ManufacturingProduct" },
+          { icon: <FolderKanban size={16} />, title: "Projects & Job Costing", description: "Project profitability", href: "/ProjectAndCosting" },
         ],
       },
-
-
-
-
-
       {
-        heading: "Platform Capabilities",
+        heading: "Capabilities",
         items: [
-          {
-            icon: <BarChart3 size={15} />,
-            title: "Dashboards & Reporting",
-            description: "Real-time operational insights across your business",
-               href: "/DashboardAndReporting", // ← Add this
-          },
-          {
-            icon: <Zap size={15} />,
-            title: "Workflow Automation",
-            description: "Automate approvals and routine business processes",
-                 href: "/workflow", // ← Add this
-          },
-          {
-            icon: <Plug size={15} />,
-            title: "Integrations",
-            description: "Connect banks, ecommerce, and external systems",
-            href: "/Integrations",
-          },
-          {
-            icon: <Building2 size={15} />,
-            title: "Multi-company & Multi-branch",
-            description: "Manage multiple entities from one platform",
-            href: "/MulticompanyAndBranches",
-          },
-
-    {
-            icon: <FileText size={15} />,
-            title: "Document Management",
-            description: "File & Document of organisation",
-            href: "/DocumentManagement",
-          },
-
-
+          { icon: <BarChart3 size={16} />, title: "Dashboards & Reporting", description: "Real-time insights", href: "/DashboardAndReporting" },
+          { icon: <Zap size={16} />, title: "Workflow Automation", description: "Automate approvals", href: "/workflow" },
+          { icon: <Plug size={16} />, title: "Integrations", description: "Banks, ecommerce, APIs", href: "/Integrations" },
+          { icon: <Building2 size={16} />, title: "Multi-company", description: "Multiple entities, one place", href: "/MulticompanyAndBranches" },
+          { icon: <FileText size={16} />, title: "Document Management", description: "Files, contracts, archives", href: "/DocumentManagement" },
         ],
       },
     ],
-    cta: {
-      label: "See Bizak in action",
-      buttonLabel: "Request Demo",
-      highlight: "Live demo with a product expert",
-    },
+    cta: { label: "See Bizak in action with a product expert.", buttonLabel: "Get Started", href: "/contact" },
   },
 
   Solutions: {
@@ -223,156 +111,31 @@ const megaMenus: Record<string, MegaMenuData> = {
       {
         heading: "By Industry",
         items: [
-          {
-            icon: <Factory size={15} />,
-            title: "Manufacturing",
-            description: "Production, BOM, costing, and supply chain",
-            href: "/manufacturing",
-          },
-          {
-            icon: <Truck size={15} />,
-            title: "Distribution & Logistics",
-            description: "Warehouse, routing, and delivery management",
-            href: "/distribution",
-          },
-          {
-            icon: <Briefcase size={15} />,
-            title: "Professional Services",
-            description: "Project tracking, billing, and resource planning",
-               href: "/ProfessionalService", // ← Add this
-          },
-          {
-            icon: <Store size={15} />,
-            title: "Retail & E-Commerce",
-            description: "POS, multi-channel, inventory, and returns",
-                 href: "/Retail", // ← Add this
-          },
+          { icon: <Factory size={16} />, title: "Manufacturing", description: "Production, BOM, supply chain", href: "/manufacturing" },
+          { icon: <Truck size={16} />, title: "Distribution", description: "Warehouse, routing, delivery", href: "/distribution" },
+          { icon: <Briefcase size={16} />, title: "Professional Services", description: "Project tracking, billing", href: "/ProfessionalService" },
+          { icon: <Store size={16} />, title: "Retail & E-Commerce", description: "POS, omnichannel", href: "/Retail" },
         ],
       },
       {
         heading: "By Company Size",
         items: [
-          {
-            icon: <Rocket size={15} />,
-            title: "Startups & SMEs",
-            description: "Get started fast with pre-configured modules",
-            href: "/StartupsAndSmes",
-          },
-          {
-            icon: <Building2 size={15} />,
-            title: "Mid-Market",
-            description: "Scale operations with advanced workflows",
-            href: "/MidMarket",
-          },
-          {
-            icon: <Globe size={15} />,
-            title: "Enterprise",
-            description: "Multi-entity, multi-currency, global deployments",
-                   href: "/Enterprise",
-          },
+          { icon: <Rocket size={16} />, title: "Startups & SMEs", description: "Pre-configured modules", href: "/StartupsAndSmes" },
+          { icon: <Building2 size={16} />, title: "Mid-Market", description: "Advanced workflows", href: "/MidMarket" },
+          { icon: <Globe size={16} />, title: "Enterprise", description: "Multi-entity, global", href: "/Enterprise" },
         ],
       },
       {
         heading: "By Function",
         items: [
-          {
-            icon: <DollarSign size={15} />,
-            title: "Finance Teams",
-            description: "Automate close, compliance, and reporting",
-          },
-          {
-            icon: <Package size={15} />,
-            title: "Operations",
-            description: "Streamline supply chain and fulfillment",
-          },
-          {
-            icon: <Users size={15} />,
-            title: "Sales & Revenue",
-            description: "Accelerate pipeline and close faster",
-          },
-          {
-            icon: <LayoutDashboard size={15} />,
-            title: "IT & Admins",
-            description: "Manage integrations, access, and system health",
-          },
+          { icon: <DollarSign size={16} />, title: "Finance Teams", description: "Close, compliance, reporting" },
+          { icon: <Package size={16} />, title: "Operations", description: "Supply chain, fulfillment" },
+          { icon: <Users size={16} />, title: "Sales & Revenue", description: "Pipeline acceleration" },
+          { icon: <LayoutDashboard size={16} />, title: "IT & Admins", description: "Integrations, access control" },
         ],
       },
     ],
-    cta: {
-      label: "Find your industry solution",
-      buttonLabel: "Explore Solutions",
-    },
-  },
-
-  Pricing: {
-    columns: [
-      {
-        heading: "Plans",
-        items: [
-          {
-            icon: <Rocket size={15} />,
-            title: "Starter",
-            description: "Core ERP modules for growing businesses up to 25 users",
-          },
-          {
-            icon: <Building2 size={15} />,
-            title: "Growth",
-            description: "Advanced automation and multi-branch support",
-            badge: "Most Popular",
-          },
-          {
-            icon: <Globe size={15} />,
-            title: "Enterprise",
-            description: "Full suite with custom SLA and dedicated support",
-          },
-        ],
-      },
-      {
-        heading: "Compare & Calculate",
-        items: [
-          {
-            icon: <CheckCircle size={15} />,
-            title: "Compare Plans",
-            description: "Side-by-side feature comparison across all tiers",
-          },
-          {
-            icon: <Calculator size={15} />,
-            title: "ROI Calculator",
-            description: "Estimate your savings and payback period",
-          },
-          {
-            icon: <Tag size={15} />,
-            title: "Volume Discounts",
-            description: "Custom pricing for 100+ seat deployments",
-          },
-        ],
-      },
-      {
-        heading: "Add-ons",
-        items: [
-          {
-            icon: <Plug size={15} />,
-            title: "Integration Pack",
-            description: "Premium connectors for Shopify, Stripe, and Xero",
-          },
-          {
-            icon: <Shield size={15} />,
-            title: "Advanced Security",
-            description: "SSO, audit logs, IP restrictions, and more",
-          },
-          {
-            icon: <HeadphonesIcon size={15} />,
-            title: "Priority Support",
-            description: "Dedicated CSM and guaranteed SLA response times",
-          },
-        ],
-      },
-    ],
-    cta: {
-      label: "Not sure which plan fits your team?",
-      buttonLabel: "Talk to Sales",
-      highlight: "No long-term contracts",
-    },
+    cta: { label: "Find the right Bizak solution for your team.", buttonLabel: "Explore Solutions" },
   },
 
   Customers: {
@@ -380,73 +143,29 @@ const megaMenus: Record<string, MegaMenuData> = {
       {
         heading: "Success Stories",
         items: [
-          {
-            icon: <Star size={15} />,
-            title: "Customer Stories",
-            description: "How businesses scaled with Bizak ERP",
-          },
-          {
-            icon: <BarChart3 size={15} />,
-            title: "Case Studies",
-            description: "Detailed results and metrics from real deployments",
-                href: "/case-studies", // ← Add this
-          },
-          {
-            icon: <Heart size={15} />,
-            title: "Reviews & Ratings",
-            description: "Verified reviews from G2, Capterra, and Trustpilot",
-          },
+          { icon: <Star size={16} />, title: "Customer Stories", description: "How teams scaled with Bizak" },
+          { icon: <BarChart3 size={16} />, title: "Case Studies", description: "Metrics and outcomes", href: "/case-studies" },
+          { icon: <Heart size={16} />, title: "Reviews & Ratings", description: "Verified G2, Capterra reviews" },
         ],
       },
-
-
-      
       {
         heading: "By Industry",
         items: [
-          {
-            icon: <Factory size={15} />,
-            title: "Manufacturing Wins",
-            description: "Production efficiency gains across the sector",
-          },
-          {
-            icon: <Truck size={15} />,
-            title: "Distribution Leaders",
-            description: "Logistics and fulfillment transformation stories",
-          },
-          {
-            icon: <Store size={15} />,
-            title: "Retail Champions",
-            description: "Omnichannel and POS success stories",
-          },
+          { icon: <Factory size={16} />, title: "Manufacturing Wins", description: "Production efficiency gains" },
+          { icon: <Truck size={16} />, title: "Distribution Leaders", description: "Logistics transformations" },
+          { icon: <Store size={16} />, title: "Retail Champions", description: "Omnichannel POS wins" },
         ],
       },
       {
         heading: "Community",
         items: [
-          {
-            icon: <Users size={15} />,
-            title: "Customer Community",
-            description: "Connect with 5,000+ Bizak users worldwide",
-          },
-          {
-            icon: <Award size={15} />,
-            title: "Customer Advisory Board",
-            description: "Shape the future of the product with us",
-          },
-          {
-            icon: <Calendar size={15} />,
-            title: "User Conference",
-            description: "BizakConnect 2025 — Join our annual summit",
-            badge: "Sept 2025",
-          },
+          { icon: <Users size={16} />, title: "Customer Community", description: "5,000+ Bizak users" },
+          { icon: <Award size={16} />, title: "Customer Advisory Board", description: "Shape the roadmap" },
+          { icon: <Calendar size={16} />, title: "BizakConnect", description: "Annual user summit", badge: "Sept 2025" },
         ],
       },
     ],
-    cta: {
-      label: "Join 5,000+ businesses growing with Bizak",
-      buttonLabel: "Read Stories",
-    },
+    cta: { label: "Join 5,000+ businesses growing with Bizak.", buttonLabel: "Read Stories" },
   },
 
   Partners: {
@@ -454,77 +173,29 @@ const megaMenus: Record<string, MegaMenuData> = {
       {
         heading: "Partner Types",
         items: [
-          {
-            icon: <Handshake size={15} />,
-            title: "Resellers",
-            description: "Sell and implement Bizak in your local market",
-            href: "/partners/resellers",
-          },
-          {
-            icon: <UserCheck size={15} />,
-            title: "Consultants & SIs",
-            description: "Deliver Bizak implementations for clients",
-            href: "/partners/consultants",
-          },
-          {
-            icon: <Plug size={15} />,
-            title: "Technology Partners",
-            description: "Build integrations on top of Bizak APIs",
-            href: "/partners/technology",
-          },
+          { icon: <Handshake size={16} />, title: "Resellers", description: "Sell in your market", href: "/partners/resellers" },
+          { icon: <UserCheck size={16} />, title: "Consultants & SIs", description: "Implement for clients", href: "/partners/consultants" },
+          { icon: <Plug size={16} />, title: "Technology Partners", description: "Build on Bizak APIs", href: "/partners/technology" },
         ],
       },
       {
-        heading: "Partner Resources",
+        heading: "Resources",
         items: [
-          {
-            icon: <BookOpen size={15} />,
-            title: "Partner Portal",
-            description: "Access training, certifications, and sales tools",
-            href: "/partners/portal",
-          },
-          {
-            icon: <FileText size={15} />,
-            title: "Marketplace",
-            description: "Discover and list partner extensions",
-            href: "/partners/marketplace",
-          },
-          {
-            icon: <Globe size={15} />,
-            title: "Find a Partner",
-            description: "Locate a certified Bizak partner near you",
-            href: "/partners/find",
-          },
+          { icon: <BookOpen size={16} />, title: "Partner Portal", description: "Training & sales tools", href: "/partners/portal" },
+          { icon: <FileText size={16} />, title: "Marketplace", description: "List your extensions", href: "/partners/marketplace" },
+          { icon: <Globe size={16} />, title: "Find a Partner", description: "Locate certified partners", href: "/partners/find" },
         ],
       },
       {
         heading: "Grow Together",
         items: [
-          {
-            icon: <Rocket size={15} />,
-            title: "Become a Partner",
-            description: "Apply to join the Bizak Partner Network",
-            href: "/partners",
-          },
-          {
-            icon: <Award size={15} />,
-            title: "Partner Awards",
-            description: "Recognizing excellence in our partner ecosystem",
-            href: "/partners/awards",
-          },
-          {
-            icon: <Calendar size={15} />,
-            title: "Partner Events",
-            description: "Upcoming training, summits, and webinars",
-            href: "/partners/events",
-          },
+          { icon: <Rocket size={16} />, title: "Become a Partner", description: "Join the network", href: "/partners" },
+          { icon: <Award size={16} />, title: "Partner Awards", description: "Recognizing excellence", href: "/partners/awards" },
+          { icon: <Calendar size={16} />, title: "Partner Events", description: "Training & summits", href: "/partners/events" },
         ],
       },
     ],
-    cta: {
-      label: "Grow your practice with Bizak",
-      buttonLabel: "Become a Partner",
-    },
+    cta: { label: "Grow your practice with Bizak.", buttonLabel: "Become a Partner", href: "/partners" },
   },
 
   Resources: {
@@ -532,79 +203,29 @@ const megaMenus: Record<string, MegaMenuData> = {
       {
         heading: "Learn",
         items: [
-          {
-            icon: <BookOpen size={15} />,
-            title: "Documentation",
-            description: "Full technical docs for all modules and APIs",
-            href: "/documentation",
-          },
-          {
-            icon: <FileText size={15} />,
-            title: "Blog",
-            description: "Insights on ERP, finance, and operations",
-            href: "/blog",
-
-
-
-          },
-          {
-            icon: <BookMarked size={15} />,
-            title: "Guides & Playbooks",
-            description: "Step-by-step implementation guides",
-            href: "/GuidesAndPlaybooks",
-          },
+          { icon: <BookOpen size={16} />, title: "Documentation", description: "Technical docs and APIs", href: "/documentation" },
+          { icon: <FileText size={16} />, title: "Blog", description: "ERP, finance, ops insights", href: "/blog" },
+          { icon: <BookMarked size={16} />, title: "Guides & Playbooks", description: "Implementation guides", href: "/GuidesAndPlaybooks" },
         ],
       },
       {
         heading: "Support",
         items: [
-          {
-            icon: <HeadphonesIcon size={15} />,
-            title: "Help Center",
-            description: "Find answers to common questions",
-               href: "/HelpCenter", // ← Add this
-          },
-          {
-            icon: <MessageSquare size={15} />,
-            title: "Community Forum",
-            description: "Ask questions and share tips with peers",
-            href: "/CommunityForum",
-          },
-          {
-            icon: <GraduationCap size={15} />,
-            title: "Training & Certification",
-            description: "Self-paced courses and official certifications",
-            href: "/TrainingAndCertification",
-          },
+          { icon: <HeadphonesIcon size={16} />, title: "Help Center", description: "Answers to common Qs", href: "/HelpCenter" },
+          { icon: <MessageSquare size={16} />, title: "Community Forum", description: "Ask peers, share tips", href: "/CommunityForum" },
+          { icon: <GraduationCap size={16} />, title: "Training & Certification", description: "Courses & badges", href: "/TrainingAndCertification" },
         ],
       },
       {
         heading: "Tools",
         items: [
-          {
-            icon: <Calculator size={15} />,
-            title: "ROI Calculator",
-            description: "Estimate your savings and payback period",
-          },
-          {
-            icon: <FileText size={15} />,
-            title: "Templates Library",
-            description: "Ready-to-use finance and operations templates",
-          },
-          {
-            icon: <Video size={15} />,
-            title: "Webinars & Events",
-            description: "Live and on-demand product sessions",
-            href: "/WebinarsAndEvents",
-            badge: "Live",
-          },
+          { icon: <Calculator size={16} />, title: "ROI Calculator", description: "Estimate your savings" },
+          { icon: <FileText size={16} />, title: "Templates Library", description: "Finance & ops templates" },
+          { icon: <Video size={16} />, title: "Webinars & Events", description: "Live & on-demand", badge: "Live", href: "/WebinarsAndEvents" },
         ],
       },
     ],
-    cta: {
-      label: "Explore all resources",
-      buttonLabel: "Visit Resource Center",
-    },
+    cta: { label: "Everything you need to get value from Bizak.", buttonLabel: "Visit Resource Center" },
   },
 
   Company: {
@@ -612,135 +233,102 @@ const megaMenus: Record<string, MegaMenuData> = {
       {
         heading: "About",
         items: [
-          {
-            icon: <Info size={15} />,
-            title: "About Bizak",
-            description: "Our story, mission, and the team behind the product",
-            href: "/about",
-          },
-          {
-            icon: <Target size={15} />,
-            title: "Our Mission",
-            description: "Empowering businesses with clarity and control",
-            href: "/OurMission",
-          },
-          {
-            icon: <Users size={15} />,
-            title: "Leadership Team",
-            description: "Meet the people driving Bizak forward",
-            href: "/LeadershipTeam",
-          },
+          { icon: <Info size={16} />, title: "About Bizak", description: "Our story and mission", href: "/about" },
+          { icon: <Target size={16} />, title: "Our Mission", description: "Clarity and control", href: "/OurMission" },
+          { icon: <Users size={16} />, title: "Leadership Team", description: "Meet the team", href: "/LeadershipTeam" },
         ],
       },
       {
         heading: "Connect",
         items: [
-          {
-            icon: <Briefcase size={15} />,
-            title: "Careers",
-            description: "Join a team building the future of enterprise ERP",
-            badge: "Hiring",
-            href: "/careers",
-          },
-          {
-            icon: <FileText size={15} />,
-            title: "Press & Media",
-            description: "News, brand assets, and media kit",
-            href: "/PressAndMedia",
-          },
-          {
-            icon: <Calendar size={15} />,
-            title: "Events",
-            description: "Conferences, webinars, and roadshows",
-          },
+          { icon: <Briefcase size={16} />, title: "Careers", description: "Build the future of ERP", badge: "Hiring", href: "/careers" },
+          { icon: <FileText size={16} />, title: "Press & Media", description: "News and brand kit", href: "/PressAndMedia" },
+          { icon: <Calendar size={16} />, title: "Events", description: "Conferences and webinars" },
         ],
       },
       {
         heading: "Support & Trust",
         items: [
-          {
-            icon: <Mail size={15} />,
-            title: "Contact Us",
-            description: "Reach our team for sales and general support",
-            href: "/contact",
-
-          },
-          {
-            icon: <Shield size={15} />,
-            title: "Trust Center",
-            description: "Compliance, certifications, and data policies",
-          },
-          {
-            icon: <Activity size={15} />,
-            title: "System Status",
-            description: "Live uptime monitoring and incident reporting",
-            href: "/system-status",
-          },
+          { icon: <Mail size={16} />, title: "Contact Us", description: "Sales & support", href: "/contact" },
+          { icon: <Shield size={16} />, title: "Trust Center", description: "Compliance & policies" },
+          { icon: <Activity size={16} />, title: "System Status", description: "Live uptime monitoring", href: "/system-status" },
         ],
       },
     ],
-    cta: {
-      label: "Want to learn more about Bizak?",
-      buttonLabel: "Contact Us",
-    },
+    cta: { label: "Want to talk to us directly?", buttonLabel: "Contact Us", href: "/contact" },
   },
 };
 
-const NAV_ITEMS = [
-  "Product",
-  "Solutions",
-  // "Pricing",
-  "Customers",
-  "Partners",
-  "Resources",
-  "Company",
-];
+const NAV_ITEMS = ["Product", "Solutions", "Customers", "Partners", "Resources", "Company"];
 
-// ─── MenuItem Component ───────────────────────────────────────────────────────
+// ─── Ruul-style Mega Menu Item ────────────────────────────────────────────────
 
-function MegaMenuItem({ item }: { item: MenuItem }) {
+function MegaItem({ item }: { item: MenuItem }) {
   return (
     <a
-   
-
-     href={item.href || "#"}          // ← Use item.href here
- onClick={item.href ? undefined : (e) => e.preventDefault()} // ← Only prevent default if no href
-
- 
-      className="group flex items-start gap-3 p-2.5 rounded-lg hover:bg-[#f7f8f5] transition-all duration-150 cursor-pointer"
+      href={item.href || "#"}
+      onClick={item.href ? undefined : (e) => e.preventDefault()}
+      className="group flex items-start gap-3 p-3 rounded-2xl transition-colors duration-150"
+      style={{ textDecoration: "none" }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.background = "#F4F5EF";
+        const icon = e.currentTarget.querySelector("[data-icon-circle]") as HTMLElement | null;
+        if (icon) {
+          icon.style.background = "#1A2D20";
+          icon.style.color = "#DBE9B8";
+        }
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.background = "transparent";
+        const icon = e.currentTarget.querySelector("[data-icon-circle]") as HTMLElement | null;
+        if (icon) {
+          icon.style.background = "#F4F5EF";
+          icon.style.color = "#1F3422";
+        }
+      }}
     >
       <div
-        className="mt-0.5 flex-shrink-0 w-[30px] h-[30px] flex items-center justify-center rounded-md transition-all duration-150"
-        style={{ background: "#f2f3ef", color: "#7a826d" }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.background = "#7a826d";
-          (e.currentTarget as HTMLElement).style.color = "#fff";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.background = "#f2f3ef";
-          (e.currentTarget as HTMLElement).style.color = "#7a826d";
+        data-icon-circle
+        className="mt-0.5 flex-shrink-0"
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: 999,
+          background: "#F4F5EF",
+          color: "#1F3422",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "background 0.18s ease, color 0.18s ease",
         }}
       >
         {item.icon}
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 pt-0.5">
         <div className="flex items-center gap-2 flex-wrap">
           <span
-            className="text-[#1c1c1c] group-hover:text-[#7a826d] transition-colors duration-150"
-            style={{ fontFamily: "Inter", fontWeight: 500, fontSize: 13.5, lineHeight: 1.3 }}
+            style={{
+              fontFamily: "Inter",
+              fontWeight: 500,
+              fontSize: 14,
+              color: "#1A1D19",
+              letterSpacing: "-0.01em",
+              lineHeight: 1.3,
+            }}
           >
             {item.title}
           </span>
           {item.badge && (
             <span
-              className="flex-shrink-0 px-1.5 py-[2px] rounded"
               style={{
+                padding: "2px 7px",
+                borderRadius: 999,
+                background: "#DBE9B8",
+                color: "#1F3422",
                 fontFamily: "Inter",
+                fontSize: 10,
                 fontWeight: 600,
-                fontSize: 9.5,
-                letterSpacing: "0.4px",
-                background: "rgba(122,130,109,0.12)",
-                color: "#7a826d",
+                letterSpacing: "0.04em",
                 textTransform: "uppercase",
               }}
             >
@@ -749,166 +337,133 @@ function MegaMenuItem({ item }: { item: MenuItem }) {
           )}
         </div>
         <p
-          className="text-[#999] leading-snug mt-[3px] group-hover:text-[#777] transition-colors"
-          style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 12 }}
+          style={{
+            fontFamily: "Inter",
+            fontWeight: 400,
+            fontSize: 12.5,
+            color: "#6E7466",
+            marginTop: 4,
+            lineHeight: 1.45,
+          }}
         >
           {item.description}
         </p>
       </div>
+      <ArrowUpRight
+        size={14}
+        className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{ color: "#1F3422", marginTop: 4 }}
+      />
     </a>
   );
 }
 
-// ─── Mega Menu Panel ──────────────────────────────────────────────────────────
+// ─── Ruul-style Mega Menu Panel ───────────────────────────────────────────────
 
-function MegaMenuPanel({
-  data,
-  visible,
-  onMouseEnter,
-  onMouseLeave,
-  onFocus,
-  onBlur,
-}: MegaMenuPanelProps) {
+function MegaPanel({ data, visible }: { data: MegaMenuData; visible: boolean }) {
   const colCount = data.columns.length;
-
   return (
     <div
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onFocus={onFocus}
-      onBlur={onBlur}
+      onMouseDown={(e) => e.stopPropagation()}
       style={{
         position: "absolute",
-        top: "calc(100% + 8px)",
+        top: "calc(100% + 10px)",
         left: "50%",
         transform: visible
-          ? "translateX(-50%) translateY(0px)"
-          : "translateX(-50%) translateY(-10px)",
+          ? "translateX(-50%) translateY(0)"
+          : "translateX(-50%) translateY(-6px)",
         opacity: visible ? 1 : 0,
         pointerEvents: visible ? "all" : "none",
-        transition: "opacity 0.18s ease, transform 0.2s ease",
-        width: colCount === 3 ? "min(1080px, calc(100vw - 64px))" : "min(780px, calc(100vw - 64px))",
-        background: "#ffffff",
-        borderRadius: 14,
-        border: "1px solid #eaece7",
-        boxShadow: "0 8px 48px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)",
+        transition: "opacity 0.2s ease, transform 0.22s ease",
+        width: colCount === 3 ? "min(1180px, calc(100vw - 32px))" : "min(820px, calc(100vw - 32px))",
+        background: "#FCFCF7",
+        borderRadius: 24,
+        border: "1px solid #E5E5E0",
+        boxShadow: "0 1px 0 rgba(15,20,17,0.03), 0 24px 64px rgba(15,20,17,0.10)",
         overflow: "hidden",
         zIndex: 100,
       }}
     >
-      {/* Caret pointer */}
-      <div
-        style={{
-          position: "absolute",
-          top: -6,
-          left: "50%",
-          transform: "translateX(-50%) rotate(45deg)",
-          width: 12,
-          height: 12,
-          background: "#ffffff",
-          border: "1px solid #eaece7",
-          borderBottom: "none",
-          borderRight: "none",
-        }}
-      />
-
-      <div style={{ padding: "28px 28px 24px" }}>
-        {/* Column grid */}
+      <div style={{ padding: "26px 26px 22px" }}>
         <div
           style={{
             display: "grid",
             gridTemplateColumns: `repeat(${colCount}, 1fr)`,
-            gap: "24px 32px",
+            columnGap: 24,
+            rowGap: 12,
           }}
         >
-          {data.columns.map((col, colIdx) => (
-            <div key={colIdx}>
+          {data.columns.map((col, ci) => (
+            <div key={ci} style={{ position: "relative" }}>
+              {ci > 0 && (
+                <div
+                  aria-hidden
+                  style={{
+                    position: "absolute",
+                    left: -12,
+                    top: 8,
+                    bottom: 8,
+                    width: 1,
+                    background: "#E5E5E0",
+                  }}
+                />
+              )}
               {col.heading && (
                 <div
                   style={{
                     fontFamily: "Inter",
-                    fontWeight: 600,
-                    fontSize: 10,
-                    letterSpacing: "0.8px",
-                    color: "#c0c0b8",
+                    fontWeight: 500,
+                    fontSize: 11,
+                    letterSpacing: "0.2em",
+                    color: "#9CA08F",
                     textTransform: "uppercase",
-                    marginBottom: 10,
-                    paddingBottom: 10,
-                    borderBottom: "1px solid #f0f1ed",
+                    padding: "0 12px 12px",
                   }}
                 >
                   {col.heading}
                 </div>
               )}
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                {col.items.map((item, itemIdx) => (
-                  <MegaMenuItem key={itemIdx} item={item} />
+                {col.items.map((it, ii) => (
+                  <MegaItem key={ii} item={it} />
                 ))}
               </div>
             </div>
           ))}
         </div>
 
-        {/* CTA Bar */}
         {data.cta && (
           <div
             style={{
-              marginTop: 22,
-              paddingTop: 18,
-              borderTop: "1px solid #f0f1ed",
+              marginTop: 18,
+              padding: "16px 18px",
+              borderRadius: 18,
+              background: "#1A2D20",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              gap: 16,
+              gap: 14,
+              flexWrap: "wrap",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-              <span
-                style={{
-                  fontFamily: "Inter",
-                  fontWeight: 400,
-                  fontSize: 13,
-                  color: "#666",
-                }}
-              >
-                {data.cta.label}
-              </span>
-              {data.cta.highlight && (
-                <span
-                  style={{
-                    fontFamily: "Inter",
-                    fontWeight: 400,
-                    fontSize: 12,
-                    color: "#bbb",
-                  }}
-                >
-                  — {data.cta.highlight}
-                </span>
-              )}
-            </div>
-            <a
-              href="#"
-              onClick={(e) => e.preventDefault()}
-              className="group flex-shrink-0 inline-flex items-center gap-2 hover:gap-3 transition-all duration-150"
+            <div
               style={{
                 fontFamily: "Inter",
-                fontWeight: 600,
-                fontSize: 13,
-                color: "#fff",
-                background: "#1a1a1a",
-                padding: "10px 20px",
-                borderRadius: 8,
-                textDecoration: "none",
+                fontSize: 14,
+                fontWeight: 500,
+                color: "#FCFCF7",
+                letterSpacing: "-0.005em",
               }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLElement).style.background = "#3a3a3a")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLElement).style.background = "#1a1a1a")
-              }
+            >
+              {data.cta.label}
+            </div>
+            <a
+              href={data.cta.href || "#"}
+              onClick={!data.cta.href ? (e) => e.preventDefault() : undefined}
+              className="bz-pill bz-pill-accent"
             >
               {data.cta.buttonLabel}
-              <ArrowRight size={13} />
+              <ArrowRight size={14} />
             </a>
           </div>
         )}
@@ -920,14 +475,12 @@ function MegaMenuPanel({
 // ─── Mobile Drawer ────────────────────────────────────────────────────────────
 
 function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
-  // Reset expansion when drawer closes
   useEffect(() => {
-    if (!open) setExpandedItem(null);
+    if (!open) setExpanded(null);
   }, [open]);
 
-  // Lock body scroll while drawer is open
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -939,22 +492,19 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 
   return (
     <>
-      {/* Backdrop */}
       <div
         onClick={onClose}
         style={{
           position: "fixed",
           inset: 0,
           zIndex: 45,
-          background: "rgba(0,0,0,0.25)",
+          background: "rgba(15,20,17,0.32)",
           backdropFilter: "blur(4px)",
           opacity: open ? 1 : 0,
           pointerEvents: open ? "all" : "none",
           transition: "opacity 0.22s ease",
         }}
       />
-
-      {/* Slide-in panel */}
       <div
         style={{
           position: "fixed",
@@ -962,74 +512,64 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           right: 0,
           bottom: 0,
           width: "100%",
-          maxWidth: 360,
-          background: "#ffffff",
+          maxWidth: 380,
+          background: "#FCFCF7",
           zIndex: 50,
           overflowY: "auto",
           transform: open ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.26s cubic-bezier(0.4,0,0.2,1)",
-          boxShadow: "-8px 0 40px rgba(0,0,0,0.12)",
+          transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1)",
+          boxShadow: "-8px 0 40px rgba(15,20,17,0.12)",
         }}
       >
-        {/* Drawer header */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             padding: "0 20px",
-            height: 76,
-            borderBottom: "1px solid #f0f1ed",
+            height: 80,
+            borderBottom: "1px solid #E5E5E0",
           }}
         >
-          <a
-            href="/"
-            onClick={onClose}
-            style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
-          >
-            <img
-              src={bizakLogo}
-              alt="Bizak ERP"
-              style={{ height: 22, width: "auto", display: "block" }}
-            />
+          <a href="/" onClick={onClose} style={{ display: "flex" }}>
+            <img src={bizakLogo} alt="Bizak ERP" style={{ height: 28, width: "auto" }} />
           </a>
           <button
             onClick={onClose}
             style={{
-              width: 36,
-              height: 36,
-              borderRadius: 8,
-              border: "none",
-              background: "transparent",
+              width: 40,
+              height: 40,
+              borderRadius: 999,
+              border: "1px solid #E5E5E0",
+              background: "#FCFCF7",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#666",
+              color: "#1A1D19",
             }}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Nav accordion */}
-        <div style={{ padding: "12px 12px 0" }}>
+        <div style={{ padding: "16px 14px 0" }}>
           {NAV_ITEMS.map((item) => {
-            const menuData = megaMenus[item];
-            const isExpanded = expandedItem === item;
+            const data = megaMenus[item];
+            const isOpen = expanded === item;
             return (
               <div key={item}>
                 <button
-                  onClick={() => setExpandedItem(isExpanded ? null : item)}
+                  onClick={() => setExpanded(isOpen ? null : item)}
                   style={{
                     width: "100%",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "14px 14px",
-                    borderRadius: 10,
+                    padding: "16px 16px",
+                    borderRadius: 16,
                     border: "none",
-                    background: isExpanded ? "#f7f8f5" : "transparent",
+                    background: isOpen ? "#F4F5EF" : "transparent",
                     cursor: "pointer",
                     transition: "background 0.15s ease",
                   }}
@@ -1038,55 +578,53 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                     style={{
                       fontFamily: "Inter",
                       fontWeight: 500,
-                      fontSize: 15,
-                      color: isExpanded ? "#1a1a1a" : "#444",
+                      fontSize: 16,
+                      color: "#1A1D19",
                     }}
                   >
                     {item}
                   </span>
                   <ChevronDown
-                    size={15}
-                    color={isExpanded ? "#7a826d" : "#bbb"}
+                    size={16}
                     style={{
-                      transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                      transition: "transform 0.2s ease",
+                      color: "#9CA08F",
+                      transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.22s ease",
                     }}
                   />
                 </button>
-
-                {/* Accordion content */}
                 <div
                   style={{
-                    maxHeight: isExpanded ? 900 : 0,
+                    maxHeight: isOpen ? 1200 : 0,
                     overflow: "hidden",
                     transition: "max-height 0.32s ease",
                   }}
                 >
-                  {menuData && (
-                    <div style={{ padding: "4px 8px 12px 12px" }}>
-                      {menuData.columns.map((col, cIdx) => (
-                        <div key={cIdx} style={{ marginBottom: 12 }}>
+                  {data && (
+                    <div style={{ padding: "4px 6px 10px" }}>
+                      {data.columns.map((col, ci) => (
+                        <div key={ci} style={{ marginBottom: 8 }}>
                           {col.heading && (
                             <div
                               style={{
                                 fontFamily: "Inter",
-                                fontWeight: 600,
-                                fontSize: 9.5,
-                                letterSpacing: "0.7px",
-                                color: "#ccc",
+                                fontWeight: 500,
+                                fontSize: 10,
+                                letterSpacing: "0.18em",
+                                color: "#9CA08F",
                                 textTransform: "uppercase",
-                                padding: "10px 12px 6px",
+                                padding: "10px 14px 6px",
                               }}
                             >
                               {col.heading}
                             </div>
                           )}
-                          {col.items.map((mItem, mIdx) => (
+                          {col.items.map((mi, mid) => (
                             <a
-                              key={mIdx}
-                              href={mItem.href || "#"}
+                              key={mid}
+                              href={mi.href || "#"}
                               onClick={(e) => {
-                                if (!mItem.href) {
+                                if (!mi.href) {
                                   e.preventDefault();
                                   return;
                                 }
@@ -1095,64 +633,47 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                               style={{
                                 display: "flex",
                                 alignItems: "center",
-                                gap: 10,
-                                padding: "9px 12px",
-                                borderRadius: 8,
+                                gap: 12,
+                                padding: "10px 14px",
+                                borderRadius: 12,
                                 textDecoration: "none",
-                                transition: "background 0.15s ease",
-                                WebkitTapHighlightColor: "rgba(122,130,109,0.15)",
                               }}
-                              onMouseEnter={(e) =>
-                                ((e.currentTarget as HTMLElement).style.background = "#f7f8f5")
-                              }
-                              onMouseLeave={(e) =>
-                                ((e.currentTarget as HTMLElement).style.background = "transparent")
-                              }
                             >
                               <div
                                 style={{
-                                  width: 26,
-                                  height: 26,
-                                  borderRadius: 6,
-                                  background: "#f2f3ef",
+                                  width: 32,
+                                  height: 32,
+                                  borderRadius: 999,
+                                  background: "#F4F5EF",
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
-                                  color: "#7a826d",
+                                  color: "#1F3422",
                                   flexShrink: 0,
                                 }}
                               >
-                                {mItem.icon}
+                                {mi.icon}
                               </div>
                               <div>
                                 <div
                                   style={{
                                     fontFamily: "Inter",
                                     fontWeight: 500,
-                                    fontSize: 13.5,
-                                    color: "#333",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 6,
+                                    fontSize: 14,
+                                    color: "#1A1D19",
                                   }}
                                 >
-                                  {mItem.title}
-                                  {mItem.badge && (
-                                    <span
-                                      style={{
-                                        fontSize: 9,
-                                        fontWeight: 600,
-                                        background: "rgba(122,130,109,0.12)",
-                                        color: "#7a826d",
-                                        padding: "1px 5px",
-                                        borderRadius: 4,
-                                        letterSpacing: "0.3px",
-                                        textTransform: "uppercase",
-                                      }}
-                                    >
-                                      {mItem.badge}
-                                    </span>
-                                  )}
+                                  {mi.title}
+                                </div>
+                                <div
+                                  style={{
+                                    fontFamily: "Inter",
+                                    fontSize: 12,
+                                    color: "#6E7466",
+                                    marginTop: 2,
+                                  }}
+                                >
+                                  {mi.description}
                                 </div>
                               </div>
                             </a>
@@ -1167,102 +688,28 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           })}
         </div>
 
-        {/* Bottom CTA */}
         <div
           style={{
             padding: "20px 20px 32px",
-            marginTop: 8,
-            borderTop: "1px solid #f0f1ed",
+            marginTop: 16,
+            borderTop: "1px solid #E5E5E0",
             display: "flex",
             flexDirection: "column",
             gap: 10,
           }}
         >
-          {/* <a
-            href="https://system.bizakerp.com"
-            onClick={(e) => e.preventDefault()}
-            style={{
-              display: "block",
-              textAlign: "center",
-              padding: "12px",
-              borderRadius: 10,
-              border: "1px solid #e8eae4",
-              fontFamily: "Inter",
-              fontWeight: 500,
-              fontSize: 14,
-              color: "#444",
-              textDecoration: "none",
-              transition: "background 0.15s ease",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "#f7f8f5")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "transparent")
-            }
-          >
-            Log in
-          </a> */}
-
-
-          
-    <a
+          <a
             href="https://system.bizakerp.com"
             target="_blank"
             rel="noopener noreferrer"
             onClick={onClose}
-            style={{
-              display: "block",
-              textAlign: "center",
-              padding: "12px",
-              borderRadius: 10,
-              border: "1px solid #e8eae4",
-              fontFamily: "Inter",
-              fontWeight: 500,
-              fontSize: 14,
-              color: "#444",
-              textDecoration: "none",
-              transition: "background 0.15s ease",
-              WebkitTapHighlightColor: "rgba(122,130,109,0.15)",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "#f7f8f5")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "transparent")
-            }
+            className="bz-pill bz-pill-light"
+            style={{ justifyContent: "center" }}
           >
-            Log in
+            Sign in
           </a>
-
-
-          <a
-            href="/contact"
-            onClick={onClose}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              padding: "12px",
-              borderRadius: 10,
-              background: "#1a1a1a",
-              fontFamily: "Inter",
-              fontWeight: 600,
-              fontSize: 14,
-              color: "#fff",
-              textDecoration: "none",
-              WebkitTapHighlightColor: "rgba(255,255,255,0.2)",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "#333")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "#1a1a1a")
-            }
-          >
-            Request Demo
-            <ArrowRight size={14} />
+          <a href="/contact" onClick={onClose} className="bz-pill bz-pill-dark" style={{ justifyContent: "center" }}>
+            Request Demo <ArrowRight size={14} />
           </a>
         </div>
       </div>
@@ -1270,291 +717,144 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
   );
 }
 
-// ─── Main Header Component ────────────────────────────────────────────────────
+// ─── Header (Ruul: NOT sticky, click-to-open) ─────────────────────────────────
 
 export function Header() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
 
-  // Shadow on scroll
+  // Click-outside closes the open menu
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Close mega menu when clicking outside
-  useEffect(() => {
-    const onClick = () => setActiveMenu(null);
-    if (activeMenu) document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
+    if (!activeMenu) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (!headerRef.current) return;
+      if (!headerRef.current.contains(e.target as Node)) {
+        setActiveMenu(null);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [activeMenu]);
 
-  const scheduleClose = useCallback(() => {
-    closeTimerRef.current = setTimeout(() => setActiveMenu(null), 300);
-  }, []);
+  // Escape key closes the open menu
+  useEffect(() => {
+    if (!activeMenu) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActiveMenu(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [activeMenu]);
 
-  const cancelClose = useCallback(() => {
-    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
-  }, []);
-
-  const handleNavEnter = (item: string) => {
-    cancelClose();
-    if (megaMenus[item]) setActiveMenu(item);
+  const toggle = (item: string) => {
+    if (megaMenus[item]) {
+      setActiveMenu((prev) => (prev === item ? null : item));
+    }
   };
 
   return (
     <>
-      {/* Soft backdrop tint behind mega menu */}
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 35,
-          background: activeMenu ? "rgba(0,0,0,0.05)" : "transparent",
-          pointerEvents: "none",
-          transition: "background 0.2s ease",
-        }}
-      />
-
-      {/* ──────────────── Header Bar ──────────────── */}
       <header
+        ref={headerRef}
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 40,
-          background: "#ffffff",
-          boxShadow: scrolled || activeMenu
-            ? "0 1px 0 rgba(0,0,0,0.08), 0 4px 24px rgba(0,0,0,0.07)"
-            : "0 1px 0 rgba(0,0,0,0.07)",
-          transition: "box-shadow 0.25s ease",
+          position: "relative",
+          padding: "8px 24px 12px",
+          background: "#efefe9",
+          borderBottom: "1px solid rgba(15, 20, 17, 0.08)",
         }}
       >
-        <div
-          style={{
-            maxWidth: 1320,
-            margin: "0 auto",
-            padding: "0 24px",
-            height: 76,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            position: "relative",
-          }}
-        >
-          {/* ── Logo ── */}
-          <a
-            href="/"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              textDecoration: "none",
-              flexShrink: 0,
-            }}
-          >
-            <img
-              src={bizakLogo}
-              alt="Bizak ERP"
-              style={{ height: 25, width: "auto", display: "block" }}
-            />
-          </a>
+        <div style={{ maxWidth: 1320, margin: "0 auto", position: "relative" }}>
+          <div className="bz-nav-card">
+            {/* Logo */}
+            <a
+              href="/"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                textDecoration: "none",
+                flexShrink: 0,
+                marginRight: 28,
+              }}
+            >
+              <img src={bizakLogo} alt="Bizak ERP" style={{ height: 28, width: "auto" }} />
+            </a>
 
-          {/* ── Desktop Center Navigation ── */}
-          <nav
-            className="hidden lg:flex"
-            style={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              alignItems: "center",
-              gap: 2,
-            }}
-          >
-            {NAV_ITEMS.map((item) => {
-              const hasMega = !!megaMenus[item];
-              const isActive = activeMenu === item;
-              return (
-                <div
-                  key={item}
-                  style={{ position: "relative" }}
-                  onMouseEnter={() => handleNavEnter(item)}
-                  onMouseLeave={scheduleClose}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    onMouseEnter={cancelClose}
-                    onFocus={() => handleNavEnter(item)}
-                    onBlur={scheduleClose}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 4,
-                      padding: "8px 13px",
-                      borderRadius: 8,
-                      border: "none",
-                      background: isActive ? "#f5f5f2" : "transparent",
-                      cursor: "pointer",
-                      transition: "background 0.15s ease",
-                      outline: "none",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "Inter",
-                        fontWeight: 500,
-                        fontSize: 14,
-                        color: isActive ? "#1a1a1a" : "#555",
-                        transition: "color 0.15s ease",
+            {/* Desktop nav — click-to-open */}
+            <nav className="hidden lg:flex" style={{ flex: 1, gap: 0, alignItems: "center" }}>
+              {NAV_ITEMS.map((item) => {
+                const hasMega = !!megaMenus[item];
+                const isActive = activeMenu === item;
+                return (
+                  <div key={item} style={{ position: "relative" }}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggle(item);
                       }}
+                      aria-expanded={isActive}
+                      aria-haspopup={hasMega || undefined}
+                      className={`bz-nav-link ${isActive ? "is-active" : ""}`}
                     >
                       {item}
-                    </span>
-                    {hasMega && (
-                      <ChevronDown
-                        size={13}
-                        style={{
-                          color: isActive ? "#7a826d" : "#c0c0b8",
-                          transform: isActive ? "rotate(180deg)" : "rotate(0deg)",
-                          transition: "transform 0.2s ease, color 0.15s ease",
-                        }}
-                      />
-                    )}
-                  </button>
+                      {hasMega && (
+                        <ChevronDown
+                          size={13}
+                          style={{
+                            color: isActive ? "#1F3422" : "#9CA08F",
+                            transform: isActive ? "rotate(180deg)" : "rotate(0deg)",
+                            transition: "transform 0.22s ease, color 0.15s ease",
+                            marginLeft: 2,
+                          }}
+                        />
+                      )}
+                    </button>
 
-                  {/* Bridge: transparent hover zone covering the gap between button and panel */}
-                  {hasMega && (
-                    <div
-                      aria-hidden="true"
-                      onMouseEnter={cancelClose}
-                      style={{
-                        position: "absolute",
-                        top: "100%",
-                        left: "-20px",
-                        right: "-20px",
-                        height: "10px",
-                        zIndex: 99,
-                      }}
-                    />
-                  )}
+                    {hasMega && <MegaPanel data={megaMenus[item]} visible={isActive} />}
+                  </div>
+                );
+              })}
+            </nav>
 
-                  {/* Mega Menu Panel */}
-                  {hasMega && (
-                    <MegaMenuPanel
-                      data={megaMenus[item]}
-                      visible={isActive}
-                      onMouseEnter={cancelClose}
-                      onMouseLeave={scheduleClose}
-                      onFocus={cancelClose}
-                      onBlur={scheduleClose}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </nav>
+            {/* Right CTAs (desktop) */}
+            <div className="hidden lg:flex" style={{ alignItems: "center", gap: 6, flexShrink: 0 }}>
+              <a
+                href="https://system.bizakerp.com"
+                target="_blank"
+                rel="noreferrer"
+                className="bz-nav-link"
+              >
+                Sign in
+              </a>
+              <a href="/contact" className="bz-pill bz-pill-dark" style={{ padding: "10px 18px" }}>
+                Request Demo
+              </a>
+            </div>
 
-          {/* ── Right: Auth Actions ── */}
-          <div
-            className="hidden lg:flex"
-            style={{
-              alignItems: "center",
-              gap: 4,
-              flexShrink: 0,
-            }}
-          >
-            <a
-              href="https://system.bizakerp.com" target="_blank"
-         
+            {/* Mobile hamburger */}
+            <button
+              className="flex lg:hidden"
+              onClick={() => setMobileOpen(true)}
               style={{
-                fontFamily: "Inter",
-                fontWeight: 500,
-                fontSize: 14,
-                color: "#555",
-                textDecoration: "none",
-                padding: "8px 14px",
-                borderRadius: 8,
-                transition: "background 0.15s ease, color 0.15s ease",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "#f5f5f2";
-                (e.currentTarget as HTMLElement).style.color = "#1a1a1a";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-                (e.currentTarget as HTMLElement).style.color = "#555";
-              }}
-            >
-              Log in
-            </a>
-
-            <div
-              style={{ width: 1, height: 16, background: "#e8eae4", margin: "0 4px" }}
-            />
-
-            <a className="biz-shimmer-btn"
-              href="/contact"
-              target="_blank"
-              style={{
-                display: "inline-flex",
+                marginLeft: "auto",
+                width: 44,
+                height: 44,
+                borderRadius: 999,
+                border: "1px solid #E5E5E0",
+                background: "#FCFCF7",
+                cursor: "pointer",
                 alignItems: "center",
-                gap: 7,
-                fontFamily: "Inter",
-                fontWeight: 600,
-                fontSize: 13.5,
+                justifyContent: "center",
                 color: "#1A1D19",
-                // background: "#1a1a1a",
-                padding: "10px 20px",
-                borderRadius: 9,
-                textDecoration: "none",
-                height: 40,
-                transition: "background 0.15s ease, gap 0.15s ease",
               }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "#C7FF35";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "#C7FF35";
-              }}
+              aria-label="Open menu"
             >
-              Request Demo
-              <ArrowRight size={13} />
-            </a>
+              <Menu size={20} />
+            </button>
           </div>
-
-          {/* ── Mobile Hamburger ── */}
-          <button
-            className="flex lg:hidden"
-            onClick={() => setMobileOpen(true)}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 8,
-              border: "none",
-              background: "transparent",
-              cursor: "pointer",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#555",
-              transition: "background 0.15s ease",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "#f5f5f2")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.background = "transparent")
-            }
-            aria-label="Open menu"
-          >
-            <Menu size={22} />
-          </button>
         </div>
       </header>
 
-      {/* Mobile Drawer */}
       <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
     </>
   );

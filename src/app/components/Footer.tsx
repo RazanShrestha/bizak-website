@@ -1,66 +1,248 @@
-import svgPaths from "../../imports/svg-eyvfmiiac4";
+import { ArrowUpRight, Instagram, Twitter, Facebook, Linkedin, Sparkles } from "lucide-react";
 import bizakLogoFooter from "../../assets/bizaklogo-footer.png";
+import footerBgImage from "../../assets/footerimg.png";
 
-const footerLinks = [
+// ─── Footer CTA — dynamic per page ────────────────────────────────────────────
+//
+// Pages render <Footer cta={{...}} /> to override the closing CTA. Without a
+// prop, Footer falls back to the homepage default.
+
+export interface FooterCta {
+  title: React.ReactNode;          // e.g. "Take full control of your operations."
+  titleMuted?: React.ReactNode;    // e.g. "Start in minutes." — rendered as a faded inline span after title
+  description?: React.ReactNode;   // sub-paragraph beneath the title
+  primaryLabel?: string;           // primary button label, default "Get Started"
+  primaryHref?: string;            // primary button href, default self-register
+  secondaryLabel?: string;         // secondary button label, default "Book a demo"
+  secondaryHref?: string;          // secondary button href, default "/contact"
+}
+
+const DEFAULT_CTA: FooterCta = {
+  title: "Take full control of your operations.",
+  titleMuted: "Start in minutes.",
+  description: "No setup cost. No long contracts. Cancel anytime — keep your data.",
+  primaryLabel: "Get Started",
+  primaryHref: "https://system.bizakerp.com/account/self-register",
+  secondaryLabel: "Book a demo",
+  secondaryHref: "/contact",
+};
+
+const footerCols: { heading: string; links: { label: string; href: string }[] }[] = [
   {
-    heading: 'Product',
-    items: [
-      { label: 'Features', href: '#' },
-      { label: 'Pricing', href: '#' },
-      { label: 'Integrations', href: 'integrations' },
-      { label: 'Changelog', href: '#' },
+    heading: "Product",
+    links: [
+      { label: "Bizak ERP Platform", href: "/product" },
+      { label: "Financial Management", href: "/FinancialManagement" },
+      { label: "Sales & CRM", href: "/SalesCrm" },
+      { label: "Inventory & Warehouse", href: "/InventoryAndWarehouse" },
+      { label: "Manufacturing", href: "/ManufacturingProduct" },
+      { label: "Workflow Automation", href: "/workflow" },
+      { label: "Integrations", href: "/Integrations" },
     ],
   },
   {
-    heading: 'Resources',
-    items: [
-      { label: 'Documentation', href: '/documentation' },
-      { label: 'Help Center', href: '/HelpCenter' },
-      { label: 'Blog', href: '/blog' },
-      { label: 'Customer Stories', href: '#' },
+    heading: "Solutions",
+    links: [
+      { label: "Manufacturing", href: "/manufacturing" },
+      { label: "Distribution", href: "/distribution" },
+      { label: "Professional Services", href: "/ProfessionalService" },
+      { label: "Retail & E-Commerce", href: "/Retail" },
+      { label: "Startups & SMEs", href: "/StartupsAndSmes" },
+      { label: "Mid-Market", href: "/MidMarket" },
+      { label: "Enterprise", href: "/Enterprise" },
     ],
   },
   {
-    heading: 'Company',
-    items: [
-      { label: 'About Us', href: '/about' },
-      { label: 'Careers', href: '/careers' },
-      { label: 'Contact', href: '/contact' },
-      { label: 'Privacy Policy', href: '#' },
+    heading: "Resources",
+    links: [
+      { label: "Documentation", href: "/documentation" },
+      { label: "Blog", href: "/blog" },
+      { label: "Help Center", href: "/HelpCenter" },
+      { label: "Case Studies", href: "/case-studies" },
+      { label: "Guides & Playbooks", href: "/GuidesAndPlaybooks" },
+      { label: "Webinars & Events", href: "/WebinarsAndEvents" },
+      { label: "Training", href: "/TrainingAndCertification" },
     ],
   },
 ];
 
-export function Footer() {
+const FOOTER_LINK_STYLE: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  color: "rgba(252,252,247,0.62)",
+  textDecoration: "none",
+  fontFamily: "Inter",
+  fontSize: 14,
+  fontWeight: 400,
+  padding: "4px 0",
+  transition: "color 0.18s ease",
+};
+
+export function Footer({ cta }: { cta?: FooterCta } = {}) {
+  const c: FooterCta = { ...DEFAULT_CTA, ...(cta ?? {}) };
   return (
-    <footer className="bg-[#121212] border-t border-white/5">
-      <div className="max-w-[1320px] mx-auto px-5 py-16">
-        <div className="flex flex-col lg:flex-row gap-12 justify-between">
-          {/* Brand column */}
-          <div className="lg:w-[464px]">
-            <div className="flex items-center gap-2 mb-6">
-              <img src={bizakLogoFooter} alt="Bizak Logo" />
-              {/* <span className="text-white tracking-tight" style={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 20 }}>Bizak</span> */}
+    <footer>
+      {/* ─── Single wrapper: warehouse image + olive tint covers BOTH the CTA and the framed card ─── */}
+      <div
+        style={{
+          position: "relative",
+          backgroundImage: `url(${footerBgImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          padding: "0 16px 24px",
+        }}
+      >
+        {/* Olive tint over the warehouse image — covers the entire footer area */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "rgba(26,45,32,0.55)",
+            pointerEvents: "none",
+          }}
+        />
+
+        <div style={{ position: "relative", maxWidth: 1320, margin: "0 auto" }}>
+          {/* CTA block — sits on the tinted warehouse bg, light text */}
+          <div
+            style={{
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 22,
+              padding: "96px 16px 72px",
+            }}
+          >
+            <h2 className="bz-h2" style={{ maxWidth: 720, color: "#FCFCF7" }}>
+              {c.title}
+              {c.titleMuted && (
+                <>
+                  {" "}
+                  <span style={{ color: "rgba(252,252,247,0.55)" }}>{c.titleMuted}</span>
+                </>
+              )}
+            </h2>
+            {c.description && (
+              <p
+                style={{
+                  fontFamily: "var(--bz-body-font)",
+                  fontSize: 15,
+                  color: "rgba(252,252,247,0.62)",
+                  margin: 0,
+                  maxWidth: 520,
+                  lineHeight: 1.55,
+                }}
+              >
+                {c.description}
+              </p>
+            )}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                gap: 10,
+                marginTop: 4,
+              }}
+            >
+              <a href={c.primaryHref} className="bz-pill bz-pill-accent">
+                {c.primaryLabel}
+                <ArrowUpRight size={14} />
+              </a>
+              <a href={c.secondaryHref} className="bz-pill bz-pill-ghost-dark">
+                <Sparkles size={13} />
+                {c.secondaryLabel}
+              </a>
             </div>
-            <p className="text-white/40" style={{ fontFamily: 'Inter', fontWeight: 400, fontSize: 14, lineHeight: 1.625, maxWidth: 310 }}>
-              Empowering modern businesses with an all-in-one ERP that is flexible, powerful, and easy to use.
-            </p>
           </div>
 
-          {/* Links columns */}
-          <div className="flex flex-col sm:flex-row gap-12">
-            {footerLinks.map((col) => (
-              <div key={col.heading} className="w-52">
-                <h5 className="text-white uppercase tracking-wide mb-6"
-                  style={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 11, letterSpacing: '0.55px' }}>
+          {/* Framed card — sits on top of the same tinted bg */}
+          <div style={{ position: "relative" }}>
+            <div style={{ position: "relative" }}>
+          <div className="bz-footer-card">
+          {/* Top row: link columns */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1.4fr 1fr 1fr 1fr",
+              gap: 48,
+              alignItems: "flex-start",
+            }}
+            className="bz-footer-top-grid"
+          >
+            {/* Brand col */}
+            <div>
+              <img
+                src={bizakLogoFooter}
+                alt="Bizak ERP"
+                style={{ height: 48, width: "auto", marginBottom: 24 }}
+              />
+              <p
+                style={{
+                  fontFamily: "Inter",
+                  fontSize: 14,
+                  fontWeight: 400,
+                  color: "rgba(252,252,247,0.62)",
+                  lineHeight: 1.65,
+                  maxWidth: 280,
+                  margin: 0,
+                }}
+              >
+                The operating system for modern business — finance, inventory, sales and operations in one unified workspace.
+              </p>
+
+              <div style={{ marginTop: 22, display: "flex", alignItems: "center", gap: 10 }}>
+                <a
+                  href="https://system.bizakerp.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bz-pill bz-pill-leaf"
+                  style={{ padding: "10px 16px", fontSize: 13 }}
+                >
+                  Get Started
+                </a>
+                <a
+                  href="/contact"
+                  className="bz-pill bz-pill-ghost-dark"
+                  style={{ padding: "10px 16px", fontSize: 13 }}
+                >
+                  Talk to sales
+                </a>
+              </div>
+            </div>
+
+            {/* Link columns */}
+            {footerCols.map((col) => (
+              <div key={col.heading}>
+                <h5
+                  style={{
+                    fontFamily: "Inter",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    letterSpacing: "0.16em",
+                    textTransform: "uppercase",
+                    color: "rgba(252,252,247,0.55)",
+                    margin: 0,
+                    paddingBottom: 18,
+                  }}
+                >
                   {col.heading}
                 </h5>
-                <ul className="space-y-4">
-                  {col.items.map((item) => (
-                    <li key={item.label}>
-                      <a href={item.href} className="text-white/40 hover:text-white/70 transition-colors"
-                        style={{ fontFamily: 'Inter', fontWeight: 400, fontSize: 14 }}>
-                        {item.label}
+                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column" }}>
+                  {col.links.map((link) => (
+                    <li key={link.label}>
+                      <a
+                        href={link.href}
+                        style={FOOTER_LINK_STYLE}
+                        onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#FCFCF7")}
+                        onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(252,252,247,0.62)")}
+                      >
+                        {link.label}
+                        <ArrowUpRight size={13} style={{ opacity: 0.45 }} />
                       </a>
                     </li>
                   ))}
@@ -68,33 +250,101 @@ export function Footer() {
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Bottom bar */}
-        <div className="flex items-center justify-between mt-16 pt-8 border-t border-white/5">
-          <p className="text-white/20" style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: 11 }}>
-            © 2024 BIZAK SYSTEMS INC. ALL RIGHTS RESERVED.
-          </p>
-          <div className="flex items-center gap-6">
-            {/* Social icons */}
-            <a href="#" className="text-white/20 hover:text-white/50 transition-colors">
-              <svg width="19" height="19" viewBox="0 0 18.9999 18.9999" fill="none">
-                <path d={svgPaths.p1a75c680} fill="currentColor" />
-              </svg>
-            </a>
-            <a href="#" className="text-white/20 hover:text-white/50 transition-colors">
-              <svg width="19" height="15" viewBox="0 0 18.9999 14.9999" fill="none">
-                <path d={svgPaths.p3f52f0c0} fill="currentColor" />
-              </svg>
-            </a>
-            <a href="#" className="text-white/20 hover:text-white/50 transition-colors">
-              <svg width="17" height="19" viewBox="0 0 16.9999 18.9999" fill="none">
-                <path d={svgPaths.p9aabd00} fill="currentColor" />
-              </svg>
-            </a>
+          {/* Divider */}
+          <div
+            style={{
+              marginTop: 56,
+              height: 1,
+              background: "rgba(252,252,247,0.08)",
+            }}
+          />
+
+          {/* Bottom row */}
+          <div
+            style={{
+              marginTop: 28,
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 18,
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "Inter",
+                fontSize: 12.5,
+                fontWeight: 400,
+                color: "rgba(252,252,247,0.45)",
+                lineHeight: 1.7,
+              }}
+            >
+              © Copyright Bizak Systems Inc. 2018–2026 ·{" "}
+              <a href="#" style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: 3 }}>
+                Terms of Use
+              </a>{" "}
+              ·{" "}
+              <a href="#" style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: 3 }}>
+                Privacy Policy
+              </a>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {[
+                { Icon: Instagram, href: "#", label: "Instagram" },
+                { Icon: Twitter, href: "#", label: "Twitter" },
+                { Icon: Facebook, href: "#", label: "Facebook" },
+                { Icon: Linkedin, href: "#", label: "LinkedIn" },
+              ].map(({ Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: 999,
+                    background: "rgba(252,252,247,0.06)",
+                    border: "1px solid rgba(252,252,247,0.08)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "rgba(252,252,247,0.62)",
+                    transition: "background 0.18s ease, color 0.18s ease",
+                    textDecoration: "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "rgba(252,252,247,0.12)";
+                    (e.currentTarget as HTMLElement).style.color = "#FCFCF7";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "rgba(252,252,247,0.06)";
+                    (e.currentTarget as HTMLElement).style.color = "rgba(252,252,247,0.62)";
+                  }}
+                >
+                  <Icon size={16} />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
+      </div>
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .bz-footer-top-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 560px) {
+          .bz-footer-top-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+        }
+        @media (max-width: 720px) {
+          .bz-footer-card { border-radius: 22px !important; }
+        }
+      `}</style>
     </footer>
   );
 }
