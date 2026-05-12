@@ -1,394 +1,235 @@
 ---
 name: redesign-page
-description: Migrate a legacy Bizak marketing page to the new design system (tokens + marketing primitives). Use when the user says "redesign <PageName>", "migrate <PageName>", "update <PageName> to the new pattern", or after touching any page that still uses inline styles + per-file `const C = {...}` color objects.
+description: Migrate a legacy Bizak marketing page to the new design system (paper/olive/lime/pistachio palette + Phase 1 primitives). Use when the user says "redesign <PageName>", "migrate <PageName>", "update <PageName> to the new pattern", or after touching any page that still uses inline styles, per-file `const C = {...}` colour objects, or the legacy `marketing/` `HeroCentered`/`HeroSplit`/`HeroPanel` heroes.
 ---
 
 # Skill: redesign-page
 
-This skill is the canonical workflow for converting a marketing page to the
-project's design system. Three reference docs anchor the work — load them
-before you start (or recall them if already loaded this session):
+This skill is the canonical workflow for converting a marketing page to
+the project's current design system. Three reference docs anchor the
+work — load them before you start (or recall them if already loaded this
+session):
 
 | Doc | Why you need it |
 |---|---|
-| **`docs/BIZAK_PRODUCT_OVERVIEW.md`** | **What Bizak is** — modules, audience, product narratives (real-time, single source of truth, no manual coding, audit trail, multi-entity, replaces-spreadsheets), brand voice, canonical statistics, section conventions. **Read this *first*** so the section copy, data points and section structure reinforce the rest of the site. Without it the redesign is technically correct but generically SaaS. |
-| **`/CLAUDE.md`** | Hard rules + page-design checklist (always loaded). |
-| **`/docs/DESIGN_SYSTEM.md`** | Long-form design reference — tokens, primitive APIs, scopes, hero pattern, CTA tone convention. |
+| **`docs/BIZAK_PRODUCT_OVERVIEW.md`** | **What Bizak is** — modules, audience, product narratives, brand voice, canonical statistics, section conventions. Read first so copy + structure reinforce the rest of the site. |
+| **`/CLAUDE.md`** | Hard rules + page-design checklist + the migration plan (always loaded). |
+| **`/docs/DESIGN_SYSTEM.md`** | Long-form design reference — tokens, primitive APIs, hero pattern, closing-CTA-via-Footer convention. |
+
+## Status check first — which phase are we in?
+
+The site is **mid-rebrand**. Before redesigning a page, confirm where the
+codebase is in the migration plan (`CLAUDE.md` §"Migration plan"):
+
+- **Phase 0 (foundation)**: tokens, fonts, docs. *Should be done.*
+- **Phase 1 (primitive library)**: build `<Pill>`, `<Bento>`, `<BentoGrid>`, `<SectionHead>`, `<HeroCanvas>`, `<HeroCard>`, `<StepCard>`, `<BigCard>`, `<Carousel>`, `<Accordion>`, `<Marquee>`, `<Heading>`, `<Eyebrow>`, `<BadgeGreen>`, `<Flag>`, `<StatusChip>`, `<DotGrid>`, etc.
+- **Phase 2 (HomePage refactor)**: rewrite the staged HomePage onto primitives — canonical reference.
+- **Phase 3 (per-page migration)**: one PR per page, in megaMenu order.
+- **Phase 4 (retire legacy)**: delete `hp-*`/`biz-*` CSS classes, old `marketing/` primitives, `@mui/*`.
+
+**If you're being asked to redesign a page and Phase 1 isn't done yet**, stop and tell the user. Migrating pages onto primitives that don't exist yet creates parallel inline JSX that has to be re-migrated later. Phase 1 first.
 
 ## Product brief first
 
-The very first step of any redesign is **"what is this page selling, and to
-whom?"** — answered from `BIZAK_PRODUCT_OVERVIEW.md`:
+The very first step of any redesign is **"what is this page selling, and to whom?"** — answered from `BIZAK_PRODUCT_OVERVIEW.md`:
 
-1. Which module / industry / capability does this page cover? (See §3 of the overview.)
+1. Which module / industry / capability does this page cover? (See §3.)
 2. Which 2–3 product narratives (§4) should the page lean on?
 3. Which canonical statistics (§5.4) should it reuse?
 4. What's the section rhythm appropriate for this kind of page (§7.3)?
-5. Does the closing CTA follow §7.1 (`tone="dark"`, accent + ghostDark buttons)?
+5. What closing-CTA copy goes into `<Footer cta={…}>` for this page (§7.1)?
 
 If you're about to write copy that could equally describe Salesforce,
-NetSuite or HubSpot, you skipped this step. Go back and re-anchor.
-
-## Scope first
-
-Before doing anything else, decide which **scope** the page belongs to:
-
-- The 4 "By Industry" pages (`ManufacturingPage`, `DistributionPage`,
-  `ProfessionalServicePage`, `RetailAndEcommercePage`) compose
-  `src/app/components/solutions/by-industry/` primitives + the global
-  `marketing/` primitives. The canonical reference is
-  `ManufacturingPage.tsx` — mirror its structure.
-- Any other marketing page composes `marketing/` primitives directly.
-
-Where a primitive lives encodes who is allowed to use it. **Never deep-import
-across scopes** — if a non-industry page needs `IndustryHero`, the right move
-is to promote it up to `marketing/` first (see "Scope promotion rule" in
-`/CLAUDE.md`), not to import from another scope's folder.
-
-## Pick a hero option FIRST (before any code)
-
-If the page being redesigned has a hero (or the user explicitly asked to
-"redesign the hero in X"), the **very first action** is to ask the user
-which of the **3 approved hero layouts** to use:
-
-| Option | Primitive | Reference | Feel |
-|---|---|---|---|
-| **1 · Centered** | `<HeroCentered>` | `HomePage.tsx` | Centered copy + a big full-width visual / dashboard below |
-| **2 · Split** | `<HeroSplit>` | `ManufacturingPage.tsx` (uses scoped `<IndustryHero>`) | Two-column: copy left, a domain visual right; light + `.biz-mesh` |
-| **3 · Panel** | `<HeroPanel>` | `CarrersPage.tsx` | Two-column on dark: copy left, a self-contained KPI/list card right |
-
-**Required prompt** (verbatim wording is fine, but the choice must be
-explicit):
-
-> Which hero layout do you want — **Option 1 (Centered, HomePage style)**, **Option 2 (Split, Manufacturing style)**, or **Option 3 (Panel, Careers style)**?
-
-Wait for the answer. Do **not** guess "the closest one" or proceed on the
-old hero shape. After the user picks, compose the corresponding primitive
-from `marketing/` (`HeroCentered` / `HeroSplit` / `HeroPanel`) — see the
-prop tables in `/CLAUDE.md` "The 3 hero options" section. Custom visuals
-(dashboards, diagrams, KPI panels) go into the primitive's slot
-(`visual` / `panel`); the primitive owns the layout, surface, mesh, badge,
-heading, CTAs, and stats row.
-
-This step does **not** apply to:
-- mid-page sections (they use `<SectionHeading>` + `<Section>`),
-- pages with no hero (e.g., a footer-only legal page).
-
-### After picking the hero — strip every `paddingTop: 76` shim
-
-The 3 hero primitives (and any `<Section pad="hero">`) own the full top offset — `pt-[120px]` already accounts for the 76px fixed `<Header>` plus ~44px breathing room. **Adding a separate 76px anywhere else stacks on top and produces 196px of dead space.** This is the bug that made `/SalesCrm` look loose while `/` looked tight; we've also seen it bite `ManufacturingPage`, `DocumentationPage`, `HelpCenter`, `LeadershipTeamPage`, `OurMissionPage`, `PressAndMediaPage`, `SystemStatusPage`. **Single source of truth: vertical hero padding is defined in exactly one place — the `Section` primitive's `pad="hero"` variant. Never re-derive locally.**
-
-**Required check, every time a page is moving onto a hero primitive — must hit BOTH layers:**
-
-1. **The page component itself.** Open the page file you just redesigned. Look for these patterns at the top of the returned JSX:
-
-   ```tsx
-   // ❌ Page-internal shim — typical of HomePage-style pages that render their own Header
-   <Header />
-   <main style={{ paddingTop: 76 }}>
-     <HeroSection />
-     ...
-   </main>
-
-   // ❌ Same bug, slightly different shape
-   <div style={{ paddingTop: 76 }}>
-     <HeroSection />
-     ...
-   </div>
-   ```
-
-   Strip the inline `paddingTop: 76` so it becomes plain `<main>` / `<div>` (or delete the wrapper if it was only there for the offset).
-
-2. **The route layout in `src/app/routes.tsx`.** Find the `*PageLayout` function (or direct route entry) that renders this page. Look for:
-
-   ```tsx
-   // ❌ Routes-level shim
-   <Header />
-   <div style={{ paddingTop: 76 }}>
-     <ThePage />
-   </div>
-   <Footer />
-   ```
-
-   Remove the `<div style={{ paddingTop: 76 }}>` wrapper:
-
-   ```tsx
-   // ✅ After
-   <Header />
-   <ThePage />
-   <Footer />
-   ```
-
-3. **Sweep with grep before declaring done:**
-
-   ```
-   grep -n "paddingTop: 76" <page-file> src/app/routes.tsx
-   ```
-
-   Zero matches inside the page you redesigned and inside its layout. If any match remains, the hero will sit at 196px instead of 120px.
-
-4. Do all of the above in the **same change** as the hero migration — never leave a redesigned hero behind a double-pad shim.
-
-**Counter-rule — when to LEAVE a `paddingTop: 76` shim alone:** if the page being routed does *not* start with one of the 3 hero primitives or a `<Section pad="hero">` (e.g., its top JSX is still a raw `<div>` of legacy content), the shim is the only thing keeping it out from under the fixed header. Remove a shim only when the page's first section is hero-padded.
-
-### Audit pass — while you're in the file, also scan for related drift
-
-Once the active page is clean, before closing the task do a quick read-through of the page for any **other** locally-redefined values that should be coming from the global primitives. The same "single source of truth" rule that catches the 76px shim also catches:
-
-- per-file hex literals that duplicate `var(--bz-*)` tokens (`#7A826D`, `#C7FF35`, `#1A1D19`, …)
-- per-file copies of standard hero/heading sizes / line-heights (`text-[clamp(...)]` outside of the hero primitives, `leading-[1.x]` re-derived per page)
-- per-file `paddingTop` / `marginTop` / `mt-[76px]` magic numbers compensating for the fixed header
-- bespoke hero `<section>`s with hand-rolled layout instead of `HeroCentered` / `HeroSplit` / `HeroPanel`
-- bespoke CTA buttons / badges that mirror `<Button>` / `<HeroBadge>` / `<PillBadge>` shapes
-
-If you find any, flag them in the report and (if scoped to the page you're touching) fix them in the same change. The goal: every page composes the global primitives and adds **only** content — no parallel definitions of the same value.
+NetSuite or HubSpot, you skipped this step.
 
 ## Page-design checklist (run BEFORE editing anything)
 
-This is the non-negotiable preflight. Walk through every item; whatever is
-"no" becomes part of this redesign — fix what you touch, don't bandaid:
+Walk through every item; whatever is "no" becomes part of this redesign.
 
-1. **Scope.** Open `src/app/components/Header.tsx` and find this page inside the `megaMenus` object. Which top-level group + sub-heading does it sit under? Does a corresponding scope folder exist (e.g., `solutions/by-industry/`)?
-2. **Section primitives.** If the page belongs to a family with a scope folder, is it composing those scoped section primitives, or duplicating their JSX inline? If a sibling page in the same family has invented a section the primitive doesn't cover yet, **promote that pattern into the scope folder first**, then use it.
-3. **Global primitives.** `Container`, `Section`, `SectionHeading`, `Button`, `Card`, `Stat`, `IconBadge`, `PillBadge`, `HeroBadge`, `Eyebrow` from `marketing/` — used wherever they fit?
-3a. **Hero option chosen.** If the page has a hero, you've already asked the user which of the 3 options (Centered / Split / Panel) — see the section above. The hero composes `<HeroCentered>` / `<HeroSplit>` / `<HeroPanel>` from `marketing/`. Do NOT hand-roll a hero `<section>` with bespoke layout. The chosen primitive owns the surface, `.biz-mesh`, the badge slot, the heading, CTAs, and stats row. Custom visuals go in the `visual` / `panel` slot.
-3b. **Hero badge — always `<HeroBadge>`.** The eyebrow pill above the hero `<h1>` is **always** `<HeroBadge>`, never `<PillBadge tone="accent">` and never a hand-rolled `<div>`/`<span>` with a custom gradient. Pass `tone="dark"` when the hero surface is dark (`HeroPanel` and any `tone="dark"` `HeroCentered`/`HeroSplit`); omit `tone` (defaults to `"light"`) for the standard light `.biz-mesh` heroes. Light example: `badge={<HeroBadge>Smart Manufacturing Platform</HeroBadge>}` (Manufacturing). Dark example: `badge={<HeroBadge tone="dark">ERP for Startups & SMEs</HeroBadge>}` (StartupsAndSmes). If the page being redesigned currently has `<PillBadge tone="accent" dot>...</PillBadge>` in the hero badge slot, swap it for `<HeroBadge>` (or `<HeroBadge tone="dark">`) in the same change.
-4. **Tokens.** No per-file `const C = {...}` color object. No hex literals except in genuinely dynamic style props. All colors via `var(--bz-*)` or Tailwind utilities.
-5. **Icons.** No per-file SVG dictionary `function Icon({ name }) {...}`. Use the global `<Icon name="..." />` from `marketing/` for data-driven loops; import lucide directly (`import { Factory } from "lucide-react"`) for statically known icons.
-6. **Fonts.** Inter only — end-to-end, **including monospace**. References to `'Manrope'`, `'Poppins'`, etc. are silent visual bugs. Tailwind's `font-mono` utility (and `font-family: monospace` in inline styles) is also banned: Inter inherits from the page root and must reach every leaf — IDs, SKUs, step numbers and code-like identifiers stay Inter, differentiated with letter-spacing / weight / color tint, not a font swap. When you touch a page, strip every `font-mono` you find in the same change.
-7. **Animations / motion.** Reuse the existing global keyframe classes (`biz-pulse-glow`, `biz-float`, `biz-particle`, `biz-flow`, `biz-radar-ping`, …) — don't redeclare keyframes per page.
-8. **className over inline `style`.** Static values in className. Inline `style` only for dynamic values. No `onMouseEnter`/`onMouseLeave` style mutations — use Tailwind `hover:`.
-9. **Promotion check.** A JSX pattern that appears in this page **and** in another nav group's pages with the same shape belongs in `marketing/`, not duplicated. Promote it.
-10. **Delegate-to-atom check.** Walk every `<button>`, `<a>` styled as a button, and styled `<div>`/`<span>` in the file (and inside any scoped section primitive the page composes). If its shape mirrors a global primitive (`<Button>`, `<Card>`, `<IconBadge>`, `<PillBadge>`, `<Stat>`, `<HeroBadge>`, `<Eyebrow>`), replace it with that primitive. If the needed variant doesn't exist yet (e.g., the by-industry "shimmer" CTA), **add the variant on the global primitive first** (`marketing/Button.tsx` etc.), update its prop docs in `/CLAUDE.md` + `/docs/DESIGN_SYSTEM.md`, then delegate. *This applies inside scoped primitives too:* `IndustryHero` should compose `<Button>`, not roll its own `HeroCtaButton`. Known offenders: `IndustryHero.tsx` (local `HeroCtaButton`) and `IndustryCta.tsx` (local `CtaButton`) — when you touch either, fix both.
-11. **Closing-CTA tone.** If the page has a closing CTA section (the "Take full control of …" / "Run your factory floor with …" moment, typically directly above the footer), it MUST sit on `<Section tone="dark">` — the olive-tinted `bg-bz-deep` (`#1A1D19`). **Not** `tone="deeper"` (`bg-bz-deep-2` = `#121212` pure black). Pure black flattens the lime accent CTA button; the olive surface lets it glow. Action pair: `<Button variant="accent" size="lg" withArrow>` + `<Button variant="ghostDark" size="lg">`. This matches what the by-industry pages' `IndustryCta` already renders. The closing CTA isn't always literally the final section — but **whenever a page has one, it lives on `tone="dark"`**. See `/docs/BIZAK_PRODUCT_OVERVIEW.md` §7.1.
-12. **Mobile responsiveness.** Every grid, flex row, fixed width, and hero dashboard visual must work at 375px without horizontal scroll (except overflow-x-auto scrollable tables). Apply the patterns from the "Mobile responsiveness" section below: single-column fallbacks, hidden decorative sidebars, stacked connectivity sections, hidden connector lines. Run the mobile checklist before Step 5 verification. **This is non-negotiable — a page that looks great at 1280px but breaks at 375px is not done.**
+1. **Scope.** Open `src/app/components/Header.tsx` and find this page inside the `megaMenus` object. Which top-level group + sub-heading?
+2. **Primitives available?** The new primitive library lives in `marketing/`. If `<Pill>` / `<Bento>` / `<SectionHead>` etc. don't exist yet, Phase 1 isn't complete — flag and stop.
+3. **Primitive composition.** Is the page composing the new primitives, or duplicating their JSX inline? Inline duplication = migration work.
+4. **Tokens.** No per-file `const C = {...}`. No hex literals (except dynamic style props). All colours via `var(--bz-fire)` / `var(--bz-paper)` / etc. or Tailwind utilities (`text-bz-fire`, `bg-bz-paper`).
+5. **Icons.** No per-file SVG dictionary. Use `lucide-react` directly for new code.
+6. **Fonts.** Inter only — end-to-end. References to `'Hedvig …'`, `'Manrope'`, `'Poppins'`, `font-mono`, `font-family: monospace` are bugs. Strip in the same change.
+7. **No `<style>{`@media …`}</style>` blocks inside pages.** Responsive logic lives in the primitive. If you find one, the primitive's API is missing a breakpoint — extract it.
+8. **className over inline `style`.** Static values in className. Inline `style` only for truly dynamic values. No `onMouseEnter`/`onMouseLeave` style mutations — use `hover:` utilities or `:hover` on the primitive's CSS class.
+9. **Closing-CTA pattern.** Page does NOT render its own closing CTA section. CTA goes in `<Footer cta={…}>` in `routes.tsx`. See `FinancialManagementPageLayout` for the reference.
+10. **Header offset shim.** Grep `paddingTop: 76|pt-\[76|mt-\[76` inside the page file AND its `*PageLayout` in `routes.tsx`. Both must be zero. The header is no longer fixed.
+11. **Section alternation.** Consecutive content sections alternate `tone="a"` / `tone="b"`. Dark sections sparing and intentional.
+12. **Mobile responsiveness.** Every grid, flex row, fixed width, hero visual works at 375px without horizontal scroll. See the mobile cheatsheet below.
 
 If any item fails, the redesign is the work to bring it into compliance.
-The end state of any page edit is "all items pass for the parts of the
-file you touched."
 
 ## When to invoke
 
-- User explicitly asks: "redesign the X page", "migrate X to the new pattern", "convert X to use the design system".
+- User explicitly asks: "redesign the X page", "migrate X to the new pattern".
 - You are about to edit a page file that still has any of these signals:
-  - `const C = { ... }` color object at the top of the file
-  - inline `style={{ ... }}` for static values (colors, padding, fonts)
+  - `const C = { ... }` colour object at the top
+  - inline `style={{ ... }}` for static values (colours, padding, fonts, grids)
   - `onMouseEnter` / `onMouseLeave` mutating `e.currentTarget.style`
-  - `'Manrope'` / `'Poppins'` / any font that isn't `'Inter'`
-  - `linear-gradient(...)` / `radial-gradient(...)` (except via the canonical `.biz-mesh` class on a hero, or inside the `<HeroBadge>` primitive — those two are the allowed reuses)
-  - a per-file `function Icon({ name }) { const icons = {...} }` SVG dictionary (legacy industry-page pattern — replace with the global `marketing/Icon`)
-  - `<svg>` with hardcoded path strings where a lucide equivalent exists
+  - `'Manrope'` / `'Poppins'` / `'Hedvig …'` / any non-Inter font
+  - `font-mono` / `font-family: monospace`
+  - `linear-gradient(...)` / `radial-gradient(...)` — no exceptions, the `.biz-mesh` carve-out has been retired
+  - a per-file `function Icon({ name }) { … }` SVG dictionary
   - `<span className="material-symbols-outlined">`
-  - a local `function FooButton(...)` / `function FooCard(...)` / `function FooBadge(...)` that returns a raw `<button>`/`<a>`/styled `<div>` mirroring the shape of a global primitive (`<Button>`/`<Card>`/`<PillBadge>`/etc.) — even when it's inside a scoped section primitive in `solutions/by-industry/`. Delegate to the global primitive (adding a variant first if needed); don't fork.
-
-If any signal is present and you're touching the file, run this skill before
-making other changes — don't bandaid the legacy pattern.
+  - a local `function FooButton(...)` / `function FooCard(...)` / `function FooBadge(...)` mirroring a primitive's shape
+  - `paddingTop: 76` / `pt-[76px]` / `mt-[76px]` anywhere — the header is no longer fixed
+  - a `<Section tone="dark">` block above `<Footer>` posing as a closing CTA — moved into Footer
+  - `<HeroCentered>`, `<HeroSplit>`, or `<HeroPanel>` from the legacy `marketing/` — those are pre-rebrand
+  - `.biz-mesh` or `<HeroBadge>` (legacy) — replaced by `<BadgeGreen>` on a flat surface
+  - any reference to `--bz-sage*` tokens (deprecated) — use `--bz-fire` / `--bz-paper` / etc.
 
 ## The migration
 
 ### Step 1 — Read the page
 
-Read the entire file end-to-end. Note:
+Read the entire file end-to-end. Note sections, content data, icons,
+bespoke visuals.
 
-- What sections exist (Hero, Features, Stats, Testimonial, CTA…).
-- What content data is hardcoded inside JSX vs. lifted into a `const ARRAY = [...]`.
-- What icons are used and where they come from.
-- Any genuinely bespoke visuals (animations, dashboard mockups) that don't fit primitives.
+### Step 2 — Plan section-by-section
 
-### Step 2 — Plan section by section
+For each section, identify:
 
-**For "By Industry" pages**, prefer the section primitives in
-`solutions/by-industry/` — they encode the canonical hero / challenges /
-solution / capabilities / insights / workflow / CTA rhythm those pages
-share. Mirror `ManufacturingPage.tsx`. The page becomes ~150–250 lines of
-data + a custom hero visual.
-
-**For all other pages**, decide section-by-section:
-
-- **Wrapper** — `<Section tone="light"|"white"|"dark"|"deeper" pad="default"|"compact"|"hero">`.
-- **Width** — `<Container>` (1320) or `<Container width="narrow">` (1200).
-- **Heading block** — `<SectionHeading eyebrow="..." title="..." description="..." level="h1"|"h2" tone="dark"|"light" align="left"|"center" maxWidth={...}>`.
-- **Buttons** — `<Button variant="..." size="..." href="..." withArrow>`.
-- **Cards / grids** — `<Card>` plus a Tailwind grid (`grid grid-cols-1 md:grid-cols-3 gap-4`).
-- **Stats** — `<Stat value=... label=... tone=... size=... />`.
-- **Eyebrow / pills** — `<Eyebrow>`, `<PillBadge>`.
-- **Icon containers** — `<IconBadge tone=... size=...><Icon className="size-5" /></IconBadge>`.
-- **Icons inside data arrays** — use `<Icon name="..." size={N} />` from `marketing/`. For new code with statically-known icons, prefer importing the lucide icon directly (`import { Factory } from "lucide-react"`).
+- **Wrapper** — `<Section tone="a|b|dark">`.
+- **Width** — `<Container width="default|narrow">`.
+- **Heading block** — `<SectionHead index? label title titleMuted? actions?>`.
+- **CTAs** — `<Pill variant="..." withTick? withArrow? href>`.
+- **Cards / grids** — `<BentoGrid cols={N}>` + `<Bento tone=... hover>` (compound: `<Bento.Header>`, `<Bento.Desc>`, `<Bento.Cta>`, `<Bento.Footer>`).
+- **Stats** — `<DataRow>` or `<EntityRow>` inside a `<Bento.Footer>`.
+- **Eyebrow / pills** — `<Eyebrow index="..." label="...">`.
+- **Hero** — `<Section tone="b"><Container><BadgeGreen>…</BadgeGreen><Heading level={1}>…</Heading><div>{pills}</div><HeroCanvas>{heroCards}</HeroCanvas></Container></Section>`.
 
 ### Step 3 — Replace, don't rewrite from scratch
 
-- Lift any inline content arrays already defined (like `VALUES = [...]`) — keep them as-is, they're the right shape.
-- Lift any inline content that isn't yet in an array but should be (e.g., feature list inside JSX → extract to a `const FEATURES = [...]`).
-- For each old inline `style={...}`, find the equivalent token / utility class. The token map:
-  - `'#7A826D'` → `text-bz-sage` / `bg-bz-sage` / `var(--bz-sage)`
-  - `'#C7FF35'` → `text-bz-accent` / `bg-bz-accent`
-  - `'#1A1D19'` → `bg-bz-deep`
-  - `'#121212'` → `bg-bz-deep-2`
-  - `'#F8F9F7'` → `bg-bz-bg`
+- Lift inline content into `const ARRAY = [...]` data structures.
+- Convert each inline `style={...}` into a token reference or className.
+- Token map:
+  - `'#FCFCF7'` → `bg-bz-paper` / `var(--bz-paper)`
+  - `'#efefe9'` → `bg-bz-section-b` / `var(--bz-section-b)`
   - `'#FFFFFF'` → `bg-bz-surface`
-  - `'#333333'` / `'#333'` → `text-bz-text`
-  - `'#666666'` / `'#666'` → `text-bz-text-muted`
-  - `'#E8EAE4'` → `border-bz-border`
-  - `rgba(255,255,255,0.07)` (border on dark) → `border-white/10`
-  - `rgba(255,255,255,0.04)` (surface on dark) → `bg-white/[0.04]`
-  - `rgba(255,255,255,0.6)` (text on dark muted) → `text-white/60`
+  - `'#1A2D20'` → `bg-bz-olive`
+  - `'#0F1411'` → `bg-bz-deep` / `var(--bz-deep)` (pill-dark)
+  - `'#0A100D'` → `bg-bz-olive-dark` (footer chrome)
+  - `'#d3f969'` → `bg-bz-fire` / `text-bz-fire`
+  - `'#DBE9B8'` → `bg-bz-leaf`
+  - `'#1A1D19'` → `text-bz-text`
+  - `'#6E7466'` → `text-bz-text-muted`
+  - `'#A2A296'` → `text-bz-text-soft`
+  - `'#D8D9D3'` → `border-bz-line`
+  - `'#E5E5E0'` → `border-bz-line-soft`
+  - `rgba(252,252,247,0.62)` → `text-white/[0.62]` or `var(--bz-text-on-dark-muted)`
+  - `rgba(252,252,247,0.08)` → `border-white/[0.08]`
 
-- For each old `onMouseEnter` style mutation, replace with Tailwind `hover:` utility.
-- For each old gradient (`linear-gradient` or `radial-gradient`):
-  - **If it's the hero `<section>` background** → replace with the `.biz-mesh` className (no inline radials).
-  - **If it's a hero eyebrow/badge** → replace with `<HeroBadge>` from `marketing/` (use `<HeroBadge tone="dark">` if the hero sits on a dark surface). Never substitute `<PillBadge>` here.
-  - **Anything else** (cards, dividers, glows, chip backgrounds, decorative blobs) → flat fill or delete the decorative element. Project rule still bans non-hero gradients.
-- For each `<svg>` with a hardcoded path, look up the lucide-react equivalent. If unsure, leave the SVG temporarily and flag it in your summary — don't guess wrong icons.
+- Replace `onMouseEnter`/`onMouseLeave` style mutations with `:hover` rules on the primitive's CSS class or Tailwind `hover:` utilities.
+- Replace gradients with flat colours, shadows, or `<DotGrid>` overlays. No exceptions.
+- Replace `<svg>` icons with lucide equivalents (or `<Icon name>` for data-driven arrays).
 
 ### Step 4 — Remove dead code
 
-- Delete the `const C = { ... }` object at the top of the file.
-- Delete any unused imports (`useState` if no longer used, etc.).
-- Delete inline event handlers that only existed for hover style mutations.
-- Do **not** leave `// removed` comments. Just delete.
+- Delete `const C = { ... }` objects.
+- Delete unused imports.
+- Delete `onMouseEnter`/`onMouseLeave` handlers that only mutated style.
+- Delete `<style>{@media …}</style>` blocks once the primitive owns the breakpoint.
+- Delete `paddingTop: 76` shims in the page AND in `routes.tsx`'s `*PageLayout`.
+- Delete `<Section tone="dark">` closing CTAs — move copy into `<Footer cta={…}>`.
+- Do **not** leave `// removed` comments.
 
 ### Step 5 — Verify
 
-1. Read the migrated file end-to-end. Sanity-check that no `'#hex'` literals remain (except in genuinely dynamic style props like progress bars).
+1. Read the migrated file end-to-end. Sanity-check that no `'#hex'` literals remain (except dynamic).
 2. Grep for forbidden patterns:
    ```
-   Manrope|Poppins|font-mono|monospace|linear-gradient|radial-gradient|material-symbols-outlined|onMouseEnter
+   Hedvig|Manrope|Poppins|font-mono|monospace|linear-gradient|radial-gradient|material-symbols-outlined|onMouseEnter|paddingTop: 76|biz-mesh|HeroBadge
    ```
-   Inside the file you migrated, all results should be 0. **Justified exceptions:** if the file is a hero, it should reference `.biz-mesh` (className) and `<HeroBadge>` instead of inline `linear-gradient`/`radial-gradient` — verify those references are present, not the raw gradient strings.
-3. If non-trivial, ask the user to run `npm run build` and `npm run dev` to verify visually.
+   Inside the migrated file, all results should be 0.
+3. Grep also for legacy palette references inside the migrated file:
+   ```
+   --bz-sage|bg-bz-sage|text-bz-sage|--bz-deep-2|bg-bz-deep-2|#7A826D|#C7FF35|#1A1D19|#121212
+   ```
+   Should be 0 (the legacy aliases still resolve, but new code should use the descriptive tokens).
+4. If non-trivial, run `npm run build` + `npm run dev`.
 
-### Step 6 — Report
+### Step 6 — Update the route layout
 
-End with a short summary: what sections were migrated, what bespoke pieces remained (if any), what tokens or primitives were *added* to the system as a side effect (if any).
+Open `src/app/routes.tsx`. Find the page's `*PageLayout`. Confirm:
+- It renders `<Header />`, the page, `<Footer cta={…}>` — in that order.
+- It does NOT have a `<div style={{paddingTop: 76}}>` wrapper.
+- The `cta` prop on `<Footer>` reflects this page's specific closing copy (or is omitted to use the generic default).
+
+### Step 7 — Report
+
+End with a short summary: what sections were migrated, what bespoke
+pieces remained (if any), what primitives were added/extended as a side
+effect (if any).
 
 ## Out of scope
 
-- Don't rewrite content copy unless the user asked. The goal is *design* migration, not editorial.
+- Don't rewrite content copy unless the user asked. The goal is *design* migration.
 - Don't change routes, props, or exported component names — pages are imported by `routes.tsx`.
-- Don't touch `src/styles/style.css` (the homepage's bespoke CSS) — its color literals were already swapped to tokens.
-- Don't migrate >1 page per session unless the user explicitly asked. One page at a time keeps reviewable diffs.
+- Don't touch `src/styles/style.css`'s `.bz-*` CSS classes unless adding paint for a new primitive variant.
+- Don't migrate >1 page per session unless explicitly asked.
 
-## Mobile responsiveness (mandatory on every redesign / new page)
+## Mobile responsiveness (mandatory)
 
-Every section of every page must look correct on mobile (≥320px) through tablet (768px) without breaking the desktop view. This is not optional — run the mobile check as part of Step 5 before declaring done.
+Every section must look correct from 375px through desktop without horizontal scroll. Patterns:
 
-### Responsive pattern cheatsheet
-
-The patterns below cover every recurring layout in Bizak product pages. Apply them wherever the shape matches — don't wait to be asked.
-
-#### Dark showcase grids (TechShowcaseSection / TransactionEngineSection)
 ```tsx
-// 2-col bento
-<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+// Bento grid — `BentoGrid cols={N}` owns its breakpoints; don't re-encode
+<BentoGrid cols={3} />          // collapses to 1-col on mobile, 2-col on tablet automatically
 
-// 3-col top + 12-col bottom bento
-<div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-  <div className="col-span-full md:col-span-2 ...">  {/* wide card */}
-  <div className="...">                              {/* narrow card */}
+// If you write a raw grid for one-off layouts
+<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
+// Fixed-ratio grids
+<div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-5">
+
+// 12-col bentos
 <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-  <div className="col-span-full md:col-span-5 ...">
   <div className="col-span-full md:col-span-7 ...">
+  <div className="col-span-full md:col-span-5 ...">
 
-// Inline-style grids (legacy pages) → convert to className
-// ❌  style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:20 }}
-// ✅  className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-5"
-// ❌  style={{ display:"grid", gridTemplateColumns:"5fr 7fr", gap:20 }}
-// ✅  className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-5"
-```
+// Hero dashboard decorative sidebars — desktop only
+<div className="hidden md:flex w-[200px] shrink-0 ...">
 
-#### Intelligence / reporting sections (always `3fr 1fr`)
-```tsx
-// ❌  grid grid-cols-[3fr_1fr]
-// ✅  grid grid-cols-1 lg:grid-cols-[3fr_1fr]
-```
+// Fixed-height hero panels — never
+<div className="... h-auto">                          // not h-[480px]
 
-#### Hero dashboard panels (visual slot of HeroCentered/HeroSplit)
-```tsx
-// Stats row: 3-col
-<div className="grid grid-cols-2 sm:grid-cols-3 ...">
-// Stats row: 4-col
-<div className="grid grid-cols-2 md:grid-cols-4 ...">
-// On 2-col fallback the top-row border logic stays; bottom-row items get a top border:
-className={`...${i >= 2 ? " border-t md:border-t-0 border-bz-border" : ""}`}
+// Connectivity / hub rows
+<div className="flex flex-col items-center gap-6 md:flex-row md:gap-0 md:justify-center">
+<div className="hidden md:block w-16 h-px bg-bz-line ..."/>   // connector lines hide on mobile
 
-// Decorative sidebar (desktop-only UI mock — hide on mobile)
-// ❌  className="w-[200px] shrink-0 flex flex-col ..."
-// ✅  className="hidden md:flex w-[200px] shrink-0 flex-col ..."
+// Fixed-width sidepanels
+<div className="w-full lg:w-[360px] lg:flex-shrink-0">
 
-// Fixed height panels
-// ❌  className="... flex h-[480px]"
-// ✅  className="... flex h-auto"
-```
-
-#### Connectivity / hub sections
-```tsx
-// Outer flex → stack on mobile, horizontal on desktop
-// ❌  className="flex items-center justify-center flex-wrap"
-// ✅  className="flex flex-col items-center gap-6 md:flex-row md:gap-0 md:flex-wrap md:justify-center"
-
-// Horizontal connector lines → hidden on mobile
-// ❌  <div className="w-16 h-px bg-bz-accent/30 flex-shrink-0" />
-// ✅  <div className="hidden md:block w-16 h-px bg-bz-accent/30 flex-shrink-0" />
-// Or for gradient connectors inside a component:
-// ✅  <div className="hidden md:flex flex-1 h-px ... bg-gradient-to-r ..." />
-```
-
-#### Stat side-panels with fixed width
-```tsx
-// ❌  className="... w-[360px] flex-shrink-0"
-// ✅  className="... w-full lg:w-[360px] lg:flex-shrink-0"
-// And the outer container:
-// ❌  className="flex gap-5 items-start"
-// ✅  className="flex flex-col gap-5 lg:flex-row lg:items-start"
-```
-
-#### Tables / dense horizontal layouts
-```tsx
-// 5-column journal tables (e.g., GL auto-posting panel):
-// Wrap in overflow-x-auto and set min-w on inner rows so they scroll on mobile
-<div className="rounded-bz-lg border border-white/10 overflow-hidden overflow-x-auto">
+// Dense tables — wrap and set min-w on inner rows
+<div className="rounded-bz-lg border border-bz-line-soft overflow-hidden overflow-x-auto">
   <div className="hidden md:grid grid-cols-[68px_92px_1fr_120px_72px] ... min-w-[560px]">
-  {rows.map(r => (
-    <div className="grid grid-cols-[68px_92px_1fr_120px_72px] ... min-w-[560px]">
+
+// Padding
+<div className="px-4 md:px-8 py-5 md:py-7">
 ```
 
-#### OEE formula / horizontal flex chains
-```tsx
-// Multi-factor "A × B × C = result" row
-// ❌  className="flex items-center gap-3 mb-11"
-// ✅  className="flex items-center gap-3 mb-6 md:mb-11 flex-wrap"
-```
+### Mobile checklist (run before Step 5)
 
-#### General padding/spacing on hero dashboard cells
-```tsx
-// Keep desktop padding, reduce on mobile
-// ❌  className="px-8 py-7 ..."
-// ✅  className="px-4 sm:px-8 py-5 sm:py-7 ..."
-```
-
-### Mobile checklist (run before Step 5 verification)
-
-Walk through every section of the page you just wrote or redesigned:
-
-- [ ] **No fixed-column grids without a `grid-cols-1` breakpoint.** Every `grid-cols-N` (N ≥ 2) that isn't already prefixed with `sm:` / `md:` / `lg:` is a bug.
-- [ ] **No inline `display: grid` or `display: flex` layout styles** (use className with responsive prefixes instead).
-- [ ] **No fixed `h-[Npx]` on hero dashboard panels** — use `h-auto`.
-- [ ] **Decorative sidebars in hero visuals are hidden on mobile** (`hidden md:flex`).
-- [ ] **Connectivity sections stack vertically on mobile**, connector lines are `hidden md:block`.
-- [ ] **Dense tables (5+ columns) are wrapped in `overflow-x-auto`** with `min-w-[...]` on rows.
-- [ ] **`grid-cols-[3fr_1fr]` and similar fixed-ratio grids have a `grid-cols-1` mobile fallback.**
-- [ ] **Fixed-width sidepanels (`w-[Npx]`) become `w-full` on mobile** with the desktop value at a breakpoint.
-- [ ] **All `flex` rows that must stack** have `flex-col md:flex-row` (or similar).
-- [ ] **Padding values are either token-based or have a mobile reduction** (`px-4 md:px-8`).
+- [ ] All `grid-cols-N` (N ≥ 2) have a `grid-cols-1` mobile prefix.
+- [ ] No inline `display: grid` / `display: flex` layout styles.
+- [ ] No fixed `h-[Npx]` on hero panels — use `h-auto`.
+- [ ] Decorative sidebars `hidden md:flex`.
+- [ ] Connectivity sections stack on mobile; connectors `hidden md:block`.
+- [ ] Dense tables wrapped in `overflow-x-auto` + `min-w-[…]` on rows.
+- [ ] Fixed-width sidepanels become `w-full` on mobile.
+- [ ] Padding reduced on mobile where appropriate.
 
 ## Common mistakes to avoid
 
 - **Adding a primitive that already exists.** Check `src/app/components/marketing/index.ts` first.
-- **Adding new tokens without updating `docs/DESIGN_SYSTEM.md`.** Tokens and docs stay in sync.
-- **Using `rounded-md` / `rounded-lg`.** Those are Tailwind defaults that don't match our scale. Use `rounded-bz-md` / `rounded-bz-lg`.
-- **Wrapping `<Section>` in another wrapper for padding.** `<Section>` already provides vertical padding via `pad`. `<Container>` provides horizontal gutter. Don't double-wrap.
-- **Passing `tone="light"` to children inside `<Section tone="light">`.** "light" on `Section` means *light surface, dark text*. "light" on `SectionHeading`/`Stat` means *for use on dark surfaces*. Match them carefully:
-  - `<Section tone="light">` → children: `tone="dark"` (default)
-  - `<Section tone="dark">` → children: `tone="light"`
-- **Writing desktop-only layouts.** Any `grid-cols-N`, `flex` row, or fixed-width element that hasn't been tested at 375px is incomplete work. The mobile checklist above is non-negotiable.
+- **Adding new tokens without updating `docs/DESIGN_SYSTEM.md` and `/CLAUDE.md`.**
+- **Using `rounded-md` / `rounded-lg`.** Use `rounded-bz-md` / `rounded-bz-lg`.
+- **Wrapping `<Section>` in another wrapper for padding.** `<Section>` already provides padding; `<Container>` provides horizontal gutter.
+- **Writing a `<Section tone="dark">` closing CTA above `<Footer>`.** The CTA lives inside `<Footer cta={…}>`.
+- **Adding `paddingTop: 76`** anywhere. Header is no longer fixed.
+- **Reaching for the legacy `marketing/` heroes** (`HeroCentered`, `HeroSplit`, `HeroPanel`). They're pre-rebrand. New heroes use `<Section tone="b">` + `<BadgeGreen>` + `<HeroCanvas>`.
+- **Adding `.biz-mesh`** or `<HeroBadge>`. Both retired.
+- **Per-page `<style>{@media …}</style>` blocks.** Means a primitive's breakpoint is missing — fix the primitive.
+- **Writing desktop-only layouts.** Run the mobile checklist before declaring done.

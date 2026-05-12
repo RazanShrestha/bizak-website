@@ -1,78 +1,124 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   BIZAK BRAND TOKENS
-   Single source of truth for the marketing site. Do NOT redeclare these
-   values inside component files (no per-page `const C = {...}` objects).
-   See docs/DESIGN_SYSTEM.md for usage.
+   BIZAK BRAND TOKENS — single source of truth for the marketing site.
+
+   These tokens drive every page through CSS custom properties AND Tailwind
+   utilities (see @theme inline at the bottom of this file). Do NOT redeclare
+   any of these inside component files, and do NOT add a second :root block
+   in style.css. See docs/DESIGN_SYSTEM.md for usage.
    ───────────────────────────────────────────────────────────────────────── */
 :root {
-  /* Brand palette */
-  --bz-sage:        #7A826D;   /* primary brand olive */
-  --bz-sage-hover:  #616857;
-  --bz-sage-soft:   rgba(122, 130, 109, 0.10);
-  --bz-sage-mid:    rgba(122, 130, 109, 0.20);
+  /* ── Surfaces ─────────────────────────────────────────────────────────
+     Paper-cream base, two alternating tones for section rhythm, white
+     for elevated cards, olive family for dark surfaces.
+     ───────────────────────────────────────────────────────────────── */
+  --bz-paper:        #FCFCF7;   /* primary page background (light) */
+  --bz-paper-warm:   #F4F4ED;   /* slightly warmer cream — cards on paper */
+  --bz-section-a:    #FCFCF7;   /* alternating section bg — tone A */
+  --bz-section-b:    #efefe9;   /* alternating section bg — tone B */
+  --bz-surface:      #FFFFFF;   /* elevated card on light */
 
-  --bz-accent:      #C7FF35;   /* lime accent — single canonical value */
-  --bz-accent-soft: rgba(199, 255, 53, 0.10);
-  --bz-accent-mid:  rgba(199, 255, 53, 0.20);
+  --bz-olive:        #1A2D20;   /* dark olive — tone="dark" sections, hero canvas, dark bento */
+  --bz-olive-soft:   #243A2D;   /* lighter olive variant */
+  --bz-olive-dark:   #0A100D;   /* deepest olive — footer chrome */
+  --bz-deep:         #0F1411;   /* deepest olive-black — pill-dark button fill */
+  --bz-deep-2:       #121212;   /* DEPRECATED — pure black; use --bz-olive-dark */
 
-  /* Surfaces */
-  --bz-bg:          #F8F9F7;   /* page off-white */
-  --bz-bg-alt:      #FBFBFB;
-  --bz-surface:     #FFFFFF;
-  --bz-deep:        #1A1D19;   /* canonical dark surface */
-  --bz-deep-2:      #121212;   /* deeper dark for footer/CTA backgrounds */
+  /* ── Brand accents ───────────────────────────────────────────────────
+     Lime (fire) is the single pop colour. Pistachio (leaf) is the soft
+     secondary used for callouts, badges, and on-dark CTAs.
+     ───────────────────────────────────────────────────────────────── */
+  --bz-fire:         #d3f969;   /* lime accent — primary pop */
+  --bz-fire-soft:    rgba(211, 249, 105, 0.10);
+  --bz-fire-mid:     rgba(211, 249, 105, 0.20);
+  --bz-leaf:         #DBE9B8;   /* pistachio — soft secondary accent */
+  --bz-leaf-deep:    #A8C76C;
 
-  /* Text */
-  --bz-text:        #333333;   /* charcoal body/heading */
-  --bz-text-muted:  #666666;
-  --bz-text-soft:   #999999;
-  --bz-text-on-dark:        #FFFFFF;
-  --bz-text-on-dark-muted:  rgba(255, 255, 255, 0.60);
-  --bz-text-on-dark-soft:   rgba(255, 255, 255, 0.40);
+  /* ── Legacy semantic aliases ─────────────────────────────────────────
+     Kept as `var(--bz-fire)` etc. so un-migrated pages keep rendering.
+     NEW code should use the descriptive names above (--bz-fire,
+     --bz-paper, …). The --bz-sage family is fully deprecated — when the
+     last legacy page is migrated to the new palette, delete this block.
+     ───────────────────────────────────────────────────────────────── */
+  --bz-accent:       var(--bz-fire);
+  --bz-accent-soft:  var(--bz-fire-soft);
+  --bz-accent-mid:   var(--bz-fire-mid);
+  --bz-bg:           var(--bz-paper);
+  --bz-bg-alt:       var(--bz-paper-warm);
+  --bz-sage:         #7A826D;   /* DEPRECATED */
+  --bz-sage-hover:   #616857;   /* DEPRECATED */
+  --bz-sage-soft:    rgba(122, 130, 109, 0.10);
+  --bz-sage-mid:     rgba(122, 130, 109, 0.20);
 
-  /* Borders */
-  --bz-border:        #E8EAE4;
-  --bz-border-soft:   #F0F1ED;
-  --bz-border-on-dark: rgba(255, 255, 255, 0.07);
+  /* ── Text ─────────────────────────────────────────────────────────── */
+  --bz-text:               #1A1D19;
+  --bz-text-muted:         #6E7466;
+  --bz-text-soft:          #A2A296;
+  --bz-text-on-dark:       #FCFCF7;
+  --bz-text-on-dark-muted: rgba(252, 252, 247, 0.62);
+  --bz-text-on-dark-soft:  rgba(252, 252, 247, 0.45);
 
-  /* Type scale (use clamp() for hero/section so sizes are responsive) */
-  --bz-text-eyebrow:  11px;
+  /* ── Borders / lines ──────────────────────────────────────────────── */
+  --bz-line:           #D8D9D3;
+  --bz-line-soft:      #E5E5E0;
+  --bz-border:         var(--bz-line-soft);     /* legacy alias */
+  --bz-border-soft:    #F0F1ED;
+  --bz-border-on-dark: rgba(252, 252, 247, 0.08);
+
+  /* ── Typography ───────────────────────────────────────────────────────
+     INTER ONLY — end-to-end. No serif headings, no font-mono, no
+     Hedvig, no Manrope. Inter is the only family loaded by fonts.css
+     and inherits from <body> down. The two variable names below are
+     kept for backward compatibility with code that explicitly sets
+     font-family inline; both resolve to Inter.
+     ───────────────────────────────────────────────────────────────── */
+  --bz-heading-font: 'Inter', system-ui, -apple-system, sans-serif;
+  --bz-body-font:    'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Type scale — refined down from the previous spec to match the new
+     visual rhythm. Headings are smaller and calmer; weight is medium
+     (500) for marketing rather than bold. */
+  --bz-text-eyebrow:  12px;
   --bz-text-sm:       13px;
   --bz-text-base:     15px;
   --bz-text-lg:       17px;
   --bz-text-xl:       20px;
-  --bz-text-h3:       22px;
-  --bz-text-h2:       clamp(30px, 4vw, 48px);
-  --bz-text-h1:       clamp(40px, 5vw, 64px);
+  --bz-text-h3:       clamp(20px, 2.6vw, 28px);
+  --bz-text-h2:       clamp(26px, 3.4vw, 36px);
+  --bz-text-h1:       clamp(32px, 4.5vw, 56px);
 
-  --bz-tracking-eyebrow: 0.12em;
-  --bz-tracking-tight:   -0.02em;
-  --bz-tracking-tighter: -0.03em;
+  --bz-tracking-eyebrow: 0.22em;
+  --bz-tracking-tight:   -0.018em;
+  --bz-tracking-tighter: -0.022em;
 
   --bz-leading-body:    1.7;
-  --bz-leading-heading: 1.1;
+  --bz-leading-heading: 1.12;
 
-  /* Radii */
+  /* ── Radii ────────────────────────────────────────────────────────── */
   --bz-radius-sm:   6px;
-  --bz-radius-md:   8px;
+  --bz-radius-md:   10px;
   --bz-radius-lg:   12px;
-  --bz-radius-xl:   16px;
-  --bz-radius-2xl:  20px;
+  --bz-radius-xl:   18px;
+  --bz-radius-2xl:  22px;
+  --bz-radius-3xl:  28px;
   --bz-radius-pill: 9999px;
 
-  /* Spacing */
-  --bz-section-y:  96px;       /* vertical padding for marketing sections */
-  --bz-section-x:  24px;       /* horizontal page gutter */
-  --bz-container:  1320px;     /* max content width */
+  /* ── Spacing ──────────────────────────────────────────────────────── */
+  --bz-section-y:        140px;   /* desktop vertical padding for marketing sections */
+  --bz-section-y-tablet: 110px;
+  --bz-section-y-mobile: 80px;
+  --bz-section-y-tight:  96px;
+  --bz-section-x:        24px;
+  --bz-container:        1320px;
   --bz-container-narrow: 1200px;
-  --bz-header-h:   76px;       /* fixed header offset */
+  --bz-header-h:         76px;    /* LEGACY — header is no longer position:fixed.
+                                     Pages must NOT add paddingTop:76 shims. */
 
-  /* Shadows (no gradients per project rule — use shadows for depth) */
-  --bz-shadow-card:  0 1px 2px rgba(0, 0, 0, 0.04);
-  --bz-shadow-lift:  0 8px 32px rgba(0, 0, 0, 0.06);
-  --bz-shadow-deep:  0 20px 60px -15px rgba(0, 0, 0, 0.12);
+  /* ── Shadows (no gradients — use shadows for depth) ─────────────── */
+  --bz-shadow-card:  0 1px 2px rgba(15, 20, 17, 0.04);
+  --bz-shadow-lift:  0 8px 32px rgba(15, 20, 17, 0.06);
+  --bz-shadow-deep:  0 20px 60px -15px rgba(15, 20, 17, 0.18);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -82,7 +128,7 @@
    ───────────────────────────────────────────────────────────────────────── */
 :root {
   --font-size: 16px;
-  --background: var(--bz-bg);
+  --background: var(--bz-paper);
   --foreground: var(--bz-text);
   --card: var(--bz-surface);
   --card-foreground: var(--bz-text);
@@ -90,80 +136,100 @@
   --popover-foreground: var(--bz-text);
   --primary: var(--bz-deep);
   --primary-foreground: var(--bz-text-on-dark);
-  --secondary: var(--bz-bg);
+  --secondary: var(--bz-paper-warm);
   --secondary-foreground: var(--bz-text);
-  --muted: var(--bz-bg);
+  --muted: var(--bz-paper-warm);
   --muted-foreground: var(--bz-text-muted);
-  --accent: var(--bz-sage-soft);
-  --accent-foreground: var(--bz-sage);
+  --accent: var(--bz-fire-soft);
+  --accent-foreground: var(--bz-text);
   --destructive: #d4183d;
   --destructive-foreground: #ffffff;
-  --border: var(--bz-border);
+  --border: var(--bz-line-soft);
   --input: transparent;
   --input-background: #f3f3f5;
   --switch-background: #cbced4;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: var(--bz-sage);
+  --ring: var(--bz-fire);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
-  --sidebar: var(--bz-bg-alt);
+  --sidebar: var(--bz-paper-warm);
   --sidebar-foreground: var(--bz-text);
   --sidebar-primary: var(--bz-deep);
   --sidebar-primary-foreground: var(--bz-text-on-dark);
-  --sidebar-accent: var(--bz-bg);
+  --sidebar-accent: var(--bz-paper);
   --sidebar-accent-foreground: var(--bz-text);
-  --sidebar-border: var(--bz-border);
-  --sidebar-ring: var(--bz-sage);
+  --sidebar-border: var(--bz-line-soft);
+  --sidebar-ring: var(--bz-fire);
 }
 
 .dark {
-  --background: var(--bz-deep);
+  --background: var(--bz-olive);
   --foreground: var(--bz-text-on-dark);
-  --card: var(--bz-deep);
+  --card: var(--bz-olive);
   --card-foreground: var(--bz-text-on-dark);
-  --popover: var(--bz-deep);
+  --popover: var(--bz-olive);
   --popover-foreground: var(--bz-text-on-dark);
-  --primary: var(--bz-accent);
+  --primary: var(--bz-fire);
   --primary-foreground: var(--bz-deep);
-  --secondary: rgba(255, 255, 255, 0.05);
+  --secondary: rgba(252, 252, 247, 0.05);
   --secondary-foreground: var(--bz-text-on-dark);
-  --muted: rgba(255, 255, 255, 0.05);
+  --muted: rgba(252, 252, 247, 0.05);
   --muted-foreground: var(--bz-text-on-dark-muted);
-  --accent: var(--bz-accent-soft);
-  --accent-foreground: var(--bz-accent);
+  --accent: var(--bz-fire-soft);
+  --accent-foreground: var(--bz-fire);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
   --border: var(--bz-border-on-dark);
-  --input: rgba(255, 255, 255, 0.05);
-  --ring: var(--bz-accent);
+  --input: rgba(252, 252, 247, 0.05);
+  --ring: var(--bz-fire);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    TAILWIND 4 @theme — exposes tokens as Tailwind utilities.
-   Use bg-bz-sage, text-bz-text-muted, rounded-bz-lg, etc. in className.
+   Use bg-bz-paper, text-bz-text-muted, rounded-bz-lg, etc. in className.
    ───────────────────────────────────────────────────────────────────────── */
 @theme inline {
-  /* Brand colors */
-  --color-bz-sage:           var(--bz-sage);
-  --color-bz-sage-hover:     var(--bz-sage-hover);
-  --color-bz-sage-soft:      var(--bz-sage-soft);
-  --color-bz-sage-mid:       var(--bz-sage-mid);
+  /* Brand colors — new canonical palette */
+  --color-bz-paper:          var(--bz-paper);
+  --color-bz-paper-warm:     var(--bz-paper-warm);
+  --color-bz-section-a:      var(--bz-section-a);
+  --color-bz-section-b:      var(--bz-section-b);
+  --color-bz-surface:        var(--bz-surface);
+  --color-bz-olive:          var(--bz-olive);
+  --color-bz-olive-soft:     var(--bz-olive-soft);
+  --color-bz-olive-dark:     var(--bz-olive-dark);
+  --color-bz-deep:           var(--bz-deep);
+  --color-bz-deep-2:         var(--bz-deep-2);
+  --color-bz-fire:           var(--bz-fire);
+  --color-bz-fire-soft:      var(--bz-fire-soft);
+  --color-bz-fire-mid:       var(--bz-fire-mid);
+  --color-bz-leaf:           var(--bz-leaf);
+  --color-bz-leaf-deep:      var(--bz-leaf-deep);
+
+  /* Brand colors — legacy aliases (deprecated; kept for un-migrated pages) */
   --color-bz-accent:         var(--bz-accent);
   --color-bz-accent-soft:    var(--bz-accent-soft);
   --color-bz-accent-mid:     var(--bz-accent-mid);
   --color-bz-bg:             var(--bz-bg);
   --color-bz-bg-alt:         var(--bz-bg-alt);
-  --color-bz-surface:        var(--bz-surface);
-  --color-bz-deep:           var(--bz-deep);
-  --color-bz-deep-2:         var(--bz-deep-2);
+  --color-bz-sage:           var(--bz-sage);
+  --color-bz-sage-hover:     var(--bz-sage-hover);
+  --color-bz-sage-soft:      var(--bz-sage-soft);
+  --color-bz-sage-mid:       var(--bz-sage-mid);
+
+  /* Text */
   --color-bz-text:           var(--bz-text);
   --color-bz-text-muted:     var(--bz-text-muted);
   --color-bz-text-soft:      var(--bz-text-soft);
+
+  /* Borders */
+  --color-bz-line:           var(--bz-line);
+  --color-bz-line-soft:      var(--bz-line-soft);
   --color-bz-border:         var(--bz-border);
   --color-bz-border-soft:    var(--bz-border-soft);
 
@@ -173,6 +239,7 @@
   --radius-bz-lg:   var(--bz-radius-lg);
   --radius-bz-xl:   var(--bz-radius-xl);
   --radius-bz-2xl:  var(--bz-radius-2xl);
+  --radius-bz-3xl:  var(--bz-radius-3xl);
   --radius-bz-pill: var(--bz-radius-pill);
 
   /* Shadcn passthrough (kept for ui/* primitives) */
@@ -237,7 +304,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-weight: 700;
+    font-weight: 500;
     line-height: var(--bz-leading-heading);
     letter-spacing: var(--bz-tracking-tight);
   }

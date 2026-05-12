@@ -7965,29 +7965,13 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   RUUL-STYLE REDESIGN — experiment scope (HomePage + Header + Footer)
-   Paper cream base, grid overlays, pill buttons, marquee, FAQ accordion.
+   BIZAK .bz-* RUUL-STYLE PRIMITIVE CSS
+   Paint layer for the new design system. Tokens consumed below live in
+   theme.css (single source of truth) — do NOT add a :root block here.
+   The .bz-* classes are the CSS paint behind the React primitive library
+   (see docs/DESIGN_SYSTEM.md §3). Page-level CSS should not be added —
+   put new visual logic in a primitive instead.
    ────────────────────────────────────────────────────────────────────── */
-
-:root {
-  --bz-paper:        #FCFCF7;
-  --bz-paper-warm:   #F4F4ED;
-  --bz-deep:         #0F1411;   /* deepest olive-black */
-  --bz-olive:        #1A2D20;   /* hero/dark section */
-  --bz-olive-dark:   #0A100D;;   /* hero/dark section */
-  --bz-olive-soft:   #243A2D;
-  --bz-fire:         #d3f969;   /* lime accent */
-  --bz-leaf:         #DBE9B8;   /* soft pistachio */
-  --bz-leaf-deep:    #A8C76C;
-  --bz-line:         #D8D9D3;
-  --bz-line-soft:    #E5E5E0;
-  --bz-text:         #1A1D19;
-  --bz-text-muted:   #6E7466;
-  --bz-text-soft:    #A2A296;   /* warmer gray for muted heading spans */
-  --bz-text-on-dark-muted: rgba(252,252,247,0.62);
-  --bz-heading-font: 'Hedvig Letters Sans', 'Inter', system-ui, sans-serif;
-  --bz-body-font:    'Inter', system-ui, sans-serif;
-}
 
 /* Page wrapper */
 .bz-page {
@@ -8000,8 +7984,9 @@
 }
 .bz-page h1, .bz-page h2, .bz-page h3, .bz-page h4 {
   font-family: var(--bz-heading-font);
-  font-weight: 400;
+  font-weight: 500;
   text-wrap: balance;
+  letter-spacing: -0.018em;
 }
 
 /* Consistent section padding — generous for premium feel */
@@ -8046,12 +8031,12 @@
 }
 .bz-eyebrow-light { color: rgba(252,252,247,0.55); }
 
-/* Section heading — h2 uses Hedvig, smaller than before */
+/* Section heading — h2 */
 .bz-h2 {
   font-family: var(--bz-heading-font);
-  font-weight: 400;
-  font-size: clamp(26px, 3.4vw, 36px);
-  letter-spacing: -0.018em;
+  font-weight: 500;
+  font-size: var(--bz-text-h2);
+  letter-spacing: var(--bz-tracking-tight);
   line-height: 1.12;
   color: var(--bz-text);
   margin: 0;
@@ -8059,12 +8044,12 @@
 }
 .bz-h2-muted { color: var(--bz-text-soft); }
 
-/* Hero h1 — Hedvig, capped 54px instead of 76 so it reads tighter */
+/* Hero h1 */
 .bz-h1 {
   font-family: var(--bz-heading-font);
-  font-weight: 400;
-  font-size: clamp(32px, 4.5vw, 36px);
-  letter-spacing: -0.018em;
+  font-weight: 500;
+  font-size: var(--bz-text-h1);
+  letter-spacing: var(--bz-tracking-tight);
   line-height: 1.08;
   color: var(--bz-text);
   margin: 0;
@@ -8362,7 +8347,7 @@
 .bz-bento-paper { background: var(--bz-paper); border: 1px solid var(--bz-line-soft); color: var(--bz-text); }
 .bz-bento-title {
   font-family: var(--bz-heading-font);
-  font-weight: 400;
+  font-weight: 500;
   font-size: clamp(20px, 1.8vw, 26px);
   letter-spacing: -0.012em;
   line-height: 1.2;
@@ -8395,7 +8380,7 @@
 /* Stat block */
 .bz-stat-num {
   font-family: var(--bz-heading-font);
-  font-weight: 400;
+  font-weight: 500;
   font-size: clamp(34px, 4.4vw, 48px);
   letter-spacing: -0.02em;
   line-height: 1;

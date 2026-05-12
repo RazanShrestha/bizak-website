@@ -200,13 +200,14 @@ these (or a near-cousin) over inventing new ones:
 Reinforces — not duplicates — `/docs/DESIGN_SYSTEM.md`. The visual cues
 that make a page feel "Bizak":
 
-1. **Sage primary + lime accent.** `#7A826D` sage carries the brand. `#C7FF35` lime is the *single* accent colour — used sparingly for "live" pills, the hero badge, key numbers on dark surfaces.
-2. **Olive-tinted dark surface (`#1A1D19`).** Bizak's dark sections aren't pure black — they're a deep olive (`bg-bz-deep`). This is *the* brand dark and it's what makes the lime accent pop.
-3. **Hero pattern.** Every hero wears `.biz-mesh` (the 3-stop radial mesh) + a `<HeroBadge>` pill (the only allowed gradient).
-4. **Live data over static screenshots.** Hero visuals and section mocks show *flowing data* — pulsing dots, streaming journal rows, OEE gauges, "JUST POSTED" pills. This is the visual language of "real-time."
-5. **Bento layouts with asymmetric col spans.** 6/6, 7/5, 5/7, 8/4 — never a uniform 4-col grid for the storytelling sections. The asymmetry tells the eye what's primary.
-6. **Tabular numbers everywhere.** Money, percentages, counts → `tabular-nums` so the columns line up.
-7. **Pills carry meaning.** `<PillBadge tone="accent" dot>LIVE</PillBadge>`, `<PillBadge tone="sage">NEW</PillBadge>`, `<PillBadge tone="neutral">FY2024</PillBadge>` — pills are functional labels, not decoration.
+1. **Paper-cream base + olive dark + lime accent + pistachio secondary.** The new palette: `#FCFCF7` paper as the primary page surface, `#1A2D20` olive for dark sections / hero canvas / dark bento cards, `#d3f969` lime (`--bz-fire`) as the *single* canonical pop colour, `#DBE9B8` pistachio (`--bz-leaf`) as the softer secondary accent. No sage. No gradients.
+2. **Alternating section backgrounds.** Consecutive content sections alternate between `--bz-section-a` (`#FCFCF7`) and `--bz-section-b` (`#efefe9`). This rhythm is what unifies the page — a single uniform background reads flat; alternating tones give the eye chapter breaks. Dark sections (`bg-bz-olive`) are used sparingly for showcase blocks.
+3. **Hero pattern.** Centered copy on a paper surface (`--bz-section-b` for a touch of warmth). `<BadgeGreen>` confetti pill above the `<h1>`. Two `<Pill>` CTAs (`variant="dark" withTick` + `variant="light"`). Optional `<HeroCanvas>` below — a dark olive panel with a 1px grid overlay holding 1–3 floating `<HeroCard>`s. No more `.biz-mesh` radial-gradient hero — that pattern is retired.
+4. **Live data over static screenshots.** Hero visuals and section mocks show *flowing data* — pulsing dots, streaming journal rows, OEE gauges, "Live" / "Posted" pills, auto-posting feeds. This is the visual language of "real-time" (narrative §4.1).
+5. **Bento layouts.** Asymmetric column spans, never a uniform N-column grid for storytelling sections. The `<BentoGrid cols={N}>` primitive ships responsive defaults; reach for asymmetric spans (`<BigCard>`, mixed tones) for the page's marquee section.
+6. **DotGrid for depth on dark.** Dark surfaces (hero canvas, dark bento, FAQ intro panel) get a `<DotGrid>` overlay — a 1px subtle grid in `rgba(252,252,247,0.05)`. This is what gives them texture without resorting to gradients or imagery.
+7. **Single font, single accent.** Inter for everything (body, headings, IDs, SKUs, code-like identifiers — differentiate with letter-spacing or weight, never a font swap). Lime `#d3f969` for the pop colour; pistachio `#DBE9B8` for the soft secondary; everything else is paper / olive / text-muted.
+8. **Pills carry meaning.** `<Pill variant="accent">`, `<Pill variant="leaf">`, `<StatusChip variant="live">` — pills are functional labels with semantic variants, not decoration.
 
 ---
 
@@ -214,61 +215,64 @@ that make a page feel "Bizak":
 
 Anchors that should be consistent across pages:
 
-### 7.1 The closing CTA section (above the footer)
+### 7.1 The closing CTA — owned by `<Footer cta={…}>`
 
 The bottom-of-page CTA — the "Take full control of your financial operations" /
-"Run your factory floor with complete precision." moment — must use
-**`<Section tone="dark">`** (the olive-tinted `bg-bz-deep` = `#1A1D19`),
-**not** `tone="deeper"` (`bg-bz-deep-2` = `#121212` pure black).
-
-This matches the by-industry pages' `IndustryCta` (`.biz-cta-section`,
-which already uses `var(--bz-deep)`). The olive undertone is what lets
-the lime accent CTA button "glow" against the surface.
+"Run your factory floor with complete precision." moment — is **owned by
+the Footer**, not by the page. The Footer's top section is a centered
+closing-CTA card on a warehouse-photo background tinted with olive. Pages
+override its copy via a `cta` prop passed in the route layout.
 
 ```tsx
-<Section tone="dark" pad="default">
-  <Container width="narrow">
-    <SectionHeading
-      title={<>Take full control of<br />your financial operations</>}
-      description="..."
-      tone="light"
-      align="center"
-      maxWidth={640}
-    />
-    <div className="mt-8 flex flex-wrap justify-center gap-3">
-      <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
-      <Button variant="ghostDark" size="lg" href="/contact">Contact Sales</Button>
-    </div>
-  </Container>
-</Section>
+// In src/app/routes.tsx — *PageLayout wrapper for each page
+<Footer
+  cta={{
+    title: "Take full control of your financial operations.",
+    titleMuted: "Close month-end in hours, not weeks.",
+    description: "One ledger, auto-posted journals, real-time P&L — and a full audit trail behind every figure.",
+    primaryLabel: "Start free trial",
+    primaryHref: "https://system.bizakerp.com/account/self-register",
+    secondaryLabel: "Talk to finance team",
+    secondaryHref: "/contact",
+  }}
+/>
 ```
 
-The CTA isn't always literally the last section — some pages may close
-with a comparison table or FAQ — but **whenever a page has a closing
-CTA, it lives on `tone="dark"`**, with `<Button variant="accent">` +
-`<Button variant="ghostDark">` as the action pair.
+If no `cta` prop is passed, the Footer uses the generic default copy
+("Take full control of your operations.…"). Override per-page when the
+page sells a specific module — the override copy should reinforce the
+page's narrative (see §4).
+
+**Do not** render a separate dark CTA `<Section>` above the Footer.
+That's the legacy pattern (the previous `<Section tone="dark">` closing
+CTA). The new convention is one CTA per page, owned by the Footer.
+
+The `FooterCta` interface is exported from `src/app/components/Footer.tsx`.
+Reference: `FinancialManagementPageLayout` in `routes.tsx`.
 
 ### 7.2 Hero
 
-Always `<Section pad="hero" className="biz-mesh">` + `<HeroBadge>` above
-the `<h1>`. See `/docs/DESIGN_SYSTEM.md` §3.6.
+Centered on a paper-cream surface (typically `bg-bz-section-b`).
+`<BadgeGreen>` above `<h1>`, two `<Pill>` CTAs, optional `<HeroCanvas>`
+below with floating `<HeroCard>`s. No more `.biz-mesh` radial-gradient
+backdrop. See `/docs/DESIGN_SYSTEM.md` §3.6.
 
 ### 7.3 Section rhythm
 
-Most module pages alternate `tone="light"` (off-white `#F8F9F7`) and
-`tone="white"` (`#FFFFFF`) for the body sections, with one or two
-`tone="dark"` "showcase" sections for visual variety, then close on the
-dark CTA.
+Body sections alternate between `--bz-section-a` (paper `#FCFCF7`) and
+`--bz-section-b` (warm `#efefe9`) — this alternation is the new visual
+rhythm. Dark sections (`bg-bz-olive`) appear sparingly for showcase
+blocks. The closing CTA is in the Footer, not in the page.
 
 A good rhythm for a module page (Financial Management, Sales/CRM, etc.):
 
-1. Hero (`pad="hero"` + `biz-mesh`)
-2. Feature grid (`tone="white"`)
-3. Technical showcase (`tone="dark"`) — bento of 4 capability cards
-4. Reporting / intelligence section (`tone="light"`)
-5. Connectivity section (`tone="dark"`) — "this module connects to everything"
-6. Impact metrics (`tone="white"`)
-7. Closing CTA (`tone="dark"`) ← see §7.1
+1. Hero (`tone="b"`) — paper-warm bg, `<HeroCanvas>` below copy.
+2. How-it-works (`tone="a"`) — 3 `<StepCard>`s.
+3. Platform (`tone="b"`) — `<PlatformDashboard>` mock + `<BentoGrid cols={4}>` summary.
+4. Exclusive / capabilities (`tone="a"`) — `<BentoGrid cols={3}>` + a `<BigCard>` marquee feature.
+5. Testimonials (`tone="b"`) — `<Carousel>` + 3 stat tiles.
+6. FAQ (`tone="a"`) — `<Accordion>`.
+7. (Footer renders the closing CTA via its `cta` prop — no page-level CTA section.)
 
 ---
 
@@ -281,8 +285,9 @@ When the user says "**redesign X**" or "**design a new page for Y**":
 3. **Read `/docs/DESIGN_SYSTEM.md`** for primitive APIs.
 4. **Run the page-design checklist** in the redesign-page skill.
 5. **For copy**: pull from the narratives in §4 and the voice in §5. Use the canonical stats in §5.4 unless the page genuinely needs a new one.
-6. **For section structure**: follow the rhythm in §7.3 unless the user has called for something different.
-7. **For the closing CTA**: always `tone="dark"` per §7.1.
+6. **For section structure**: follow the rhythm in §7.3 — alternate `tone="a"`/`tone="b"` between content sections, dark sections sparingly.
+7. **For the closing CTA**: pass it via `<Footer cta={…}>` in the route layout — never as a `<Section tone="dark">` block in the page. See §7.1.
+8. **Confirm the page composes primitives**, not bespoke inline JSX. If a primitive is missing, build it first (see DESIGN_SYSTEM §6).
 
 When something material changes about the product (a new module ships, a
 positioning pivot, new canonical stats), update this file. Treat it as
