@@ -32,8 +32,8 @@ export type SectionHeadProps = {
   description?: React.ReactNode;
   /** Optional CTA row (right-aligned on desktop, stacked on mobile). */
   actions?: React.ReactNode;
-  /** Optional tone for use on dark surfaces. */
-  tone?: "dark" | "light";
+  /** The SURFACE this section head sits on. "light" = light bg, dark text (default). "dark" = dark bg, paper text. Matches <Section> convention. */
+  tone?: "light" | "dark";
   /** Max-width override on the title for narrower copy blocks. */
   titleMaxWidth?: number | string;
   className?: string;
@@ -53,7 +53,7 @@ export function SectionHead({
   title,
   description,
   actions,
-  tone = "dark",
+  tone = "light",
   titleMaxWidth,
   className,
   spacing = "default",
@@ -90,7 +90,7 @@ export function SectionHead({
         <p
           className={cn(
             "mt-4 max-w-[640px] text-[15px] leading-[1.65]",
-            tone === "light" ? "text-white/[0.62]" : "text-bz-text-muted",
+            tone === "dark" ? "text-white/[0.72]" : "text-bz-text-muted",
           )}
         >
           {description}

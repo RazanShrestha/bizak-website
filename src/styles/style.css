@@ -8032,26 +8032,29 @@
 .bz-eyebrow-light { color: rgba(252,252,247,0.55); }
 
 /* Section heading — h2 */
-.bz-h2 {
+/* Use :where() to give .bz-h2 / .bz-h1 ZERO CSS specificity. Without this,
+   their `margin: 0` and other rules would beat Tailwind utilities (which
+   sit in @layer utilities and have lower cascade priority than unlayered
+   rules). Now any utility class on the same element (mb-16, text-bz-text,
+   etc.) wins automatically. */
+:where(.bz-h2) {
   font-family: var(--bz-heading-font);
   font-weight: 500;
   font-size: var(--bz-text-h2);
   letter-spacing: var(--bz-tracking-tight);
   line-height: 1.12;
-  color: var(--bz-text);
   margin: 0;
   text-wrap: balance;
 }
 .bz-h2-muted { color: var(--bz-text-soft); }
 
 /* Hero h1 */
-.bz-h1 {
+:where(.bz-h1) {
   font-family: var(--bz-heading-font);
   font-weight: 500;
   font-size: var(--bz-text-h1);
   letter-spacing: var(--bz-tracking-tight);
   line-height: 1.08;
-  color: var(--bz-text);
   margin: 0;
   text-wrap: balance;
   max-width: 900px;

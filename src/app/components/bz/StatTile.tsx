@@ -23,7 +23,7 @@ export function StatTile({
   ...rest
 }: StatTileProps) {
   const bg = tone === "dark" ? "bg-white/[0.07]" : "bg-[#F4F5EF]";
-  const descColor = tone === "dark" ? "text-white/[0.62]" : "text-bz-text-muted";
+  const descColor = tone === "dark" ? "text-white/[0.72]" : "text-bz-text-muted";
   const numClass = tone === "dark" ? "bz-stat-num bz-stat-num-light" : "bz-stat-num";
   return (
     <div

@@ -831,7 +831,7 @@ export function Header() {
               </a>
             </div>
 
-            {/* Mobile hamburger */}
+            {/* Mobile hamburger — bare 3-line icon, no chrome */}
             <button
               className="flex lg:hidden"
               onClick={() => setMobileOpen(true)}
@@ -839,17 +839,17 @@ export function Header() {
                 marginLeft: "auto",
                 width: 44,
                 height: 44,
-                borderRadius: 999,
-                border: "1px solid #E5E5E0",
-                background: "#FCFCF7",
+                padding: 0,
+                border: "none",
+                background: "transparent",
                 cursor: "pointer",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#1A1D19",
+                color: "var(--bz-text)",
               }}
               aria-label="Open menu"
             >
-              <Menu size={20} />
+              <Menu size={24} strokeWidth={2} />
             </button>
           </div>
         </div>

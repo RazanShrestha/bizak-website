@@ -16,18 +16,43 @@ session):
 | **`/CLAUDE.md`** | Hard rules + page-design checklist + the migration plan (always loaded). |
 | **`/docs/DESIGN_SYSTEM.md`** | Long-form design reference — tokens, primitive APIs, hero pattern, closing-CTA-via-Footer convention. |
 
-## Status check first — which phase are we in?
+## Status — Phase 3 is active
 
-The site is **mid-rebrand**. Before redesigning a page, confirm where the
-codebase is in the migration plan (`CLAUDE.md` §"Migration plan"):
+Phase 0 (foundation), Phase 1 (28 primitives), and Phase 2 (HomePage
+refactor onto primitives) are **done**. **Phase 3 is the per-page
+migration loop** — one PR per page, mirroring `HomePage.tsx`'s structure.
 
-- **Phase 0 (foundation)**: tokens, fonts, docs. *Should be done.*
-- **Phase 1 (primitive library)**: build `<Pill>`, `<Bento>`, `<BentoGrid>`, `<SectionHead>`, `<HeroCanvas>`, `<HeroCard>`, `<StepCard>`, `<BigCard>`, `<Carousel>`, `<Accordion>`, `<Marquee>`, `<Heading>`, `<Eyebrow>`, `<BadgeGreen>`, `<Flag>`, `<StatusChip>`, `<DotGrid>`, etc.
-- **Phase 2 (HomePage refactor)**: rewrite the staged HomePage onto primitives — canonical reference.
-- **Phase 3 (per-page migration)**: one PR per page, in megaMenu order.
-- **Phase 4 (retire legacy)**: delete `hp-*`/`biz-*` CSS classes, the entire `marketing/` folder, `@mui/*`.
+- **Canonical reference page**: `src/app/components/HomePage.tsx`. Read it before any redesign.
+- **Primitive library**: 28 primitives in `src/app/components/bz/`. Barrel: `bz/index.ts`. Catalogue: `bz/README.md`.
+- **Never import from `marketing/` in new code** — that folder is legacy and slated for deletion in Phase 4.
 
-**If you're being asked to redesign a page and Phase 1 isn't done yet**, stop and tell the user. Migrating pages onto primitives that don't exist yet creates parallel inline JSX that has to be re-migrated later. Phase 1 first.
+If you're asked to redesign a page, you can proceed — every primitive
+you'll need already exists. If you encounter a shape that ISN'T covered
+by an existing primitive, **add it to `bz/` first** (with paint in
+`style.css`, React wrapper in `bz/`, export in `bz/index.ts`), then use
+it on the page.
+
+## Conventions learned from the HomePage refactor (read before editing)
+
+These rules came out of Phase 2 and are now load-bearing across every page:
+
+1. **`tone` means SURFACE, not text colour.** `tone="dark"` = "I sit on a dark surface" → renders paper text. `tone="light"` (default) = "I sit on a light surface" → renders dark text. Applies to `Section`, `Heading`, `Eyebrow`, `SectionHead`, `DataRow`, `EntityRow`, `JournalRow`, `MiniBars`, `ModuleListItem`, `StatTile`, `StripeBar`, `Marquee`. The legacy `marketing/` convention was the opposite — ignore that.
+
+2. **Hero spacing uses inline `style`, not Tailwind margin utilities.** This is the *only* place inline `style` for static spacing is sanctioned. The canonical hero rhythm:
+
+   ```tsx
+   <BadgeGreen style={{ marginBottom: 28 }}>...</BadgeGreen>
+   <Heading level={2} style={{ marginBottom: 36 }}>...</Heading>
+   <div className="flex flex-wrap justify-center gap-[10px]">{pills}</div>
+   ```
+
+   Why: `.bz-h1`/`.bz-h2` paint classes set `margin: 0` and their cascade priority can defeat Tailwind `mb-*` utilities in subtle ways (twMerge, layer ordering). Inline `style` always wins. Don't try to "fix" this back to Tailwind utilities — it has been tried and the rhythm broke.
+
+3. **`Section pad="hero"`** = flat `pt-[56px] pb-[96px]` on all viewport sizes. This matches the staged spec exactly. Don't add responsive variation.
+
+4. **Page-specific domain visuals (dashboards, mock invoices, multi-entity panels) stay as in-page sub-components**, but compose `bz/` micro-viz primitives (`DataRow`, `EntityRow`, `JournalRow`, `MiniBars`, `ModuleListItem`, `StatTile`) instead of duplicating JSX. See `HomePage.tsx`'s `PlatformDashboard`, `StepVisualConnect`, `StepVisualScale`, `MultiEntityVisual` for the pattern.
+
+5. **Page-internal styles never use `<style>{@media ...}</style>` blocks.** If a section needs responsive logic, the primitive that owns the layout owns the breakpoint. If you reach for a `<style>` block in a page, the primitive is missing a breakpoint — extend it.
 
 ## Product brief first
 

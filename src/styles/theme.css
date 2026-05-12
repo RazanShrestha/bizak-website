@@ -53,11 +53,11 @@
 
   /* ── Text ─────────────────────────────────────────────────────────── */
   --bz-text:               #1A1D19;
-  --bz-text-muted:         #6E7466;
-  --bz-text-soft:          #A2A296;
+  --bz-text-muted:         #5A6053;   /* description copy / meta labels — bumped darker for legibility */
+  --bz-text-soft:          #707064;   /* Heading.Muted span — soft inline muted (bumped darker for readability) */
   --bz-text-on-dark:       #FCFCF7;
-  --bz-text-on-dark-muted: rgba(252, 252, 247, 0.62);
-  --bz-text-on-dark-soft:  rgba(252, 252, 247, 0.45);
+  --bz-text-on-dark-muted: rgba(252, 252, 247, 0.72);
+  --bz-text-on-dark-soft:  rgba(252, 252, 247, 0.55);
 
   /* ── Borders / lines ──────────────────────────────────────────────── */
   --bz-line:           #D8D9D3;
@@ -223,9 +223,12 @@
   --color-bz-sage-mid:       var(--bz-sage-mid);
 
   /* Text */
-  --color-bz-text:           var(--bz-text);
-  --color-bz-text-muted:     var(--bz-text-muted);
-  --color-bz-text-soft:      var(--bz-text-soft);
+  --color-bz-text:                var(--bz-text);
+  --color-bz-text-muted:          var(--bz-text-muted);
+  --color-bz-text-soft:           var(--bz-text-soft);
+  --color-bz-text-on-dark:        var(--bz-text-on-dark);
+  --color-bz-text-on-dark-muted:  var(--bz-text-on-dark-muted);
+  --color-bz-text-on-dark-soft:   var(--bz-text-on-dark-soft);
 
   /* Borders */
   --color-bz-line:           var(--bz-line);

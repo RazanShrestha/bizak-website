@@ -11,19 +11,23 @@ Quick rules for AI assistants live in `/CLAUDE.md` at the project root.
 Everything below is the *why* and *how* — read this when you're adding a
 new primitive, adjusting tokens, or migrating a legacy page.
 
-> **Status note.** The site is mid-rebrand. Phase 0 (foundation) is
-> complete. Phase 1 (build the new primitive library) is in progress.
+> **Status note.** Phase 0 (foundation) + Phase 1 (28 primitives) + Phase 2
+> (HomePage refactor) are complete. **Phase 3 (per-page migration) is next.**
 >
-> **The new primitive library lives in `src/app/components/bz/`** — that's
-> the canonical folder going forward. The OLD `marketing/` folder
-> (`HeroCentered`, `Button`, `Card`, …) is kept un-touched so un-migrated
-> legacy pages still render, but **new code never imports from
-> `marketing/`**. The `marketing/` folder will be deleted in Phase 4 once
-> every page is migrated.
+> **The primitive library lives in `src/app/components/bz/`** — the
+> canonical folder. The OLD `marketing/` folder (`HeroCentered`, `Button`,
+> `Card`, …) is kept un-touched so un-migrated legacy pages still render,
+> but **new code never imports from `marketing/`**. The `marketing/` folder
+> will be deleted in Phase 4 once every page is migrated.
 >
 > The `.bz-*` CSS classes in `style.css` are the *paint* for the new
 > primitives in `bz/`; both layers — CSS class + React wrapper — live in
 > lockstep.
+>
+> **Canonical reference page**: `src/app/components/HomePage.tsx`. Every
+> Phase 3 page migration mirrors its structure (content data arrays at the
+> top, section components composing primitives, page-specific domain
+> visuals as in-page sub-components composing micro-viz primitives).
 
 ---
 
@@ -523,25 +527,27 @@ The site is being migrated in five phases.
 - Duplicate `:root` block removed from `style.css`.
 - Docs (`CLAUDE.md`, this file, `BIZAK_PRODUCT_OVERVIEW.md`, the `redesign-page` skill) updated to reflect the new direction.
 
-### Phase 1 — Build the primitive library
+### Phase 1 — Build the primitive library (✅ complete)
 
-Extract every recurring shape from the staged HomePage into a React
-primitive in `src/app/components/bz/`. List in §3 above. Each
-primitive is paint (CSS class) + structure (React component) + slots
-(typed props or compound children).
+28 primitives shipped in `src/app/components/bz/`. See §3 for the prop
+APIs. Each primitive is paint (CSS class in `style.css` under `.bz-*`) +
+structure (React component) + slots (typed props or compound children).
 
-Acceptance bar: when Phase 1 ships, refactoring the HomePage onto the
-primitives drops it from ~800 lines to ~250 lines, with zero
-`onMouseEnter` style mutations, zero hex literals, zero
-`<style>{@media …}</style>` blocks.
+### Phase 2 — HomePage refactor (✅ complete)
 
-### Phase 2 — HomePage refactor (canonical reference)
+`src/app/components/HomePage.tsx` now composes the `bz/` primitives. This
+is the canonical reference for every Phase 3 migration. `HomeLayout` in
+`routes.tsx` renders `<Header /> <HomePage /> <Footer />` — pages own
+content; the layout owns chrome.
 
-Rewrite the staged HomePage using only the new primitives. This becomes
-the canonical reference for every subsequent migration — the way
-`ManufacturingPage.tsx` was the canonical for the by-industry pages.
+Key lessons that became conventions (documented in `/CLAUDE.md`):
 
-### Phase 3 — Per-page migration
+- `tone` means **surface** everywhere (`tone="dark"` = dark surface, light text).
+- Hero badge → title → buttons uses inline `style={{ marginBottom: 28|36 }}` to bypass cascade issues with `.bz-h1`/`.bz-h2` paint classes.
+- `Section pad="hero"` = flat `pt-[56px] pb-[96px]` (no responsive variation).
+- Mobile Header hamburger = bare 3-line icon, no chrome.
+
+### Phase 3 — Per-page migration (⏳ next)
 
 One PR per page. Order:
 

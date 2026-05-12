@@ -25,7 +25,7 @@ export function JournalRow({
 }: JournalRowProps) {
   const bg = tone === "dark" ? "bg-white/[0.05]" : "bg-[#F4F5EF]";
   const txnColor = tone === "dark" ? "text-bz-text-on-dark" : "text-bz-text";
-  const flowColor = tone === "dark" ? "text-white/[0.62]" : "text-bz-text-muted";
+  const flowColor = tone === "dark" ? "text-white/[0.72]" : "text-bz-text-muted";
   return (
     <div
       className={cn(

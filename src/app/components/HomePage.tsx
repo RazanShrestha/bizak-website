@@ -98,11 +98,11 @@ function HeroSection() {
     <Section tone="b" pad="hero">
       <Container>
         <div className="flex flex-col items-center text-center">
-          <div className="mb-7">
-            <BadgeGreen>Now Live, Globally 🎉</BadgeGreen>
-          </div>
+          <BadgeGreen style={{ marginBottom: 28 }}>
+            Now Live, Globally 🎉
+          </BadgeGreen>
 
-          <Heading level={2} className="mb-9">
+          <Heading level={2} style={{ marginBottom: 36 }}>
             The operating system for modern business,{" "}
             <Heading.Muted>handling finance, inventory and operations in one place.</Heading.Muted>
           </Heading>
@@ -387,7 +387,7 @@ function PlatformDashboard() {
       <div className="relative grid grid-cols-1 gap-[18px] md:grid-cols-[1fr_1.4fr]">
         {/* Sidebar */}
         <div className="rounded-bz-xl border border-white/[0.06] bg-white/[0.04] p-3.5">
-          <div className="mb-3 text-[10.5px] font-medium uppercase tracking-[0.18em] text-white/[0.45]">
+          <div className="mb-3 text-[10.5px] font-medium uppercase tracking-[0.18em] text-white/[0.55]">
             Modules
           </div>
           {modules.map((m) => (
@@ -415,11 +415,11 @@ function PlatformDashboard() {
 
           <div className="grid grid-cols-2 gap-2">
             <div className="flex items-center justify-between rounded-bz-lg bg-white/[0.06] px-3 py-2.5">
-              <span className="text-[11.5px] text-white/[0.62]">Open invoices</span>
+              <span className="text-[11.5px] text-white/[0.72]">Open invoices</span>
               <span className="text-[16px] font-medium text-bz-text-on-dark">32</span>
             </div>
             <div className="flex items-center justify-between rounded-bz-lg bg-white/[0.06] px-3 py-2.5">
-              <span className="text-[11.5px] text-white/[0.62]">Stock alerts</span>
+              <span className="text-[11.5px] text-white/[0.72]">Stock alerts</span>
               <span className="text-[16px] font-medium text-bz-text-on-dark">6</span>
             </div>
           </div>

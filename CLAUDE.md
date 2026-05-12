@@ -118,19 +118,19 @@ Radii: `--bz-radius-sm` 6, `--bz-radius-md` 10, `--bz-radius-lg` 12,
 
 ## Migration plan — the path from legacy to the new system
 
-The site is being migrated in five phases. **Where we are right now: Phase 0 is in progress / just completed.**
+The site is being migrated in five phases. **Where we are: Phase 2 done, Phase 3 is next.**
 
 | Phase | What | Status |
 |---|---|---|
-| 0 | Foundation: token reconciliation in `theme.css`, Hedvig removed, docs updated. | ✅ Phase 0 lands the foundation. After this PR, future Claude sessions read the new palette and primitive plan from the docs. |
-| 1 | Build the primitive library in `bz/` (see §"Planned primitive library" below). | In progress. |
-| 2 | Refactor the staged HomePage onto the new primitives — proves the system works, becomes the canonical reference. | Pending. |
-| 3 | Migrate every other page onto the new primitives, one PR per page, in megaMenu order. | Pending. |
-| 4 | Retire legacy: `hp-*` and `biz-*` classes in `style.css`, the entire `marketing/` folder (all old primitives), `src/imports/svg-*.ts`, `@mui/*` deps. | Pending. |
+| 0 | Foundation: tokens reconciled in `theme.css`, Hedvig removed, docs updated. | ✅ Done. |
+| 1 | Build the primitive library in `bz/`. | ✅ Done — 28 primitives shipped (see "Available primitives" below). |
+| 2 | Refactor the staged HomePage onto the new primitives. | ✅ Done — `HomePage.tsx` is the canonical reference. Routes' `HomeLayout` renders Header + HomePage + Footer. |
+| 3 | Migrate every other page onto the new primitives, one PR per page, in megaMenu order. | ⏳ **Next.** Start with `FinancialManagementPage` (already has `cta` override). |
+| 4 | Retire legacy: `hp-*` and `biz-*` classes in `style.css`, the entire `marketing/` folder, `src/imports/svg-*.ts`, `@mui/*` deps, `--bz-sage*` aliases. | Pending. |
 
-## Planned primitive library (Phase 1)
+## Available primitives (Phase 1 — shipped)
 
-Every recurring shape in the staged HomePage becomes a React primitive in `src/app/components/bz/`. The contract: pages compose primitives with data + slot children. No inline `style={{}}` for static values; no `onMouseEnter`/`onMouseLeave` mutations; no media-query `<style>{…}</style>` strings.
+Every recurring shape from the HomePage is now a React primitive in `src/app/components/bz/`. Pages compose primitives + data — no inline `style={{}}` for static values, no `onMouseEnter`/`onMouseLeave` mutations, no media-query `<style>{…}</style>` strings, no per-file `function Container` / `function Pill` forks.
 
 ```tsx
 import {
@@ -162,11 +162,11 @@ import {
 
 ### Layout
 
-- **`<Section tone="a|b|dark" pad="default|tight">`** — automatic alternation: pass `tone="a"` or `tone="b"` explicitly, or let a `<SectionGroup>` parent alternate. Encodes the section-y padding from `theme.css`.
+- **`<Section tone="a|b|dark|paper" pad="default|tight|hero|none">`** — pages alternate `tone="a"` and `tone="b"` between consecutive content sections. `tone="dark"` for showcase blocks. `pad="hero"` = flat 56px/96px to match the hero spec.
 - **`<Container width="default|narrow">`** — 1320 / 1200.
 - **`<HeroCanvas>`** — dark olive panel with grid overlay; holds `<HeroCard>`s.
-- **`<SectionHead index label title titleMuted actions/>`** — opening row of every section: eyebrow + h2 + optional CTA pair.
-- **`<BentoGrid cols={2|3|4}>`** — auto-responsive grid; owns its own breakpoints (no `<style>{@media …}</style>` per page).
+- **`<SectionHead index label title description? actions? tone? titleMaxWidth? spacing?>`** — opening row of every section: eyebrow + h2 + optional CTA pair on the right.
+- **`<BentoGrid cols={2|3|4|12} gap?>`** — auto-responsive grid; owns its own breakpoints (no `<style>{@media …}</style>` per page).
 
 ### Patterns
 
@@ -177,21 +177,58 @@ import {
 
 ### Micro-viz (used inside card footers / step visuals)
 
-- **`<DataRow label value/>`** — recurring "label / value" rows.
-- **`<MiniBars values highlightLast/>`** — small bar chart in HeroCard footers.
-- **`<EntityRow flag name amount/>`** — multi-entity rows.
-- **`<JournalRow txn debit credit/>`** — auto-posting journal entry rows.
-- **`<ModuleListItem active>`** — PlatformDashboard sidebar item.
+- **`<DataRow label value emphasis? tone?/>`** — recurring "label / value" rows.
+- **`<MiniBars values highlightLast? tone? height?/>`** — small bar chart in HeroCard footers.
+- **`<EntityRow flag name amount tone?/>`** — multi-entity rows.
+- **`<JournalRow txn debit credit tone?/>`** — auto-posting journal entry rows.
+- **`<ModuleListItem active? tone?>`** — sidebar nav row (used in PlatformDashboard).
+- **`<StatTile value desc tone?/>`** — big-number + descriptive-text card (testimonials side-panel, impact metrics).
 
-Once these primitives ship, **every page becomes composition + data**. Adding a new module page should be ~200 lines of TSX. Changing the bento hover effect should be one CSS rule in `style.css`. That's the contract.
+**Every page becomes composition + data.** Adding a new module page should be ~250–400 lines of TSX. Changing the bento hover effect = one CSS rule in `style.css`. That's the contract.
 
-## Anatomy of a marketing page (after Phase 1)
+## The `tone` prop convention
+
+All primitives that accept `tone` use the **same mental model**: `tone` describes the **SURFACE the element sits on**, not its text colour.
+
+- `tone="light"` (default) = the element sits on a light surface → renders with dark text / paint
+- `tone="dark"` = the element sits on a dark surface → renders with paper text / paint
+
+This applies to `Section`, `Heading`, `Eyebrow`, `SectionHead`, `DataRow`, `EntityRow`, `JournalRow`, `MiniBars`, `ModuleListItem`, `StatTile`, `StripeBar`, `Marquee`. **The legacy `marketing/` convention was the opposite** (tone="light" meant "for use on dark surfaces"); ignore that — `bz/` is surface-tone.
+
+## Hero spacing convention (use inline `style` for badge → title → buttons)
+
+The hero stack — `<BadgeGreen>` → `<Heading>` → CTA row — uses **inline `style={{ marginBottom: N }}`** for the vertical gaps, not Tailwind `mb-*` utilities. This is a deliberate carve-out because:
+
+1. `.bz-h1` and `.bz-h2` paint classes set `margin: 0`; their cascade priority can defeat Tailwind margin utilities in unexpected ways (mixed `@layer utilities` vs unlayered, `twMerge` interactions with custom classes, etc.).
+2. Inline `style` always wins. For the *exact* hero rhythm to match across pages without surprises, use it for these three measurements only.
+
+Canonical hero rhythm:
+
+```tsx
+<BadgeGreen style={{ marginBottom: 28 }}>Now Live, Globally 🎉</BadgeGreen>
+<Heading level={2} style={{ marginBottom: 36 }}>
+  The operating system for modern business,{" "}
+  <Heading.Muted>handling finance and ops in one place.</Heading.Muted>
+</Heading>
+<div className="flex flex-wrap justify-center gap-[10px]">
+  <Pill variant="dark" withTick href="...">Get Started</Pill>
+  <Pill variant="light" iconLeft={<Sparkles size={13}/>} href="...">Book a demo</Pill>
+</div>
+```
+
+- Badge → title: `marginBottom: 28`
+- Title → buttons: `marginBottom: 36`
+- Section padding: `pad="hero"` (56px top / 96px bottom, flat)
+
+This is the **only place** inline `style` for static spacing is sanctioned. Mid-page sections, bentos, etc. use `BentoGrid` / `SectionHead` / `Section pad` / built-in primitive spacing — no inline styles there.
+
+## Anatomy of a marketing page (canonical reference: `src/app/components/HomePage.tsx`)
 
 ```tsx
 import {
   Section, Container, SectionHead, Bento, BentoGrid, Pill, Heading,
   HeroCard, HeroCanvas, BadgeGreen, Marquee, StepCard,
-} from "./marketing";
+} from "./bz";
 import { Layers, ShieldCheck } from "lucide-react";
 
 const FEATURES = [
@@ -201,16 +238,18 @@ const FEATURES = [
 
 function HeroSection() {
   return (
-    <Section tone="b">
+    <Section tone="b" pad="hero">
       <Container>
-        <BadgeGreen>Now Live, Globally</BadgeGreen>
-        <Heading level={1}>
-          The operating system for modern business,
-          <Heading.Muted> finance and ops in one place.</Heading.Muted>
-        </Heading>
-        <div className="flex flex-wrap gap-2">
-          <Pill variant="dark" withTick href="/start">Get Started</Pill>
-          <Pill variant="light">Book a demo</Pill>
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>Now Live, Globally 🎉</BadgeGreen>
+          <Heading level={2} style={{ marginBottom: 36 }}>
+            The operating system for modern business,{" "}
+            <Heading.Muted>finance and ops in one place.</Heading.Muted>
+          </Heading>
+          <div className="flex flex-wrap justify-center gap-[10px]">
+            <Pill variant="dark" withTick href="/start">Get Started</Pill>
+            <Pill variant="light" iconLeft={<Sparkles size={13}/>} href="/contact">Book a demo</Pill>
+          </div>
         </div>
         <HeroCanvas>
           <HeroCard icon={<Activity/>} title="Live ledger" badge="Live" value="$1,242,180"/>
