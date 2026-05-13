@@ -241,20 +241,20 @@ export function Footer({ cta, isLightMode = false }: { cta?: FooterCta; isLightM
                 The operating system for modern business — finance, inventory, sales and operations in one unified workspace.
               </p>
 
-              <div style={{ marginTop: 22, display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ marginTop: 22, display: "flex", flexDirection: "column", alignItems: "stretch", gap: 10 }}>
                 <a
                   href="https://system.bizakerp.com"
                   target="_blank"
                   rel="noreferrer"
-                  className="bz-pill bz-pill-leaf"
-                  style={{ padding: "10px 16px", fontSize: 13 }}
+                  className="bz-pill bz-pill-accent"
+                  style={{ padding: "10px 16px", fontSize: 13, justifyContent: "center" }}
                 >
                   Get Started
                 </a>
                 <a
                   href="/contact"
                   className={`bz-pill ${isLightMode ? "bz-pill-ghost" : "bz-pill-ghost-dark"}`}
-                  style={{ padding: "10px 16px", fontSize: 13 }}
+                  style={{ padding: "10px 16px", fontSize: 13, justifyContent: "center" }}
                 >
                   Talk to sales
                 </a>
@@ -288,7 +288,7 @@ export function Footer({ cta, isLightMode = false }: { cta?: FooterCta; isLightM
                         onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = p.link)}
                       >
                         {link.label}
-                        <ArrowUpRight size={13} style={{ opacity: 0.45 }} />
+                        {/* <ArrowUpRight size={13} style={{ opacity: 0.45 }} /> */}
                       </a>
                     </li>
                   ))}

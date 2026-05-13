@@ -1,5 +1,4 @@
 import {
-  Boxes,
   ClipboardCheck,
   MapPin,
   PackagePlus,
@@ -19,7 +18,6 @@ import {
   DotGrid,
   Heading,
   HeroCanvas,
-  HeroCard,
   JournalRow,
   Pill,
   Section,
@@ -37,13 +35,10 @@ import {
 const ZONES = [
   { id: "A", name: "Zone A · Main floor",   units: "3,842 units", pct: 78 },
   { id: "B", name: "Zone B · Cold storage", units: "1,206 units", pct: 62 },
-  { id: "C", name: "Zone C · Mezzanine",    units: "892 units",   pct: 41 },
-  { id: "D", name: "Zone D · Bonded",       units: "418 units",   pct: 28 },
 ];
 
 const LIVE_FEED = [
-  { id: "GRN-2046", what: "Goods receipt · 480 units", flow: "DR Inventory · CR GR clearing", t: "12s" },
-  { id: "PICK-7714", what: "Pick · SO-1041",            flow: "Allocated · Zone A",            t: "1m"  },
+  // { id: "PICK-7714", what: "Pick · SO-1041",            flow: "Allocated · Zone A",            t: "1m"  },
   { id: "TR-318",    what: "Transfer · A → C",          flow: "212 units moved",               t: "4m"  },
   { id: "GRN-2045",  what: "Goods receipt · 96 units",  flow: "DR Inventory · CR GR clearing", t: "9m"  },
 ];
@@ -57,10 +52,17 @@ const CORE_FEATURES = [
 const VALUATION_METHODS = ["FIFO", "LIFO", "Weighted average"];
 
 const CYCLE_COUNT_ROWS = [
-  { ref: "CC-441", loc: "Zone A · Rack 14", variance: "0"  },
+  { ref: "CC-441", loc: "Zone A · Rack 14", variance: "+2"  },
   { ref: "CC-440", loc: "Zone B · Shelf 3", variance: "0"  },
-  { ref: "CC-439", loc: "Zone C · Bin M2",  variance: "+2" },
-  { ref: "CC-438", loc: "Zone A · Rack 12", variance: "0"  },
+];
+
+const HERO_TREE = [
+  { id: "wh",  depth: 0, label: "Dubai Distribution Hub", tag: "Warehouse"                  },
+  { id: "b1",  depth: 1, label: "Bay A-1",                tag: "Bay"                        },
+  { id: "bn3", depth: 2, label: "Bin B-3",                tag: "Bin"                        },
+  { id: "r14", depth: 3, label: "Rack 14",                tag: "Rack",      selected: true  },
+  { id: "s3",  depth: 4, label: "Shelf S-3",              tag: "Shelf"                      },
+  { id: "b2",  depth: 1, label: "Bay A-2",                tag: "Bay",       muted: true     },
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -89,53 +91,104 @@ function HeroSection() {
           </div>
         </div>
 
-        <HeroCanvas>
-          <HeroCardLiveStock />
-          <HeroCardReceipt />
+        <HeroCanvas className="flex flex-col !p-0 [&>.bz-hero-cards]:flex-1 [&>.bz-hero-cards]:flex [&>.bz-hero-cards]:flex-col [&>.bz-hero-cards]:items-stretch">
+          <div className="flex flex-1 flex-col p-[56px] max-[720px]:p-9 max-[480px]:p-4">
+            <WarehouseFlowPanel />
+          </div>
         </HeroCanvas>
       </Container>
     </Section>
   );
 }
 
-function HeroCardLiveStock() {
+function WarehouseFlowPanel() {
   return (
-    <HeroCard
-      icon={<Boxes size={12} />}
-      title="Live stock"
-      badge="Live"
-      badgeVariant="live"
-      eyebrow="On-hand · all sites"
-      value="6,358 units"
-    >
-      <div className="rounded-bz-lg bg-bz-paper-warm p-3">
-        <DataRow
-          label="Across"
-          value="4 warehouses · 12 zones"
-          emphasis
-          className="mb-1.5"
-        />
-        <DataRow label="SKUs in motion today" value="1,402" />
-      </div>
-    </HeroCard>
-  );
-}
+    <div className="flex flex-1 flex-col overflow-hidden rounded-bz-2xl border border-white/[0.08] bg-bz-paper">
 
-function HeroCardReceipt() {
-  return (
-    <HeroCard
-      icon={<PackagePlus size={12} />}
-      title="GRN-2046 received"
-      badge="Auto-posted"
-      badgeVariant="posted"
-      eyebrow="Apex Manufacturing · 480 units"
-      value="$48,200"
-    >
-      <div className="flex flex-col gap-1.5 rounded-bz-lg bg-bz-paper-warm px-3 py-2.5">
-        <DataRow label="Inventory" value="+$48,200" emphasis />
-        <DataRow label="GR clearing" value="−$48,200" />
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-bz-line-soft px-5 py-3.5">
+        <StatusChip variant="live">Live · 3 sites</StatusChip>
+        <p className="text-[13px] font-semibold tabular-nums text-bz-text">6,358 units on-hand</p>
       </div>
-    </HeroCard>
+
+      {/* Body — stacks on mobile, side-by-side on sm+ */}
+      <div className="grid flex-1 grid-cols-1 divide-y divide-bz-line-soft sm:grid-cols-[3fr_2fr] sm:divide-x sm:divide-y-0">
+
+        {/* Left — location hierarchy tree */}
+        <div className="p-5">
+          <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
+            Location hierarchy
+          </p>
+          <div className="flex flex-col gap-0.5">
+            {HERO_TREE.map((n) => (
+              <div
+                key={n.id}
+                className={[
+                  "flex items-center gap-2 rounded-bz-sm py-1.5 pr-2",
+                  n.selected ? "bg-[var(--bz-fire-soft)]" : "",
+                ].join(" ")}
+                style={{ paddingLeft: n.depth * 14 + 8 }}
+              >
+                <span
+                  className={[
+                    "h-[5px] w-[5px] shrink-0 rounded-full",
+                    n.selected
+                      ? "bg-bz-fire"
+                      : n.depth === 0
+                      ? "bg-bz-olive"
+                      : n.depth === 1
+                      ? "bg-bz-leaf-deep"
+                      : "bg-bz-text-soft",
+                    n.muted ? "opacity-40" : "",
+                  ].join(" ")}
+                />
+                <span
+                  className={[
+                    "flex-1 text-[11.5px]",
+                    n.selected
+                      ? "font-medium text-bz-text"
+                      : n.depth === 0
+                      ? "font-semibold text-bz-text"
+                      : n.muted
+                      ? "text-bz-text-soft"
+                      : "text-bz-text",
+                  ].join(" ")}
+                >
+                  {n.label}
+                </span>
+                <span className="shrink-0 text-[9px] font-medium uppercase tracking-[0.12em] text-bz-text-soft">
+                  {n.tag}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right — selected location detail */}
+        <div className="p-5">
+          <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
+            Selected location
+          </p>
+
+          <div className="mb-3 text-[10.5px] text-bz-text-muted">
+            Bay A-1 · Bin B-3 · Rack 14
+          </div>
+
+          <div className="bz-stat-num mb-0.5" style={{ fontSize: 24 }}>1,204</div>
+          <div className="mb-4 text-[10.5px] text-bz-text-muted">units on-hand</div>
+
+          <div className="mb-1.5 flex items-center justify-between gap-2">
+            <span className="text-[10.5px] text-bz-text-muted">Occupancy</span>
+            <span className="text-[10.5px] font-medium text-bz-text">78%</span>
+          </div>
+          <StripeBar pct={78} />
+
+          <div className="mt-3">
+            <DataRow label="Active lot" value="L-204" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -182,22 +235,22 @@ function WarehouseMap() {
   return (
     <div className="grid grid-cols-1 gap-[18px] lg:grid-cols-[1.4fr_1fr]">
       {/* Zone map */}
-      <div className="relative overflow-hidden rounded-bz-2xl bg-bz-olive p-7">
+      <div className="relative flex flex-col overflow-hidden rounded-bz-2xl bg-bz-olive p-7">
         <DotGrid tone="dark" />
-        <div className="relative">
+        <div className="relative flex flex-col flex-1">
           <div className="mb-5 flex items-start justify-between gap-3">
             <div>
               <div className="text-[10.5px] font-medium uppercase tracking-[0.18em] text-white/[0.55]">
                 Warehouse map · all sites
               </div>
-              <div className="mt-1 text-[18px] font-medium text-bz-text-on-dark">
+              {/* <div className="mt-1 text-[18px] font-medium text-bz-text-on-dark">
                 4 sites · 12 zones · 6,358 units
-              </div>
+              </div> */}
             </div>
             <StatusChip variant="live">Live</StatusChip>
           </div>
 
-          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          <div className="mt-auto grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {ZONES.map((z) => (
               <div
                 key={z.id}
@@ -226,7 +279,7 @@ function WarehouseMap() {
 
       {/* Live feed */}
       <div className="rounded-bz-2xl border border-bz-line-soft bg-bz-paper p-6">
-        <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="mb-4 flex items-start justify-between gap-3 pb-24">
           <div>
             <div className="text-[11px] text-bz-text-muted">Live movement feed</div>
             <div className="bz-stat-num" style={{ fontSize: 20 }}>last 60 seconds</div>
@@ -277,10 +330,8 @@ function FlowSection() {
             tag="Receive"
             title="Scan in goods, post journals automatically"
             bullets={[
-              "Barcode, lot or serial captured on receipt — zero re-keying.",
               "GRN posts DR Inventory · CR GR clearing the moment you scan.",
             ]}
-            cta={{ variant: "dark", withTick: true, href: "/purchasing", children: "Learn more" }}
             visual={<ReceiveVisual />}
           />
           <StepCard
@@ -289,9 +340,7 @@ function FlowSection() {
             title="Live bin map, smart put-away"
             bullets={[
               "Zone, rack and bin addresses — system suggests the best slot.",
-              "Cycle counts and internal transfers reconcile in real time.",
             ]}
-            cta={{ variant: "dark", withTick: true, href: "/InventoryAndWarehouse", children: "Learn more" }}
             visual={<StoreVisual />}
           />
           <StepCard
@@ -300,9 +349,7 @@ function FlowSection() {
             title="Pick, pack and post COGS automatically"
             bullets={[
               "Allocate against the open sales order — FIFO, LIFO or weighted average.",
-              "Dispatch posts DR COGS · CR Inventory · books stay live.",
             ]}
-            cta={{ variant: "dark", withTick: true, href: "/SalesCrm", children: "Learn more" }}
             visual={<ShipVisual />}
           />
         </div>
@@ -364,9 +411,9 @@ function StoreVisual() {
 
 function ShipVisual() {
   const picks = [
-    { sku: "SKU-4821", qty: "12 × Lot L-204", bin: "A · R14" },
+    // { sku: "SKU-4821", qty: "12 × Lot L-204", bin: "A · R14" },
     { sku: "SKU-3902", qty: "4 × Lot L-198",  bin: "A · R12" },
-    { sku: "SKU-1207", qty: "1 × Lot L-211",  bin: "B · S3"  },
+    // { sku: "SKU-1207", qty: "1 × Lot L-211",  bin: "B · S3"  },
   ];
   return (
     <div className="w-full max-w-[380px] rounded-bz-xl border border-bz-line-soft bg-bz-paper p-4 shadow-[0_10px_28px_rgba(15,20,17,0.06)]">
@@ -407,11 +454,10 @@ function CountsSection() {
         <BigCard
           text={{
             title: "One cycle-count log. Every unit, every method.",
-            body: "Blind, visible or location-cycle counts feed straight into the ledger — with valuation in FIFO, LIFO or weighted average, picked per warehouse.",
+            // body: "Blind, visible or location-cycle counts feed straight into the ledger — with valuation in FIFO, LIFO or weighted average, picked per warehouse.",
             bullets: [
               "Lot, serial and batch trace, end to end",
               "Variance reconciliation, fully audited",
-              "98% inventory accuracy across 50,000+ companies",
             ],
             cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to operations" },
           }}
@@ -430,10 +476,10 @@ function CountSheetVisual() {
         <ClipboardCheck size={16} color="#1F3422" />
       </div>
       <div className="bz-stat-num" style={{ fontSize: 28 }}>99.8%</div>
-      <div className="mb-4 text-[11px] text-bz-text-muted">Variance-free reconciliation</div>
+      <div className="mb-4 pb-6 text-[11px] text-bz-text-muted">Variance-free reconciliation</div>
 
       <div className="flex flex-col gap-1.5">
-        {CYCLE_COUNT_ROWS.map((r) => (
+        {CYCLE_COUNT_ROWS.slice(0, 2).map((r) => (
           <div
             key={r.ref}
             className="flex items-center justify-between gap-2 rounded-bz-md bg-bz-paper-warm px-3 py-2"
@@ -448,7 +494,7 @@ function CountSheetVisual() {
         ))}
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <div className="mt-3 flex flex-wrap gap-1.5 pt-8">
         {VALUATION_METHODS.map((m) => (
           <span
             key={m}
@@ -485,11 +531,11 @@ function OneLedgerSection() {
               icon={<PackagePlus size={22} strokeWidth={1.4} color="#DBE9B8" />}
             />
             <Bento.Desc>
-              Receipts post DR Inventory · CR GR clearing the moment they're scanned.
+              Receipts post DR Inventory.
             </Bento.Desc>
             <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
               <JournalRow tone="dark" txn="GRN-2046 · 480 units" debit="Inventory" credit="GR clearing" />
-              <JournalRow tone="dark" txn="GRN-2045 · 96 units"  debit="Inventory" credit="GR clearing" />
+              {/* <JournalRow tone="dark" txn="GRN-2045 · 96 units"  debit="Inventory" credit="GR clearing" /> */}
             </Bento.Footer>
           </Bento>
 
@@ -499,11 +545,11 @@ function OneLedgerSection() {
               icon={<Truck size={22} strokeWidth={1.4} color="#DBE9B8" />}
             />
             <Bento.Desc>
-              Dispatches post DR COGS · CR Inventory — gross margin lands the same day.
+              Dispatches post DR COGS.
             </Bento.Desc>
             <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
               <JournalRow tone="dark" txn="SH-882 · SO-1041" debit="COGS" credit="Inventory" />
-              <JournalRow tone="dark" txn="SH-881 · SO-1037" debit="COGS" credit="Inventory" />
+              {/* <JournalRow tone="dark" txn="SH-881 · SO-1037" debit="COGS" credit="Inventory" /> */}
             </Bento.Footer>
           </Bento>
 
@@ -513,11 +559,11 @@ function OneLedgerSection() {
               icon={<MapPin size={22} strokeWidth={1.4} color="#DBE9B8" />}
             />
             <Bento.Desc>
-              Internal transfers move stock between zones with full audit, no margin impact.
+              Internal transfers move stock.
             </Bento.Desc>
             <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
               <JournalRow tone="dark" txn="TR-318 · A → C" debit="Zone C stock" credit="Zone A stock" />
-              <JournalRow tone="dark" txn="TR-317 · B → A" debit="Zone A stock" credit="Zone B stock" />
+              {/* <JournalRow tone="dark" txn="TR-317 · B → A" debit="Zone A stock" credit="Zone B stock" /> */}
             </Bento.Footer>
           </Bento>
         </BentoGrid>

@@ -128,6 +128,26 @@ function ErrorBoundaryPage() {
   );
 }
 
+function DistributionPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <DistributionPage />
+      <Footer
+        isLightMode
+        cta={{
+          title: "Ship more, faster — with zero inventory surprises.",
+          titleMuted: "Every order tracked. Every margin known.",
+          description:
+            "Centralise purchasing, warehouses, and fulfillment on one ledger. COGS posts the moment you ship — no re-keying, full audit trail.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Talk to operations team",
+        }}
+      />
+    </div>
+  );
+}
+
 function PurchasingPageLayout() {
   return (
     <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -260,6 +280,25 @@ function InventoryAndWarehousePageLayout() {
           description: "Track every SKU in real time, automate replenishment.",
           primaryLabel: "Start free trial",
           secondaryLabel: "Talk to operations team",
+        }}
+      />
+    </div>
+  );
+}
+
+function ManufacturingPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <ManufacturingPage />
+      <Footer
+        cta={{
+          title: "Run your factory floor with complete precision.",
+          titleMuted: "From raw material to finished good, on time, every run.",
+          description:
+            "Plan production, manage BOMs, schedule work orders and post manufacturing cost straight to the ledger — one connected operating system, zero re-keying.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Talk to ops team",
         }}
       />
     </div>
@@ -563,7 +602,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true,           Component: HomeLayout          },
       { path: "purchasing",    Component: PurchasingPageLayout },
-      { path: "distribution",  Component: DistributionPage    },
+      { path: "distribution",  Component: DistributionPageLayout },
       { path: "about",         Component: AboutPage           },
       { path: "contact",      Component: ContactPage          },
       { path: "partners",                Component: PartnerPage              },
@@ -584,7 +623,7 @@ export const router = createBrowserRouter([
       { path: "InventoryAndWarehouse", Component: InventoryAndWarehousePageLayout },
       { path: "SalesForceManagement", Component: SalesForceManagementPageLayout },
       { path: "ProjectAndCosting", Component: ProjectAndCostingPageLayout },
-      { path: "manufacturing",    Component: ManufacturingPage           },
+      { path: "manufacturing",    Component: ManufacturingPageLayout     },
       { path: "manufacturingProduct",    Component: ManufacturingProductPageLayout           },
       { path: "Retail", Component: RetailAndEcommercePage    },
       { path: "ProfessionalService", Component: ProfessionalServicePage    },

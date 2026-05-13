@@ -8467,9 +8467,7 @@
   border: 1px solid var(--bz-line);
 }
 .bz-footer-card--light::before {
-  background-image:
-    linear-gradient(rgba(15,20,17,0.04) 1px, transparent 1px),
-    linear-gradient(to right, rgba(15,20,17,0.04) 1px, transparent 1px);
+  background-image: none;
 }
 
 /* Flag chip */

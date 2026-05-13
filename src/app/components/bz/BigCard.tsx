@@ -50,13 +50,16 @@ export function BigCard({
     >
       <div className="bz-big-card-text">
         <div>
-          <h3 className="bz-bento-title" style={{ marginBottom: 14 }}>
+          <h3
+            className="bz-bento-title"
+            style={{ marginBottom: text.body ? 14 : text.bullets ? 32 : 14 }}
+          >
             {text.title}
           </h3>
           {text.body && (
             <p
               className="text-[14.5px] leading-[1.6] text-white/[0.72]"
-              style={{ maxWidth: 460, marginBottom: text.bullets ? 36 : 0 }}
+              style={{ marginBottom: text.bullets ? 96 : 0 }}
             >
               {text.body}
             </p>
@@ -64,7 +67,7 @@ export function BigCard({
           {text.bullets && (
             <ul
               className="flex flex-col gap-[10px]"
-              style={{ maxWidth: 460, listStyle: "none", padding: 0, margin: 0 }}
+              style={{ listStyle: "none", padding: 0, margin: 0 }}
             >
               {text.bullets.map((b, i) => (
                 <li

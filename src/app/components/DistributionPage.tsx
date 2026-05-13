@@ -1,824 +1,532 @@
-import "../../styles/style.css";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
-import { HeroSplit, HeroBadge, Button, Icon } from "./marketing";
 import {
-  HeroVisual,
-  HeroMainCard,
-  HeroInventoryCard,
-  HeroGlobeCard,
-  HeroCircleCard,
-  ChallengesGrid,
-  ChallengeCard,
-  SolutionGrid,
-  type SolutionItem,
-  CapabilitiesGrid,
-  CapabilityCard,
-  SimpleFeatureCard,
-  MonoTable,
-  MethodGrid,
-  InsightsBlock,
-  ChartFrame,
-  WorkflowStrip,
-  type WorkflowStep,
-  IndustryCta,
-} from "./solutions/by-industry";
+  Layers,
+  PackageCheck,
+  RefreshCw,
+  Route,
+  ScanBarcode,
+  Sparkles,
+  Truck,
+} from "lucide-react";
+import {
+  BadgeGreen,
+  Bento,
+  BentoGrid,
+  BigCard,
+  Container,
+  DataRow,
+  Heading,
+  HeroCanvas,
+  Pill,
+  Section,
+  SectionHead,
+  StatusChip,
+  StepCard,
+  StripeBar,
+} from "./bz";
 
-// ─── Hero ────────────────────────────────────────────────────────────────────
+// ── DATA ─────────────────────────────────────────────────────────────────────
 
-const SHIPMENT_ORDERS = [
-  { id: "SO-2024-0891", dest: "Dubai, UAE", pct: 94, status: "shipped" },
-  { id: "SO-2024-0892", dest: "London, UK", pct: 67, status: "picking" },
-  { id: "SO-2024-0893", dest: "Mumbai, IN", pct: 28, status: "processing" },
+const ORDERS_IN_FLIGHT = [
+  { id: "DO-8841", dest: "Dubai, UAE",   stage: "Shipped",    pct: 94 },
+  { id: "DO-8842", dest: "London, UK",   stage: "Picking",    pct: 61 },
+  { id: "DO-8843", dest: "Mumbai, IN",   stage: "Processing", pct: 27 },
 ];
 
-function DistributionHeroVisual() {
+const DISPATCH_SUMMARY = [
+  { label: "Shipped today",  value: "142" },
+  { label: "In Transit",     value: "37"  },
+  { label: "Awaiting pick",  value: "11"  },
+];
+
+const BATCH_ROWS = [
+  { id: "#B-2025-041", product: "Frozen Dairy Mix",   exp: "2026-03-15", status: "Cleared", ok: true  },
+  { id: "#B-2025-042", product: "Organic Wheat Bulk", exp: "2026-08-20", status: "Pending", ok: false },
+  { id: "#B-2025-043", product: "Cold-press Oil 1L",  exp: "2025-12-01", status: "Cleared", ok: true  },
+];
+
+const SKU_MARGINS = [
+  { sku: "SKU-1042", desc: "Organic Wheat 25kg", cost: "$18.40", sell: "$31.00", margin: "40.6%", up: true  },
+  { sku: "SKU-2011", desc: "Cold-press Oil 1L",  cost: "$4.80",  sell: "$7.20",  margin: "33.3%", up: true  },
+  { sku: "SKU-3301", desc: "Frozen Dairy Mix",   cost: "$12.10", sell: "$16.50", margin: "26.7%", up: false },
+];
+
+const CAPABILITIES = [
+  { icon: RefreshCw,    title: "Smart Replenishment",   desc: "Reorder points with lead-time awareness — auto-PO fires before you run out, no manual trigger." },
+  { icon: ScanBarcode,  title: "Barcode & QR Scanning", desc: "Receive, pick, and transfer via mobile scan. Every movement recorded the moment it happens." },
+  { icon: Layers,       title: "Unit Conversions",      desc: "Buy in pallets, sell in cases, track in kilograms — all on the same item master." },
+  { icon: Route,        title: "Multi-channel Sync",    desc: "Orders from e-commerce, B2B portals, and POS flow into one unified fulfillment queue." },
+  { icon: PackageCheck, title: "Stock Transfers",       desc: "Move goods between warehouses and branches with full in-transit visibility and journal posting." },
+  { icon: Truck,        title: "Carrier Integration",   desc: "Push shipment details to carriers and pull live tracking events back — automatically." },
+];
+
+// ── HERO MOCK ─────────────────────────────────────────────────────────────────
+
+function DispatchBoardPanel() {
   return (
-    <HeroVisual
-      main={
-        <HeroMainCard panelTitle="Bizak · Order Control">
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 7,
-              paddingTop: 10,
-              borderTop: "1px solid rgba(122,130,109,0.1)",
-            }}
-          >
-            {SHIPMENT_ORDERS.map((order) => (
-              <div key={order.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ minWidth: 86 }}>
-                  <span style={{ fontSize: 8, fontFamily: "monospace", color: "rgba(122,130,109,0.7)" }}>
-                    {order.id}
+    <div className="flex flex-1 flex-col overflow-hidden rounded-bz-2xl border border-white/[0.08] bg-bz-paper">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-bz-line-soft px-5 py-3.5">
+        <StatusChip variant="live">Live Dispatch · 190 orders today</StatusChip>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] text-bz-text-muted">On-time</span>
+          <span className="text-[15px] font-bold tabular-nums text-bz-text">96.2%</span>
+          <span className="text-[10px] font-semibold text-bz-leaf-deep">↑ +1.4%</span>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="grid flex-1 grid-cols-1 divide-y divide-bz-line-soft sm:grid-cols-[3fr_2fr] sm:divide-x sm:divide-y-0">
+
+        {/* Left — orders in flight */}
+        <div className="p-5">
+          <p className="mb-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
+            Orders in Flight
+          </p>
+          <div className="flex flex-col gap-4">
+            {ORDERS_IN_FLIGHT.map((o) => (
+              <div key={o.id}>
+                <div className="mb-1.5 flex items-center justify-between gap-2">
+                  <span className="text-[10.5px] font-medium text-bz-text">{o.id}</span>
+                  <span className="text-[10px] text-bz-text-muted">{o.dest}</span>
+                  <span
+                    className={[
+                      "ml-auto shrink-0 text-[9px] font-semibold uppercase tracking-[0.1em]",
+                      o.pct >= 90
+                        ? "text-bz-leaf-deep"
+                        : o.pct >= 50
+                        ? "text-bz-text"
+                        : "text-bz-text-muted",
+                    ].join(" ")}
+                  >
+                    {o.stage}
                   </span>
-                  <div style={{ fontSize: 7, color: "rgba(122,130,109,0.45)", marginTop: 1 }}>
-                    {order.dest}
-                  </div>
                 </div>
-                <div
-                  style={{
-                    flex: 1,
-                    height: 4,
-                    background: "rgba(122,130,109,0.1)",
-                    borderRadius: 99,
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "100%",
-                      width: `${order.pct}%`,
-                      background: "var(--bz-accent)",
-                      borderRadius: 99,
-                    }}
-                  />
-                </div>
-                <span
-                  style={{
-                    fontSize: 8,
-                    fontWeight: 700,
-                    color: order.status === "shipped" ? "var(--bz-sage)" : "var(--bz-accent)",
-                    minWidth: 60,
-                    textAlign: "right",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                  }}
-                >
-                  {order.status}
-                </span>
+                <StripeBar pct={o.pct} />
               </div>
             ))}
           </div>
-        </HeroMainCard>
-      }
-      inventory={
-        <HeroInventoryCard
-          iconName="inventory"
-          eyebrow="Live Inventory"
-          value="14,204 SKU"
-          barLabel="In Stock"
-          barValue="88%"
-          barPct={88}
-        />
-      }
-      globe={
-        <HeroGlobeCard iconName="globe" eyebrow="Global Shipments">
-          <div
-            style={{
-              position: "relative",
-              height: 80,
-              background: "rgba(232,234,228,0.3)",
-              borderRadius: 8,
-              border: "1px solid rgba(232,234,228,0.5)",
-              overflow: "hidden",
-            }}
-          >
-            <svg
-              style={{ position: "absolute", inset: 0, opacity: 0.2 }}
-              viewBox="0 0 200 80"
-              fill="none"
-            >
-              <path d="M20,40 Q60,15 100,40 T180,40" stroke="currentColor" strokeWidth="1" />
-            </svg>
-            {[
-              { top: "50%", left: "25%", delay: "0s" },
-              { top: "33%", left: "65%", delay: "0.5s" },
-              { top: "65%", left: "50%", delay: "1s" },
-            ].map((p, i) => (
+        </div>
+
+        {/* Right — dispatch summary */}
+        <div className="p-5">
+          <p className="mb-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
+            Today's Summary
+          </p>
+          <div className="flex flex-col gap-2.5">
+            {DISPATCH_SUMMARY.map((s) => (
               <div
-                key={i}
-                className="biz-data-dot biz-pulse-glow"
-                style={{
-                  top: p.top,
-                  left: p.left,
-                  animationDelay: p.delay,
-                  transform: "translate(-50%,-50%)",
-                }}
-              />
+                key={s.label}
+                className="flex items-center justify-between rounded-bz-md border border-bz-line-soft bg-white px-3.5 py-2.5"
+              >
+                <span className="text-[10.5px] text-bz-text-muted">{s.label}</span>
+                <span className="text-[15px] font-bold tabular-nums text-bz-text">{s.value}</span>
+              </div>
             ))}
           </div>
-        </HeroGlobeCard>
-      }
-      circle={<HeroCircleCard eyebrow="Warehouse Util." value="72%" progressPct={40} />}
-    />
+        </div>
+      </div>
+    </div>
   );
 }
+
+// ── HERO ──────────────────────────────────────────────────────────────────────
 
 function HeroSection() {
   return (
-    <HeroSplit
-      badge={<HeroBadge>Unified Distribution Platform</HeroBadge>}
-      title={
-        <>
-          ERP for Trading &amp;&nbsp;
-          <span className="text-bz-sage">Distribution</span> Companies
-        </>
-      }
-      description="Consolidate your purchasing, warehouse inventory, and multi-channel sales into a single source of truth. Scale without the operational complexity."
-      actions={
-        <>
-          <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
-          <Button variant="outline" size="lg">See How It Works</Button>
-        </>
-      }
-      stats={[
-        { value: "99.9%", label: "Inventory Accuracy" },
-        { value: "24/7", label: "Real-time Sync" },
-      ]}
-      visual={<DistributionHeroVisual />}
-    />
+    <Section tone="b" pad="hero">
+      <Container>
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>
+            96.2% on-time delivery, live 🚚
+          </BadgeGreen>
+
+          <Heading level={2} style={{ marginBottom: 36 }}>
+            Every order. Every warehouse. Every route.{" "}
+            <Heading.Muted>One operating system for distribution.</Heading.Muted>
+          </Heading>
+
+          <div className="flex flex-wrap justify-center gap-[10px]">
+            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
+              Start free trial
+            </Pill>
+            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">
+              Book a demo
+            </Pill>
+          </div>
+        </div>
+
+        <HeroCanvas className="flex flex-col !p-0 [&>.bz-hero-cards]:flex-1 [&>.bz-hero-cards]:flex [&>.bz-hero-cards]:flex-col [&>.bz-hero-cards]:items-stretch">
+          <div className="flex flex-1 flex-col p-[56px] max-[720px]:p-9 max-[480px]:p-4">
+            <DispatchBoardPanel />
+          </div>
+        </HeroCanvas>
+      </Container>
+    </Section>
   );
 }
 
-// ─── Challenges ──────────────────────────────────────────────────────────────
+// ── STEP VISUALS ──────────────────────────────────────────────────────────────
 
-function ChallengesSection() {
+function PurchaseOrderVisual() {
   return (
-    <ChallengesGrid
-      eyebrow="Challenges"
-      title="Distribution operations become complex as you grow"
-      description="Legacy systems and fragmented processes can't keep up with the demands of modern scaling distributors."
-    >
-      {/* 1 · Stock Discrepancies */}
-      <ChallengeCard
-        icon="inventory"
-        title="Stock Discrepancies"
-        description="Mismatches between physical counts and system records lead to overselling and customer dissatisfaction."
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div
-            style={{
-              flex: 1,
-              height: 6,
-              background: "#f3f3f3",
-              borderRadius: 99,
-              overflow: "hidden",
-            }}
-          >
-            <div style={{ height: "100%", background: "var(--bz-sage)", width: "100%" }} />
-          </div>
-          <span
-            style={{
-              fontSize: 9,
-              fontWeight: 700,
-              color: "var(--bz-sage)",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Correction Active
-          </span>
-        </div>
-      </ChallengeCard>
-
-      {/* 2 · Manual Tracking */}
-      <ChallengeCard
-        icon="edit-note"
-        title="Manual Tracking"
-        description="Reliance on spreadsheets creates bottlenecks and critical human error in daily data entry and verification."
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span
-              style={{
-                fontSize: 9,
-                fontWeight: 700,
-                color: "#666",
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-              }}
-            >
-              Human Error Rate
-            </span>
-            <span style={{ fontSize: 10, fontWeight: 700, color: "#f87171" }}>High</span>
-          </div>
-          <div style={{ height: 6, background: "#f3f3f3", borderRadius: 99, overflow: "hidden" }}>
-            <div style={{ height: "100%", background: "#f87171", width: "85%" }} />
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
-            <div
-              className="biz-pulse-glow"
-              style={{ width: 8, height: 8, borderRadius: "50%", background: "#fbbf24" }}
-            />
-            <span
-              style={{
-                fontSize: 9,
-                fontWeight: 700,
-                color: "var(--bz-sage)",
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-              }}
-            >
-              Sync Pending
-            </span>
-          </div>
-        </div>
-      </ChallengeCard>
-
-      {/* 3 · Fulfillment Delays */}
-      <ChallengeCard
-        icon="truck"
-        title="Fulfillment Delays"
-        description="Disconnected warehouse teams and archaic pick-lists slow down the pace of delivery to your customers."
-      >
-        <div style={{ position: "relative", height: 40, width: "100%", display: "flex", alignItems: "center" }}>
-          <div style={{ position: "absolute", width: "100%", height: 1, background: "#e5e7eb" }} />
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              width: "40%",
-              height: 2,
-              background: "#f87171",
-              top: "calc(50% - 2px)",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              width: "90%",
-              height: 2,
-              background: "rgba(199,255,53,0.6)",
-              top: "calc(50% + 1px)",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: "var(--bz-sage)",
-              top: "50%",
-              transform: "translateY(-50%)",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              left: "40%",
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: "#f87171",
-              top: "50%",
-              transform: "translate(-50%,-50%)",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              right: "5%",
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: "var(--bz-accent)",
-              boxShadow: "0 0 8px var(--bz-accent)",
-              top: "50%",
-              transform: "translateY(-50%)",
-            }}
-          />
-          <span
-            style={{
-              position: "absolute",
-              top: 0,
-              left: "33%",
-              fontSize: 8,
-              fontWeight: 700,
-              color: "#f87171",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-            }}
-          >
-            Delayed
-          </span>
-          <span
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: "58%",
-              fontSize: 8,
-              fontWeight: 700,
-              color: "var(--bz-sage)",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-            }}
-          >
-            Bizak Optimized
-          </span>
-        </div>
-      </ChallengeCard>
-
-      {/* 4 · Visibility Gap */}
-      <ChallengeCard
-        icon="eye-off"
-        title="Visibility Gap"
-        description="Inability to track goods in transit or multi-location stock levels in real-time results in inefficient ordering."
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div
-            style={{
-              position: "relative",
-              width: 44,
-              height: 44,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <div
-              className="biz-radar-ping"
-              style={{
-                position: "absolute",
-                inset: 0,
-                background: "rgba(199,255,53,0.12)",
-                borderRadius: "50%",
-              }}
-            />
-            <div
-              style={{
-                width: 6,
-                height: 6,
-                background: "var(--bz-accent)",
-                borderRadius: "50%",
-                boxShadow: "0 0 8px var(--bz-accent)",
-                position: "relative",
-                zIndex: 10,
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                width: 4,
-                height: 4,
-                background: "rgba(122,130,109,0.4)",
-                borderRadius: "50%",
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                bottom: 10,
-                left: 14,
-                width: 4,
-                height: 4,
-                background: "rgba(122,130,109,0.4)",
-                borderRadius: "50%",
-              }}
-            />
-          </div>
+    <div className="flex w-full flex-col gap-4">
+      <div className="rounded-bz-lg border border-bz-line bg-white px-5 py-4">
+        <div className="mb-3 flex items-center justify-between gap-2">
           <div>
-            <div
-              style={{
-                fontSize: 9,
-                fontWeight: 700,
-                color: "var(--bz-sage)",
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-              }}
-            >
-              Warehouse Radar
-            </div>
-            <div style={{ fontSize: 9, color: "#666", marginTop: 2 }}>Illuminating Blind Spots</div>
+            <div className="text-[11px] font-bold text-bz-text">PO-3041</div>
+            <div className="mt-0.5 text-[10px] text-bz-text-muted">ABC Trading Co. · 14 May 2025</div>
           </div>
+          <StatusChip variant="posted">Approved</StatusChip>
         </div>
-      </ChallengeCard>
+        <div className="flex flex-col gap-2">
+          {[
+            { ref: "RM-4021", desc: "Steel Sheet 5KG",  qty: "×240", val: "$4,416" },
+            { ref: "RM-4031", desc: "Bearing Seal 2PCS", qty: "×480", val: "$1,344" },
+          ].map((l) => (
+            <div key={l.ref} className="flex items-center gap-2">
+              <span className="w-[50px] shrink-0 text-[9.5px] font-medium text-bz-text">{l.ref}</span>
+              <span className="flex-1 text-[9.5px] text-bz-text-muted">{l.desc}</span>
+              <span className="text-[9.5px] text-bz-text-muted">{l.qty}</span>
+              <span className="w-[44px] text-right text-[9.5px] font-semibold tabular-nums text-bz-text">{l.val}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-      {/* 5 · Siloed Data */}
-      <ChallengeCard
-        icon="hub"
-        title="Siloed Data"
-        description="Purchasing and Sales teams working off different versions of truth across your multi-branch locations."
-      >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0, height: 44 }}>
+      {/* 3-way match */}
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { label: "PO", ok: true },
+          { label: "GRN", ok: true },
+          { label: "Invoice", ok: true },
+        ].map((m) => (
           <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              border: "2px solid rgba(122,130,109,0.22)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
+            key={m.label}
+            className="flex flex-col items-center gap-1.5 rounded-bz-md border border-bz-line-soft bg-white py-3"
           >
-            <div style={{ width: 6, height: 6, background: "rgba(122,130,109,0.4)", borderRadius: "50%" }} />
+            <span className="text-[9px] font-semibold uppercase tracking-[0.12em] text-bz-text-soft">{m.label}</span>
+            <span className="text-[9.5px] font-semibold text-bz-leaf-deep">Matched</span>
           </div>
-          <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center", height: 2 }}>
-            <div style={{ width: "100%", height: 1, background: "rgba(122,130,109,0.15)" }} />
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                justifyContent: "space-around",
-                alignItems: "center",
-              }}
-            >
-              {[0, 0.5, 1].map((delay, i) => (
-                <div
-                  key={i}
-                  className="biz-pulse-glow"
-                  style={{
-                    width: 4,
-                    height: 4,
-                    background: "var(--bz-accent)",
-                    borderRadius: "50%",
-                    animationDelay: `${delay}s`,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              border: "2px solid rgba(199,255,53,0.6)",
-              background: "rgba(199,255,53,0.06)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <div style={{ width: 6, height: 6, background: "var(--bz-accent)", borderRadius: "50%" }} />
-          </div>
-        </div>
-        <div style={{ textAlign: "center", marginTop: 8 }}>
-          <span
-            style={{
-              fontSize: 9,
-              fontWeight: 700,
-              color: "var(--bz-sage)",
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-            }}
-          >
-            Data Ingestion
-          </span>
-        </div>
-      </ChallengeCard>
-
-      {/* 6 · Compliance Risk */}
-      <ChallengeCard
-        icon="shield"
-        title="Compliance Risk"
-        description="Difficulties tracking lot numbers, expiry dates, and required regulatory paperwork as volume increases."
-      >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ position: "relative", width: 44, height: 44 }}>
-            <svg
-              style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}
-              viewBox="0 0 48 48"
-            >
-              <circle cx="24" cy="24" r="18" fill="transparent" stroke="#f3f3f3" strokeWidth="4" />
-              <circle
-                cx="24"
-                cy="24"
-                r="18"
-                fill="transparent"
-                stroke="#f87171"
-                strokeWidth="4"
-                strokeDasharray="113"
-                strokeDashoffset="40"
-              />
-            </svg>
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <span style={{ fontSize: 8, fontWeight: 700, color: "#f87171" }}>65%</span>
-            </div>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
-            <span
-              style={{
-                fontSize: 9,
-                fontWeight: 700,
-                color: "#f87171",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-              }}
-            >
-              Regulatory Check
-            </span>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div
-                className="biz-pulse-glow"
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  background: "var(--bz-accent)",
-                  boxShadow: "0 0 8px var(--bz-accent)",
-                }}
-              />
-              <span
-                style={{
-                  fontSize: 9,
-                  fontWeight: 700,
-                  color: "var(--bz-sage)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                }}
-              >
-                Audit Ready
-              </span>
-            </div>
-          </div>
-        </div>
-      </ChallengeCard>
-    </ChallengesGrid>
+        ))}
+      </div>
+    </div>
   );
 }
 
-// ─── Solution ────────────────────────────────────────────────────────────────
-
-const SOLUTIONS: SolutionItem[] = [
-  {
-    icon: "warehouse",
-    title: "Centralized Inventory",
-    desc: "Real-time visibility across all warehouses, transit hubs, and retail points in a single dashboard.",
-  },
-  {
-    icon: "cart",
-    title: "Efficient Purchasing",
-    desc: "Automate replenishment based on lead times and demand forecasts to optimize cash flow.",
-  },
-  {
-    icon: "bolt",
-    title: "Faster Fulfillment",
-    desc: "Integrated picking, packing, and shipping workflows with direct carrier connections for speed.",
-  },
-  {
-    icon: "settings",
-    title: "Warehouse Control",
-    desc: "Sophisticated bin management and barcode scanning for 99.9% inventory accuracy levels.",
-  },
-  {
-    icon: "insights",
-    title: "Financial Visibility",
-    desc: "Real-time P&L per SKU, including accurate landed costs and multi-currency conversions.",
-  },
-  {
-    icon: "account-tree",
-    title: "Multi-branch Sync",
-    desc: "Manage global entities with ease, keeping local compliance and global reporting perfectly aligned.",
-  },
-];
-
-// ─── Capabilities ────────────────────────────────────────────────────────────
-
-function CapabilitiesSection() {
+function PickListVisual() {
+  const lines = [
+    { sku: "SKU-1042", loc: "Zone A · Rack 14", qty: "24 KG", done: true  },
+    { sku: "SKU-3301", loc: "Zone B · Shelf 3",  qty: "12 EA", done: true  },
+    { sku: "SKU-2011", loc: "Zone A · Bin B-3",  qty: "6 L",   done: false },
+  ];
   return (
-    <CapabilitiesGrid
-      eyebrow="Capabilities"
-      title="Built for the operational demands of distributors."
-    >
-      {/* Row 1: Batch & Lot | Pick & Pack */}
-      <CapabilityCard span={3} minHeight={440}>
+    <div className="flex w-full flex-col gap-4">
+      <div className="flex items-start justify-between gap-2">
         <div>
-          <h3>Batch &amp; Lot Tracking</h3>
-          <p>
-            Full traceability from manufacturer to end customer. Perfect for food, chemical, or
-            electronics distribution where provenance is critical.
-          </p>
+          <div className="text-[11px] font-bold text-bz-text">Pick List PL-2044</div>
+          <div className="mt-0.5 text-[10px] text-bz-text-muted">DO-8841 · Dubai, UAE</div>
         </div>
-        <MonoTable
-          headers={["BATCH_ID", "EXP_DATE", "STATUS"]}
-          rows={[
-            { values: ["#B-2024-001", "2025-12-30", "PASSED"], statusColor: "#4ade80" },
-            { values: ["#B-2024-002", "2026-04-15", "PENDING"], statusColor: "#fbbf24" },
-          ]}
-        />
-      </CapabilityCard>
+        <StatusChip variant="live">Picking</StatusChip>
+      </div>
 
-      <CapabilityCard span={3} minHeight={440}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            marginBottom: 24,
-          }}
-        >
-          <div>
-            <h3>Pick &amp; Pack Rules</h3>
-            <p>
-              FIFO, FEFO, or LIFO automated routing. Optimize warehouse floor walk paths and
-              expiration management.
-            </p>
-          </div>
+      <div>
+        <div className="mb-1.5 flex items-center justify-between">
+          <span className="text-[10px] text-bz-text-muted">Progress</span>
+          <span className="text-[10px] font-medium text-bz-text">2 / 3 lines</span>
+        </div>
+        <StripeBar pct={67} />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {lines.map((p) => (
           <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: "50%",
-              background: "rgba(199,255,53,0.1)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--bz-accent)",
-              flexShrink: 0,
-            }}
+            key={p.sku}
+            className={[
+              "flex items-center gap-3 rounded-bz-md border px-3.5 py-2.5",
+              p.done
+                ? "border-bz-line-soft bg-white"
+                : "border-bz-line bg-bz-paper-warm",
+            ].join(" ")}
           >
-            <Icon name="list" size={26} />
-          </div>
-        </div>
-        <MethodGrid
-          items={[
-            { label: "FIFO", sub: "First In" },
-            { label: "FEFO", sub: "Expiry" },
-            { label: "LIFO", sub: "Last In" },
-          ]}
-        />
-      </CapabilityCard>
-
-      {/* Row 2: Stock Transfers | Low Stock (neon) | Unit Conversions */}
-      <SimpleFeatureCard
-        iconName="sync"
-        title="Stock Transfers"
-        body="Inter-warehouse logistics and inventory balancing across entities with ease."
-        minHeight={260}
-      />
-      <SimpleFeatureCard
-        iconName="bell"
-        title="Low Stock Alerts"
-        body="Automated reorder triggers synchronized with supplier lead times."
-        minHeight={260}
-        neon
-        cornerBadge="High Priority"
-      />
-      <SimpleFeatureCard
-        iconName="package"
-        title="Unit Conversions"
-        body="Buy in pallets, sell in units, track in kilograms effortlessly."
-        minHeight={260}
-        progressPct={66}
-      />
-
-      {/* Row 3: Full-width Inventory Precision */}
-      <CapabilityCard span={6}>
-        <div className="biz-precision-card">
-          <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
-            <div>
-              <div className="biz-mini-stat">99.8%</div>
-              <p
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.45)",
-                  marginTop: 6,
-                }}
-              >
-                Accuracy
-              </p>
+            <div
+              className={[
+                "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border",
+                p.done ? "border-bz-leaf-deep" : "border-bz-text-soft",
+              ].join(" ")}
+            >
+              {p.done && (
+                <span className="text-[8px] font-bold text-bz-leaf-deep">✓</span>
+              )}
             </div>
-            <div style={{ maxWidth: 400 }}>
-              <h4 style={{ fontWeight: 700, fontSize: 19, color: "#fff", marginBottom: 8 }}>
-                Inventory Precision
-              </h4>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.38)", lineHeight: 1.6 }}>
-                Our enterprise customers maintain near-perfect inventory levels through automated
-                reconciliation and digital cycle counting.
-              </p>
+            <div className="flex-1">
+              <div className="text-[10.5px] font-medium text-bz-text">{p.sku}</div>
+              <div className="text-[9.5px] text-bz-text-muted">{p.loc}</div>
             </div>
+            <span className="text-[10px] font-semibold tabular-nums text-bz-text">{p.qty}</span>
           </div>
-          <Button variant="ghostDark" size="sm">Read Audit Report</Button>
-        </div>
-      </CapabilityCard>
-    </CapabilitiesGrid>
+        ))}
+      </div>
+    </div>
   );
 }
 
-// ─── Insights ────────────────────────────────────────────────────────────────
-
-function DistributionChart() {
+function ShipmentSettleVisual() {
   return (
-    <ChartFrame
-      tooltip={{ title: "PROFIT MARGIN: 24.2%", subtitle: "↑ 2.4% vs last month" }}
-      glowSide="right"
-    >
-      <svg style={{ width: "100%", height: "100%" }} viewBox="0 0 400 200" fill="none">
-        <path
-          d="M0 150 C 50 140, 100 80, 150 100 S 250 20, 400 50"
-          stroke="var(--bz-sage)"
-          strokeWidth="3"
-        />
-        <path
-          d="M0 150 C 50 140, 100 80, 150 100 S 250 20, 400 50 V 200 H 0 Z"
-          fill="rgba(122,130,109,0.05)"
-        />
-        <circle cx="150" cy="100" r="5" fill="var(--bz-accent)" stroke="var(--bz-sage)" strokeWidth="2" />
-      </svg>
-    </ChartFrame>
+    <div className="flex w-full flex-col gap-4">
+      <div className="rounded-bz-lg border border-bz-line bg-white px-5 py-4">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <div>
+            <div className="text-[11px] font-bold text-bz-text">INV-8841</div>
+            <div className="mt-0.5 text-[10px] text-bz-text-muted">From DO-8841 · Dubai, UAE</div>
+          </div>
+          <StatusChip variant="posted">Sent</StatusChip>
+        </div>
+        <div className="flex items-center justify-between border-t border-bz-line-soft pt-3">
+          <span className="text-[10.5px] text-bz-text-muted">Invoice total</span>
+          <span className="text-[14px] font-bold tabular-nums text-bz-text">$5,760.00</span>
+        </div>
+      </div>
+
+      <div className="rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-4 py-3">
+        <div className="mb-2.5 flex items-center gap-2">
+          <span className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
+            Auto-posted
+          </span>
+          <StatusChip variant="live">Ledger</StatusChip>
+        </div>
+        <div className="flex flex-col gap-2">
+          {[
+            { acc: "Accounts Receivable", side: "DR", amt: "$5,760" },
+            { acc: "Revenue",             side: "CR", amt: "$5,760" },
+          ].map((j) => (
+            <DataRow key={j.acc} label={j.acc} value={`${j.side} ${j.amt}`} />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
-// ─── Workflow ────────────────────────────────────────────────────────────────
+// ── [01] FULFILLMENT FLOW ─────────────────────────────────────────────────────
 
-const STEPS: WorkflowStep[] = [
-  { icon: "payments", label: "Purchase" },
-  { icon: "inbox", label: "Receive" },
-  { icon: "gps", label: "Track" },
-  { icon: "manufacturing", label: "Process" },
-  { icon: "truck", label: "Ship" },
-  { icon: "invoice", label: "Invoice" },
-];
+function FulfillmentFlowSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="01"
+          label="End-to-end flow"
+          title={
+            <>
+              From first PO to paid invoice —{" "}
+              <Heading.Muted>all on one ledger.</Heading.Muted>
+            </>
+          }
+          titleMaxWidth={680}
+        />
 
-// ─── Page ────────────────────────────────────────────────────────────────────
+        <div className="flex flex-col gap-5">
+          <StepCard
+            number="01"
+            tag="Source & Order"
+            title="Vendor management, POs, and 3-way matching"
+            bullets={["3-way match (PO · GRN · Invoice) posts receipt to the ledger instantly."]}
+            visual={<PurchaseOrderVisual />}
+            className="!bg-bz-surface"
+          />
+
+          <StepCard
+            number="02"
+            tag="Warehouse & Dispatch"
+            title="FIFO-routed picks, barcode scanning, carrier links"
+            bullets={["Barcode or QR scan to confirm each pick line — zero paper travellers."]}
+            visual={<PickListVisual />}
+            className="!bg-bz-surface"
+          />
+
+          <StepCard
+            number="03"
+            tag="Deliver & Settle"
+            title="Auto-invoice on shipment, COGS posted the same second"
+            bullets={["COGS and revenue post to the ledger automatically the moment you dispatch."]}
+            cta={{ variant: "dark", withTick: true, href: "https://system.bizakerp.com/account/self-register", children: "See it live" }}
+            visual={<ShipmentSettleVisual />}
+            className="!bg-bz-surface"
+          />
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ── [02] BATCH TRACEABILITY ───────────────────────────────────────────────────
+
+function BatchTableVisual() {
+  return (
+    <div className="flex w-full flex-col gap-3">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
+        Lot Traceability · Active Batches
+      </p>
+      <div className="overflow-hidden rounded-bz-lg border border-bz-line-soft bg-white">
+        <div className="hidden grid-cols-[1.4fr_2fr_1fr_0.9fr] gap-3 border-b border-bz-line-soft bg-bz-paper-warm px-4 py-2.5 sm:grid">
+          {["Batch ID", "Product", "Expiry", "Status"].map((h) => (
+            <span key={h} className="text-[9px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">{h}</span>
+          ))}
+        </div>
+        {BATCH_ROWS.map((b, i) => (
+          <div
+            key={b.id}
+            className={[
+              "grid grid-cols-1 gap-0.5 px-4 py-3 sm:grid-cols-[1.4fr_2fr_1fr_0.9fr] sm:items-center sm:gap-3",
+              i < BATCH_ROWS.length - 1 ? "border-b border-bz-line-soft" : "",
+            ].join(" ")}
+          >
+            <span className="text-[10.5px] font-medium tabular-nums text-bz-text">{b.id}</span>
+            <span className="text-[10.5px] text-bz-text-muted">{b.product}</span>
+            <span className="text-[10px] tabular-nums text-bz-text-muted">{b.exp}</span>
+            <span className={["text-[9.5px] font-semibold", b.ok ? "text-bz-leaf-deep" : "text-bz-text-muted"].join(" ")}>
+              {b.status}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-2 rounded-bz-md border border-bz-line-soft bg-white px-3.5 py-2.5">
+        <span className="flex-1 text-[10.5px] text-bz-text-muted">One-click recall by lot or batch number</span>
+        <span className="shrink-0 text-[10.5px] font-semibold text-bz-leaf-deep">Compliance-ready</span>
+      </div>
+    </div>
+  );
+}
+
+function BatchTraceabilitySection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <BigCard
+          text={{
+            title: "Full lot-to-customer traceability",
+            body: "Track every unit from manufacturer receipt to end-customer delivery.",
+            bullets: [
+              "FIFO, FEFO, and LIFO pick strategies per item category.",
+              "Expiry-date alerting with automated hold triggers before breach.",
+              // "One-click batch recall — every affected order surfaced in seconds.",
+            ],
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to sales team" },
+          }}
+          visual={<BatchTableVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+// ── [03] OPERATIONS CAPABILITIES ─────────────────────────────────────────────
+
+function OperationsCapabilitiesSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="03"
+          label="The platform"
+          title={
+            <>
+              Everything a modern distributor needs.{" "}
+              <Heading.Muted>Nothing it doesn't.</Heading.Muted>
+            </>
+          }
+          titleMaxWidth={680}
+        />
+        <BentoGrid cols={3}>
+          {CAPABILITIES.map(({ icon: Icon, title, desc }) => (
+            <Bento key={title} tone="paper" hover>
+              <Bento.Header title={title} icon={<Icon size={16} />} />
+              <Bento.Desc>{desc}</Bento.Desc>
+            </Bento>
+          ))}
+        </BentoGrid>
+      </Container>
+    </Section>
+  );
+}
+
+// ── [04] MARGIN INTELLIGENCE ──────────────────────────────────────────────────
+
+function SkuMarginsVisual() {
+  return (
+    <div className="flex w-full flex-col gap-3">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
+        Per-SKU Margin · Live
+      </p>
+      <div className="overflow-hidden rounded-bz-lg border border-bz-line-soft bg-white">
+        <div className="hidden grid-cols-[1.1fr_2fr_0.8fr_0.8fr_0.8fr] gap-2 border-b border-bz-line-soft bg-bz-paper-warm px-4 py-2.5 sm:grid">
+          {["SKU", "Item", "Cost", "Sell", "Margin"].map((h) => (
+            <span key={h} className="text-[9px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">{h}</span>
+          ))}
+        </div>
+        {SKU_MARGINS.map((s, i) => (
+          <div
+            key={s.sku}
+            className={[
+              "grid grid-cols-1 gap-0.5 px-4 py-3 sm:grid-cols-[1.1fr_2fr_0.8fr_0.8fr_0.8fr] sm:items-center sm:gap-2",
+              i < SKU_MARGINS.length - 1 ? "border-b border-bz-line-soft" : "",
+            ].join(" ")}
+          >
+            <span className="text-[10px] font-medium text-bz-text">{s.sku}</span>
+            <span className="text-[10.5px] text-bz-text-muted">{s.desc}</span>
+            <span className="text-[10.5px] tabular-nums text-bz-text-muted">{s.cost}</span>
+            <span className="text-[10.5px] font-medium tabular-nums text-bz-text">{s.sell}</span>
+            <span
+              className={[
+                "text-[10.5px] font-bold tabular-nums",
+                s.up ? "text-bz-leaf-deep" : "text-bz-text-muted",
+              ].join(" ")}
+            >
+              {s.margin}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-2 rounded-bz-md border border-bz-line-soft bg-white px-3.5 py-2.5">
+        <span className="flex-1 text-[10.5px] text-bz-text-muted">COGS auto-posted on every shipment</span>
+        <span className="shrink-0 text-[10.5px] font-semibold text-bz-leaf-deep">Zero re-keying</span>
+      </div>
+    </div>
+  );
+}
+
+function MarginIntelligenceSection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <BigCard
+          reverse
+          text={{
+            title: "Per-SKU margin, from landed cost to last cent",
+            body: "Freight, duty, and handling baked in — your true margin, live on every SKU.",
+            bullets: [
+              "Landed cost calculation: freight + duty + handling per unit.",
+              "Live P&L per SKU — no month-end manual costing run.",
+            ],
+            cta: { variant: "accent", withArrow: true, href: "https://system.bizakerp.com/account/self-register", children: "Start free trial" },
+          }}
+          visual={<SkuMarginsVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+// ── PAGE ──────────────────────────────────────────────────────────────────────
 
 export function DistributionPage() {
   return (
-    <div className="biz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <main>
-        <HeroSection />
-        <ChallengesSection />
-        <SolutionGrid
-          eyebrow="The Solution"
-          title="A complete operational platform for modern distributors"
-          items={SOLUTIONS}
-        />
-        <CapabilitiesSection />
-        <InsightsBlock
-          eyebrow="Strategic Insights"
-          title="Make faster, smarter operational decisions."
-          description="Stop guessing. Use real-time demand forecasting and profit margin analytics to steer your distribution business with confidence."
-          bullets={[
-            { bold: "Demand Forecasting", rest: " — AI-driven stock prediction." },
-            { bold: "Real-time Margin Tracking", rest: " — Profitability per order." },
-          ]}
-          chart={<DistributionChart />}
-        />
-        <WorkflowStrip
-          eyebrow="Optimization Engine"
-          title="End-to-End Distribution Workflow"
-          steps={STEPS}
-        />
-        <IndustryCta
-          title="Run your distribution business with complete control."
-          description="Join the next generation of global traders. Start your journey with Bizak today and eliminate the complexity."
-        />
-      </main>
-      <Footer />
-    </div>
+    <>
+      <HeroSection />
+      <FulfillmentFlowSection />
+      <BatchTraceabilitySection />
+      <OperationsCapabilitiesSection />
+      <MarginIntelligenceSection />
+    </>
   );
 }
