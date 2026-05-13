@@ -11,7 +11,6 @@ import {
   ClipboardCheck,
   Clock,
   DollarSign,
-  FileText,
   Landmark,
   Network,
   Package,
@@ -21,8 +20,6 @@ import {
   Sparkles,
   Tags,
   TrendingDown,
-  TrendingUp,
-  Truck,
   Warehouse,
   Workflow,
 } from "lucide-react";
@@ -36,8 +33,6 @@ import {
   EntityRow,
   Heading,
   HeroCanvas,
-  HeroCard,
-  MiniBars,
   Pill,
   Section,
   SectionHead,
@@ -104,6 +99,43 @@ const METRICS = [
 // [HERO]
 // ════════════════════════════════════════════════════════════════════════════
 
+const PIPELINE_STAGES = [
+  {
+    label: "RFQ",
+    dot: "bg-bz-text-soft",
+    total: "$74k",
+    items: [
+      { ref: "RFQ-7703", amt: "$52k"   },
+      { ref: "RFQ-7701", amt: "$22k"   },
+    ],
+  },
+  {
+    label: "PO Issued",
+    dot: "bg-bz-fire",
+    total: "$70.2k",
+    items: [
+      { ref: "PO-8821", amt: "$48.2k" },
+      { ref: "PO-8819", amt: "$22k"   },
+    ],
+  },
+  {
+    label: "In Transit",
+    dot: "bg-amber-400",
+    total: "$48.2k",
+    items: [
+      { ref: "GRN-990", amt: "$48.2k" },
+    ],
+  },
+  {
+    label: "3-Way Match",
+    dot: "bg-emerald-500",
+    total: "$48.2k",
+    items: [
+      { ref: "INV-AX-402", amt: "$48.2k" },
+    ],
+  },
+] as const;
+
 function HeroSection() {
   return (
     <Section tone="b" pad="hero">
@@ -127,38 +159,59 @@ function HeroSection() {
         </div>
 
         <HeroCanvas>
-          <HeroCard
-            icon={<Truck size={12} />}
-            title="Open POs"
-            badge="Live"
-            badgeVariant="live"
-            eyebrow="Procurement · Q3"
-            value="142"
-          >
-            <div className="rounded-bz-lg bg-bz-paper-warm p-3">
-              <DataRow
-                label="Avg. cycle time"
-                value="4.2 days"
-                emphasis
-                className="mb-1.5"
-              />
-              <MiniBars values={[58, 46, 52, 40, 36, 32, 28]} highlightLast />
+          <div className="bz-hero-card" style={{ width: 660 }}>
+            {/* Header */}
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex size-6 items-center justify-center rounded-bz-pill bg-bz-olive text-bz-leaf">
+                  <ShoppingCart size={12} />
+                </span>
+                <span className="text-[12.5px] font-medium text-bz-text">Procurement pipeline</span>
+              </div>
+              <StatusChip variant="live">Live</StatusChip>
             </div>
-          </HeroCard>
 
-          <HeroCard
-            icon={<Receipt size={12} />}
-            title="PO-2024-8821"
-            badge="Matched"
-            badgeVariant="posted"
-            eyebrow="Axeon Logistics · Approved"
-            value="$48,200"
-          >
-            <div className="flex flex-col gap-1.5 rounded-bz-lg bg-bz-paper-warm px-3 py-2.5">
-              <DataRow label="AP" value="−$48,200.00" />
-              <DataRow label="Goods receipt · VAT 19%" value="GRN-990-22 · +$7,695" />
+            {/* Scrollable on mobile, 4 columns on desktop */}
+            <div className="overflow-x-auto">
+              <div className="min-w-[480px]">
+                <div className="grid grid-cols-4 gap-2">
+                  {PIPELINE_STAGES.map((stage) => (
+                    <div key={stage.label} className="flex flex-col gap-1.5">
+                      {/* Stage label */}
+                      <div className="flex items-center gap-1.5 pb-1">
+                        <span className={`size-1.5 shrink-0 rounded-bz-pill ${stage.dot}`} />
+                        <span className="text-[10px] font-medium text-bz-text">{stage.label}</span>
+                      </div>
+                      {/* Items */}
+                      {stage.items.map((item) => (
+                        <div
+                          key={item.ref}
+                          className="rounded-bz-md bg-bz-paper-warm px-2.5 py-2"
+                        >
+                          <p className="text-[11px] font-medium text-bz-text">{item.ref}</p>
+                          <p className="mt-0.5 text-[10px] tabular-nums text-bz-text-muted">
+                            {item.amt}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Totals */}
+                <div className="mt-2.5 grid grid-cols-4 gap-2 border-t border-bz-line-soft pt-2.5">
+                  {PIPELINE_STAGES.map((stage) => (
+                    <p
+                      key={stage.label}
+                      className="text-[11.5px] font-medium tabular-nums text-bz-text"
+                    >
+                      {stage.total}
+                    </p>
+                  ))}
+                </div>
+              </div>
             </div>
-          </HeroCard>
+          </div>
         </HeroCanvas>
       </Container>
     </Section>

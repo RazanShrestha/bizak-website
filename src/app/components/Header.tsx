@@ -74,14 +74,6 @@ const megaMenus: Record<string, MegaMenuData> = {
   Product: {
     columns: [
       {
-        heading: "Main Flow",
-        items: [
-          { icon: <Layers size={16} />, title: "Bizak ERP Platform", description: "One system for finance, inventory, sales, operations", href: "/product" },
-          { icon: <Target size={16} />, title: "Why Bizak", description: "Replace spreadsheets, unify your stack", href: "/why-bizak" },
-          { icon: <Shield size={16} />, title: "Architecture & Security", description: "Enterprise-grade infrastructure" },
-        ],
-      },
-      {
         heading: "Core Modules",
         items: [
           { icon: <DollarSign size={16} />, title: "Financial Management", description: "Ledger, AR, AP, reporting", href: "/FinancialManagement" },

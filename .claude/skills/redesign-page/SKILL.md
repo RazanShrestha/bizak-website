@@ -203,6 +203,7 @@ list is illustrative, not exhaustive):
 2. **The `<HeroCard>` primitive is one option, not the default.** Reach for it only when its specific shape (small floating card with icon-title-badge-eyebrow-value-footer) is the BEST fit for this page's story. If you're using it because HomePage/SalesCrm used it, that's the trap — use a different shape.
 3. **`<HeroCanvas>` itself is also optional.** A page can have a hero mock directly on the `bz-section-b` surface (as `FinancialManagement.tsx` does) — no dark canvas required. Match the canvas/no-canvas choice to whether the mock benefits from a dark backdrop.
 4. **Card count is not magical.** 2 cards is not the canon. The mock might be 1 panel, or 3, or 5, or a single composite. Let the story decide.
+5. **The hero mock must fill the full `<Container>` width.** Do NOT put `max-w-xl`, `max-w-2xl`, `max-w-3xl`, or any `mx-auto max-w-*` on the mock's outer wrapper `<div>`. The mock takes the default block width of its container. Constraining it makes the hero feel cramped and wastes the canvas. Only internal sub-elements (e.g. individual columns) may have explicit widths.
 
 Hero mocks belong in the Step 2 design brief (next) — write the mock's
 shape and *why it serves this page specifically* before opening any
@@ -395,6 +396,7 @@ Every section must look correct from 375px through desktop without horizontal sc
 
 ## Common mistakes to avoid
 
+- **Constraining the hero mock width.** The mock's outer wrapper must take the full `<Container>` width — never put `max-w-xl`, `max-w-2xl`, `max-w-3xl`, or `mx-auto max-w-*` on it. Only internal sub-elements may carry width constraints.
 - **Adding a primitive that already exists.** Check `src/app/components/bz/index.ts` first.
 - **Adding new tokens without updating `docs/DESIGN_SYSTEM.md` and `/CLAUDE.md`.**
 - **Using `rounded-md` / `rounded-lg`.** Use `rounded-bz-md` / `rounded-bz-lg`.

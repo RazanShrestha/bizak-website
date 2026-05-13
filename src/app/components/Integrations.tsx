@@ -1,113 +1,70 @@
 import {
   Section, Container, SectionHead, BentoGrid, Bento, Pill, Heading,
-  BadgeGreen, BigCard, StepCard,
+  BadgeGreen, BigCard, StepCard, DotGrid,
 } from "./bz";
 import {
   Boxes, Upload, Unlink, Activity, Shield, Key,
   GitBranch, RefreshCw, Webhook,
+  CreditCard, Landmark, ShoppingBag, Users, Calculator,
+  Mail, CalendarDays, Fingerprint, Scale, Truck, Layers, Wallet,
 } from "lucide-react";
 
 // ─── Hero visual ─────────────────────────────────────────────────────────────
 
-const SOURCES = [
-  { name: "Stripe",     cat: "Payments" },
-  { name: "Shopify",    cat: "Commerce" },
-  { name: "QuickBooks", cat: "Ledger"   },
-  { name: "SAP",        cat: "ERP"      },
+const INTEGRATION_CATEGORIES = [
+  { Icon: CreditCard,   name: "Payment Gateways",      desc: "Multi-gateway, multi-currency, auto-posted"         },
+  { Icon: Landmark,     name: "Banks & Finance",        desc: "Direct feeds, auto-reconciliation, multi-bank"      },
+  { Icon: ShoppingBag,  name: "E-Commerce",             desc: "Orders, returns, and catalogue in real time"        },
+  { Icon: Users,        name: "CRM",                    desc: "Customer records flow into every module"            },
+  { Icon: Calculator,   name: "Accounting",             desc: "Transactions auto-posted to the general ledger"     },
+  { Icon: Mail,         name: "Email",                  desc: "Trigger workflows and alerts from inbox events"     },
+  { Icon: CalendarDays, name: "Calendar & Scheduling",  desc: "Appointments, deadlines, and reminders synced"      },
+  { Icon: Fingerprint,  name: "Biometric Devices",      desc: "Attendance and access control, captured live"       },
+  { Icon: Scale,        name: "Weighing Bridges",        desc: "Real-time weight data for dispatch and billing"     },
+  { Icon: Truck,        name: "Logistics & Shipping",   desc: "Carrier tracking piped into your ops layer"         },
+  { Icon: Layers,       name: "ERP Systems",            desc: "Migrate from or co-run alongside any ERP"           },
+  { Icon: Wallet,       name: "Payroll & HR",           desc: "Payslips, headcount, and benefits in sync"          },
 ];
 
-const DESTINATIONS = [
-  { name: "Finance",   cat: "General Ledger" },
-  { name: "Inventory", cat: "Stock & WMS"    },
-  { name: "Sales",     cat: "CRM & Orders"   },
-  { name: "Payroll",   cat: "HR & Pay"       },
-];
-
-const LIVE_EVENTS = [
-  { code: "SO-1182",  route: "Shopify → Finance",      ago: "2s"  },
-  { code: "PAY-3002", route: "Stripe → Sales",         ago: "5s"  },
-  { code: "INV-947",  route: "QuickBooks → Inventory", ago: "11s" },
-];
-
-function FlowDiagramVisual() {
+function ConnectorShowcaseMock() {
   return (
-    <div className="w-full max-w-[860px] mx-auto mt-12">
-      <div className="rounded-bz-xl border border-bz-line bg-bz-surface px-5 md:px-7 py-6">
-        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-3">
-
-          {/* Source systems */}
-          <div className="flex flex-col gap-2 flex-1">
-            <div className="text-[9px] font-bold tracking-[0.12em] uppercase text-bz-text-soft mb-0.5">
-              External Systems
-            </div>
-            {SOURCES.map((s) => (
-              <div
-                key={s.name}
-                className="flex items-center justify-between gap-2 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3 py-2"
-              >
-                <span className="text-[12px] font-bold text-bz-text">{s.name}</span>
-                <span className="text-[10px] text-bz-text-muted">{s.cat}</span>
-                <div className="w-1.5 h-1.5 rounded-full bg-bz-fire shrink-0" />
-              </div>
-            ))}
-          </div>
-
-          {/* Connector arrow (desktop) */}
-          <div className="hidden md:flex flex-col items-center shrink-0 px-1 gap-1">
-            <div className="h-px w-10 border-t border-dashed border-bz-line" />
-            <span className="text-[11px] text-bz-text-soft">→</span>
-          </div>
-
-          {/* BIZAK hub */}
-          <div className="rounded-bz-xl border-2 border-bz-fire bg-bz-olive px-6 py-5 text-center shrink-0 md:w-[140px]">
-            <div className="text-[8px] font-bold tracking-[0.18em] uppercase text-bz-fire mb-2">
-              BIZAK HUB
-            </div>
-            <div className="text-[28px] font-extrabold text-bz-text-on-dark leading-none">2,184</div>
-            <div className="text-[9px] text-bz-text-on-dark-muted mt-1">syncs today</div>
-            <div className="flex items-center gap-1.5 justify-center mt-2.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-bz-fire shrink-0" />
-              <span className="text-[9px] font-bold text-bz-fire uppercase tracking-[0.12em]">Live</span>
-            </div>
-          </div>
-
-          {/* Connector arrow (desktop) */}
-          <div className="hidden md:flex flex-col items-center shrink-0 px-1 gap-1">
-            <div className="h-px w-10 border-t border-dashed border-bz-line" />
-            <span className="text-[11px] text-bz-text-soft">→</span>
-          </div>
-
-          {/* Destination modules */}
-          <div className="flex flex-col gap-2 flex-1">
-            <div className="text-[9px] font-bold tracking-[0.12em] uppercase text-bz-text-soft mb-0.5">
-              Bizak Modules
-            </div>
-            {DESTINATIONS.map((d) => (
-              <div
-                key={d.name}
-                className="flex items-center justify-between gap-2 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3 py-2"
-              >
-                <div className="w-1.5 h-1.5 rounded-full bg-bz-leaf shrink-0" />
-                <span className="text-[10px] text-bz-text-muted flex-1">{d.cat}</span>
-                <span className="text-[12px] font-bold text-bz-text">{d.name}</span>
-              </div>
-            ))}
-          </div>
+    <div className="w-full mt-10 rounded-bz-xl overflow-hidden border border-white/[0.06]">
+      {/* Header */}
+      <div className="relative bg-bz-olive overflow-hidden px-7 py-5 border-b border-white/[0.06]">
+        <DotGrid tone="dark" />
+        <div className="relative flex items-center justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-bz-text-on-dark-muted">
+            Integration Categories
+          </span>
+          <span className="text-[11px] font-semibold text-bz-fire">200+ connectors available</span>
         </div>
+      </div>
 
-        {/* Live event strip */}
-        <div className="mt-5 pt-4 border-t border-bz-line-soft grid grid-cols-1 sm:grid-cols-3 gap-2">
-          {LIVE_EVENTS.map((e) => (
-            <div
-              key={e.code}
-              className="flex flex-col gap-0.5 rounded-bz-md bg-bz-paper-warm px-3 py-2 border border-bz-line-soft"
-            >
-              <span className="text-[11px] font-bold text-bz-text">{e.code}</span>
-              <span className="text-[10px] text-bz-text-muted">{e.route}</span>
-              <span className="text-[10px] font-bold text-bz-olive">{e.ago} ago</span>
+      {/* Category grid — gap-px trick: container bg bleeds 1px between cells */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-px bg-white/[0.08]">
+        {INTEGRATION_CATEGORIES.map(({ Icon, name, desc }) => (
+          <div key={name} className="flex items-start gap-3.5 px-6 py-5 bg-bz-olive">
+            <Icon size={16} className="text-bz-fire shrink-0 mt-0.5" />
+            <div className="min-w-0">
+              <div className="text-[13px] font-bold text-bz-text-on-dark leading-snug">{name}</div>
+              <div className="text-[11px] text-bz-text-on-dark-muted mt-0.5 leading-snug">{desc}</div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Stats strip */}
+      <div className="grid grid-cols-3 bg-bz-olive-dark border-t border-white/[0.06] divide-x divide-white/[0.06]">
+        {[
+          ["200+",   "Connectors"],
+          ["25+",    "Categories"],
+          ["<2 min", "Avg. Setup"],
+        ].map(([v, l]) => (
+          <div key={l} className="px-6 py-4 text-center">
+            <div className="text-[20px] font-extrabold text-bz-text-on-dark leading-none">{v}</div>
+            <div className="text-[9px] font-bold uppercase tracking-[0.1em] text-bz-text-on-dark-muted mt-1.5">{l}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -349,7 +306,7 @@ function HeroSection() {
             </Pill>
           </div>
         </div>
-        <FlowDiagramVisual />
+        <ConnectorShowcaseMock />
       </Container>
     </Section>
   );

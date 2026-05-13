@@ -1,320 +1,361 @@
-import "../../styles/style.css";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
-import { FileText, Folder, Paperclip, ShieldCheck, Search } from "lucide-react";
 import {
-  Section, Container, SectionHeading, Button, Card, IconBadge, HeroBadge, HeroCentered, Stat,
-} from "./marketing";
+  Section, Container, SectionHead, BentoGrid, Bento, Pill, Heading,
+  BadgeGreen, StepCard, BigCard, StatusChip,
+} from "./bz";
+import {
+  FileText, Folder, Paperclip, ShieldCheck, Search, Upload,
+  Clock, Lock, FileImage, File, CheckCircle2,
+} from "lucide-react";
 
-// ─── HERO VISUAL ─────────────────────────────────────────────────────────────
-const FILES = [
-  { name: "Signed Quotation - ACME Corp.pdf", ext: "PDF", size: "1.2 MB", tag: "Sales Order #1042", tagColor: "#3b82f6" },
-  { name: "Product Catalog 2025.xlsx",         ext: "XLSX", size: "2.4 MB", tag: "Inventory",         tagColor: "#22c55e" },
-  { name: "Vendor Agreement.docx",             ext: "DOCX", size: "320 KB", tag: "Supplier #204",     tagColor: "#f97316" },
-  { name: "Warehouse Photo Apr.jpg",           ext: "JPG",  size: "4.1 MB", tag: "Fixed Assets",      tagColor: "#8b5cf6" },
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
+const HERO_FILES = [
+  { ext: "PDF",  name: "Signed Quotation.pdf",    size: "1.2 MB", by: "Sarah K.", fire: true,  fade: ""           },
+  { ext: "DOCX", name: "Product Spec Sheet.docx", size: "340 KB", by: "Omar T.",  fire: false, fade: "opacity-80" },
+  { ext: "JPG",  name: "Warehouse Photos.jpg",    size: "4.1 MB", by: "Priya M.", fire: true,  fade: "opacity-60" },
+  { ext: "XLSX", name: "Delivery Schedule.xlsx",  size: "820 KB", by: "David R.", fire: false, fade: "opacity-40" },
 ];
 
-function FileCabinetVisual() {
+const LINE_ITEMS = [
+  { sku: "SKU-201", desc: "Design Consultation", qty: "×50", total: "$12,500" },
+  { sku: "SKU-304", desc: "Delivery Service",    qty: "×5",  total: "$8,000"  },
+  { sku: "",        desc: "Shipping & Handling",  qty: "",    total: "$4,000"  },
+];
+
+const RECORD_TYPES = [
+  { icon: FileText,    module: "Sales Orders",    files: 4 },
+  { icon: Folder,      module: "Purchase Orders", files: 2 },
+  { icon: Paperclip,   module: "Customers",       files: 7 },
+  { icon: ShieldCheck, module: "Employees",       files: 3 },
+  { icon: FileImage,   module: "Fixed Assets",    files: 5 },
+  { icon: File,        module: "Expenses",        files: 2 },
+];
+
+const TRUST_FEATURES = [
+  {
+    icon: Lock,
+    title: "Role-based access",
+    desc: "Finance reports stay with Finance. HR contracts stay with HR. Every file is scoped to the roles that need it — no over-sharing, no accidental exposure.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "100% audit compliance",
+    desc: "Every upload, view, and download is logged with user, timestamp, and IP. Full chain of custody on every file, automatically.",
+  },
+  {
+    icon: Clock,
+    title: "Version history",
+    desc: "Every revision of every document is retained. See who changed what and when — and roll back to any earlier version in one click.",
+  },
+];
+
+// ─── HERO MOCK ────────────────────────────────────────────────────────────────
+
+function RecordAttachmentMock() {
   return (
-    <div className="w-full max-w-[900px] mx-auto">
-      <div className="rounded-bz-lg border border-white/20 bg-white/[0.06] p-1.5 shadow-[0_0_60px_rgba(199,255,53,0.12)]">
-        <div className="rounded-bz-md bg-white/[0.04] overflow-hidden">
+    <div className="w-full rounded-bz-2xl border border-bz-line bg-bz-surface overflow-hidden">
+      <div className="px-5 py-3 border-b border-bz-line bg-bz-paper-warm flex items-center gap-1.5">
+        <span className="text-[11px] text-bz-text-muted">Sales</span>
+        <span className="text-[11px] text-bz-text-muted">/</span>
+        <span className="text-[11px] font-semibold text-bz-text">SO-1042</span>
+        <div className="ml-auto"><StatusChip variant="posted">Posted</StatusChip></div>
+      </div>
 
-          {/* Titlebar */}
-          <div className="px-5 py-3.5 flex items-center justify-between bg-white/[0.04] border-b border-white/10">
-            <div className="flex gap-1.5">
-              {(["#ff5f57", "#ffbd2e", "#28c840"] as const).map((c) => (
-                <div key={c} style={{ background: c }} className="w-2.5 h-2.5 rounded-full" />
-              ))}
-            </div>
-            <span className="text-[11px] font-bold text-white uppercase tracking-[0.12em]">
-              Bizak · File Cabinet
-            </span>
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-bz-accent" />
-              <span className="text-[9px] font-bold text-bz-accent uppercase tracking-[0.14em]">Synced</span>
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] divide-y md:divide-y-0 md:divide-x divide-bz-line">
+        <div className="p-5 md:p-6">
+          <div className="text-[10.5px] text-bz-text-muted mb-0.5">Sales Order</div>
+          <div className="text-[22px] font-bold text-bz-text leading-none mb-1">SO-1042</div>
+          <div className="text-[12.5px] text-bz-text-muted mb-5">ACME Corp Inc. · Apr 12, 2025</div>
+
+          <div className="text-[10px] font-semibold text-bz-text-muted uppercase tracking-[0.09em] mb-2">Line Items</div>
+          <div className="flex flex-col">
+            {LINE_ITEMS.map((item, i) => (
+              <div key={i} className="flex items-center gap-3 py-2 border-b border-bz-line-soft last:border-0">
+                {item.sku && (
+                  <span className="w-[52px] flex-shrink-0 text-[9.5px] font-semibold text-bz-text-muted">{item.sku}</span>
+                )}
+                <span className="flex-1 text-[12px] text-bz-text">{item.desc}</span>
+                {item.qty && <span className="text-[11px] text-bz-text-muted">{item.qty}</span>}
+                <span className="text-[12px] font-semibold text-bz-text tabular-nums">{item.total}</span>
+              </div>
+            ))}
           </div>
 
-          {/* Search bar */}
-          <div className="px-4 py-2.5 border-b border-white/10 bg-white/[0.02] flex items-center gap-2">
-            <Search className="size-3 text-white/25" />
-            <span className="text-[12px] text-white/25">Search files...</span>
-            <div className="ml-auto">
-              <span className="text-[9px] font-bold px-2 py-0.5 bg-white/10 rounded text-white/35 uppercase tracking-[0.08em]">
-                All Types
-              </span>
-            </div>
+          <div className="flex items-center justify-between pt-3 mt-1 border-t border-bz-line">
+            <span className="text-[12px] font-semibold text-bz-text-muted">Total</span>
+            <span className="text-[18px] font-bold text-bz-text">$24,500.00</span>
           </div>
+        </div>
 
-          {/* File rows — dark themed */}
-          {FILES.map((f, i) => (
-            <div
-              key={f.name}
-              className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.05] last:border-0"
-              style={{
-                background: i === 0 ? "rgba(199,255,53,0.04)" : "transparent",
-                borderLeft: `3px solid ${i === 0 ? "var(--bz-accent)" : "transparent"}`,
-                opacity: i === 0 ? 1 : i === 1 ? 0.75 : i === 2 ? 0.5 : 0.3,
-              }}
-            >
+        <div className="p-5 md:p-6">
+          <div className="text-[10px] font-semibold text-bz-text-muted uppercase tracking-[0.09em] mb-3">
+            Attachments ({HERO_FILES.length})
+          </div>
+          <div className="flex flex-col gap-2.5">
+            {HERO_FILES.map((f) => (
               <div
-                className="flex-shrink-0 w-9 h-9 rounded-[10px] flex items-center justify-center"
-                style={{ background: `${f.tagColor}20`, border: `1px solid ${f.tagColor}30` }}
+                key={f.name}
+                className={`flex items-center gap-2.5 p-3 rounded-bz-lg border border-bz-line-soft bg-bz-paper-warm ${f.fade}`}
               >
-                <span className="text-[7px] font-black tracking-[0.04em]" style={{ color: f.tagColor }}>
-                  {f.ext}
-                </span>
+                <div
+                  className={`w-9 h-9 rounded-[8px] flex-shrink-0 flex items-center justify-center ${
+                    f.fire
+                      ? "bg-bz-fire/[0.15] border border-bz-fire/[0.25]"
+                      : "bg-bz-leaf/[0.22] border border-bz-leaf/[0.35]"
+                  }`}
+                >
+                  <span className="text-[8px] font-black tracking-[0.04em] text-bz-text">{f.ext}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[11.5px] font-semibold text-bz-text truncate">{f.name}</div>
+                  <div className="text-[10px] text-bz-text-muted mt-0.5">{f.size} · {f.by}</div>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[12px] font-bold text-white truncate">{f.name}</div>
-                <div className="text-[10px] text-white/40 mt-0.5">{f.size}</div>
-              </div>
-              <div
-                className="text-[9px] font-bold px-2 py-0.5 rounded whitespace-nowrap hidden sm:block"
-                style={{ background: `${f.tagColor}18`, color: f.tagColor, border: `1px solid ${f.tagColor}30` }}
-              >
-                {f.tag}
-              </div>
-            </div>
-          ))}
-
-          {/* Footer */}
-          <div className="px-4 py-2.5 border-t border-white/10 bg-white/[0.02] flex items-center justify-between">
-            <span className="text-[10px] text-white/40 font-semibold">148 files · 2.1 GB</span>
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-bz-accent" />
-              <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.12em]">Synced</span>
-            </div>
+            ))}
           </div>
-
         </div>
       </div>
     </div>
   );
 }
 
-// ─── FILE TYPES ───────────────────────────────────────────────────────────────
-const FILE_TYPES = [
-  { ext: "PDF",  color: "#ef4444", label: "Documents & reports" },
-  { ext: "XLSX", color: "#22c55e", label: "Spreadsheets" },
-  { ext: "DOCX", color: "#3b82f6", label: "Word documents" },
-  { ext: "JPG",  color: "#f97316", label: "Images & photos" },
-  { ext: "PNG",  color: "#8b5cf6", label: "Graphics & screenshots" },
-  { ext: "ZIP",  color: "#64748b", label: "Archives & bundles" },
-  { ext: "MP4",  color: "#ec4899", label: "Videos & demos" },
-  { ext: "CSV",  color: "#14b8a6", label: "Data exports" },
-];
+// ─── HERO ─────────────────────────────────────────────────────────────────────
 
-function FileTypesSection() {
+function HeroSection() {
   return (
-    <Section tone="white">
+    <Section tone="b" pad="hero">
       <Container>
-        <SectionHeading
-          eyebrow="Supported Formats"
-          title={<>Upload any file type<br />your business uses</>}
-          description="From signed quotations to product images — if your team works with it, Bizak stores it."
-          maxWidth={560}
-          className="mb-14"
-        />
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {FILE_TYPES.map((ft) => (
-            <div
-              key={ft.ext}
-              className="flex items-center gap-4 p-5 rounded-bz-lg border border-bz-border/30 bg-bz-bg/50 hover:border-bz-text/20 transition-colors"
-            >
-              <div
-                className="w-12 h-12 rounded-[10px] flex-shrink-0 flex items-center justify-center"
-                style={{ background: `${ft.color}14`, border: `1px solid ${ft.color}28` }}
-              >
-                <span className="text-[10px] font-black tracking-[0.04em]" style={{ color: ft.color }}>{ft.ext}</span>
-              </div>
-              <div>
-                <div className="text-[13px] font-bold text-bz-text">.{ft.ext.toLowerCase()}</div>
-                <div className="text-[12px] text-bz-text-muted mt-0.5">{ft.label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── ATTACH TO RECORDS ────────────────────────────────────────────────────────
-const RECORDS = [
-  { label: "Sales Order #1042",   file: "Signed Quotation.pdf",     color: "#3b82f6" },
-  { label: "Purchase Order #219", file: "Supplier Invoice.pdf",     color: "#f97316" },
-  { label: "Customer: ACME Corp", file: "KYC Documents.zip",        color: "#22c55e" },
-  { label: "Employee: John D.",   file: "Employment Contract.docx", color: "#8b5cf6" },
-];
-
-function AttachToRecordsSection() {
-  return (
-    <Section tone="dark">
-      <Container>
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
-          <div>
-            <SectionHeading
-              eyebrow="Contextual Attachments"
-              title={<>Attach files directly<br />to any business record</>}
-              description="When creating a sales order, attach the signed quotation. On a purchase order, pin the supplier invoice. Every record in Bizak can carry its own files — always in context, never lost."
-              tone="light"
-              align="left"
-              maxWidth={440}
-              className="mb-10"
-            />
-            <div
-              className="p-6 bg-white/[0.04] rounded-bz-lg border border-white/[0.07]"
-              style={{ borderLeft: "3px solid var(--bz-accent)" }}
-            >
-              <div className="text-[9px] font-bold text-white/40 uppercase tracking-[0.15em] mb-2.5">Example</div>
-              <p className="text-[13px] text-white/50 leading-[1.65] m-0">
-                A sales rep creates a Sales Order for ACME Corp. Instead of emailing the signed quotation
-                separately, they attach it from the File Cabinet — it stays linked to that order forever.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            {RECORDS.map((r, i) => (
-              <div
-                key={r.label}
-                className="flex items-center gap-3.5 p-4 rounded-bz-lg bg-white/[0.04] border border-white/[0.06]"
-                style={{ opacity: i === 0 ? 1 : i === 1 ? 0.75 : i === 2 ? 0.52 : 0.32 }}
-              >
-                <div
-                  className="w-9 h-9 rounded-[10px] flex-shrink-0 flex items-center justify-center"
-                  style={{ background: `${r.color}20`, border: `1px solid ${r.color}30` }}
-                >
-                  <FileText size={16} style={{ color: r.color }} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[12px] font-bold text-white">{r.label}</div>
-                  <div className="text-[10px] mt-0.5">
-                    <span style={{ color: r.color }}>↗ {r.file}</span>
-                    <span className="text-white/40"> attached</span>
-                  </div>
-                </div>
-                <div className="w-6 h-6 rounded-[7px] flex-shrink-0 flex items-center justify-center bg-bz-accent/10">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--bz-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 6L9 17 4 12" />
-                  </svg>
-                </div>
-              </div>
-            ))}
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>Platform Capability</BadgeGreen>
+          <Heading level={2} style={{ marginBottom: 36 }}>
+            Every file, exactly{" "}
+            <Heading.Muted>where it belongs.</Heading.Muted>
+          </Heading>
+          <div className="flex flex-wrap justify-center gap-[10px]">
+            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
+              Get Started
+            </Pill>
+            <Pill variant="light" href="/contact">Book a Demo</Pill>
           </div>
         </div>
+        <div className="mt-16">
+          <RecordAttachmentMock />
+        </div>
       </Container>
     </Section>
   );
 }
 
-// ─── BENEFITS ─────────────────────────────────────────────────────────────────
-const BENEFITS = [
-  {
-    Icon: Folder,
-    title: "Central File Hub",
-    desc: "All business media — documents, images, contracts — stored in one place, accessible to your entire team from anywhere in the system.",
-  },
-  {
-    Icon: Paperclip,
-    title: "Always In Context",
-    desc: "Files are linked to the exact record they belong to. Open a sales order and every related attachment is right there — no separate folder hunting.",
-  },
-  {
-    Icon: ShieldCheck,
-    title: "Secure & Controlled",
-    desc: "Role-based access ensures sensitive files — contracts, financial reports, HR documents — are only visible to the right people in your organization.",
-  },
-];
+// ─── STEP VISUALS ─────────────────────────────────────────────────────────────
 
-function BenefitsSection() {
+function UploadVisual() {
   return (
-    <Section tone="light">
-      <Container>
-        <SectionHeading
-          eyebrow="Why It Matters"
-          title="Go paperless. Stay organized."
-          align="center"
-          className="mb-16"
-        />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {BENEFITS.map(({ Icon: BIcon, title, desc }) => (
-            <Card key={title} pad="lg" hover="lift">
-              <IconBadge tone="sage" size="md" className="mb-6">
-                <BIcon className="size-5" />
-              </IconBadge>
-              <h3 className="text-[17px] font-bold text-bz-text mb-3">{title}</h3>
-              <p className="text-[14px] text-bz-text-muted leading-[1.7]">{desc}</p>
-            </Card>
+    <div className="w-full max-w-[400px] rounded-bz-xl border border-bz-line-soft bg-bz-paper p-5 shadow-[0_10px_28px_rgba(15,20,17,0.06)]">
+      <div className="border-2 border-dashed border-bz-line rounded-bz-lg px-5 py-8 flex flex-col items-center gap-3">
+        <Upload size={22} className="text-bz-text-muted" />
+        <span className="text-[12px] font-semibold text-bz-text-muted text-center">
+          Drag any file here, or click to browse
+        </span>
+        <div className="flex flex-wrap gap-1.5 justify-center mt-0.5">
+          {["PDF", "DOCX", "XLSX", "JPG", "ZIP"].map((ext) => (
+            <span
+              key={ext}
+              className="text-[9px] font-bold px-2 py-0.5 rounded-bz-pill bg-bz-paper-warm border border-bz-line text-bz-text-muted"
+            >
+              {ext}
+            </span>
           ))}
         </div>
+      </div>
+      <div className="mt-3 flex items-center justify-between text-[10px] text-bz-text-muted">
+        <span>148 file types supported</span>
+        <span className="font-semibold text-bz-text">No size limit</span>
+      </div>
+    </div>
+  );
+}
+
+function AttachVisual() {
+  return (
+    <div className="w-full max-w-[400px] rounded-bz-xl border border-bz-line-soft bg-bz-paper p-5 shadow-[0_10px_28px_rgba(15,20,17,0.06)]">
+      <div className="flex items-center justify-between mb-2.5">
+        <span className="text-[11px] font-semibold text-bz-text-muted">Sales Order</span>
+        <StatusChip variant="posted">Posted</StatusChip>
+      </div>
+      <div className="text-[16px] font-bold text-bz-text mb-0.5">SO-1042</div>
+      <div className="text-[12px] text-bz-text-muted mb-4">ACME Corp · $24,500.00</div>
+      <div className="text-[10px] font-semibold text-bz-text-muted uppercase tracking-[0.09em] mb-1.5">
+        Attachments (1)
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-2 p-2.5 rounded-bz-md bg-bz-paper-warm border border-bz-line-soft">
+          <span className="text-[8px] font-black text-bz-text bg-bz-fire rounded px-1.5 py-0.5 flex-shrink-0">PDF</span>
+          <span className="text-[11px] text-bz-text flex-1 truncate font-medium">Signed Quotation.pdf</span>
+          <CheckCircle2 size={12} className="text-bz-text-muted flex-shrink-0" />
+        </div>
+        <div className="flex items-center gap-2 p-2.5 rounded-bz-md border border-dashed border-bz-line">
+          <Paperclip size={11} className="text-bz-text-muted" />
+          <span className="text-[11px] text-bz-text-muted">Attach another file…</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RetrieveVisual() {
+  const results = [
+    { name: "Signed Quotation - ACME Corp.pdf", record: "SO-1042 · Sales Orders" },
+    { name: "Signed Quotation - BDC Ltd.pdf",   record: "SO-0987 · Sales Orders" },
+  ];
+  return (
+    <div className="w-full max-w-[400px] rounded-bz-xl border border-bz-line-soft bg-bz-paper p-5 shadow-[0_10px_28px_rgba(15,20,17,0.06)]">
+      <div className="flex items-center gap-2 px-3 py-2.5 rounded-bz-lg bg-bz-paper-warm border border-bz-line mb-3">
+        <Search size={12} className="text-bz-text-muted flex-shrink-0" />
+        <span className="text-[12px] font-semibold text-bz-text">signed quotation</span>
+      </div>
+      <div className="flex flex-col gap-1.5">
+        {results.map((r) => (
+          <div key={r.name} className="flex items-center gap-2.5 p-2.5 rounded-bz-md bg-bz-paper-warm border border-bz-line-soft">
+            <span className="text-[8px] font-black text-bz-text bg-bz-fire rounded px-1.5 py-0.5 flex-shrink-0">PDF</span>
+            <div className="flex-1 min-w-0">
+              <div className="text-[11px] font-semibold text-bz-text truncate">{r.name}</div>
+              <div className="text-[9.5px] text-bz-text-muted mt-0.5">{r.record}</div>
+            </div>
+          </div>
+        ))}
+        <div className="text-[10px] text-bz-text-muted text-center pt-1">2 results · instant search</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── WORKFLOW ─────────────────────────────────────────────────────────────────
+
+function DocumentWorkflowSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="01"
+          label="How it works"
+          title={<>Upload, attach, and retrieve —{" "}<Heading.Muted>three steps to go paperless.</Heading.Muted></>}
+          titleMaxWidth={640}
+        />
+        <div className="flex flex-col gap-5">
+          <StepCard
+            number="01"
+            tag="Upload"
+            title="Drop any file type into Bizak"
+            bullets={[
+              "PDFs, spreadsheets, images, videos, archives — all supported.",
+              "Drag and drop from your desktop, or upload from any device.",
+            ]}
+            visual={<UploadVisual />}
+          />
+          <StepCard
+            number="02"
+            tag="Attach"
+            title="Link files to the records they belong to"
+            bullets={[
+              "Attach a signed quotation to its sales order. Pin a supplier invoice to the PO.",
+              "Files stay linked as records move through every workflow stage.",
+            ]}
+            visual={<AttachVisual />}
+          />
+          <StepCard
+            number="03"
+            tag="Retrieve"
+            title="Find any file in seconds, from anywhere"
+            bullets={[
+              "Search by file name, type, linked record, or uploader.",
+              "Open any record and every attachment is right there — no folder hunting.",
+            ]}
+            visual={<RetrieveVisual />}
+          />
+        </div>
       </Container>
     </Section>
   );
 }
 
-// ─── CTA ──────────────────────────────────────────────────────────────────────
-function CTASection() {
+// ─── RECORD CONTEXT ───────────────────────────────────────────────────────────
+
+function RecordTypesVisual() {
   return (
-    <Section tone="dark">
-      <Container width="narrow">
-        <SectionHeading
-          title={<>Stop digging through folders.<br />Start attaching files.</>}
-          description="Bizak's File Cabinet keeps every document exactly where it belongs — attached to the record that needs it."
-          tone="light"
-          align="center"
-          maxWidth={560}
-          className="mb-10"
-        />
-        <div className="flex flex-wrap justify-center gap-3">
-          <Button variant="accent" size="lg" href="https://system.bizakerp.com/account/self-register" withArrow>Start Free Trial</Button>
-          <Button variant="ghostDark" size="lg" href="/contact">Book a Demo</Button>
+    <div className="grid grid-cols-2 gap-2.5 w-full">
+      {RECORD_TYPES.map(({ icon: Icon, module, files }) => (
+        <div
+          key={module}
+          className="flex items-center gap-2.5 p-3 rounded-bz-lg bg-white/[0.05] border border-white/[0.08]"
+        >
+          <div className="w-8 h-8 rounded-[8px] bg-bz-fire/[0.10] flex items-center justify-center flex-shrink-0">
+            <Icon size={13} className="text-bz-fire" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[11px] font-semibold text-white truncate">{module}</div>
+            <div className="text-[9.5px] text-white/40">{files} files</div>
+          </div>
         </div>
+      ))}
+    </div>
+  );
+}
+
+function RecordContextSection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <BigCard
+          text={{
+            title: "Files that follow every record.",
+            body: "Every module in Bizak carries its own document panel. Open a purchase order, a customer profile, an employee record, or a fixed asset — and every related file is right there, in context.",
+            bullets: [
+              "Attach files during record creation — no separate upload step",
+              "Files travel with the record through every status change",
+              "Every attachment auto-links to the originating transaction",
+            ],
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "See it in action" },
+          }}
+          visual={<RecordTypesVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+// ─── TRUST ────────────────────────────────────────────────────────────────────
+
+function TrustSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="02"
+          label="Security & compliance"
+          title={<>Sensitive files,{" "}<Heading.Muted>in the right hands.</Heading.Muted></>}
+        />
+        <BentoGrid cols={3}>
+          {TRUST_FEATURES.map(({ icon: Icon, title, desc }) => (
+            <Bento key={title} tone="paper" hover>
+              <Bento.Header title={title} icon={<Icon size={18} />} />
+              <Bento.Desc>{desc}</Bento.Desc>
+            </Bento>
+          ))}
+        </BentoGrid>
       </Container>
     </Section>
   );
 }
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
+
 export function DocumentManagementPage() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <main>
-        <HeroCentered
-          tone="dark"
-          mesh={false}
-          badge={<HeroBadge tone="dark">File Cabinet</HeroBadge>}
-          title={<>Every file,<br />right where you need it.</>}
-          description="Store images, PDFs, spreadsheets, and any other file — then attach them directly to sales orders, invoices, or any record in Bizak. One hub. Zero lost files."
-          actions={
-            <>
-              <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
-              <Button variant="ghostDark" size="lg" href="#features">See How It Works</Button>
-            </>
-          }
-          visual={
-            <>
-              <div className="flex flex-wrap justify-center gap-8 md:gap-14 py-6 mb-8 border-y border-white/10">
-                {[
-                  { value: "148+", label: "File types supported" },
-                  { value: "100%", label: "Linked to records"    },
-                ].map((s) => (
-                  <Stat key={s.label} value={s.value} label={s.label} tone="light" size="md" align="center" />
-                ))}
-              </div>
-              <FileCabinetVisual />
-            </>
-          }
-        />
-        <FileTypesSection />
-        <AttachToRecordsSection />
-        <BenefitsSection />
-        <CTASection />
-      </main>
-      <Footer />
-    </div>
+    <>
+      <HeroSection />
+      <DocumentWorkflowSection />
+      <RecordContextSection />
+      <TrustSection />
+    </>
   );
 }

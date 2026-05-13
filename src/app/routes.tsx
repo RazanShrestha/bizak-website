@@ -128,27 +128,6 @@ function ErrorBoundaryPage() {
   );
 }
 
-
-
-
-
-function ProductPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <div style={{ paddingTop: 76 }}>
-        <ProductPage />
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
-
-
-
-
-
 function PurchasingPageLayout() {
   return (
     <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -221,18 +200,6 @@ function CaseStudiesPageLayout() {
       <Header />
       <div style={{ paddingTop: 76 }}>
         <CaseStudiesPage />
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
-function WhyBizakPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <div style={{ paddingTop: 76 }}>
-        <WhyBizakPage />
       </div>
       <Footer />
     </div>
@@ -412,8 +379,42 @@ function DashboardAndReportingPageLayout() {
 }
 
 
+function DocumentManagementPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <DocumentManagementPage />
+      <Footer
+        cta={{
+          title: "Never lose a document again.",
+          titleMuted: "Every file, every record, one system.",
+          description:
+            "Store, tag, and attach every document to the records it belongs to — and find any file in seconds from anywhere in Bizak.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Book a demo",
+        }}
+      />
+    </div>
+  );
+}
+
 function MulticompanyAndBranchesPageLayout() {
-  return <MulticompanyAndBranchesPage />;
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <MulticompanyAndBranchesPage />
+      <Footer
+        cta={{
+          title: "Run the whole group on one ERP.",
+          titleMuted: "From new entity to live consolidation.",
+          description:
+            "Stop stitching subsidiaries in spreadsheets. Every entity gets its own books — and your group gets a real-time consolidated view, every day of the month.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Book a demo",
+        }}
+      />
+    </div>
+  );
 }
 
 
@@ -561,7 +562,6 @@ export const router = createBrowserRouter([
     errorElement: <ErrorBoundaryPage />,
     children: [
       { index: true,           Component: HomeLayout          },
-      { path: "product",       Component: ProductPageLayout   },
       { path: "purchasing",    Component: PurchasingPageLayout },
       { path: "distribution",  Component: DistributionPage    },
       { path: "about",         Component: AboutPage           },
@@ -578,8 +578,6 @@ export const router = createBrowserRouter([
       { path: "partners/events/register/:slug",           Component: PartnerEventRegisterPage   },
       { path: "partners/events/enroll/:slug",             Component: PartnerEventEnrollPage     },
       { path: "case-studies",   Component: CaseStudiesPage      },
-            { path: "why-bizak",     Component: WhyBizakPage        },
-
       { path: "workflow",      Component: WorkFlowAutomationPageLayout },
       { path: "FinancialManagement", Component: FinancialManagementPageLayout },
       { path: "SalesCrm", Component: SalesAndCrmPageLayout },
@@ -592,8 +590,8 @@ export const router = createBrowserRouter([
       { path: "ProfessionalService", Component: ProfessionalServicePage    },
       { path: "DashboardAndReporting", Component: DashboardAndReportingPageLayout },
       { path: "Integrations", Component: IntegrationsPageLayout },
-      { path: "MulticompanyAndBranches", Component: MulticompanyAndBranchesPage },
-      { path: "DocumentManagement", Component: DocumentManagementPage },
+      { path: "MulticompanyAndBranches", Component: MulticompanyAndBranchesPageLayout },
+      { path: "DocumentManagement", Component: DocumentManagementPageLayout },
       { path: "careers", Component: CareersPageLayout },
       { path: "PointOfSales", Component: PointOfSalesPageLayout },
       { path: "StartupsAndSmes", Component: StartupsAndSmes },

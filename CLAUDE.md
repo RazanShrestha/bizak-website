@@ -221,6 +221,8 @@ Canonical hero rhythm:
 - Title → buttons: `marginBottom: 36`
 - Section padding: `pad="hero"` (56px top / 96px bottom, flat)
 
+**Hero mock width:** The mock panel / card group below the CTAs must fill the full `<Container>` width. Never put `max-w-xl`, `max-w-2xl`, `max-w-3xl`, or `mx-auto max-w-*` on the mock's outer wrapper `<div>`. Only internal sub-elements may carry explicit widths. A full-width mock looks intentional and fills the canvas; a constrained one feels like a centred widget dropped into the hero.
+
 This is the **only place** inline `style` for static spacing is sanctioned. Mid-page sections, bentos, etc. use `BentoGrid` / `SectionHead` / `Section pad` / built-in primitive spacing — no inline styles there.
 
 ## Anatomy of a marketing page
