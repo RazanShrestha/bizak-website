@@ -46,7 +46,7 @@ function HeadingRoot({
       <Tag
         className={cn(
           LEVEL_CLASS[level],
-          tone === "dark" ? "text-bz-text-on-dark" : "text-bz-text",
+          tone === "dark" ? "text-bz-text-on-dark" : "text-bz-text-heading",
           className,
         )}
         {...rest}

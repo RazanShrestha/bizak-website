@@ -5,63 +5,49 @@ import {
 import {
   Boxes, Upload, Unlink, Activity, Shield, Key,
   GitBranch, RefreshCw, Webhook,
-  CreditCard, Landmark, ShoppingBag, Users, Calculator,
-  Mail, CalendarDays, Fingerprint, Scale, Truck, Layers, Wallet,
+  CreditCard, Landmark, ShoppingBag, Calculator,
 } from "lucide-react";
 
 // ─── Hero visual ─────────────────────────────────────────────────────────────
 
-const INTEGRATION_CATEGORIES = [
-  { Icon: CreditCard,   name: "Payment Gateways",      desc: "Multi-gateway, multi-currency, auto-posted"         },
-  { Icon: Landmark,     name: "Banks & Finance",        desc: "Direct feeds, auto-reconciliation, multi-bank"      },
-  { Icon: ShoppingBag,  name: "E-Commerce",             desc: "Orders, returns, and catalogue in real time"        },
-  { Icon: Users,        name: "CRM",                    desc: "Customer records flow into every module"            },
-  { Icon: Calculator,   name: "Accounting",             desc: "Transactions auto-posted to the general ledger"     },
-  { Icon: Mail,         name: "Email",                  desc: "Trigger workflows and alerts from inbox events"     },
-  { Icon: CalendarDays, name: "Calendar & Scheduling",  desc: "Appointments, deadlines, and reminders synced"      },
-  { Icon: Fingerprint,  name: "Biometric Devices",      desc: "Attendance and access control, captured live"       },
-  { Icon: Scale,        name: "Weighing Bridges",        desc: "Real-time weight data for dispatch and billing"     },
-  { Icon: Truck,        name: "Logistics & Shipping",   desc: "Carrier tracking piped into your ops layer"         },
-  { Icon: Layers,       name: "ERP Systems",            desc: "Migrate from or co-run alongside any ERP"           },
-  { Icon: Wallet,       name: "Payroll & HR",           desc: "Payslips, headcount, and benefits in sync"          },
+const HERO_CONNECTORS = [
+  { Icon: CreditCard,  name: "Stripe",     category: "Payments", pulse: "1,842 tx · live"     },
+  { Icon: ShoppingBag, name: "Shopify",    category: "Commerce", pulse: "391 orders synced"    },
+  { Icon: Calculator,  name: "QuickBooks", category: "Ledger",   pulse: "Auto-posted"          },
+  { Icon: Landmark,    name: "Plaid",      category: "Banking",  pulse: "2 banks reconciled"   },
 ];
 
 function ConnectorShowcaseMock() {
   return (
     <div className="w-full mt-10 rounded-bz-xl overflow-hidden border border-white/[0.06]">
-      {/* Header */}
-      <div className="relative bg-bz-olive overflow-hidden px-7 py-5 border-b border-white/[0.06]">
+      <div className="relative bg-bz-olive overflow-hidden px-5 py-4 border-b border-white/[0.06]">
         <DotGrid tone="dark" />
         <div className="relative flex items-center justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-bz-text-on-dark-muted">
-            Integration Categories
+          <span className="text-[12px] font-bold text-bz-text-on-dark">Integration Hub</span>
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-bz-fire">
+            <span className="w-1.5 h-1.5 rounded-full bg-bz-fire inline-block" />
+            200+ connectors live
           </span>
-          <span className="text-[11px] font-semibold text-bz-fire">200+ connectors available</span>
         </div>
       </div>
 
-      {/* Category grid — gap-px trick: container bg bleeds 1px between cells */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-px bg-white/[0.08]">
-        {INTEGRATION_CATEGORIES.map(({ Icon, name, desc }) => (
-          <div key={name} className="flex items-start gap-3.5 px-6 py-5 bg-bz-olive">
-            <Icon size={16} className="text-bz-fire shrink-0 mt-0.5" />
-            <div className="min-w-0">
-              <div className="text-[13px] font-bold text-bz-text-on-dark leading-snug">{name}</div>
-              <div className="text-[11px] text-bz-text-on-dark-muted mt-0.5 leading-snug">{desc}</div>
+      <div className="bg-bz-olive divide-y divide-white/[0.05]">
+        {HERO_CONNECTORS.map(({ Icon, name, category, pulse }) => (
+          <div key={name} className="flex items-center gap-4 px-5 py-4">
+            <Icon size={15} className="text-bz-fire shrink-0" />
+            <div className="flex-1 min-w-0">
+              <span className="text-[13px] font-bold text-bz-text-on-dark">{name}</span>
+              <span className="text-[11px] text-bz-text-on-dark-muted ml-2">{category}</span>
             </div>
+            <span className="text-[10px] font-semibold text-bz-fire whitespace-nowrap">{pulse}</span>
           </div>
         ))}
       </div>
 
-      {/* Stats strip */}
       <div className="grid grid-cols-3 bg-bz-olive-dark border-t border-white/[0.06] divide-x divide-white/[0.06]">
-        {[
-          ["200+",   "Connectors"],
-          ["25+",    "Categories"],
-          ["<2 min", "Avg. Setup"],
-        ].map(([v, l]) => (
-          <div key={l} className="px-6 py-4 text-center">
-            <div className="text-[20px] font-extrabold text-bz-text-on-dark leading-none">{v}</div>
+        {[["200+", "Connectors"], ["25+", "Categories"], ["<2 min", "Avg. Setup"]].map(([v, l]) => (
+          <div key={l} className="px-4 py-4 text-center">
+            <div className="text-[18px] font-extrabold text-bz-text-on-dark leading-none">{v}</div>
             <div className="text-[9px] font-bold uppercase tracking-[0.1em] text-bz-text-on-dark-muted mt-1.5">{l}</div>
           </div>
         ))}

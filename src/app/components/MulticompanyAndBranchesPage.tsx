@@ -63,80 +63,37 @@ const HERO_ENTITIES = [
   { flag: "🇦🇺", code: "AU", curr: "AUD", rev: "A$2.8M"   },
 ];
 
-const IC_ROWS = [
-  { code: "IC-2412", from: "US", to: "DE", amt: "$24,800",   ago: "1m ago"  },
-  { code: "IC-2411", from: "UK", to: "AE", amt: "£12,400",   ago: "6m ago"  },
-  { code: "IC-2410", from: "SG", to: "AU", amt: "S$18,900",  ago: "14m ago" },
-];
 
 function GroupConsoleMock() {
   return (
     <div className="w-full rounded-bz-xl border border-bz-line bg-bz-surface overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2.5 bg-bz-paper-warm border-b border-bz-line">
-        <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
-          <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-          <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+      <div className="flex items-end justify-between px-5 py-4 bg-bz-paper-warm border-b border-bz-line">
+        <div>
+          <div className="text-[10px] font-bold text-bz-text-muted uppercase tracking-[0.1em] mb-1.5">
+            Group Revenue · QTD
+          </div>
+          <div className="text-[26px] font-extrabold text-bz-text leading-none">
+            $48.2M{" "}
+            <span className="text-[13px] font-bold text-[#16a34a]">+12.4%</span>
+          </div>
         </div>
-        <span className="text-[11px] font-bold text-bz-text-muted uppercase tracking-[0.12em]">
-          Bizak Group Console
-        </span>
         <StatusChip variant="live">Live</StatusChip>
       </div>
 
-      <div className="p-4 md:p-5 flex flex-col gap-4">
-        <div className="flex items-end justify-between">
-          <div>
-            <div className="text-[10px] font-bold text-bz-text-muted uppercase tracking-[0.1em] mb-1">
-              Group Revenue · QTD
-            </div>
-            <div className="text-[22px] font-extrabold text-bz-text leading-none">
-              $48.2M{" "}
-              <span className="text-[13px] font-bold text-[#16a34a]">+12.4%</span>
-            </div>
+      <div className="divide-y divide-bz-line-soft">
+        {HERO_ENTITIES.slice(0, 4).map((e) => (
+          <div key={e.code} className="flex items-center gap-3.5 px-5 py-3.5">
+            <span className="text-[18px] leading-none">{e.flag}</span>
+            <span className="flex-1 text-[13px] font-medium text-bz-text">Bizak {e.code}</span>
+            <span className="text-[11px] text-bz-text-muted mr-3">{e.curr}</span>
+            <span className="text-[13px] font-bold text-bz-text">{e.rev}</span>
           </div>
-          <div className="text-right">
-            <div className="text-[10px] font-semibold text-bz-text-muted">IC Eliminated</div>
-            <div className="text-[13px] font-bold text-bz-text">$4.1M · auto</div>
-          </div>
-        </div>
+        ))}
+      </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {HERO_ENTITIES.map((e) => (
-            <div
-              key={e.code}
-              className="flex items-center gap-2.5 rounded-bz-md border border-bz-line-soft bg-bz-paper px-3 py-2.5"
-            >
-              <span className="text-[17px] leading-none">{e.flag}</span>
-              <div>
-                <div className="text-[9px] font-bold text-bz-text-muted uppercase tracking-[0.08em]">
-                  {e.code} · {e.curr}
-                </div>
-                <div className="text-[13px] font-bold text-bz-text">{e.rev}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="rounded-bz-md border border-bz-line overflow-hidden">
-          <div className="flex justify-between items-center px-3 py-2 bg-bz-paper-warm border-b border-bz-line">
-            <span className="text-[9px] font-bold text-bz-text-muted uppercase tracking-[0.12em]">
-              Intercompany Postings
-            </span>
-            <span className="text-[9px] font-bold text-[#16a34a]">14 today · auto</span>
-          </div>
-          {IC_ROWS.map((r) => (
-            <div
-              key={r.code}
-              className="grid grid-cols-4 gap-2 px-3 py-2 text-[11px] border-t border-bz-line-soft"
-            >
-              <span className="font-bold text-bz-text">{r.code}</span>
-              <span className="text-bz-text-muted">{r.from} → {r.to}</span>
-              <span className="font-bold text-bz-text text-right">{r.amt}</span>
-              <span className="text-[#16a34a] font-bold text-right">{r.ago}</span>
-            </div>
-          ))}
-        </div>
+      <div className="px-5 py-3 bg-bz-paper-warm border-t border-bz-line flex justify-between items-center">
+        <span className="text-[11px] font-bold text-bz-text">IC Eliminations · $4.1M</span>
+        <span className="text-[10px] font-bold text-[#16a34a]">● auto-matched</span>
       </div>
     </div>
   );
@@ -327,12 +284,12 @@ function HeroSection() {
         <div className="flex flex-col items-center text-center">
           <BadgeGreen style={{ marginBottom: 28 }}>Platform Capability</BadgeGreen>
           <Heading level={2} style={{ marginBottom: 36 }}>
-            One ERP. Many entities.{" "}
-            <Heading.Muted>Zero spreadsheet rollups.</Heading.Muted>
+            One ERP. Many entities.{" "}{<br/>}
+            Zero spreadsheet rollups.
           </Heading>
           <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="/contact">Book a Demo</Pill>
-            <Pill variant="light" withArrow href="https://system.bizakerp.com/account/self-register">
+            <Pill variant="dark" withArrowUpRight href="/contact">Book a Demo</Pill>
+            <Pill variant="light" href="https://system.bizakerp.com/account/self-register">
               Start Free Trial
             </Pill>
           </div>

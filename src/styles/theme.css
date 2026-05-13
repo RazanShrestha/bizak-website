@@ -53,6 +53,7 @@
 
   /* ── Text ─────────────────────────────────────────────────────────── */
   --bz-text:               #1A1D19;
+  --bz-text-heading:       #2D332B;   /* slightly softer than body — used for h1/h2 marketing titles */
   --bz-text-muted:         #5A6053;   /* description copy / meta labels — bumped darker for legibility */
   --bz-text-soft:          #707064;   /* Heading.Muted span — soft inline muted (bumped darker for readability) */
   --bz-text-on-dark:       #FCFCF7;
@@ -224,6 +225,7 @@
 
   /* Text */
   --color-bz-text:                var(--bz-text);
+  --color-bz-text-heading:        var(--bz-text-heading);
   --color-bz-text-muted:          var(--bz-text-muted);
   --color-bz-text-soft:           var(--bz-text-soft);
   --color-bz-text-on-dark:        var(--bz-text-on-dark);
@@ -307,15 +309,15 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-weight: 500;
+    font-weight: 300;
     line-height: var(--bz-leading-heading);
     letter-spacing: var(--bz-tracking-tight);
   }
 
-  h1 { font-size: var(--text-2xl); font-weight: var(--font-weight-medium); line-height: 1.5; }
-  h2 { font-size: var(--text-xl); font-weight: var(--font-weight-medium); line-height: 1.5; }
-  h3 { font-size: var(--text-lg); font-weight: var(--font-weight-medium); line-height: 1.5; }
-  h4 { font-size: var(--text-base); font-weight: var(--font-weight-medium); line-height: 1.5; }
+  h1 { font-size: var(--text-2xl); font-weight: 300; line-height: 1.5; }
+  h2 { font-size: var(--text-xl); font-weight: 300; line-height: 1.5; }
+  h3 { font-size: var(--text-lg); font-weight: 300; line-height: 1.5; }
+  h4 { font-size: var(--text-base); font-weight: 300; line-height: 1.5; }
 
   label, button, input {
     font-family: inherit;

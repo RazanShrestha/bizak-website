@@ -286,6 +286,25 @@ function InventoryAndWarehousePageLayout() {
   );
 }
 
+function ProfessionalServicePageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <ProfessionalServicePage />
+      <Footer
+        cta={{
+          title: "Run a profitable practice, not a busy one.",
+          titleMuted: "Every billable minute captured, every engagement on the books.",
+          description:
+            "Unify time, talent and clients on Bizak — and turn every hour worked into invoiced, collected revenue.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Talk to practice team",
+        }}
+      />
+    </div>
+  );
+}
+
 function ManufacturingPageLayout() {
   return (
     <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -626,7 +645,7 @@ export const router = createBrowserRouter([
       { path: "manufacturing",    Component: ManufacturingPageLayout     },
       { path: "manufacturingProduct",    Component: ManufacturingProductPageLayout           },
       { path: "Retail", Component: RetailAndEcommercePage    },
-      { path: "ProfessionalService", Component: ProfessionalServicePage    },
+      { path: "ProfessionalService", Component: ProfessionalServicePageLayout },
       { path: "DashboardAndReporting", Component: DashboardAndReportingPageLayout },
       { path: "Integrations", Component: IntegrationsPageLayout },
       { path: "MulticompanyAndBranches", Component: MulticompanyAndBranchesPageLayout },

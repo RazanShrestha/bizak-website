@@ -104,15 +104,15 @@ function HeroSection() {
 
           <Heading level={2} style={{ marginBottom: 36 }}>
             The operating system for modern business,{" "}
-            <Heading.Muted>handling finance, inventory and operations in one place.</Heading.Muted>
+            handling finance, inventory and operations in one place.
           </Heading>
 
           <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
             <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">
-              Book a demo
+              Request demo
             </Pill>
           </div>
         </div>

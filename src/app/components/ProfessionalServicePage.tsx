@@ -1,1279 +1,710 @@
-import "../../styles/style.css";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
-import { HeroSplit, HeroBadge, Button, Icon } from "./marketing";
 import {
-  HeroVisual,
-  HeroMainCard,
-  HeroInventoryCard,
-  HeroGlobeCard,
-  HeroCircleCard,
-  ChallengesGrid,
-  ChallengeCard,
-  SolutionGrid,
-  type SolutionItem,
-  CapabilitiesGrid,
-  CapabilityCard,
-  SimpleFeatureCard,
-  FeatureWithMockupCard,
-  MethodGrid,
-  InsightsBlock,
-  ChartFrame,
-  WorkflowStrip,
-  type WorkflowStep,
-  IndustryCta,
-} from "./solutions/by-industry";
+  Activity,
+  Briefcase,
+  CheckCircle,
+  Clock,
+  FileText,
+  Handshake,
+  Layers,
+  Mail,
+  Play,
+  Receipt,
+  Repeat,
+  Search,
+  Sparkles,
+  Timer,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import {
+  BadgeGreen,
+  Bento,
+  BentoGrid,
+  BigCard,
+  Container,
+  DotGrid,
+  Heading,
+  HeroCanvas,
+  Pill,
+  Section,
+  SectionHead,
+  StatTile,
+  StripeBar,
+} from "./bz";
 
-// ─── Hero ────────────────────────────────────────────────────────────────────
+// ── Hero ─────────────────────────────────────────────────────────────────────
 
-const TEAM_LOAD = [
-  { code: "SR", label: "Senior", pct: 92, active: true },
-  { code: "MG", label: "Manager", pct: 76, active: true },
-  { code: "JR", label: "Analyst", pct: 64, active: false },
-];
+const HERO_PIPELINE = [
+  { stage: "Logged",    value: "$32,480", note: "Today",    state: "done" },
+  { stage: "Approved",  value: "$28,140", note: "5h ago",   state: "done" },
+  { stage: "Invoiced",  value: "$24,900", note: "Drafting", state: "live" },
+  { stage: "Collected", value: "$18,420", note: "DSO 21d",  state: "queued" },
+] as const;
 
-const ENGAGEMENTS = [
-  {
-    code: "ENG-4218",
-    client: "Hartwell & Locke LLP",
-    hours: "02:48:11",
-    billable: "BILLABLE",
-    color: "#C7FF35",
-  },
-  {
-    code: "ENG-4219",
-    client: "Vector Capital Advisors",
-    hours: "01:14:32",
-    billable: "BILLABLE",
-    color: "#60a5fa",
-  },
-  {
-    code: "ENG-4220",
-    client: "Internal · Bench Time",
-    hours: "00:42:08",
-    billable: "INTERNAL",
-    color: "rgba(122,130,109,0.4)",
-  },
-];
+const HERO_TEAM = [
+  { initials: "AR", name: "A. Reyes",  load: 102, state: "burn" },
+  { initials: "KI", name: "K. Ito",    load:  88, state: "good" },
+  { initials: "SP", name: "S. Patel",  load:  82, state: "good" },
+  { initials: "MS", name: "M. Singh",  load:  41, state: "idle" },
+  { initials: "JP", name: "J. Park",   load:  18, state: "idle" },
+] as const;
 
-const WEEK_HOURS = [
-  { day: "Mon", logged: 7.8, target: 8 },
-  { day: "Tue", logged: 8.4, target: 8 },
-  { day: "Wed", logged: 7.2, target: 8 },
-  { day: "Thu", logged: 8.1, target: 8 },
-  { day: "Fri", logged: 4.6, target: 8 },
-];
-
-function TeamLoadNode({
-  code,
-  label,
-  pct,
-  active,
-}: {
-  code: string;
-  label: string;
-  pct: number;
-  active: boolean;
-}) {
+function PracticeCommandMock() {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 4,
-        flex: 1,
-      }}
-    >
-      <div
-        style={{
-          width: 36,
-          height: 36,
-          borderRadius: "50%",
-          border: `1.5px solid ${active ? "rgba(199,255,53,0.5)" : "rgba(122,130,109,0.18)"}`,
-          background: active ? "rgba(199,255,53,0.06)" : "rgba(122,130,109,0.03)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-          boxShadow: active ? "0 0 10px rgba(199,255,53,0.12)" : "none",
-        }}
-      >
-        <span
-          style={{
-            fontSize: 9,
-            fontWeight: 700,
-            color: active ? "var(--bz-sage)" : "#bbb",
-            letterSpacing: "0.04em",
-          }}
-        >
-          {code}
-        </span>
-        <div
-          style={{
-            position: "absolute",
-            top: -3,
-            right: -3,
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            background: active ? "var(--bz-accent)" : "rgba(122,130,109,0.35)",
-            boxShadow: active ? "0 0 5px var(--bz-accent)" : "none",
-          }}
-        />
-      </div>
-      <span style={{ fontSize: 7, color: "#bbb", letterSpacing: "0.03em" }}>{label}</span>
-      <span style={{ fontSize: 9, fontWeight: 700, color: active ? "var(--bz-accent)" : "#bbb" }}>
-        {pct}%
-      </span>
-    </div>
-  );
-}
-
-function EngagementRow({
-  code,
-  client,
-  hours,
-  billable,
-  color,
-}: {
-  code: string;
-  client: string;
-  hours: string;
-  billable: string;
-  color: string;
-}) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <div style={{ width: 4, height: 22, borderRadius: 2, background: color, flexShrink: 0 }} />
-      <span
-        style={{
-          fontSize: 8,
-          fontFamily: "monospace",
-          color: "rgba(122,130,109,0.7)",
-          minWidth: 60,
-        }}
-      >
-        {code}
-      </span>
-      <span
-        style={{
-          fontSize: 8,
-          color: "#aaa",
-          flex: 1,
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {client}
-      </span>
-      <span style={{ fontSize: 8, fontFamily: "monospace", fontWeight: 700, color: "#444" }}>
-        {hours}
-      </span>
-      <span
-        style={{
-          fontSize: 7,
-          fontWeight: 700,
-          padding: "2px 6px",
-          borderRadius: 4,
-          background:
-            billable === "BILLABLE" ? "rgba(199,255,53,0.12)" : "rgba(122,130,109,0.1)",
-          color: billable === "BILLABLE" ? "var(--bz-sage)" : "#999",
-          textTransform: "uppercase",
-          letterSpacing: "0.06em",
-        }}
-      >
-        {billable}
-      </span>
-    </div>
-  );
-}
-
-function ProfessionalHeroVisual() {
-  return (
-    <HeroVisual
-      main={
-        <HeroMainCard panelTitle="Bizak · Practice Hub" liveLabel="Tracking">
-          {/* Active timer pill */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "10px 12px",
-              borderRadius: 10,
-              background: "rgba(199,255,53,0.06)",
-              border: "1px solid rgba(199,255,53,0.22)",
-              marginBottom: 12,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div
-                style={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: 7,
-                  background: "rgba(199,255,53,0.18)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "var(--bz-sage)",
-                }}
-              >
-                <Icon name="clock" size={14} />
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontSize: 7,
-                    fontWeight: 700,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color: "rgba(122,130,109,0.7)",
-                  }}
-                >
-                  Active Timer
-                </div>
-                <div style={{ fontSize: 9, color: "#444", fontWeight: 600 }}>
-                  Hartwell &amp; Locke · M&amp;A Diligence
-                </div>
-              </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div
-                className="biz-pulse-glow"
-                style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--bz-accent)" }}
-              />
-              <span
-                style={{
-                  fontFamily: "monospace",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: "var(--bz-text)",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                02:48:11
-              </span>
-            </div>
-          </div>
-
-          {/* Team load nodes */}
-          <div style={{ position: "relative", marginBottom: 12 }}>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 6 }}>
-              {TEAM_LOAD.map((t) => (
-                <TeamLoadNode key={t.code} {...t} />
-              ))}
-            </div>
-          </div>
-
-          {/* Engagement rows */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 7,
-              paddingTop: 10,
-              borderTop: "1px solid rgba(122,130,109,0.1)",
-            }}
-          >
-            {ENGAGEMENTS.map((e) => (
-              <EngagementRow key={e.code} {...e} />
-            ))}
-          </div>
-        </HeroMainCard>
-      }
-      inventory={
-        <HeroInventoryCard
-          iconName="dollar"
-          eyebrow="Billable Today"
-          value="$32,480"
-          barLabel="Realisation"
-          barValue="94.2%"
-          barPct={94}
-        />
-      }
-      globe={
-        <HeroGlobeCard iconName="calendar" eyebrow="This Week">
-          <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            {WEEK_HOURS.map((d) => (
-              <div key={d.day} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontSize: 7, color: "#888", minWidth: 22, fontWeight: 600 }}>
-                  {d.day}
-                </span>
-                <div
-                  style={{
-                    flex: 1,
-                    height: 4,
-                    background: "rgba(122,130,109,0.10)",
-                    borderRadius: 99,
-                    overflow: "hidden",
-                    position: "relative",
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "100%",
-                      width: `${(d.logged / d.target) * 100}%`,
-                      background: d.logged >= d.target ? "var(--bz-accent)" : "var(--bz-sage)",
-                      borderRadius: 99,
-                    }}
-                  />
-                </div>
-                <span
-                  style={{
-                    fontSize: 7,
-                    fontWeight: 700,
-                    color: "#555",
-                    fontFamily: "monospace",
-                  }}
-                >
-                  {d.logged}h
-                </span>
-              </div>
-            ))}
-          </div>
-        </HeroGlobeCard>
-      }
-      circle={<HeroCircleCard eyebrow="Utilisation" value="87%" progressPct={87} />}
-    />
-  );
-}
-
-function HeroSection() {
-  return (
-    <HeroSplit
-      badge={<HeroBadge>Professional Services ERP</HeroBadge>}
-      title={
-        <>
-          Bill Every Hour.
-          <br />
-          <span className="text-bz-sage">Deliver</span> Every Engagement.
-        </>
-      }
-      description="Run consultancies, agencies, and advisory firms on one platform. Capture every billable minute, plan utilisation in real time, and turn every engagement into a renewable, profitable client relationship."
-      actions={
-        <>
-          <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
-          <Button variant="outline" size="lg">See How It Works</Button>
-        </>
-      }
-      stats={[
-        { value: "87%", label: "Avg. Utilisation" },
-        { value: "12 d", label: "Faster Invoicing" },
-      ]}
-      visual={<ProfessionalHeroVisual />}
-    />
-  );
-}
-
-// ─── Challenges ──────────────────────────────────────────────────────────────
-
-function ChallengesSection() {
-  return (
-    <ChallengesGrid
-      eyebrow="Challenges"
-      title="Every untracked minute is margin walking out the door"
-      description="Spreadsheet timesheets, scope drift, idle benches, and slow invoicing quietly drain the profitability of every engagement you deliver."
-      headlineMaxWidth={720}
-    >
-      {/* 1 · Lost Billable Hours */}
-      <ChallengeCard
-        icon="clock"
-        title="Lost Billable Hours"
-        description="When time sheets are filled in on Friday afternoon from memory, an average of 14% of billable work simply disappears — never logged, never invoiced."
-      >
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 56 }}>
-          {[
-            { d: "M", logged: 38, real: 46 },
-            { d: "T", logged: 42, real: 48 },
-            { d: "W", logged: 36, real: 50 },
-            { d: "T", logged: 40, real: 52 },
-            { d: "F", logged: 28, real: 44 },
-          ].map((b, i) => (
-            <div
-              key={i}
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 3,
-                height: "100%",
-                justifyContent: "flex-end",
-              }}
-            >
-              <div
-                style={{
-                  width: "100%",
-                  height: `${b.real}%`,
-                  background: "rgba(248,113,113,0.18)",
-                  borderRadius: "3px 3px 0 0",
-                  position: "relative",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    width: "100%",
-                    height: `${(b.logged / b.real) * 100}%`,
-                    background: "rgba(122,130,109,0.55)",
-                    borderRadius: "3px 3px 0 0",
-                  }}
-                />
-              </div>
-              <span style={{ fontSize: 7, color: "#aaa" }}>{b.d}</span>
-            </div>
-          ))}
-        </div>
-        <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6 }}>
-          <div
-            className="biz-pulse-glow"
-            style={{ width: 6, height: 6, borderRadius: "50%", background: "#f87171" }}
-          />
-          <span
-            style={{
-              fontSize: 8,
-              fontWeight: 700,
-              color: "#f87171",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-            }}
-          >
-            14% leakage this week
-          </span>
-        </div>
-      </ChallengeCard>
-
-      {/* 2 · Scope Creep */}
-      <ChallengeCard
-        icon="target"
-        title="Scope Creep"
-        description="Without disciplined change-orders and live budget tracking, fixed-fee engagements quietly burn past their contracted hours."
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-          {[
-            { label: "Quoted", pct: 60, color: "rgba(122,130,109,0.4)", val: "180h" },
-            { label: "Burned", pct: 92, color: "#f87171", val: "276h" },
-          ].map((row) => (
-            <div key={row.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span
-                style={{
-                  fontSize: 8,
-                  fontWeight: 700,
-                  color: "#999",
-                  minWidth: 56,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                }}
-              >
-                {row.label}
-              </span>
-              <div
-                style={{
-                  flex: 1,
-                  height: 7,
-                  background: "#f3f3f3",
-                  borderRadius: 3,
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    height: "100%",
-                    width: `${row.pct}%`,
-                    background: row.color,
-                    borderRadius: 3,
-                  }}
-                />
-              </div>
-              <span
-                style={{ fontSize: 8, fontWeight: 700, color: row.color, fontFamily: "monospace" }}
-              >
-                {row.val}
-              </span>
-            </div>
-          ))}
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fbbf24" }} />
-            <span
-              style={{
-                fontSize: 8,
-                fontWeight: 700,
-                color: "var(--bz-sage)",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-              }}
-            >
-              +53% over budget
+    <div className="relative z-[2] w-full pb-10">
+      {/* Row 1 — running timer */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4 mb-4">
+        <div className="rounded-bz-xl border border-white/[0.08] bg-white/[0.04] p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-bz-fire" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-fire">
+              Active timer · Live
             </span>
           </div>
-        </div>
-      </ChallengeCard>
-
-      {/* 3 · Idle Benches */}
-      <ChallengeCard
-        icon="users"
-        title="Idle Benches"
-        description="Without a real-time view of who's loaded and who's free, capable consultants sit idle while overworked teammates burn out."
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          {[
-            { name: "A. Reyes", load: 102, status: "burn" },
-            { name: "K. Ito", load: 88, status: "good" },
-            { name: "M. Singh", load: 41, status: "idle" },
-            { name: "J. Park", load: 18, status: "idle" },
-          ].map((p) => {
-            const color =
-              p.status === "burn"
-                ? "#f87171"
-                : p.status === "idle"
-                ? "rgba(122,130,109,0.3)"
-                : "var(--bz-accent)";
-            return (
-              <div key={p.name} style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                <span style={{ fontSize: 8, color: "#777", minWidth: 56 }}>{p.name}</span>
-                <div
-                  style={{
-                    flex: 1,
-                    height: 5,
-                    background: "#f3f3f3",
-                    borderRadius: 99,
-                    overflow: "hidden",
-                    position: "relative",
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      height: "100%",
-                      width: "85%",
-                      borderRight: "1px dashed rgba(122,130,109,0.4)",
-                      boxSizing: "border-box",
-                    }}
-                  />
-                  <div
-                    style={{
-                      height: "100%",
-                      width: `${Math.min(p.load, 100)}%`,
-                      background: color,
-                      borderRadius: 99,
-                    }}
-                  />
+          <div className="flex items-end justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <span className="grid h-10 w-10 place-items-center rounded-bz-lg bg-bz-fire/15 text-bz-fire">
+                <Timer size={18} />
+              </span>
+              <div className="text-left">
+                <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-white/[0.62]">
+                  Hartwell &amp; Locke · M&amp;A Diligence
                 </div>
-                <span
-                  style={{
-                    fontSize: 8,
-                    fontWeight: 700,
-                    color:
-                      p.status === "burn"
-                        ? "#f87171"
-                        : p.status === "idle"
-                        ? "#bbb"
-                        : "var(--bz-sage)",
-                    minWidth: 26,
-                    textAlign: "right",
-                  }}
-                >
-                  {p.load}%
+                <div className="text-[12px] text-white/[0.72]">Lead partner · Senior associate</div>
+              </div>
+            </div>
+            <div className="text-bz-text-on-dark text-[42px] md:text-[52px] font-medium leading-none tabular-nums tracking-[-0.02em]">
+              02:48:11
+            </div>
+          </div>
+          <div className="mt-5 grid grid-cols-3 gap-3">
+            <div className="rounded-bz-md bg-white/[0.05] px-3 py-2 text-left">
+              <div className="text-[10px] uppercase tracking-[0.12em] text-white/[0.6]">Rate</div>
+              <div className="text-[14px] font-medium text-bz-text-on-dark">$240 / hr</div>
+            </div>
+            <div className="rounded-bz-md bg-white/[0.05] px-3 py-2 text-left">
+              <div className="text-[10px] uppercase tracking-[0.12em] text-white/[0.6]">Billable today</div>
+              <div className="text-[14px] font-medium text-bz-fire">$32,480</div>
+            </div>
+            <div className="rounded-bz-md bg-white/[0.05] px-3 py-2 text-left">
+              <div className="text-[10px] uppercase tracking-[0.12em] text-white/[0.6]">Realisation</div>
+              <div className="text-[14px] font-medium text-bz-leaf">94.2%</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-bz-xl border border-white/[0.08] bg-white/[0.04] p-5 flex flex-col">
+          <div className="flex items-center gap-2 mb-4">
+            <Activity size={12} className="text-bz-leaf" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">
+              Practice utilisation · Week 21
+            </span>
+          </div>
+          <div className="flex items-end gap-2">
+            <div className="text-bz-text-on-dark text-[44px] font-medium leading-none tabular-nums tracking-[-0.02em]">
+              87%
+            </div>
+            <span className="mb-1 text-[11px] text-bz-leaf">↑ 6.1pp QoQ</span>
+          </div>
+          <div className="mt-4">
+            <StripeBar pct={87} tone="dark" />
+          </div>
+          <div className="mt-4 grid grid-cols-5 gap-1.5">
+            {[78, 84, 72, 81, 46].map((h, i) => (
+              <div
+                key={i}
+                className="rounded-sm bg-bz-fire/70"
+                style={{ height: 6 + (h / 100) * 28 }}
+              />
+            ))}
+          </div>
+          <div className="mt-2 grid grid-cols-5 text-center text-[9px] text-white/[0.48]">
+            {["Mon", "Tue", "Wed", "Thu", "Fri"].map((d) => (
+              <span key={d}>{d}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Row 2 — team load strip */}
+      <div className="rounded-bz-xl border border-white/[0.08] bg-white/[0.04] p-5 mb-4">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">
+            Team load · live
+          </span>
+          <span className="text-[10px] text-white/[0.5]">2 idle · 1 over-allocated</span>
+        </div>
+        <div className="grid grid-cols-5 gap-3">
+          {HERO_TEAM.map((m) => {
+            const cap = Math.min(m.load, 100);
+            const fill =
+              m.state === "burn"
+                ? "bg-[#f87171]"
+                : m.state === "idle"
+                ? "bg-white/[0.18]"
+                : "bg-bz-fire";
+            const lbl =
+              m.state === "burn"
+                ? "text-[#f87171]"
+                : m.state === "idle"
+                ? "text-white/[0.5]"
+                : "text-bz-fire";
+            return (
+              <div key={m.initials} className="flex flex-col items-center text-center">
+                <span className="grid h-9 w-9 place-items-center rounded-full border border-white/[0.12] bg-white/[0.04] text-[10px] font-medium text-white/[0.82] tracking-[0.06em]">
+                  {m.initials}
+                </span>
+                <span className="mt-2 text-[10.5px] text-white/[0.62]">{m.name}</span>
+                <div className="mt-2 h-1 w-full rounded-full bg-white/[0.08] overflow-hidden">
+                  <div className={`h-full ${fill}`} style={{ width: `${cap}%` }} />
+                </div>
+                <span className={`mt-1.5 text-[10px] font-medium tabular-nums ${lbl}`}>
+                  {m.load}%
                 </span>
               </div>
             );
           })}
         </div>
-        <div style={{ marginTop: 8 }}>
-          <span
-            style={{
-              fontSize: 8,
-              fontWeight: 700,
-              color: "var(--bz-sage)",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-            }}
-          >
-            2 idle · 1 over-allocated
-          </span>
-        </div>
-      </ChallengeCard>
-
-      {/* 4 · Slow Invoicing & DSO */}
-      <ChallengeCard
-        icon="receipt"
-        title="Slow Invoicing & DSO"
-        description="Manual invoice prep from scattered spreadsheets stretches days-sales-outstanding well past 60 days, starving cash flow."
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 4, height: 36 }}>
-          {[
-            { stage: "Work Done", color: "rgba(122,130,109,0.55)" },
-            { stage: "Time Approved", color: "#fbbf24" },
-            { stage: "Invoice Sent", color: "#fbbf24" },
-            { stage: "Paid", color: "#f87171" },
-          ].map((s, i, arr) => (
-            <div key={s.stage} style={{ display: "flex", alignItems: "center", flex: 1 }}>
-              <div
-                style={{
-                  width: 12,
-                  height: 12,
-                  borderRadius: "50%",
-                  background: s.color,
-                  flexShrink: 0,
-                  boxShadow: `0 0 0 3px ${s.color}22`,
-                }}
-              />
-              {i < arr.length - 1 && (
-                <div
-                  style={{
-                    flex: 1,
-                    height: 1,
-                    background: "rgba(122,130,109,0.2)",
-                    margin: "0 4px",
-                  }}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
-          {["D+0", "D+8", "D+21", "D+67"].map((d) => (
-            <span key={d} style={{ fontSize: 7, color: "#aaa", fontFamily: "monospace" }}>
-              {d}
-            </span>
-          ))}
-        </div>
-        <div style={{ marginTop: 6 }}>
-          <span
-            style={{
-              fontSize: 8,
-              fontWeight: 700,
-              color: "#f87171",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-            }}
-          >
-            67-day DSO · cash trapped
-          </span>
-        </div>
-      </ChallengeCard>
-
-      {/* 5 · Knowledge In Inboxes */}
-      <ChallengeCard
-        icon="folder"
-        title="Knowledge In Inboxes"
-        description="Deliverables, contracts, and client correspondence scattered across email, drives, and chat — onboarding a new lead takes days, not hours."
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 56,
-            gap: 0,
-            position: "relative",
-          }}
-        >
-          <svg
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              pointerEvents: "none",
-            }}
-            viewBox="0 0 200 56"
-            preserveAspectRatio="none"
-          >
-            <line
-              x1="40"
-              y1="20"
-              x2="100"
-              y2="40"
-              stroke="rgba(122,130,109,0.18)"
-              strokeWidth="1"
-              strokeDasharray="3 3"
-            />
-            <line
-              x1="160"
-              y1="18"
-              x2="100"
-              y2="40"
-              stroke="rgba(122,130,109,0.18)"
-              strokeWidth="1"
-              strokeDasharray="3 3"
-            />
-            <line
-              x1="100"
-              y1="10"
-              x2="100"
-              y2="40"
-              stroke="rgba(122,130,109,0.18)"
-              strokeWidth="1"
-              strokeDasharray="3 3"
-            />
-          </svg>
-          {[
-            { x: "20%", y: "18%", lbl: "Email" },
-            { x: "50%", y: "8%", lbl: "Drive" },
-            { x: "80%", y: "20%", lbl: "Chat" },
-            { x: "50%", y: "70%", lbl: "?" },
-          ].map((n, i) => (
-            <div
-              key={i}
-              style={{
-                position: "absolute",
-                top: n.y,
-                left: n.x,
-                transform: "translate(-50%, -50%)",
-                textAlign: "center",
-              }}
-            >
-              <div
-                style={{
-                  width: 22,
-                  height: 22,
-                  borderRadius: "50%",
-                  border:
-                    i === 3
-                      ? "1.5px dashed #f87171"
-                      : "1.5px solid rgba(122,130,109,0.22)",
-                  background:
-                    i === 3 ? "rgba(248,113,113,0.06)" : "rgba(122,130,109,0.04)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 8,
-                  fontWeight: 700,
-                  color: i === 3 ? "#f87171" : "#aaa",
-                }}
-              >
-                {n.lbl[0]}
-              </div>
-              <span
-                style={{
-                  fontSize: 7,
-                  color: i === 3 ? "#f87171" : "#999",
-                  marginTop: 2,
-                  display: "block",
-                }}
-              >
-                {n.lbl}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div style={{ textAlign: "center", marginTop: 4 }}>
-          <span
-            style={{
-              fontSize: 8,
-              fontWeight: 700,
-              color: "#f87171",
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-            }}
-          >
-            No single source of truth
-          </span>
-        </div>
-      </ChallengeCard>
-
-      {/* 6 · No Engagement Margin View */}
-      <ChallengeCard
-        icon="trending"
-        title="No Engagement Margin View"
-        description="Without live cost-to-bill tracking, you only know an engagement was unprofitable months after it closed — when it's far too late to act."
-      >
-        <div style={{ display: "flex", gap: 10, alignItems: "flex-end", height: 50 }}>
-          {[
-            { label: "Eng. A", margin: 38, color: "var(--bz-accent)", val: "+38%" },
-            { label: "Eng. B", margin: 12, color: "rgba(122,130,109,0.45)", val: "+12%" },
-            { label: "Eng. C", margin: -8, color: "#f87171", val: "−8%" },
-            { label: "Eng. D", margin: 22, color: "rgba(199,255,53,0.55)", val: "+22%" },
-          ].map((b) => (
-            <div
-              key={b.label}
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 3,
-              }}
-            >
-              <span style={{ fontSize: 7, fontWeight: 700, color: b.margin < 0 ? "#f87171" : "#555" }}>
-                {b.val}
-              </span>
-              <div
-                style={{
-                  width: "100%",
-                  height: Math.abs(b.margin) * 1.2 + 6,
-                  background: b.color,
-                  borderRadius: 4,
-                  opacity: b.margin < 0 ? 0.85 : 1,
-                }}
-              />
-              <span style={{ fontSize: 7, color: "#aaa" }}>{b.label}</span>
-            </div>
-          ))}
-        </div>
-        <div style={{ marginTop: 8 }}>
-          <span
-            style={{
-              fontSize: 8,
-              fontWeight: 700,
-              color: "var(--bz-sage)",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-            }}
-          >
-            1 of 4 silently bleeding
-          </span>
-        </div>
-      </ChallengeCard>
-    </ChallengesGrid>
-  );
-}
-
-// ─── Solution ────────────────────────────────────────────────────────────────
-
-const SOLUTIONS: SolutionItem[] = [
-  {
-    icon: "briefcase",
-    title: "Engagement & Project Mgmt",
-    desc: "Plan, staff, and run every engagement from proposal to close — phases, milestones, deliverables, and budget guardrails on one timeline.",
-  },
-  {
-    icon: "clock",
-    title: "Time & Expense Capture",
-    desc: "One-tap timers, mobile entry, and AI-suggested time entries. Approvals flow directly into invoices with zero re-keying.",
-  },
-  {
-    icon: "users",
-    title: "Resource Planning",
-    desc: "See who's loaded, who's free, and who's about to bench. Rebalance teams in real time and forecast hiring needs weeks ahead.",
-  },
-  {
-    icon: "receipt",
-    title: "Billing & Retainers",
-    desc: "Fixed-fee, T&M, milestone, retainer — Bizak handles every billing model with automated WIP-to-invoice generation.",
-  },
-  {
-    icon: "handshake",
-    title: "Client Portal & CRM",
-    desc: "A branded client workspace for proposals, deliverables, approvals, and statements — replaces ten back-and-forth emails.",
-  },
-  {
-    icon: "trending",
-    title: "Profitability Analytics",
-    desc: "Live cost-to-bill, realisation, and margin per engagement, partner, and practice — actionable while the work is still in flight.",
-  },
-  {
-    icon: "book",
-    title: "Knowledge & Document Vault",
-    desc: "Versioned proposals, NDAs, deliverables, and templates — searchable across every engagement and securely shared with clients.",
-  },
-];
-
-// ─── Capabilities ────────────────────────────────────────────────────────────
-
-function TimesheetMockupBody() {
-  return (
-    <div style={{ padding: "14px 16px" }}>
-      <div
-        style={{
-          marginBottom: 12,
-          padding: "10px 12px",
-          borderRadius: 10,
-          background: "rgba(199,255,53,0.06)",
-          border: "1px solid rgba(199,255,53,0.18)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 4,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 9,
-              fontWeight: 700,
-              color: "var(--bz-accent)",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
-            Hartwell &amp; Locke
-          </span>
-          <span style={{ fontFamily: "monospace", fontSize: 14, fontWeight: 700, color: "#fff" }}>
-            02:48:11
-          </span>
-        </div>
-        <span style={{ fontSize: 10, color: "rgba(255,255,255,0.55)" }}>
-          M&amp;A Diligence · Phase 2
-        </span>
       </div>
-      {[
-        { client: "Vector Capital", task: "Strategy review", dur: "01:14:32", rate: "$240" },
-        { client: "Northwind Health", task: "Compliance audit", dur: "00:48:05", rate: "$185" },
-        { client: "Internal", task: "Practice meeting", dur: "00:30:00", rate: "—" },
-      ].map((r) => (
-        <div
-          key={r.client}
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingBottom: 8,
-            marginBottom: 8,
-            borderBottom: "1px solid rgba(255,255,255,0.05)",
-          }}
-        >
-          <div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>
-              {r.client}
-            </div>
-            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", marginTop: 1 }}>{r.task}</div>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <div
-              style={{
-                fontFamily: "monospace",
-                fontSize: 11,
-                color: "rgba(255,255,255,0.6)",
-                fontWeight: 600,
-              }}
-            >
-              {r.dur}
-            </div>
-            <div style={{ fontSize: 9, color: "var(--bz-accent)", marginTop: 1 }}>{r.rate}/h</div>
-          </div>
+
+      {/* Row 3 — time → bill pipeline */}
+      <div className="rounded-bz-xl border border-white/[0.08] bg-white/[0.04] p-5">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">
+            Time → bill · today
+          </span>
+          <span className="text-[10px] text-bz-leaf">0 re-keyed entries</span>
         </div>
-      ))}
-      <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 6 }}>
-        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Today billable</span>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "var(--bz-accent)" }}>5h 20m</span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {HERO_PIPELINE.map((p, i) => (
+            <div
+              key={p.stage}
+              className="rounded-bz-md border border-white/[0.06] bg-white/[0.03] p-3"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[9.5px] font-semibold uppercase tracking-[0.12em] text-white/[0.55]">
+                  {String(i + 1).padStart(2, "0")} · {p.stage}
+                </span>
+                <span
+                  className={`inline-flex h-1.5 w-1.5 rounded-full ${
+                    p.state === "live"
+                      ? "bg-bz-fire"
+                      : p.state === "done"
+                      ? "bg-bz-leaf"
+                      : "bg-white/[0.25]"
+                  }`}
+                />
+              </div>
+              <div className="text-[18px] font-medium text-bz-text-on-dark tabular-nums tracking-[-0.01em]">
+                {p.value}
+              </div>
+              <div className="text-[10px] text-white/[0.48] mt-0.5">{p.note}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
-function TimeTrackerCard() {
+function HeroSection() {
   return (
-    <FeatureWithMockupCard
-      iconName="clock"
-      eyebrow="Time & Engagement Tracker"
-      title="Capture Every Billable Minute"
-      description="Live one-tap timers, AI-assisted time-entry from calendar and email signals, and approval chains that feed directly into invoices — eliminating the Friday-afternoon recall ritual that loses 14% of revenue every week."
-      features={[
-        { icon: "play", text: "One-tap timers across web, mobile, and desktop with offline sync" },
-        { icon: "zap", text: "AI suggests entries from calendar, mail, and document activity" },
-        { icon: "check-circle", text: "Manager approval workflows with policy violation flags" },
-        { icon: "receipt", text: "Approved time auto-flows to draft invoices and WIP reports" },
-      ]}
-      mockupHeader={{ title: "Active Timesheet", rightLabel: "Running" }}
-      mockupBody={<TimesheetMockupBody />}
-      mockupBadges={[
-        { val: "94%", lbl: "Realisation" },
-        { val: "$32k", lbl: "Today" },
-      ]}
-      neon
-    />
+    <Section tone="b" pad="hero">
+      <Container>
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>Built for Practice Firms</BadgeGreen>
+          <Heading level={2} style={{ marginBottom: 36 }}>
+            Bill every hour.{" "}
+            <Heading.Muted>Deliver every engagement.</Heading.Muted>
+          </Heading>
+          <div className="flex flex-wrap justify-center gap-[10px]">
+            <Pill
+              variant="dark"
+              withTick
+              href="https://system.bizakerp.com/account/self-register"
+            >
+              Start free trial
+            </Pill>
+            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">
+              Book a demo
+            </Pill>
+          </div>
+        </div>
+        <HeroCanvas>
+          <PracticeCommandMock />
+        </HeroCanvas>
+      </Container>
+    </Section>
   );
 }
 
-function CapabilitiesSection() {
-  return (
-    <CapabilitiesGrid
-      eyebrow="Capabilities"
-      title="Built for the rhythm of professional practice."
-      headlineMaxWidth={580}
-    >
-      <TimeTrackerCard />
+// ── 02 · One tap to invoice ──────────────────────────────────────────────────
 
-      {/* Resource Heatmap */}
-      <CapabilityCard span={3} minHeight={400}>
-        <div>
-          <h3>Resource Heatmap</h3>
-          <p>
-            A live grid of every consultant's allocation across the next four weeks — with overload
-            warnings, idle alerts, and skill-aware suggestions for staffing the next engagement.
-          </p>
-        </div>
-        <div style={{ marginTop: 18 }}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "60px repeat(4, 1fr)",
-              gap: 4,
-              alignItems: "center",
-            }}
-          >
-            <span />
-            {["W1", "W2", "W3", "W4"].map((w) => (
-              <span
-                key={w}
-                style={{
-                  fontSize: 8,
-                  fontWeight: 700,
-                  color: "rgba(255,255,255,0.35)",
-                  textAlign: "center",
-                  letterSpacing: "0.08em",
-                }}
-              >
-                {w}
-              </span>
-            ))}
-            {[
-              { name: "A. Reyes", loads: [102, 96, 88, 72] },
-              { name: "K. Ito", loads: [88, 92, 84, 76] },
-              { name: "M. Singh", loads: [41, 58, 72, 80] },
-              { name: "J. Park", loads: [18, 24, 48, 64] },
-              { name: "S. Patel", loads: [78, 82, 90, 86] },
-            ].flatMap((p) => [
-              <span
-                key={p.name + "-l"}
-                style={{ fontSize: 9, color: "rgba(255,255,255,0.55)", padding: "5px 0" }}
-              >
-                {p.name}
-              </span>,
-              ...p.loads.map((l, i) => {
-                const bg =
-                  l > 100
-                    ? "#f87171"
-                    : l > 85
-                    ? "#C7FF35"
-                    : l > 60
-                    ? "rgba(199,255,53,0.5)"
-                    : l > 40
-                    ? "rgba(199,255,53,0.22)"
-                    : "rgba(255,255,255,0.06)";
-                const tc =
-                  l > 100 || (l > 85 && l <= 100) ? "#1A1D19" : "rgba(255,255,255,0.55)";
-                return (
-                  <div
-                    key={p.name + i}
-                    style={{
-                      height: 22,
-                      borderRadius: 5,
-                      background: bg,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 9,
-                      fontWeight: 700,
-                      color: tc,
-                    }}
-                  >
-                    {l}
-                  </div>
-                );
-              }),
-            ])}
-          </div>
-        </div>
-      </CapabilityCard>
-
-      {/* Client 360 */}
-      <CapabilityCard span={3} minHeight={400}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            marginBottom: 24,
-          }}
-        >
-          <div>
-            <h3>Client 360</h3>
-            <p>
-              Every engagement, conversation, document, invoice, and outstanding balance for a
-              client — unified in a single profile that travels with the relationship across
-              partners.
-            </p>
-          </div>
-          <div
-            style={{
-              width: 52,
-              height: 52,
-              borderRadius: "50%",
-              background: "rgba(199,255,53,0.1)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--bz-accent)",
-              flexShrink: 0,
-            }}
-          >
-            <Icon name="handshake" size={24} />
-          </div>
-        </div>
-        <MethodGrid
-          items={[
-            { label: "$418k", sub: "Lifetime Fees" },
-            { label: "7", sub: "Engagements" },
-            { label: "96%", sub: "NPS" },
-          ]}
-        />
-      </CapabilityCard>
-
-      {/* Row 3: simple cards */}
-      <SimpleFeatureCard
-        iconName="receipt"
-        title="Flexible Billing"
-        body="Fixed-fee, time-and-materials, milestone, retainer, and contingent — Bizak handles every engagement type with auto-generated invoices."
-        minHeight={240}
-      />
-      <SimpleFeatureCard
-        iconName="zap"
-        title="AI Time Suggest"
-        body="Bizak reads calendar events, email threads, and document edits — then proposes time entries that just need a one-click approval."
-        minHeight={240}
-        neon
-        cornerBadge="AI"
-      />
-      <SimpleFeatureCard
-        iconName="award"
-        title="Compliance & Trust"
-        body="Conflict-of-interest checks, audit trails, retention policies, and SOC 2 controls — built in for regulated practices."
-        minHeight={240}
-        progressPct={99}
-        progressLabel="SOC 2 · ISO 27001 · GDPR"
-      />
-    </CapabilitiesGrid>
-  );
-}
-
-// ─── Insights ────────────────────────────────────────────────────────────────
-
-function ProfessionalChart() {
-  return (
-    <ChartFrame
-      tooltip={{ title: "Utilisation: 87%", subtitle: "Realisation: 94.2% · ↑ 6.1pp QoQ" }}
-      glowSide="right"
-    >
-      <svg style={{ width: "100%", height: "100%" }} viewBox="0 0 400 200" fill="none">
-        <defs>
-          <linearGradient id="utilGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#C7FF35" stopOpacity="0.18" />
-            <stop offset="100%" stopColor="#C7FF35" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        {[40, 80, 120, 160].map((y) => (
-          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="rgba(122,130,109,0.06)" strokeWidth="1" />
-        ))}
-        <path
-          d="M0 110 C 40 100, 80 92, 120 78 S 200 60, 240 50 S 320 40, 400 28"
-          stroke="var(--bz-sage)"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <path
-          d="M0 110 C 40 100, 80 92, 120 78 S 200 60, 240 50 S 320 40, 400 28 V 200 H 0 Z"
-          fill="url(#utilGrad)"
-        />
-        <path
-          d="M0 130 C 50 128, 100 124, 160 116 S 250 96, 310 84 S 370 70, 400 60"
-          stroke="rgba(122,130,109,0.4)"
-          strokeWidth="2"
-          strokeDasharray="6 4"
-        />
-        {[
-          { x: 60, y: 95 },
-          { x: 140, y: 70 },
-          { x: 240, y: 50 },
-          { x: 340, y: 34 },
-        ].map((p, i) => (
-          <circle
-            key={i}
-            cx={p.x}
-            cy={p.y}
-            r="3.5"
-            fill="var(--bz-accent)"
-            stroke="var(--bz-sage)"
-            strokeWidth="1.6"
-          />
-        ))}
-        <line
-          x1="240"
-          y1="50"
-          x2="240"
-          y2="20"
-          stroke="rgba(199,255,53,0.4)"
-          strokeWidth="1"
-          strokeDasharray="3 3"
-        />
-        <text x="246" y="18" fontSize="8" fill="var(--bz-sage)">
-          New Hires Onboarded
-        </text>
-      </svg>
-    </ChartFrame>
-  );
-}
-
-// ─── Workflow ────────────────────────────────────────────────────────────────
-
-const STEPS: WorkflowStep[] = [
-  { icon: "search", label: "Lead" },
-  { icon: "file-text", label: "Proposal" },
-  { icon: "handshake", label: "Engage" },
-  { icon: "clock", label: "Deliver" },
-  { icon: "receipt", label: "Bill" },
-  { icon: "repeat", label: "Renew" },
+const ONE_TAP_BULLETS = [
+  "One-tap timers across web, mobile and desktop with offline sync",
+  "AI proposes entries from calendar, mail and document activity",
+  "Approved time auto-flows to draft invoices and WIP reports",
+  "Fixed-fee, T&M, milestone, retainer — every billing model",
 ];
 
-// ─── Page ────────────────────────────────────────────────────────────────────
+function OneTapVisual() {
+  return (
+    <div className="flex flex-col gap-3 p-5 md:p-6">
+      {/* Tile 1 — running timer */}
+      <div className="rounded-bz-lg border border-white/[0.08] bg-white/[0.04] p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-7 w-7 place-items-center rounded-bz-md bg-bz-fire/15 text-bz-fire">
+              <Play size={12} />
+            </span>
+            <div>
+              <div className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-bz-fire">
+                One tap · started
+              </div>
+              <div className="text-[11px] text-white/[0.72]">Vector Capital · Strategy review</div>
+            </div>
+          </div>
+          <div className="text-[15px] font-medium text-bz-text-on-dark tabular-nums">
+            01:14:32
+          </div>
+        </div>
+      </div>
+
+      {/* Tile 2 — AI suggestions */}
+      <div className="rounded-bz-lg border border-white/[0.08] bg-white/[0.04] p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="grid h-7 w-7 place-items-center rounded-bz-md bg-bz-leaf/15 text-bz-leaf">
+            <Zap size={12} />
+          </span>
+          <span className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-bz-leaf">
+            AI suggested · ready to approve
+          </span>
+        </div>
+        {[
+          { src: "Calendar", task: "Northwind Health · Compliance audit", dur: "00:48" },
+          { src: "Mail", task: "Hartwell & Locke · Diligence call", dur: "00:36" },
+          { src: "Docs",    task: "Vector Capital · Memo edits",         dur: "00:24" },
+        ].map((s) => (
+          <div
+            key={s.task}
+            className="flex items-center gap-2.5 py-1.5 border-b border-white/[0.05] last:border-0"
+          >
+            <span className="rounded-sm bg-white/[0.06] px-1.5 py-0.5 text-[8.5px] font-medium uppercase tracking-[0.1em] text-white/[0.55] min-w-[44px] text-center">
+              {s.src}
+            </span>
+            <span className="flex-1 text-[10.5px] text-white/[0.72] truncate">{s.task}</span>
+            <span className="text-[10.5px] font-medium text-bz-text-on-dark tabular-nums">
+              {s.dur}
+            </span>
+            <CheckCircle size={12} className="text-bz-fire" />
+          </div>
+        ))}
+      </div>
+
+      {/* Tile 3 — draft invoice */}
+      <div className="rounded-bz-lg border border-bz-fire/30 bg-bz-fire/5 p-4">
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <div className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-bz-fire">
+              Draft invoice · INV-4218
+            </div>
+            <div className="text-[11px] text-white/[0.72]">Hartwell &amp; Locke · May 2026</div>
+          </div>
+          <Receipt size={16} className="text-bz-fire" />
+        </div>
+        <div className="grid grid-cols-3 gap-2 mt-3">
+          <div>
+            <div className="text-[9px] uppercase tracking-[0.12em] text-white/[0.5]">Hours</div>
+            <div className="text-[13px] font-medium text-bz-text-on-dark tabular-nums">42.5h</div>
+          </div>
+          <div>
+            <div className="text-[9px] uppercase tracking-[0.12em] text-white/[0.5]">Rate</div>
+            <div className="text-[13px] font-medium text-bz-text-on-dark tabular-nums">$240</div>
+          </div>
+          <div>
+            <div className="text-[9px] uppercase tracking-[0.12em] text-white/[0.5]">Net</div>
+            <div className="text-[13px] font-medium text-bz-fire tabular-nums">$10,200</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OneTapToInvoiceSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="01"
+          label="From timer to invoice"
+          title={
+            <>
+              One tap starts the clock.{" "}
+              <Heading.Muted>Bizak does the rest, end-to-end.</Heading.Muted>
+            </>
+          }
+          description="Friday-afternoon recall costs an average of 14% of revenue. Bizak captures time as it happens, lets AI propose the rest, and pushes approved hours straight into draft invoices — zero re-keying."
+        />
+        <BigCard
+          text={{
+            title: <>From the first tap to a paid invoice, on one platform.</>,
+            body: "Every minute logged feeds the same database your finance team posts from. Time becomes WIP becomes invoice becomes ledger entry — no exports, no spreadsheets, no Friday-night reconciliations.",
+            bullets: ONE_TAP_BULLETS,
+            cta: {
+              variant: "accent",
+              withArrow: true,
+              href: "/contact",
+              children: "See it in action",
+            },
+          }}
+          visual={<OneTapVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+// ── 03 · Resource heatmap ────────────────────────────────────────────────────
+
+const HEATMAP_PEOPLE = [
+  { name: "A. Reyes",  role: "Senior partner", loads: [102, 96, 88, 72] },
+  { name: "K. Ito",    role: "Manager",        loads: [ 88, 92, 84, 76] },
+  { name: "S. Patel",  role: "Senior",         loads: [ 78, 82, 90, 86] },
+  { name: "M. Singh",  role: "Senior",         loads: [ 41, 58, 72, 80] },
+  { name: "J. Park",   role: "Analyst",        loads: [ 18, 24, 48, 64] },
+] as const;
+
+function cellTone(load: number) {
+  if (load > 100) return { bg: "bg-[#f87171]/90", text: "text-bz-text" };
+  if (load > 85)  return { bg: "bg-bz-fire",       text: "text-bz-text" };
+  if (load > 60)  return { bg: "bg-bz-fire/45",    text: "text-bz-text-on-dark" };
+  if (load > 40)  return { bg: "bg-bz-fire/20",    text: "text-white/[0.72]" };
+  return            { bg: "bg-white/[0.06]",     text: "text-white/[0.55]" };
+}
+
+function ResourceHeatmapSection() {
+  return (
+    <Section tone="dark">
+      <Container>
+        <SectionHead
+          index="02"
+          label="Real-time resourcing"
+          tone="dark"
+          title={
+            <>
+              See who's loaded, who's free,{" "}
+              <Heading.Muted>and who's about to burn.</Heading.Muted>
+            </>
+          }
+          description="A live four-week grid of every consultant's allocation — with overload warnings, idle alerts, and skill-aware suggestions for staffing the next engagement."
+        />
+
+        <div className="relative overflow-hidden rounded-bz-3xl border border-white/[0.08] bg-bz-olive-soft p-5 md:p-8">
+          <DotGrid tone="dark" />
+          <div className="relative z-[1] overflow-x-auto">
+            <div className="grid min-w-[640px] grid-cols-[200px_repeat(4,1fr)] gap-2.5">
+              <div />
+              {["Week 21", "Week 22", "Week 23", "Week 24"].map((w) => (
+                <div
+                  key={w}
+                  className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-white/[0.62] text-center"
+                >
+                  {w}
+                </div>
+              ))}
+              {HEATMAP_PEOPLE.map((p) => (
+                <div key={p.name} className="contents">
+                  <div className="flex flex-col justify-center pr-2">
+                    <span className="text-[12.5px] font-medium text-bz-text-on-dark">
+                      {p.name}
+                    </span>
+                    <span className="text-[10.5px] text-white/[0.5]">{p.role}</span>
+                  </div>
+                  {p.loads.map((l, i) => {
+                    const t = cellTone(l);
+                    return (
+                      <div
+                        key={i}
+                        className={`grid h-12 place-items-center rounded-bz-md ${t.bg}`}
+                      >
+                        <span className={`text-[13px] font-medium tabular-nums ${t.text}`}>
+                          {l}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative z-[1] mt-6 flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between md:gap-6">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] text-white/[0.62]">
+              <span className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-sm bg-[#f87171]/90" /> Over capacity
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-sm bg-bz-fire" /> Healthy
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-sm bg-bz-fire/20" /> Idle
+              </span>
+            </div>
+            <span className="text-[11px] text-bz-leaf">
+              Suggestion · move J. Park onto Hartwell &amp; Locke (W23) — frees A. Reyes by 18%
+            </span>
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ── 04 · Practice capabilities ───────────────────────────────────────────────
+
+const CAPABILITIES = [
+  {
+    icon: Briefcase,
+    title: "Engagement & project management",
+    desc: "Plan, staff and run every engagement from proposal to close — phases, milestones, deliverables and budget guardrails on one timeline.",
+  },
+  {
+    icon: Clock,
+    title: "Time & expense capture",
+    desc: "One-tap timers, mobile entry, AI-suggested entries — and approval chains that feed invoices with zero re-keying.",
+  },
+  {
+    icon: Users,
+    title: "Resource planning",
+    desc: "See who's loaded, who's free, and who's about to bench. Rebalance teams in real time and forecast hiring weeks ahead.",
+  },
+  {
+    icon: Receipt,
+    title: "Flexible billing & retainers",
+    desc: "Fixed-fee, T&M, milestone, retainer, contingent — every model, with auto-generated invoices and WIP statements.",
+  },
+  {
+    icon: Handshake,
+    title: "Client portal & CRM",
+    desc: "A branded client workspace for proposals, deliverables, approvals and statements — replacing ten back-and-forth emails.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Profitability analytics",
+    desc: "Live cost-to-bill, realisation and margin per engagement, partner and practice — actionable while work is still in flight.",
+  },
+] as const;
+
+function PracticeCapabilitiesSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="03"
+          label="Practice operating picture"
+          title={
+            <>
+              Every part of a modern firm,{" "}
+              <Heading.Muted>on one connected platform.</Heading.Muted>
+            </>
+          }
+          titleMaxWidth={760}
+        />
+        <BentoGrid cols={3}>
+          {CAPABILITIES.map(({ icon: Icon, title, desc }) => (
+            <Bento key={title} tone="paper" hover>
+              <Bento.Header
+                title={title}
+                icon={
+                  <span className="grid h-10 w-10 place-items-center rounded-bz-lg bg-bz-fire/15 text-bz-fire">
+                    <Icon size={18} />
+                  </span>
+                }
+              />
+              <Bento.Desc>{desc}</Bento.Desc>
+            </Bento>
+          ))}
+        </BentoGrid>
+      </Container>
+    </Section>
+  );
+}
+
+// ── 05 · Engagement profitability ────────────────────────────────────────────
+
+const MARGIN_ENGAGEMENTS = [
+  { client: "Hartwell & Locke",       type: "T&M",        margin:  38, val: "+$42.1k" },
+  { client: "Vector Capital",         type: "Retainer",   margin:  29, val: "+$31.4k" },
+  { client: "Northwind Health",       type: "Milestone",  margin:  22, val: "+$18.7k" },
+  { client: "Birchgrove Logistics",   type: "Fixed-fee",  margin:  12, val:  "+$8.2k" },
+  { client: "Atlas Mineral Partners", type: "Fixed-fee",  margin:  -8, val:  "-$6.3k" },
+] as const;
+
+function EngagementProfitabilitySection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <SectionHead
+          index="04"
+          label="Live engagement margin"
+          title={
+            <>
+              Know which engagement is bleeding{" "}
+              <Heading.Muted>while you can still fix it.</Heading.Muted>
+            </>
+          }
+          description="Bizak posts cost and revenue per engagement in real time — so the partner reviewing this Friday sees the same number the analyst posted Wednesday."
+        />
+
+        <div className="rounded-bz-3xl border border-bz-line-soft bg-bz-surface p-5 md:p-8">
+          <div className="flex flex-col gap-3.5">
+            {MARGIN_ENGAGEMENTS.map((e) => {
+              const neg = e.margin < 0;
+              const pct = Math.min(Math.abs(e.margin) * 1.6, 60);
+              return (
+                <div
+                  key={e.client}
+                  className="grid grid-cols-1 md:grid-cols-[1.6fr_3fr_0.6fr] gap-3 md:items-center"
+                >
+                  <div>
+                    <div className="text-[13.5px] font-medium text-bz-text">
+                      {e.client}
+                    </div>
+                    <div className="text-[11.5px] text-bz-text-muted">{e.type}</div>
+                  </div>
+
+                  <div className="relative flex h-3 items-center">
+                    <div className="absolute inset-y-0 left-1/2 w-px bg-bz-line-soft" />
+                    <div
+                      className={`absolute h-full rounded-full ${
+                        neg ? "bg-[#f87171]" : "bg-bz-fire"
+                      }`}
+                      style={
+                        neg
+                          ? { right: "50%", width: `${pct}%` }
+                          : { left: "50%",  width: `${pct}%` }
+                      }
+                    />
+                  </div>
+
+                  <div
+                    className={`text-right text-[13px] font-medium tabular-nums ${
+                      neg ? "text-[#f87171]" : "text-bz-text"
+                    }`}
+                  >
+                    {e.val}
+                    <span className="ml-1 text-[10.5px] text-bz-text-muted">
+                      ({e.margin > 0 ? "+" : ""}
+                      {e.margin}%)
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <StatTile value="87%" desc="Average utilisation across the practice." />
+          <StatTile value="94.2%" desc="Realisation rate on approved time entries." />
+          <StatTile value="12 d" desc="Faster from work-done to invoice sent." />
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ── 06 · Practice lifecycle ──────────────────────────────────────────────────
+
+const LIFECYCLE = [
+  { icon: Search,    label: "Lead",     desc: "Capture inbound, qualify, route to a partner." },
+  { icon: FileText,  label: "Proposal", desc: "Scope, price and e-sign — from a template library." },
+  { icon: Handshake, label: "Engage",   desc: "Staff the team, set milestones, kick off." },
+  { icon: Timer,     label: "Deliver",  desc: "Track time, monitor budget, flag scope drift live." },
+  { icon: Receipt,   label: "Bill",     desc: "Approved hours auto-post to invoices and the GL." },
+  { icon: Repeat,    label: "Renew",    desc: "Client portal carries the relationship forward." },
+] as const;
+
+function PracticeLifecycleSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="05"
+          label="Engagement lifecycle"
+          title={
+            <>
+              From first conversation{" "}
+              <Heading.Muted>to lifetime client.</Heading.Muted>
+            </>
+          }
+          titleMaxWidth={680}
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+          {LIFECYCLE.map(({ icon: Icon, label, desc }, i) => (
+            <div
+              key={label}
+              className="relative rounded-bz-2xl border border-bz-line-soft bg-bz-surface p-5 flex flex-col gap-3"
+            >
+              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-bz-text-muted">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="grid h-10 w-10 place-items-center rounded-bz-lg bg-bz-leaf/30 text-bz-text">
+                <Icon size={18} />
+              </span>
+              <div>
+                <div className="text-[15px] font-medium text-bz-text">{label}</div>
+                <p className="mt-1 text-[12.5px] leading-[1.55] text-bz-text-muted">
+                  {desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 flex flex-col items-start gap-4 rounded-bz-2xl bg-bz-section-b p-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-bz-lg bg-bz-fire/15 text-bz-fire">
+              <Layers size={18} />
+            </span>
+            <div>
+              <div className="text-[14.5px] font-medium text-bz-text">
+                One database behind every step
+              </div>
+              <p className="mt-1 max-w-[560px] text-[12.5px] leading-[1.55] text-bz-text-muted">
+                Lead becomes proposal becomes engagement becomes invoice becomes journal entry —
+                without re-keying, exports, or a single spreadsheet.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
+              Start free trial
+            </Pill>
+            <Pill variant="light" iconLeft={<Mail size={13} />} href="/contact">
+              Talk to practice team
+            </Pill>
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
 
 export function ProfessionalServicePage() {
   return (
-    <div className="biz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <main>
-        <HeroSection />
-        <ChallengesSection />
-        <SolutionGrid
-          eyebrow="The Solution"
-          title="One platform for every engagement, every consultant, every client"
-          items={SOLUTIONS}
-        />
-        <CapabilitiesSection />
-        <InsightsBlock
-          eyebrow="Practice Intelligence"
-          title="Make faster, smarter decisions on every engagement."
-          description="Stop guessing at profitability after the work is done. Use real-time utilisation dashboards and cost-to-bill analytics to run your practice with full confidence."
-          bullets={[
-            {
-              bold: "Real-time Utilisation Monitoring",
-              rest: " — See who's loaded, who's free, and forecast hiring needs weeks ahead.",
-            },
-            {
-              bold: "Engagement Margin Tracking",
-              rest: " — Live cost-to-bill and realisation per engagement, partner, and practice.",
-            },
-            {
-              bold: "Billable Hours Auto-Posted",
-              rest: " — Approved time flows directly to draft invoices. No re-keying.",
-            },
-          ]}
-          chart={<ProfessionalChart />}
-        />
-        <WorkflowStrip
-          eyebrow="Engagement Lifecycle"
-          title="From First Conversation to Lifetime Client"
-          steps={STEPS}
-        />
-        <IndustryCta
-          title="Run a profitable practice, not a busy one."
-          description="Unify time, talent, and clients on Bizak — and turn every billable hour into a lasting client relationship."
-        />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <HeroSection />
+      <OneTapToInvoiceSection />
+      <ResourceHeatmapSection />
+      <PracticeCapabilitiesSection />
+      <EngagementProfitabilitySection />
+      <PracticeLifecycleSection />
+    </main>
   );
 }
-
