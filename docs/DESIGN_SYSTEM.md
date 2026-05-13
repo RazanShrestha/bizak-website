@@ -125,11 +125,11 @@ primitive (Phase 1) will encode this automatically.
 
 | Token | Value | When to use |
 |---|---|---|
-| `--bz-fire` / `bg-bz-fire` / `text-bz-fire` | `#d3f969` | **The lime accent — single canonical value.** Use for primary CTAs, "Live" pills on dark, key callout numbers. |
+| `--bz-fire` / `bg-bz-fire` / `text-bz-fire` | `#d3f969` | **The lime accent — single canonical value.** Use for primary CTAs, `"Live"` pills, key callout numbers **on dark surfaces only**. Lime is near-invisible on paper/cream — never use `text-bz-fire` on a light background. |
 | `--bz-fire-soft` | `rgba(211,249,105,0.10)` | Tinted fire background. |
 | `--bz-fire-mid` | `rgba(211,249,105,0.20)` | Tinted fire border. |
 | `--bz-leaf` / `bg-bz-leaf` | `#DBE9B8` | Pistachio — softer secondary accent. Pill backgrounds on dark, badge tints, secondary CTAs. |
-| `--bz-leaf-deep` | `#A8C76C` | Pistachio deep — sparingly. |
+| `--bz-leaf-deep` / `text-bz-leaf-deep` | `#A8C76C` | Pistachio deep. **Use for positive/upward delta indicators on light surfaces** (e.g. `↑ +3.1%` inside a paper card). Readable on `bg-bz-paper` where `text-bz-fire` is not. |
 
 #### Text
 
@@ -367,30 +367,79 @@ Every marketing hero on the site is a **flat paper-cream surface** (using
 1. **`<BadgeGreen>`** above the `<h1>` — the pistachio confetti pill. Not a gradient. Not a `<PillBadge>` from the legacy primitives.
 2. **`<Heading level={1}>`** with `<Heading.Muted>` for the second-colour span.
 3. **Two `<Pill>` CTAs** — typically `<Pill variant="dark" withTick>` (primary) + `<Pill variant="light"><Sparkles/>Book a demo</Pill>` (secondary).
-4. **`<HeroCanvas>`** below (optional) — a dark olive panel with a grid overlay, holding 1–3 floating `<HeroCard>`s.
-5. **`<Marquee>`** logo strip at the bottom.
+4. **`<HeroCanvas>`** below the CTAs — **required on every page**. A dark olive panel (`bg-bz-olive`) with a `<DotGrid>` overlay. Holds the page-specific mock.
+5. **`<Marquee>`** logo strip at the bottom (optional).
 
 The previous three hero options (`HeroCentered` / `HeroSplit` / `HeroPanel`)
 are legacy. New pages don't use them. The new hero is one shape — Centered,
-flat, paper, with optional HeroCanvas below.
+flat, paper, with `<HeroCanvas>` below.
+
+### `<HeroCanvas>` surface contract
+
+`<HeroCanvas>` is always dark (`bg-bz-olive`). The mock inside it must
+honour this contract:
+
+- **Light backgrounds only.** Every card, panel, or component inside uses
+  `bg-bz-paper`, `bg-bz-paper-warm`, `bg-bz-surface`, or `bg-white/[alpha]`.
+  Never `bg-bz-olive*` or `bg-bz-deep` inside the canvas.
+- **Dark text on light cards.** Use `text-bz-text` / `text-bz-text-muted` /
+  `text-bz-text-soft`. Do not use `text-bz-text-on-dark` inside a light
+  card on the dark canvas.
+- **Designed from scratch per page.** The mock communicates this page's
+  core narrative. If it could equally appear on another module page, it
+  is wrong. See the "Mocks already in use" register in
+  `.claude/skills/redesign-page/SKILL.md`.
+- **Mobile-responsive.** Wide multi-column layouts (pipeline boards,
+  tables, card rows) are wrapped in `overflow-x-auto` with `min-w-[Npx]`
+  on the inner container so they scroll on mobile without collapsing.
+
+#### Consistent gap on all four sides — canonical pattern
+
+`<HeroCanvas>` has CSS `padding: 56px 24px 0` by default (top / sides / bottom). **Do not** patch this by adding `!pb-[56px]` to the canvas alone — when the component's natural height is less than the canvas `min-height: 460px`, the bottom gap grows unpredictably because the component floats at the top while the min-height pushes the canvas taller.
+
+The correct pattern: remove all canvas padding, make `bz-hero-cards` fill the canvas, put consistent padding in an inner wrapper, and make the component stretch to fill the remaining space.
 
 ```tsx
-<Section tone="b">
+<HeroCanvas className="flex flex-col !p-0 [&>.bz-hero-cards]:flex-1 [&>.bz-hero-cards]:flex [&>.bz-hero-cards]:flex-col [&>.bz-hero-cards]:items-stretch">
+  {/* Inner wrapper owns ALL four gaps — equal and responsive */}
+  <div className="flex flex-1 flex-col p-[56px] max-[720px]:p-9 max-[480px]:p-4">
+    <YourComponent />  {/* must have flex-1 flex-col so it fills the wrapper */}
+  </div>
+</HeroCanvas>
+```
+
+- `!p-0` removes the default canvas padding (needs `!important` to beat the unlayered CSS rule).
+- `flex flex-col` on the canvas makes `bz-hero-cards` a flex child that can grow.
+- `[&>.bz-hero-cards]:flex-1 flex flex-col items-stretch` makes the inner slot grow to fill the canvas and stretch its children.
+- The inner wrapper `p-[56px] max-[720px]:p-9 max-[480px]:p-4` provides equal, responsive padding on all four sides.
+- The component gets `flex-1 flex-col` so it fills the wrapper's inner area — this is what makes the bottom gap consistent.
+
+Reference implementations: `ManufacturingPage.tsx` (`ProductionCommandPanel`) and `InventoryAndWarehouse.tsx` (`WarehouseFlowPanel`).
+
+```tsx
+<Section tone="b" pad="hero">
   <Container>
-    <BadgeGreen>Now Live, Globally 🎉</BadgeGreen>
-    <Heading level={1}>
-      The operating system for modern business,
-      <Heading.Muted> handling finance and ops in one place.</Heading.Muted>
-    </Heading>
-    <div className="flex flex-wrap gap-2">
-      <Pill variant="dark" withTick href="/start">Get Started</Pill>
-      <Pill variant="light"><Sparkles/>Book a demo</Pill>
+    <div className="flex flex-col items-center text-center">
+      <BadgeGreen style={{ marginBottom: 28 }}>…</BadgeGreen>
+      <Heading level={2} style={{ marginBottom: 36 }}>
+        …<Heading.Muted>…</Heading.Muted>
+      </Heading>
+      <div className="flex flex-wrap justify-center gap-[10px]">
+        <Pill variant="dark" withTick href="/start">Get Started</Pill>
+        <Pill variant="light" iconLeft={<Sparkles size={13}/>}>Book a demo</Pill>
+      </div>
     </div>
-    <HeroCanvas>
-      <HeroCard … />
-      <HeroCard … />
+
+    {/* HeroCanvas — consistent gap pattern */}
+    <HeroCanvas className="flex flex-col !p-0 [&>.bz-hero-cards]:flex-1 [&>.bz-hero-cards]:flex [&>.bz-hero-cards]:flex-col [&>.bz-hero-cards]:items-stretch">
+      <div className="flex flex-1 flex-col p-[56px] max-[720px]:p-9 max-[480px]:p-4">
+        {/*
+          Component must be flex-1 flex-col to fill the wrapper.
+          bg-bz-paper / bg-bz-paper-warm backgrounds only.
+          Invent a shape that serves THIS page's story.
+        */}
+      </div>
     </HeroCanvas>
-    <Marquee>{LOGOS.map(…)}</Marquee>
   </Container>
 </Section>
 ```
@@ -398,12 +447,13 @@ flat, paper, with optional HeroCanvas below.
 ### Why the new pattern is simpler
 
 The previous spec offered three hero variants because the legacy
-legacy `marketing/` primitives served two visually-different families (HomePage's
+`marketing/` primitives served two visually-different families (HomePage's
 floating-card hero vs Manufacturing's split-with-visual hero vs Careers'
 dark KPI-panel hero). Under the new direction, **all heroes share the
 same shape** — paper surface, centered copy, `BadgeGreen`, two pills,
-optional `HeroCanvas` below. Variation lives in the canvas content, not
-the hero shell.
+`HeroCanvas` below. Variation lives entirely in the canvas content, not
+the hero shell. The dark canvas + light mock contrast is the constant;
+what the light mock *shows* is the variable.
 
 ---
 
@@ -447,8 +497,8 @@ closing CTA.
 ```tsx
 import {
   Section, Container, SectionHead, Bento, BentoGrid, Pill, Heading,
-  BadgeGreen, HeroCanvas, HeroCard, StepCard, Marquee,
-} from "./marketing";
+  BadgeGreen, HeroCanvas, StepCard, Marquee,
+} from "./bz";
 import { Layers, ShieldCheck, Activity, Receipt } from "lucide-react";
 
 const FEATURES = [
@@ -470,9 +520,9 @@ function HeroSection() {
           <Pill variant="dark" withTick href="/start">Get Started</Pill>
           <Pill variant="light">Book a demo</Pill>
         </div>
+        {/* HeroCanvas required — see §3.6 for the surface contract */}
         <HeroCanvas>
-          <HeroCard icon={<Activity/>} title="Live ledger" badge="Live" value="$1,242,180"/>
-          <HeroCard icon={<Receipt/>}  title="Invoice INV-2046" value="$12,400.00"/>
+          {/* page-specific light mock — bg-bz-paper / bg-bz-paper-warm only */}
         </HeroCanvas>
       </Container>
     </Section>

@@ -335,7 +335,7 @@ Every marketing hero is the same shell:
 2. **BadgeGreen** — pistachio confetti pill with a small emoji and label, above the h1. Margin-bottom 28px.
 3. **Heading h1** — centered, with the second half in `Heading.Muted` for the two-tone effect. Margin-bottom 36px.
 4. **CTA row** — two pills: `variant="dark" withTick` primary + `variant="light"` with sparkles icon secondary. 10px gap.
-5. **HeroCanvas** (optional) — dark olive panel with dot-grid texture, holding 1–3 floating cards (`HeroCard`) showing live, page-specific data. The mock inside is **invented for each page**, not copied.
+5. **HeroCanvas** (required) — dark olive panel (`bg-bz-olive` + `<DotGrid>` overlay). Every card/component inside must use **light backgrounds** (`bg-bz-paper`, `bg-bz-paper-warm`, `bg-bz-surface`). The mock itself is **invented per page** — never copied from another page. Wide inner layouts need `overflow-x-auto` + `min-w-[N]` for mobile.
 6. **Marquee** logo strip (optional) at the bottom.
 
 The hero is the only place inline-style spacing is sanctioned (margin-bottom 28 / 36) — the heading's CSS sets margin: 0 and the cascade is brittle. Everywhere else, use className.

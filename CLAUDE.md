@@ -236,7 +236,8 @@ What every page must share — **the design language**:
 - The palette, tokens and Inter type scale from `theme.css`.
 - The `bz/` primitive vocabulary (`Section`, `Container`, `SectionHead`, `Pill`, `Heading`, `Bento`, etc.) — composition over forks.
 - Alternating `tone="a"` / `tone="b"` between consecutive content sections; dark sections sparingly.
-- The hero *shell* — `<Section tone="b" pad="hero">` + centered `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs, optionally with `<HeroCanvas>` below.
+- The hero *shell* — `<Section tone="b" pad="hero">` + centered `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs + **`<HeroCanvas>` below the CTAs (required)**. `<HeroCanvas>` is a dark olive surface (`bg-bz-olive` + `<DotGrid>` overlay). Every card or component placed inside it **must use light backgrounds** (`bg-bz-paper`, `bg-bz-paper-warm`, `bg-bz-surface`, or `bg-white/[alpha]`) — never dark fills inside the canvas. The mock itself must be invented per page (see `.claude/skills/redesign-page/SKILL.md` "Hero mock" section).
+- **Hero mock density**: Structural richness ≠ data density. A single card with KPI header + two-panel body is rich enough. Within that structure: 3 rows max per panel, 2–3 elements per row, 1 key stat in the header. Sub-lines under every row and labels below every bar are the most common density mistakes — strip them unless they carry meaning not visible elsewhere on the page. More `padding` + fewer items always beats more items + tight spacing.
 - Closing-CTA owned by `<Footer cta={…}>` — never a page-level dark CTA section.
 - Clean, minimalistic, no gradients, single lime accent per surface.
 
@@ -268,13 +269,14 @@ the *original* HomePage hero: `<HeroCanvas>` wrapping **two
 `badgeVariant`/`eyebrow`/`value` + `<DataRow>` + `<MiniBars>` footer).
 "Live ledger" → "Live pipeline", "Invoice INV-2046" → "Sales Order
 SO-1041". Same shape, swapped strings. **The hero mock — the visual
-below badge/heading/pills — must be invented per page.** `<HeroCard>`
-is one option among many; `<HeroCanvas>` is optional too. Valid
-alternatives include: a single big feature mock, a 3-card row with
-distinct shapes, a vertical streaming feed, a before/after split, a
-process-flow diagram, a map, a document mock, or no mock at all. See
+below badge/heading/pills — must be invented completely per page.**
+`<HeroCard>` is one option among many. `<HeroCanvas>` is **required
+on every page** (dark olive bg — all content inside must be light-toned).
+The mock inside can be one card, three cards, a table, a pipeline board,
+a document, or any custom composition — as long as it is designed fresh
+for this page's story and its backgrounds are light. See
 `.claude/skills/redesign-page/SKILL.md` "Hero mock" section for the
-full taken-mock register and the alternatives list.
+full taken-mock register and the design contract.
 
 When redesigning a page, do not look at the most-recently-redesigned
 page and re-use its section function names, section order, or
@@ -312,9 +314,28 @@ function HeroSection() {
             <Pill variant="light" iconLeft={<Sparkles size={13}/>} href="/contact">Book a demo</Pill>
           </div>
         </div>
+        {/*
+          HeroCanvas is REQUIRED (dark olive bg + DotGrid).
+          Replace the mock inside with a completely new design per page —
+          single panel, kanban board, document mock, stat tiles, etc.
+          All backgrounds inside MUST be light (bg-bz-paper / bg-bz-paper-warm).
+          Must be mobile-responsive (overflow-x-auto + min-w on wide layouts).
+
+          CONSISTENT-GAP PATTERN: the default canvas has `padding: 56px 24px 0`
+          and `min-height: 460px`, so a short mock floats at the top and the
+          bottom gap grows unpredictably. Move ALL padding to an inner wrapper
+          and make the mock fill the wrapper:
+
+            <HeroCanvas className="flex flex-col !p-0 [&>.bz-hero-cards]:flex-1 [&>.bz-hero-cards]:flex [&>.bz-hero-cards]:flex-col [&>.bz-hero-cards]:items-stretch">
+              <div className="flex flex-1 flex-col p-[56px] max-[720px]:p-9 max-[480px]:p-4">
+                <MockPanel /> {/* must be `flex flex-1 flex-col` to fill */}
+              </div>
+            </HeroCanvas>
+
+          See docs/DESIGN_SYSTEM.md "Consistent gap on all four sides".
+        */}
         <HeroCanvas>
-          <HeroCard icon={<Activity/>} title="Live ledger" badge="Live" value="$1,242,180"/>
-          <HeroCard icon={<Receipt/>} title="Invoice INV-2046" value="$12,400.00"/>
+          {/* page-specific light-toned mock goes here */}
         </HeroCanvas>
       </Container>
     </Section>

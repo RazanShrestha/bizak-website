@@ -39,7 +39,7 @@ it on the page.
 - Palette, tokens, Inter type scale from `theme.css`.
 - `bz/` primitive vocabulary; composition over forks.
 - Alternating `tone="a"`/`tone="b"`; dark sections sparing.
-- Hero shell — `<Section tone="b" pad="hero">` + centered `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs, optionally with `<HeroCanvas>` below.
+- Hero shell — `<Section tone="b" pad="hero">` + centered `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs + **`<HeroCanvas>` below (required)**. `<HeroCanvas>` is a dark olive surface — content inside it must be light-toned (see "Hero mock" section below).
 - Closing CTA via `<Footer cta={…}>` — never a page-level dark section.
 - Clean, minimalistic, no gradients, single lime accent per surface.
 
@@ -75,6 +75,25 @@ These rules came out of Phase 2 and are now load-bearing across every page:
 4. **Page-specific domain visuals (dashboards, mock invoices, multi-entity panels) stay as in-page sub-components**, but compose `bz/` micro-viz primitives (`DataRow`, `EntityRow`, `JournalRow`, `MiniBars`, `ModuleListItem`, `StatTile`) instead of duplicating JSX. See `HomePage.tsx`'s `PlatformDashboard`, `StepVisualConnect`, `StepVisualScale`, `MultiEntityVisual` for the pattern.
 
 5. **Page-internal styles never use `<style>{@media ...}</style>` blocks.** If a section needs responsive logic, the primitive that owns the layout owns the breakpoint. If you reach for a `<style>` block in a page, the primitive is missing a breakpoint — extend it.
+
+6. **`<HeroCanvas>` gap pattern — consistent on all four sides.** The default `.bz-hero-canvas` CSS has `padding: 56px 24px 0` (no bottom). Do NOT patch this with `!pb-[56px]` on the canvas alone — the canvas has `min-height: 460px`, so when the component is shorter than that the bottom gap grows unpredictably (component floats at top, min-height pushes the canvas down).
+
+   **The correct pattern** (used by `ManufacturingPage.tsx` and `InventoryAndWarehouse.tsx`):
+
+   ```tsx
+   <HeroCanvas className="flex flex-col !p-0 [&>.bz-hero-cards]:flex-1 [&>.bz-hero-cards]:flex [&>.bz-hero-cards]:flex-col [&>.bz-hero-cards]:items-stretch">
+     <div className="flex flex-1 flex-col p-[56px] max-[720px]:p-9 max-[480px]:p-4">
+       <YourPanel />  {/* must be `flex flex-1 flex-col` so it fills the wrapper */}
+     </div>
+   </HeroCanvas>
+   ```
+
+   - `!p-0` removes the default canvas padding (`!important` to beat the unlayered CSS rule).
+   - `flex flex-col [&>.bz-hero-cards]:flex-1 flex flex-col items-stretch` makes the inner `bz-hero-cards` slot fill the canvas and stretch its child.
+   - The inner wrapper provides equal, responsive padding on all four sides — `56px` desktop / `36px` (`p-9`) tablet / `16px` (`p-4`) mobile.
+   - The component must carry `flex flex-1 flex-col` (not just `flex flex-col`) so it stretches to fill the wrapper. That's what makes the **bottom** gap match the top.
+
+   Do not add `mx-auto mb-6 lg:max-w-[Npx]` to the inner component to compensate for the bottom gap — the gap belongs to the wrapper, not the component.
 
 ## Product brief first
 
@@ -159,8 +178,9 @@ Hard rules to avoid this:
 The hero *shell* (`<Section tone="b" pad="hero">` + centered
 `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs) is **fixed**.
 
-The hero *mock* — the visual below the CTAs — is **per-page-invented**.
-The LLM keeps cloning it. Concrete evidence:
+The hero *mock* — the visual below the CTAs, **always inside
+`<HeroCanvas>`** — is **per-page-invented**. The LLM keeps cloning it.
+Concrete evidence:
 
 > `src/app/components/SalesCrm.tsx`'s hero is a literal label-swap of
 > the *original* HomePage hero: `<HeroCanvas>` wrapping **two
@@ -171,39 +191,92 @@ The LLM keeps cloning it. Concrete evidence:
 > SO-1041". Two different products, one identical hero card pair.
 > This is the *next* clone failure to fix.
 
+**`<HeroCanvas>` is required on every page.** It is a dark olive surface
+(`bg-bz-olive` + `<DotGrid>` overlay). The contract for anything placed
+inside it:
+
+- **Backgrounds must be light.** Use `bg-bz-paper`, `bg-bz-paper-warm`,
+  `bg-bz-surface`, or `bg-white/[alpha]`. Never dark fills
+  (`bg-bz-olive*`, `bg-bz-deep`) inside the canvas — the canvas is
+  already dark.
+- **Text must be dark.** Use `text-bz-text`, `text-bz-text-muted`,
+  `text-bz-text-soft`. Do not flip to `text-bz-text-on-dark` inside a
+  light card sitting on the dark canvas.
+- **Design it from scratch for this page.** Do not copy the shape from
+  another page and swap the strings. `src/app/components/FinancialManagement.tsx`
+  and `src/app/components/SalesCrm.tsx` are reference points for the
+  *level of page-specific invention* required — look at what story their
+  mock tells and how it is unique to that module, then apply that same
+  discipline to the page you are designing.
+- **Mobile: prefer reflowing grids over horizontal scroll.** Use
+  `grid-cols-1 sm:grid-cols-2` (or `sm:grid-cols-3`) so panels stack
+  vertically on mobile. Reserve `overflow-x-auto` + `min-w-[Npx]` only
+  for artefacts where column identity is essential and cannot be preserved
+  by stacking — e.g. a kanban board, a Gantt chart, a wide ledger table.
+  Most hero mocks (two-panel cards, flow grids, stat rows) should reflow
+  naturally without any horizontal scroll.
+
 **Mocks already in use — taken, do not re-use:**
 
 | Page | Hero mock |
 |---|---|
-| `HomePage.tsx` (current) | `<HeroCanvas>` with a 12-col split: live auto-posting journal stream (col-7) + stacked cash-position + dual-stats panel (col-5). |
-| `FinancialManagement.tsx` | Two-card editorial split on a paper section (no `<HeroCanvas>`): dark olive panel with "Reconciliation ✓ Complete" chip + "Close the period" CTA, paired with a Bizak-branded paper income-statement card. |
-| `SalesCrm.tsx` (current — TO BE REPLACED on its next redesign) | `<HeroCanvas>` + two `<HeroCard>`s (the original HomePage pattern). |
+| `HomePage.tsx` | `<HeroCanvas>`: 12-col split — live auto-posting journal stream (col-7) + stacked cash-position + dual-stats panel (col-5). Light paper cards on dark canvas. |
+| `FinancialManagement.tsx` | `<HeroCanvas>`: two-card editorial split — dark olive rounded panel (reconciliation chip + CTA) beside a light income-statement card. |
+| `SalesCrm.tsx` | `<HeroCanvas>` + two `<HeroCard>`s (label-swapped HomePage pattern — **must be replaced** on next touch). |
+| `PurchasingPage.tsx` | `<HeroCanvas>`: single 660px light-paper pipeline board — 4-column kanban (RFQ → PO Issued → In Transit → 3-Way Match), minimal `bg-bz-paper-warm` item cards (ref + amount only), footer totals row. Scrolls horizontally on mobile. |
+| `InventoryAndWarehouse.tsx` | `<HeroCanvas>`: single full-width light card — KPI header bar (on-hand units, sites, SKUs moving) + 2-panel body (`grid-cols-1 sm:grid-cols-2`, divided by `divide-bz-line-soft`): zone utilisation with `<StripeBar>` rows (left) + live movement feed with txn/journal rows (right). Stacks on mobile — no horizontal scroll. |
 
-If you would write a hero mock that fits one of those three rows
-above, **stop**. Pick a different composition.
+If you would write a hero mock that fits one of those rows above,
+**stop**. Pick a different composition.
 
-**Valid hero mock alternatives** (pick one, or invent your own — the
-list is illustrative, not exhaustive):
+**Valid hero mock shapes** (pick one, or invent your own — the list is
+illustrative, not exhaustive). All are placed inside `<HeroCanvas>`
+with light backgrounds:
 
-- A **single full-width feature panel** — one big mock that owns the canvas, e.g. a sprawling Gantt chart, a multi-warehouse stock map, a manufacturing OEE gauge cluster.
-- A **3-card horizontal row** with distinct shapes (not three uniform `<HeroCard>`s) — e.g. a tall stat tile + a wide chart panel + a small status feed.
-- A **vertical timeline / streaming feed** filling the canvas — e.g. a "today's activity" timeline for an ops page.
-- A **before/after split** — left half "spreadsheet hell" mock, right half Bizak's unified view. Strong for pages leaning on narrative §4.6.
-- A **dashboard sidebar + main panel** mock — like `PlatformDashboard` but as the hero, used to show breadth.
-- A **horizontal marquee/carousel** of mini KPI tiles flowing through the canvas — when the page sells "many things in one place."
-- A **headline statistic** owning the centre — one huge number with a small live-data row beneath it (good for pages with one canonical stat like 87.4% OEE).
-- A **process-flow diagram** — boxes + connectors showing the page's workflow (good for `/workflow`, `/Integrations`, `/MulticompanyAndBranches`).
-- A **map / geographic mock** — for pages touching multi-branch, distribution, global subsidiaries.
-- A **document mock** — a single styled invoice, BoM, quote, work-order, lease — when the page sells a specific artefact.
-- A **no-mock hero** — just badge + heading + pills + a tasteful divider or short feature row. Sometimes the strongest hero is restraint. Valid for narrative pages (`/why-bizak`, `/about`).
+- A **single full-width feature panel** — one wide light-paper mock that owns the canvas, e.g. a Gantt chart, a multi-warehouse stock map, a manufacturing OEE gauge cluster.
+- A **2–3 card horizontal row** with distinct shapes (not uniform `<HeroCard>`s) — e.g. a wide table card + a small stat tile, or a document card + a status feed.
+- A **vertical timeline / streaming feed** — e.g. a "today's activity" timeline for an ops page.
+- A **before/after split** — left half shows pain (spreadsheet chaos), right half shows Bizak's unified view. Strong for §4.6 narrative.
+- A **dashboard sidebar + main panel** mock — shows product breadth.
+- A **horizontal marquee of KPI tiles** flowing across the canvas — when the page sells "many things in one place."
+- A **headline statistic** — one large number with a live-data row beneath it (good for pages with one canonical stat like 87.4% OEE).
+- A **process-flow diagram** — light boxes + connectors for the page's workflow (`/Integrations`, `/MulticompanyAndBranches`).
+- A **document mock** — a styled invoice, BoM, quote, work-order, lease — when the page sells a specific artefact.
 
 **Rules for picking:**
 
 1. **The mock must visualise THIS page's core narrative.** A Manufacturing page's hero should make floor-ops feel tactile. A Distribution page's hero should make routing/throughput feel kinetic. A Projects page's hero should make project-P&L feel legible. If the mock could equally appear on any other module page, it's wrong.
-2. **The `<HeroCard>` primitive is one option, not the default.** Reach for it only when its specific shape (small floating card with icon-title-badge-eyebrow-value-footer) is the BEST fit for this page's story. If you're using it because HomePage/SalesCrm used it, that's the trap — use a different shape.
-3. **`<HeroCanvas>` itself is also optional.** A page can have a hero mock directly on the `bz-section-b` surface (as `FinancialManagement.tsx` does) — no dark canvas required. Match the canvas/no-canvas choice to whether the mock benefits from a dark backdrop.
+2. **The `<HeroCard>` primitive is one option, not the default.** Reach for it only when its specific shape (small floating card with icon-title-badge-eyebrow-value-footer) is the BEST fit for this page's story. If you're using it because HomePage used it, that's the trap — use a different shape.
+3. **`<HeroCanvas>` is required.** Every page uses it. The dark canvas is the constant; the light mock inside is the variable.
 4. **Card count is not magical.** 2 cards is not the canon. The mock might be 1 panel, or 3, or 5, or a single composite. Let the story decide.
 5. **The hero mock must fill the full `<Container>` width.** Do NOT put `max-w-xl`, `max-w-2xl`, `max-w-3xl`, or any `mx-auto max-w-*` on the mock's outer wrapper `<div>`. The mock takes the default block width of its container. Constraining it makes the hero feel cramped and wastes the canvas. Only internal sub-elements (e.g. individual columns) may have explicit widths.
+
+### ⛔ Hero mock data density — the crowded trap
+
+A well-structured mock (single card, KPI header + 2-panel body) can still
+feel bulky if each panel has too many items or each item has too many
+elements.
+
+**Density rules — enforce these before writing a single row:**
+
+1. **3 rows max per panel.** More than 3 rows in a feed or list reads as a
+   data dump, not a live mock.
+2. **Each row: 2–3 elements only.** e.g. `ref · description · time`.
+   A sub-line under every row (a journal entry, a utilisation label, a
+   units count) doubles the visual weight. Drop sub-lines from the hero
+   if that detail already lives in a section below (FlowSection,
+   OneLedger, etc.).
+3. **Header: 1 stat, not 3.** `StatusChip` + one key number is a clear
+   takeaway. Three numbers in the header row is a dashboard, not a hero.
+4. **No label under every bar.** A `<StripeBar>` is already the visual —
+   a `% utilised` text label below each bar doubles the row height for no
+   gain.
+5. **More padding over more items.** `p-6` / `gap-4` / `mb-5` — breathing
+   room is not wasted space. A mock that looks sparse in isolation reads
+   right in context; a mock that looks crowded always looks crowded.
+
+**The calibration test:** if removing one element per row (or one row per
+panel) makes the mock feel *cleaner without losing meaning*, remove it.
 
 Hero mocks belong in the Step 2 design brief (next) — write the mock's
 shape and *why it serves this page specifically* before opening any
@@ -263,7 +336,7 @@ toolkit decide which sections you have:
 - **Stepped narrative** — `<StepCard>` rows for "how it works" stories.
 - **Stats** — `<DataRow>` / `<EntityRow>` / `<JournalRow>` / `<MiniBars>` / `<StatTile>` inside footers or as standalone tiles.
 - **Eyebrow / pills** — `<Eyebrow index="..." label="...">`.
-- **Hero shell** (always this shape) — `<Section tone="b" pad="hero"><Container><BadgeGreen>…</BadgeGreen><Heading level={1}>…</Heading><div>{pills}</div>{page-specific mock}</Container></Section>`. The mock below the copy — typically inside `<HeroCanvas>` — should be **invented for this page**, not copied from HomePage's ledger+invoice pair or FinancialManagement's olive+invoice pair.
+- **Hero shell** (always this shape) — `<Section tone="b" pad="hero"><Container><BadgeGreen>…</BadgeGreen><Heading level={1}>…</Heading><div>{pills}</div><HeroCanvas>{page-specific light mock}</HeroCanvas></Container></Section>`. `<HeroCanvas>` is **required** (dark olive bg). The mock inside must use light backgrounds (`bg-bz-paper`, `bg-bz-paper-warm`) and must be **invented fresh for this page** — not copied from another page's hero. Multi-panel mocks use `grid-cols-1 sm:grid-cols-2` to reflow on mobile; `overflow-x-auto` + `min-w-[N]` only for kanban/Gantt/wide-table artefacts.
 - **Closing CTA** — passed via `<Footer cta={…}>` in `routes.tsx`; never as a page-level section.
 
 A section that doesn't fit any of these patterns is fine if it composes
@@ -282,8 +355,9 @@ it for this page, don't paste it from another.
   - `'#1A2D20'` → `bg-bz-olive`
   - `'#0F1411'` → `bg-bz-deep` / `var(--bz-deep)` (pill-dark)
   - `'#0A100D'` → `bg-bz-olive-dark` (footer chrome)
-  - `'#d3f969'` → `bg-bz-fire` / `text-bz-fire`
+  - `'#d3f969'` → `bg-bz-fire` / `text-bz-fire` (**dark surfaces only** — on `bg-bz-paper`/light cards use `text-bz-leaf-deep` for positive indicators instead)
   - `'#DBE9B8'` → `bg-bz-leaf`
+  - `'#A8C76C'` → `text-bz-leaf-deep` (positive/upward delta text on light surfaces, e.g. `↑ +3.1%`)
   - `'#1A1D19'` → `text-bz-text`
   - `'#6E7466'` → `text-bz-text-muted`
   - `'#A2A296'` → `text-bz-text-soft`
@@ -364,6 +438,11 @@ Every section must look correct from 375px through desktop without horizontal sc
 // Hero dashboard decorative sidebars — desktop only
 <div className="hidden md:flex w-[200px] shrink-0 ...">
 
+// Hero panel grids — always prefer stacking over scrolling
+// Use overflow-x-auto ONLY for kanban / Gantt / wide ledger tables
+<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">  // two-panel body, stacks on mobile
+<div className="grid grid-cols-1 gap-3 sm:grid-cols-3">  // three-card flow, stacks on mobile
+
 // Fixed-height hero panels — never
 <div className="... h-auto">                          // not h-[480px]
 
@@ -385,6 +464,7 @@ Every section must look correct from 375px through desktop without horizontal sc
 ### Mobile checklist (run before Step 6 — Verify)
 
 - [ ] **The `*PageLayout` wrapper in `routes.tsx` has `className="bz-page"`.** This is the #1 cause of "small horizontal scroll on mobile" complaints — `.bz-page` carries `overflow-x: clip` + `text-wrap: balance` and is mandatory. Without it, even a perfectly responsive page scrolls sideways a few px on 375px viewports because long headings or nested viz nudge past the viewport.
+- [ ] **HeroCanvas inner mock is mobile-responsive.** Multi-panel mocks use `grid-cols-1 sm:grid-cols-2` (or `sm:grid-cols-3`) so panels stack on mobile. `overflow-x-auto` + `min-w-[Npx]` is reserved only for artefacts that cannot be stacked (kanban boards, Gantt charts, wide ledger tables). All backgrounds inside the canvas are light (`bg-bz-paper`, `bg-bz-paper-warm`).
 - [ ] All `grid-cols-N` (N ≥ 2) have a `grid-cols-1` mobile prefix.
 - [ ] No inline `display: grid` / `display: flex` layout styles.
 - [ ] No fixed `h-[Npx]` on hero panels — use `h-auto`.
@@ -396,7 +476,9 @@ Every section must look correct from 375px through desktop without horizontal sc
 
 ## Common mistakes to avoid
 
-- **Constraining the hero mock width.** The mock's outer wrapper must take the full `<Container>` width — never put `max-w-xl`, `max-w-2xl`, `max-w-3xl`, or `mx-auto max-w-*` on it. Only internal sub-elements may carry width constraints.
+- **Patching `<HeroCanvas>` bottom padding with `!pb-[Npx]` on the canvas alone.** The canvas has `min-height: 460px`. If the component is shorter than that, the component floats at the top and the canvas grows taller, producing an inconsistent bottom gap. The correct fix is to move ALL padding into an inner wrapper and make the component fill the wrapper height — see "Conventions learned from the HomePage refactor" §6.
+- **Using `text-bz-fire` on a light background.** Lime (`#d3f969`) is near-invisible on paper/cream — it is a **dark-surface-only** accent. On light cards, hero mocks inside `<HeroCanvas>`, and any `bg-bz-paper` surface, use `text-bz-leaf-deep` (`#A8C76C`) for positive/upward delta indicators (e.g. `↑ +3.1%`). `text-bz-fire` is correct on dark surfaces (`bg-bz-olive`, `bg-bz-deep`, dark bentos). See `docs/DESIGN_SYSTEM.md` §Accents.
+- **Constraining the hero mock width.** The mock's outer wrapper must take the full `<Container>` width — never put `max-w-xl`, `max-w-2xl`, `max-w-3xl`, or `mx-auto max-w-*` on it. However, internal sub-elements (e.g. a panel card inside the canvas) **may** carry an explicit `lg:max-w-[Npx] mx-auto` to leave horizontal breathing room between the card and the canvas edge.
 - **Adding a primitive that already exists.** Check `src/app/components/bz/index.ts` first.
 - **Adding new tokens without updating `docs/DESIGN_SYSTEM.md` and `/CLAUDE.md`.**
 - **Using `rounded-md` / `rounded-lg`.** Use `rounded-bz-md` / `rounded-bz-lg`.
