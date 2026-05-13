@@ -394,7 +394,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
         {/* Drawer header */}
         <div className="flex items-center justify-between px-5 h-20 border-b border-bz-line-soft">
           <a href="/" onClick={onClose} className="flex">
-            <img src={bizakLogo} alt="Bizak ERP" className="h-7 w-auto" />
+            <img src={bizakLogo} alt="Bizak ERP" className="h-6 w-auto" />
           </a>
           <button
             onClick={onClose}
@@ -532,7 +532,7 @@ export function Header() {
 
             {/* Logo */}
             <a href="/" className="flex items-center no-underline flex-shrink-0 mr-7">
-              <img src={bizakLogo} alt="Bizak ERP" className="h-7 w-auto" />
+              <img src={bizakLogo} alt="Bizak ERP" className="h-6 w-auto" />
             </a>
 
             {/* Desktop nav */}
