@@ -353,13 +353,62 @@ function ProjectAndCostingPageLayout() {
 
 
 function WorkFlowAutomationPageLayout() {
-  return <WorkflowPage />;
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <WorkflowPage />
+      <Footer
+        cta={{
+          title: "Automate every approval in your business.",
+          titleMuted: "Routed, escalated, and logged — automatically.",
+          description:
+            "Define your rules once. Bizak routes every request, escalates stalled approvals, and logs every decision with full chain of custody — zero email chasing.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Book a demo",
+        }}
+      />
+    </div>
+  );
 }
 
 
 
+function IntegrationsPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <Integrations />
+      <Footer
+        cta={{
+          title: "Connect every system in your stack.",
+          titleMuted: "One integration layer, zero data wiring.",
+          description:
+            "200+ pre-built connectors, bidirectional sync, and audit-grade lineage — all inside your ERP, not bolted on.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Book a demo",
+        }}
+      />
+    </div>
+  );
+}
+
 function DashboardAndReportingPageLayout() {
-  return <DashboardAndReportingPage />;
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <DashboardAndReportingPage />
+      <Footer
+        cta={{
+          title: "See every number in your business, live.",
+          titleMuted: "40+ reports. Role-based dashboards. Auto-delivered.",
+          description:
+            "One platform, every metric — live KPIs, drillable reports, and scheduled delivery to every stakeholder.",
+          primaryLabel: "Start free trial",
+          secondaryLabel: "Book a demo",
+        }}
+      />
+    </div>
+  );
 }
 
 
@@ -371,10 +420,19 @@ function MulticompanyAndBranchesPageLayout() {
 
 function CareersPageLayout() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
       <CareersPage />
-      <Footer />
+      <Footer
+        cta={{
+          title: "Come build the operating system for modern business.",
+          titleMuted: "We're growing fast — so is the opportunity.",
+          description:
+            "50,000+ companies. 120+ countries. One team making enterprise software feel effortless. Your next chapter starts here.",
+          primaryLabel: "View open roles",
+          secondaryLabel: "Send a speculative application",
+        }}
+      />
     </div>
   );
 }
@@ -522,7 +580,7 @@ export const router = createBrowserRouter([
       { path: "case-studies",   Component: CaseStudiesPage      },
             { path: "why-bizak",     Component: WhyBizakPage        },
 
-      { path: "workflow",      Component: WorkflowPage        },
+      { path: "workflow",      Component: WorkFlowAutomationPageLayout },
       { path: "FinancialManagement", Component: FinancialManagementPageLayout },
       { path: "SalesCrm", Component: SalesAndCrmPageLayout },
       { path: "InventoryAndWarehouse", Component: InventoryAndWarehousePageLayout },
@@ -532,8 +590,8 @@ export const router = createBrowserRouter([
       { path: "manufacturingProduct",    Component: ManufacturingProductPageLayout           },
       { path: "Retail", Component: RetailAndEcommercePage    },
       { path: "ProfessionalService", Component: ProfessionalServicePage    },
-      { path: "DashboardAndReporting", Component: DashboardAndReportingPage    },
-      { path: "Integrations", Component: Integrations    },
+      { path: "DashboardAndReporting", Component: DashboardAndReportingPageLayout },
+      { path: "Integrations", Component: IntegrationsPageLayout },
       { path: "MulticompanyAndBranches", Component: MulticompanyAndBranchesPage },
       { path: "DocumentManagement", Component: DocumentManagementPage },
       { path: "careers", Component: CareersPageLayout },

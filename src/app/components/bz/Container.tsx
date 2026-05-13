@@ -21,7 +21,7 @@ export function Container({
   return (
     <Tag
       className={cn(
-        "mx-auto w-full px-4 md:px-6",
+        "mx-auto w-full bz-container-px",
         width === "default" && "max-w-[1320px]",
         width === "narrow" && "max-w-[1200px]",
         className,

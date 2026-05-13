@@ -1,6 +1,5 @@
 import { ArrowUpRight, Instagram, Twitter, Facebook, Linkedin, Sparkles } from "lucide-react";
-import bizakLogoFooter from "../../assets/bizaklogo-footer.png";
-import bizakLogoLight from "../../assets/bizaklogo.png";
+import bizakLogoVertical from "../../assets/logo/SVG/dark-mode-vertical-lockup.svg";
 import footerBgImage from "../../assets/footerimg.png";
 
 // ─── Footer CTA — dynamic per page ────────────────────────────────────────────
@@ -223,7 +222,7 @@ export function Footer({ cta, isLightMode = false }: { cta?: FooterCta; isLightM
             {/* Brand col */}
             <div>
               <img
-                src={isLightMode ? bizakLogoLight : bizakLogoFooter}
+                src={bizakLogoVertical}
                 alt="Bizak ERP"
                 style={{ height: 48, width: "auto", marginBottom: 24 }}
               />

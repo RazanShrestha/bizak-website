@@ -42,7 +42,7 @@ import {
   Mail,
   Activity,
 } from "lucide-react";
-import bizakLogo from "../../assets/bizaklogo.png";
+import bizakLogo from "../../assets/logo/SVG/all-black-horizontal-lockup.svg";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -261,112 +261,50 @@ const megaMenus: Record<string, MegaMenuData> = {
 
 const NAV_ITEMS = ["Product", "Solutions", "Customers", "Partners", "Resources", "Company"];
 
-// ─── Ruul-style Mega Menu Item ────────────────────────────────────────────────
+// ─── Mega Menu Item ───────────────────────────────────────────────────────────
 
 function MegaItem({ item }: { item: MenuItem }) {
   return (
     <a
       href={item.href || "#"}
       onClick={item.href ? undefined : (e) => e.preventDefault()}
-      className="group flex items-start gap-3 p-3 rounded-2xl transition-colors duration-150"
-      style={{ textDecoration: "none" }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.background = "#F4F5EF";
-        const icon = e.currentTarget.querySelector("[data-icon-circle]") as HTMLElement | null;
-        if (icon) {
-          icon.style.background = "#1A2D20";
-          icon.style.color = "#DBE9B8";
-        }
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.background = "transparent";
-        const icon = e.currentTarget.querySelector("[data-icon-circle]") as HTMLElement | null;
-        if (icon) {
-          icon.style.background = "#F4F5EF";
-          icon.style.color = "#1F3422";
-        }
-      }}
+      className="group flex items-start gap-3 p-3 rounded-bz-2xl hover:bg-bz-paper-warm transition-colors duration-150 no-underline"
     >
-      <div
-        data-icon-circle
-        className="mt-0.5 flex-shrink-0"
-        style={{
-          width: 36,
-          height: 36,
-          borderRadius: 999,
-          background: "#F4F5EF",
-          color: "#1F3422",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "background 0.18s ease, color 0.18s ease",
-        }}
-      >
+      <div className="mt-0.5 flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center bg-bz-paper-warm text-bz-olive group-hover:bg-bz-olive group-hover:text-bz-leaf transition-colors duration-[180ms]">
         {item.icon}
       </div>
       <div className="flex-1 min-w-0 pt-0.5">
         <div className="flex items-center gap-2 flex-wrap">
-          <span
-            style={{
-              fontFamily: "Inter",
-              fontWeight: 500,
-              fontSize: 14,
-              color: "#1A1D19",
-              letterSpacing: "-0.01em",
-              lineHeight: 1.3,
-            }}
-          >
+          <span className="font-medium text-[14px] text-bz-text tracking-[-0.01em] leading-[1.3]">
             {item.title}
           </span>
           {item.badge && (
-            <span
-              style={{
-                padding: "2px 7px",
-                borderRadius: 999,
-                background: "#DBE9B8",
-                color: "#1F3422",
-                fontFamily: "Inter",
-                fontSize: 10,
-                fontWeight: 600,
-                letterSpacing: "0.04em",
-                textTransform: "uppercase",
-              }}
-            >
+            <span className="px-[7px] py-[2px] rounded-full bg-bz-leaf text-bz-olive text-[10px] font-semibold tracking-[0.04em] uppercase">
               {item.badge}
             </span>
           )}
         </div>
-        <p
-          style={{
-            fontFamily: "Inter",
-            fontWeight: 400,
-            fontSize: 12.5,
-            color: "#6E7466",
-            marginTop: 4,
-            lineHeight: 1.45,
-          }}
-        >
+        <p className="text-[12.5px] text-bz-text-muted mt-1 leading-[1.45] mb-0">
           {item.description}
         </p>
       </div>
       <ArrowUpRight
         size={14}
-        className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ color: "#1F3422", marginTop: 4 }}
+        className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-bz-olive mt-1"
       />
     </a>
   );
 }
 
-// ─── Ruul-style Mega Menu Panel ───────────────────────────────────────────────
+// ─── Mega Menu Panel ──────────────────────────────────────────────────────────
 
 function MegaPanel({ data, visible }: { data: MegaMenuData; visible: boolean }) {
   const colCount = data.columns.length;
   return (
     <div
       onMouseDown={(e) => e.stopPropagation()}
+      className="absolute z-[100] bg-bz-paper rounded-bz-3xl border border-bz-line-soft overflow-hidden"
       style={{
-        position: "absolute",
         top: "calc(100% + 10px)",
         left: "50%",
         transform: visible
@@ -376,54 +314,25 @@ function MegaPanel({ data, visible }: { data: MegaMenuData; visible: boolean }) 
         pointerEvents: visible ? "all" : "none",
         transition: "opacity 0.2s ease, transform 0.22s ease",
         width: colCount === 3 ? "min(1180px, calc(100vw - 32px))" : "min(820px, calc(100vw - 32px))",
-        background: "#FCFCF7",
-        borderRadius: 24,
-        border: "1px solid #E5E5E0",
-        boxShadow: "0 1px 0 rgba(15,20,17,0.03), 0 24px 64px rgba(15,20,17,0.10)",
-        overflow: "hidden",
-        zIndex: 100,
+        boxShadow: "0 4px 32px rgba(15,20,17,0.08)",
       }}
     >
-      <div style={{ padding: "26px 26px 22px" }}>
+      <div className="px-[26px] pt-[26px] pb-[22px]">
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: `repeat(${colCount}, 1fr)`,
-            columnGap: 24,
-            rowGap: 12,
-          }}
+          className="grid gap-x-6 gap-y-3"
+          style={{ gridTemplateColumns: `repeat(${colCount}, 1fr)` }}
         >
           {data.columns.map((col, ci) => (
-            <div key={ci} style={{ position: "relative" }}>
+            <div key={ci} className="relative">
               {ci > 0 && (
-                <div
-                  aria-hidden
-                  style={{
-                    position: "absolute",
-                    left: -12,
-                    top: 8,
-                    bottom: 8,
-                    width: 1,
-                    background: "#E5E5E0",
-                  }}
-                />
+                <div aria-hidden className="absolute left-[-12px] top-2 bottom-2 w-px bg-bz-line-soft" />
               )}
               {col.heading && (
-                <div
-                  style={{
-                    fontFamily: "Inter",
-                    fontWeight: 500,
-                    fontSize: 11,
-                    letterSpacing: "0.2em",
-                    color: "#9CA08F",
-                    textTransform: "uppercase",
-                    padding: "0 12px 12px",
-                  }}
-                >
+                <div className="text-[11px] font-medium tracking-[0.2em] text-bz-text-soft uppercase px-3 pb-3">
                   {col.heading}
                 </div>
               )}
-              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <div className="flex flex-col gap-0.5">
                 {col.items.map((it, ii) => (
                   <MegaItem key={ii} item={it} />
                 ))}
@@ -433,28 +342,8 @@ function MegaPanel({ data, visible }: { data: MegaMenuData; visible: boolean }) 
         </div>
 
         {data.cta && (
-          <div
-            style={{
-              marginTop: 18,
-              padding: "16px 18px",
-              borderRadius: 18,
-              background: "#1A2D20",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 14,
-              flexWrap: "wrap",
-            }}
-          >
-            <div
-              style={{
-                fontFamily: "Inter",
-                fontSize: 14,
-                fontWeight: 500,
-                color: "#FCFCF7",
-                letterSpacing: "-0.005em",
-              }}
-            >
+          <div className="mt-[18px] px-[18px] py-4 rounded-bz-xl bg-bz-olive flex items-center justify-between gap-[14px] flex-wrap">
+            <div className="text-[14px] font-medium text-bz-text-on-dark tracking-[-0.005em]">
               {data.cta.label}
             </div>
             <a
@@ -494,66 +383,37 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
     <>
       <div
         onClick={onClose}
+        className="fixed inset-0 z-[45] backdrop-blur-sm"
         style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 45,
           background: "rgba(15,20,17,0.32)",
-          backdropFilter: "blur(4px)",
           opacity: open ? 1 : 0,
           pointerEvents: open ? "all" : "none",
           transition: "opacity 0.22s ease",
         }}
       />
       <div
+        className="fixed top-0 right-0 bottom-0 w-full max-w-[380px] bg-bz-paper z-50 overflow-y-auto"
         style={{
-          position: "fixed",
-          top: 0,
-          right: 0,
-          bottom: 0,
-          width: "100%",
-          maxWidth: 380,
-          background: "#FCFCF7",
-          zIndex: 50,
-          overflowY: "auto",
           transform: open ? "translateX(0)" : "translateX(100%)",
           transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1)",
           boxShadow: "-8px 0 40px rgba(15,20,17,0.12)",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 20px",
-            height: 80,
-            borderBottom: "1px solid #E5E5E0",
-          }}
-        >
-          <a href="/" onClick={onClose} style={{ display: "flex" }}>
-            <img src={bizakLogo} alt="Bizak ERP" style={{ height: 28, width: "auto" }} />
+        {/* Drawer header */}
+        <div className="flex items-center justify-between px-5 h-20 border-b border-bz-line-soft">
+          <a href="/" onClick={onClose} className="flex">
+            <img src={bizakLogo} alt="Bizak ERP" className="h-7 w-auto" />
           </a>
           <button
             onClick={onClose}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 999,
-              border: "1px solid #E5E5E0",
-              background: "#FCFCF7",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#1A1D19",
-            }}
+            className="w-10 h-10 rounded-full border border-bz-line-soft bg-bz-paper flex items-center justify-center text-bz-text cursor-pointer"
           >
             <X size={18} />
           </button>
         </div>
 
-        <div style={{ padding: "16px 14px 0" }}>
+        {/* Nav sections */}
+        <div className="px-3.5 pt-4">
           {NAV_ITEMS.map((item) => {
             const data = megaMenus[item];
             const isOpen = expanded === item;
@@ -561,61 +421,28 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
               <div key={item}>
                 <button
                   onClick={() => setExpanded(isOpen ? null : item)}
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "16px 16px",
-                    borderRadius: 16,
-                    border: "none",
-                    background: isOpen ? "#F4F5EF" : "transparent",
-                    cursor: "pointer",
-                    transition: "background 0.15s ease",
-                  }}
+                  className={`w-full flex items-center justify-between px-4 py-4 rounded-bz-xl border-none cursor-pointer transition-colors duration-150 ${isOpen ? "bg-bz-paper-warm" : "bg-transparent"}`}
                 >
-                  <span
-                    style={{
-                      fontFamily: "Inter",
-                      fontWeight: 500,
-                      fontSize: 16,
-                      color: "#1A1D19",
-                    }}
-                  >
-                    {item}
-                  </span>
+                  <span className="font-medium text-base text-bz-text">{item}</span>
                   <ChevronDown
                     size={16}
-                    style={{
-                      color: "#9CA08F",
-                      transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                      transition: "transform 0.22s ease",
-                    }}
+                    className={`text-bz-text-soft transition-transform duration-[220ms] ${isOpen ? "rotate-180" : ""}`}
                   />
                 </button>
+
                 <div
+                  className="overflow-hidden"
                   style={{
                     maxHeight: isOpen ? 1200 : 0,
-                    overflow: "hidden",
                     transition: "max-height 0.32s ease",
                   }}
                 >
                   {data && (
-                    <div style={{ padding: "4px 6px 10px" }}>
+                    <div className="px-1.5 pb-2.5 pt-1">
                       {data.columns.map((col, ci) => (
-                        <div key={ci} style={{ marginBottom: 8 }}>
+                        <div key={ci} className="mb-2">
                           {col.heading && (
-                            <div
-                              style={{
-                                fontFamily: "Inter",
-                                fontWeight: 500,
-                                fontSize: 10,
-                                letterSpacing: "0.18em",
-                                color: "#9CA08F",
-                                textTransform: "uppercase",
-                                padding: "10px 14px 6px",
-                              }}
-                            >
+                            <div className="text-[10px] font-medium tracking-[0.18em] text-bz-text-soft uppercase px-3.5 pt-2.5 pb-1.5">
                               {col.heading}
                             </div>
                           )}
@@ -630,51 +457,14 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                                 }
                                 onClose();
                               }}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 12,
-                                padding: "10px 14px",
-                                borderRadius: 12,
-                                textDecoration: "none",
-                              }}
+                              className="flex items-center gap-3 px-3.5 py-2.5 rounded-bz-lg no-underline"
                             >
-                              <div
-                                style={{
-                                  width: 32,
-                                  height: 32,
-                                  borderRadius: 999,
-                                  background: "#F4F5EF",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  color: "#1F3422",
-                                  flexShrink: 0,
-                                }}
-                              >
+                              <div className="w-8 h-8 rounded-full bg-bz-paper-warm flex items-center justify-center text-bz-olive flex-shrink-0">
                                 {mi.icon}
                               </div>
                               <div>
-                                <div
-                                  style={{
-                                    fontFamily: "Inter",
-                                    fontWeight: 500,
-                                    fontSize: 14,
-                                    color: "#1A1D19",
-                                  }}
-                                >
-                                  {mi.title}
-                                </div>
-                                <div
-                                  style={{
-                                    fontFamily: "Inter",
-                                    fontSize: 12,
-                                    color: "#6E7466",
-                                    marginTop: 2,
-                                  }}
-                                >
-                                  {mi.description}
-                                </div>
+                                <div className="font-medium text-[14px] text-bz-text">{mi.title}</div>
+                                <div className="text-[12px] text-bz-text-muted mt-0.5">{mi.description}</div>
                               </div>
                             </a>
                           ))}
@@ -688,27 +478,18 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           })}
         </div>
 
-        <div
-          style={{
-            padding: "20px 20px 32px",
-            marginTop: 16,
-            borderTop: "1px solid #E5E5E0",
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-          }}
-        >
+        {/* CTA buttons */}
+        <div className="px-5 pt-5 pb-8 mt-4 border-t border-bz-line-soft flex flex-col gap-2.5">
           <a
             href="https://system.bizakerp.com"
             target="_blank"
             rel="noopener noreferrer"
             onClick={onClose}
-            className="bz-pill bz-pill-light"
-            style={{ justifyContent: "center" }}
+            className="bz-pill bz-pill-light justify-center"
           >
             Sign in
           </a>
-          <a href="/contact" onClick={onClose} className="bz-pill bz-pill-dark" style={{ justifyContent: "center" }}>
+          <a href="/contact" onClick={onClose} className="bz-pill bz-pill-dark justify-center">
             Request Demo <ArrowRight size={14} />
           </a>
         </div>
@@ -717,27 +498,23 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
   );
 }
 
-// ─── Header (Ruul: NOT sticky, click-to-open) ─────────────────────────────────
+// ─── Header ───────────────────────────────────────────────────────────────────
 
 export function Header() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
 
-  // Click-outside closes the open menu
   useEffect(() => {
     if (!activeMenu) return;
     const onPointerDown = (e: PointerEvent) => {
       if (!headerRef.current) return;
-      if (!headerRef.current.contains(e.target as Node)) {
-        setActiveMenu(null);
-      }
+      if (!headerRef.current.contains(e.target as Node)) setActiveMenu(null);
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [activeMenu]);
 
-  // Escape key closes the open menu
   useEffect(() => {
     if (!activeMenu) return;
     const onKey = (e: KeyboardEvent) => {
@@ -748,45 +525,31 @@ export function Header() {
   }, [activeMenu]);
 
   const toggle = (item: string) => {
-    if (megaMenus[item]) {
-      setActiveMenu((prev) => (prev === item ? null : item));
-    }
+    if (megaMenus[item]) setActiveMenu((prev) => (prev === item ? null : item));
   };
 
   return (
     <>
       <header
         ref={headerRef}
-        style={{
-          position: "relative",
-          padding: "8px 24px 12px",
-          background: "#efefe9",
-          borderBottom: "1px solid rgba(15, 20, 17, 0.08)",
-        }}
+        className="relative bg-bz-section-b border-b"
+        style={{ padding: "8px 0 12px", borderBottomColor: "rgba(15,20,17,0.08)" }}
       >
-        <div style={{ maxWidth: 1320, margin: "0 auto", position: "relative" }}>
+        <div className="bz-container-px" style={{ maxWidth: 1320, margin: "0 auto" }}>
           <div className="bz-nav-card">
+
             {/* Logo */}
-            <a
-              href="/"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                textDecoration: "none",
-                flexShrink: 0,
-                marginRight: 28,
-              }}
-            >
-              <img src={bizakLogo} alt="Bizak ERP" style={{ height: 28, width: "auto" }} />
+            <a href="/" className="flex items-center no-underline flex-shrink-0 mr-7">
+              <img src={bizakLogo} alt="Bizak ERP" className="h-7 w-auto" />
             </a>
 
-            {/* Desktop nav — click-to-open */}
-            <nav className="hidden lg:flex" style={{ flex: 1, gap: 0, alignItems: "center" }}>
+            {/* Desktop nav */}
+            <nav className="hidden lg:flex flex-1 items-center">
               {NAV_ITEMS.map((item) => {
                 const hasMega = !!megaMenus[item];
                 const isActive = activeMenu === item;
                 return (
-                  <div key={item} style={{ position: "relative" }}>
+                  <div key={item}>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -800,24 +563,19 @@ export function Header() {
                       {hasMega && (
                         <ChevronDown
                           size={13}
-                          style={{
-                            color: isActive ? "#1F3422" : "#9CA08F",
-                            transform: isActive ? "rotate(180deg)" : "rotate(0deg)",
-                            transition: "transform 0.22s ease, color 0.15s ease",
-                            marginLeft: 2,
-                          }}
+                          className={`ml-0.5 transition-[transform,color] duration-200 ${
+                            isActive ? "text-bz-text rotate-180" : "text-bz-text-soft"
+                          }`}
                         />
                       )}
                     </button>
-
-                    {hasMega && <MegaPanel data={megaMenus[item]} visible={isActive} />}
                   </div>
                 );
               })}
             </nav>
 
-            {/* Right CTAs (desktop) */}
-            <div className="hidden lg:flex" style={{ alignItems: "center", gap: 6, flexShrink: 0 }}>
+            {/* Right CTAs */}
+            <div className="hidden lg:flex items-center gap-1.5 flex-shrink-0">
               <a
                 href="https://system.bizakerp.com"
                 target="_blank"
@@ -831,28 +589,22 @@ export function Header() {
               </a>
             </div>
 
-            {/* Mobile hamburger — bare 3-line icon, no chrome */}
+            {/* Mobile hamburger */}
             <button
-              className="flex lg:hidden"
+              className="flex lg:hidden ml-auto w-11 h-11 items-center justify-center border-none bg-transparent cursor-pointer text-bz-text"
               onClick={() => setMobileOpen(true)}
-              style={{
-                marginLeft: "auto",
-                width: 44,
-                height: 44,
-                padding: 0,
-                border: "none",
-                background: "transparent",
-                cursor: "pointer",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--bz-text)",
-              }}
               aria-label="Open menu"
             >
               <Menu size={24} strokeWidth={2} />
             </button>
+
           </div>
         </div>
+
+        {/* Panels anchored to <header> — left:50% centers on the full viewport width */}
+        {Object.entries(megaMenus).map(([key, data]) => (
+          <MegaPanel key={key} data={data} visible={activeMenu === key} />
+        ))}
       </header>
 
       <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />

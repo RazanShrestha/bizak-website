@@ -1,99 +1,47 @@
-import "../../styles/style.css";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
+import React from "react";
 import {
   Section,
   Container,
-  SectionHeading,
-  Button,
-  Card,
-  IconBadge,
-  HeroBadge,
-  HeroCentered,
-  Stat,
-} from "./marketing";
+  SectionHead,
+  BentoGrid,
+  Bento,
+  Pill,
+  Heading,
+  BadgeGreen,
+  HeroCanvas,
+  StatTile,
+  DataRow,
+  MiniBars,
+  BigCard,
+} from "./bz";
 import {
-  Zap,
-  SlidersHorizontal,
-  Eye,
-  Calendar,
   BarChart2,
   Layers,
-  Download,
-  RefreshCw,
-  Bell,
-  Share2,
-  Database,
   TrendingUp,
-  CheckCircle,
   FileSpreadsheet,
+  Sparkles,
+  Package,
+  DollarSign,
+  SlidersHorizontal,
+  Eye,
 } from "lucide-react";
 
-// ─── DATA ──────────────────────────────────────────────────────────────────────
+// ─── DATA ─────────────────────────────────────────────────────────────────────
 
-const KPI_DATA = [
+const KPI_TILES = [
   { label: "Total Revenue", value: "$2.84M", delta: "+12.4%" },
   { label: "Net Margin", value: "18.4%", delta: "+2.1pp" },
   { label: "Active Orders", value: "2,841", delta: "+8.7%" },
-  { label: "System Uptime", value: "99.2%", delta: "SLA Met" },
+  { label: "Cash Position", value: "$1.24M", delta: "Healthy" },
 ];
 
-const FEATURES = [
-  {
-    Icon: Zap,
-    title: "Real-time KPIs",
-    desc: "Live metrics that update as transactions occur — no manual refresh, no lag, no guesswork.",
-  },
-  {
-    Icon: SlidersHorizontal,
-    title: "Custom Report Builder",
-    desc: "Drag-and-drop builder with conditional filters, custom groupings, and calculated columns.",
-  },
-  {
-    Icon: Eye,
-    title: "Role-based Views",
-    desc: "Every team member sees exactly the data relevant to their role — nothing beyond their scope.",
-  },
-  {
-    Icon: Calendar,
-    title: "Scheduled Exports",
-    desc: "Auto-deliver reports to any stakeholder by email on a daily, weekly, or custom schedule.",
-  },
-  {
-    Icon: BarChart2,
-    title: "Drill-down Analysis",
-    desc: "Click any KPI to trace it back to the originating transaction — a full audit-ready chain.",
-  },
-  {
-    Icon: Layers,
-    title: "Multi-entity Reporting",
-    desc: "Consolidated and per-entity reports across all branches and subsidiaries in one click.",
-  },
-];
+const HERO_BARS = [38, 45, 52, 60, 55, 68, 74, 80, 76, 85, 88, 94];
 
-const CHECK_ITEMS = [
-  {
-    title: "Executive Summary View",
-    desc: "Boardroom-ready P&L, revenue trend, and forecast at a glance.",
-  },
-  {
-    title: "Operations Dashboard",
-    desc: "Live inventory levels, order pipeline, and fulfillment velocity.",
-  },
-  {
-    title: "Finance Dashboard",
-    desc: "AP/AR aging, cash position, and budget vs. actual by cost center.",
-  },
-  {
-    title: "Custom Workspace",
-    desc: "Pin the KPIs that matter to your role — drag, resize, personalize.",
-  },
-];
-
-const TREND_ROWS = [
-  { period: "Q2 2024", rev: "$680k", delta: "+9.2%" },
-  { period: "Q3 2024", rev: "$812k", delta: "+19.4%" },
-  { period: "Q4 2024", rev: "$1.01M", delta: "+24.4%" },
+const REPORT_STREAM = [
+  { name: "Executive P&L Report", time: "07:00 AM", fmt: "PDF", live: false },
+  { name: "Cash Flow Summary", time: "07:05 AM", fmt: "XLS", live: false },
+  { name: "AR Aging Report", time: "08:30 AM", fmt: "PDF", live: false },
+  { name: "Operations Dashboard", time: "Live", fmt: null, live: true },
 ];
 
 const REPORT_TYPES = [
@@ -105,568 +53,432 @@ const REPORT_TYPES = [
   { abbr: "TAX", sub: "Tax Summary" },
 ];
 
-const FLOW_STEPS = [
-  { Icon: Database, label: "Data Entry" },
-  { Icon: RefreshCw, label: "Auto Sync" },
-  { Icon: Zap, label: "KPI Update" },
-  { Icon: Bell, label: "Alert Trigger" },
-  { Icon: BarChart2, label: "Report Build" },
-  { Icon: Share2, label: "Export & Share" },
+const SCHEDULES = [
+  { name: "Executive P&L", freq: "Weekly · Mon 8AM", fmt: "PDF", to: "cfo@acmecorp.com" },
+  { name: "Cash Flow Report", freq: "Daily · 7AM", fmt: "XLS", to: "finance@acmecorp.com" },
+  { name: "Inventory Summary", freq: "Daily · 6AM", fmt: "CSV", to: "ops@acmecorp.com" },
 ];
 
-// ─── HERO VISUAL ───────────────────────────────────────────────────────────────
+const DRILL_CHAIN = [
+  { type: "Dashboard KPI", label: "Net Income", value: "$920,400", active: true },
+  { type: "P&L Report Line", label: "Marketing Expenses", value: "$48,200", active: false },
+  { type: "Journal Entry", label: "JE-2841 · Auto-posted", value: "", active: false },
+  { type: "Source Document", label: "Purchase Invoice PI-0492", value: "$48,200", active: false },
+];
 
-function DashboardMockup() {
+// ─── DRILL CHAIN VISUAL ───────────────────────────────────────────────────────
+
+function DrillChainVisual() {
   return (
-    <div className="w-full max-w-[900px] mx-auto">
-      {/* Outer glow ring — adds visible separation from dark hero bg */}
-      <div className="rounded-bz-lg border border-white/20 bg-white/[0.06] p-1.5 shadow-[0_0_60px_rgba(199,255,53,0.12)]">
-        <div className="rounded-bz-md bg-white/[0.04] px-4 py-5 sm:px-6 flex flex-col gap-5">
-
-          {/* Window chrome */}
-          <div className="flex items-center justify-between">
-            <div className="flex gap-1.5">
-              {(["#ff5f57", "#ffbd2e", "#28c840"] as const).map((bg) => (
-                <div
-                  key={bg}
-                  style={{ background: bg }}
-                  className="w-2.5 h-2.5 rounded-full"
-                />
-              ))}
-            </div>
-            {/* Analytics Hub label — prominently white so it reads clearly on dark */}
-            <span className="text-[11px] font-bold text-white uppercase tracking-[0.12em]">
-              Analytics Hub
-            </span>
-            <div className="flex items-center gap-1.5">
-              <div
-                className="biz-pulse-glow w-1.5 h-1.5 rounded-full bg-bz-accent shrink-0"
-                style={{ boxShadow: "0 0 8px #C7FF35" }}
-              />
-              <span className="text-[9px] font-bold text-bz-accent uppercase tracking-[0.14em]">
-                Live
-              </span>
+    <div className="flex flex-col gap-1">
+      {DRILL_CHAIN.map((item, i) => (
+        <React.Fragment key={item.type}>
+          <div
+            className={`rounded-bz-md px-4 py-3 border ${
+              item.active
+                ? "border-bz-fire/40 bg-bz-fire/[0.08]"
+                : "border-white/[0.08] bg-white/[0.04]"
+            }`}
+          >
+            <p className="text-[9px] font-bold uppercase tracking-[0.10em] mb-1 text-white/40">
+              {item.type}
+            </p>
+            <div className="flex items-center justify-between gap-3">
+              <p
+                className={`text-[13px] font-semibold ${
+                  item.active ? "text-bz-fire" : "text-white/80"
+                }`}
+              >
+                {item.label}
+              </p>
+              {item.value && (
+                <p
+                  className={`text-[12px] font-bold shrink-0 ${
+                    item.active ? "text-bz-fire" : "text-white/55"
+                  }`}
+                >
+                  {item.value}
+                </p>
+              )}
             </div>
           </div>
-
-          {/* KPI cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {KPI_DATA.map((kpi) => (
-              <div
-                key={kpi.label}
-                className="bg-white/[0.07] border border-white/10 rounded-bz-md px-3 py-3.5"
-              >
-                <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-white/45 mb-2">
-                  {kpi.label}
-                </p>
-                <p className="text-[18px] sm:text-[20px] font-bold text-white mb-1.5">
-                  {kpi.value}
-                </p>
-                <span className="text-[9px] font-bold bg-bz-accent/15 text-bz-accent px-1.5 py-0.5 rounded">
-                  {kpi.delta}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Chart area */}
-          <div className="bg-white/[0.03] border border-white/[0.07] rounded-bz-md px-4 py-4 sm:px-5">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <p className="text-[11px] font-bold text-white/85">Revenue Trend</p>
-                <p className="text-[9px] text-white/35 mt-0.5 uppercase tracking-[0.08em]">
-                  Q4 2024 · All Entities
-                </p>
-              </div>
-              <div className="hidden sm:flex gap-4 items-center">
-                {[
-                  { color: "var(--bz-accent)", label: "Current" },
-                  { color: "rgba(255,255,255,0.2)", label: "Last Year" },
-                ].map((leg) => (
-                  <div key={leg.label} className="flex items-center gap-1.5">
-                    <div
-                      style={{ background: leg.color }}
-                      className="w-5 h-0.5 rounded-sm"
-                    />
-                    <span className="text-[8px] text-white/40 font-semibold">
-                      {leg.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="relative h-[90px]">
-              <svg
-                width="100%"
-                height="90"
-                viewBox="0 0 400 90"
-                preserveAspectRatio="none"
-              >
-                <defs>
-                  <linearGradient id="dr-area-fill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#C7FF35" stopOpacity={0.22} />
-                    <stop offset="100%" stopColor="#C7FF35" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <path
-                  d="M0,78 C40,64 80,58 120,50 S190,34 230,38 S290,26 330,18 L400,10 L400,90 L0,90 Z"
-                  fill="url(#dr-area-fill)"
-                />
-                <path
-                  d="M0,78 C40,64 80,58 120,50 S190,34 230,38 S290,26 330,18 L400,10"
-                  fill="none"
-                  stroke="#C7FF35"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M0,84 C50,76 100,74 150,70 S230,62 290,58 S360,54 400,50"
-                  fill="none"
-                  stroke="rgba(255,255,255,0.18)"
-                  strokeWidth="1.5"
-                  strokeDasharray="5 4"
-                />
-                <circle cx="330" cy="18" r="4" fill="#C7FF35" className="biz-pulse-glow" />
-              </svg>
-              <div
-                className="absolute bg-bz-deep border border-bz-accent/30 rounded-bz-md px-3 py-2 whitespace-nowrap"
-                style={{ top: 6, left: "76%", transform: "translateX(-50%)" }}
-              >
-                <p className="text-[8px] text-white/45 uppercase tracking-[0.08em] mb-0.5">
-                  Nov Peak
-                </p>
-                <p className="text-[14px] font-bold text-white">$284k</p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── HERO STATS ────────────────────────────────────────────────────────────────
-
-function HeroStats() {
-  return (
-    <div className="flex flex-wrap justify-center gap-8 md:gap-14 py-6 mb-8 border-y border-white/10">
-      {[
-        { value: "40+", label: "Report Templates" },
-        { value: "Live", label: "Real-time Data" },
-        { value: "99.9%", label: "Uptime SLA" },
-      ].map((s) => (
-        <Stat key={s.label} value={s.value} label={s.label} tone="light" size="md" align="center" />
+          {i < DRILL_CHAIN.length - 1 && (
+            <div className="ml-5 w-px h-3 bg-white/20" />
+          )}
+        </React.Fragment>
       ))}
     </div>
   );
 }
 
-// ─── FEATURES ──────────────────────────────────────────────────────────────────
+// ─── SCHEDULED DELIVERY VISUAL ────────────────────────────────────────────────
 
-function FeaturesSection() {
+function ScheduledDeliveryVisual() {
   return (
-    <Section tone="white" id="features">
-      <Container>
-        <SectionHeading
-          eyebrow="Core Capabilities"
-          title={<>Built for every kind<br />of decision maker</>}
-          description="Whether you're a CFO tracking cash flow or an ops manager watching order velocity, Bizak surfaces the right data in the right format."
-          align="center"
-          maxWidth={640}
-          className="mb-14"
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {FEATURES.map(({ Icon: FeatureIcon, title, desc }) => (
-            <Card key={title} hover="lift" pad="md">
-              <IconBadge tone="sage" size="md" className="mb-4">
-                <FeatureIcon className="size-5" />
-              </IconBadge>
-              <h3 className="text-[17px] font-bold text-bz-text mb-2">{title}</h3>
-              <p className="text-bz-text-muted leading-[1.7] text-[14px]">{desc}</p>
-            </Card>
-          ))}
-        </div>
-      </Container>
-    </Section>
+    <div className="rounded-bz-lg border border-white/[0.08] bg-white/[0.04] overflow-hidden">
+      <div className="px-4 py-3 border-b border-white/[0.08]">
+        <p className="text-[10px] font-bold uppercase tracking-[0.10em] text-white/45">
+          Scheduled Reports
+        </p>
+      </div>
+      <div className="flex flex-col divide-y divide-white/[0.06]">
+        {SCHEDULES.map((s) => (
+          <div key={s.name} className="flex items-center justify-between px-4 py-3 gap-3">
+            <div className="min-w-0">
+              <p className="text-[12px] font-semibold text-white truncate">{s.name}</p>
+              <p className="text-[10px] text-white/40 mt-0.5 truncate">{s.to}</p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-[9px] text-white/40 hidden sm:block">{s.freq}</span>
+              <span className="text-[9px] font-bold text-bz-fire bg-bz-fire/[0.12] px-2 py-0.5 rounded">
+                {s.fmt}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
-// ─── DASHBOARD TYPES ───────────────────────────────────────────────────────────
+// ─── SECTIONS ─────────────────────────────────────────────────────────────────
 
-function DashboardTypesSection() {
+function HeroSection() {
   return (
-    <Section tone="light">
+    <Section tone="b" pad="hero">
       <Container>
-        <div className="flex flex-col gap-12 lg:flex-row lg:gap-16 items-center">
-          <div className="flex-1">
-            <SectionHeading
-              eyebrow="Dashboard Flexibility"
-              title={<>One platform,<br />every perspective</>}
-              description="Bizak adapts to how your organization works — preconfigured views for every function, fully customizable for any role."
-              align="left"
-              maxWidth={520}
-              className="mb-8"
-            />
-            <ul className="flex flex-col gap-5">
-              {CHECK_ITEMS.map((item) => (
-                <li key={item.title} className="flex gap-3 items-start">
-                  <CheckCircle className="size-[18px] text-bz-sage shrink-0 mt-0.5" />
-                  <div className="text-[14px] leading-[1.7]">
-                    <span className="font-bold text-bz-text">{item.title}</span>
-                    <span className="text-bz-text-muted"> — {item.desc}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>Analytics & Reporting</BadgeGreen>
+          <Heading level={2} style={{ marginBottom: 36 }}>
+            Every number, live.{" "}
+            <Heading.Muted>Every report, on demand.</Heading.Muted>
+          </Heading>
+          <div className="flex flex-wrap justify-center gap-[10px]">
+            <Pill
+              variant="dark"
+              withTick
+              href="https://system.bizakerp.com/account/self-register"
+            >
+              Start free trial
+            </Pill>
+            <Pill
+              variant="light"
+              iconLeft={<Sparkles size={13} />}
+              href="/contact"
+            >
+              Book a demo
+            </Pill>
           </div>
+        </div>
 
-          <div className="w-full lg:w-[480px] lg:flex-shrink-0">
-            <Card tone="soft" pad="md">
-              {/* Tab row */}
-              <div className="flex gap-2 mb-5">
-                {["Executive", "Operations", "Finance"].map((tab, i) => (
-                  <span
-                    key={tab}
-                    className={`text-[11px] font-bold px-3 py-1.5 rounded-bz-md cursor-default ${
-                      i === 0
-                        ? "bg-bz-accent text-bz-deep"
-                        : "text-bz-text-muted border border-bz-border"
+        <HeroCanvas>
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 rounded-tl-[16px] rounded-tr-[16px] border border-b-0 border-white/[0.10] overflow-hidden">
+
+            {/* Left — Live KPIs */}
+            <div className="border-b md:border-b-0 md:border-r border-white/[0.08] px-6 pt-6 pb-0 flex flex-col">
+              <div className="flex items-center gap-1.5 mb-5">
+                <div className="w-1.5 h-1.5 rounded-full bg-bz-fire" />
+                <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-white/45">
+                  Live KPIs · All Entities
+                </p>
+              </div>
+
+              <div className="flex flex-col">
+                {KPI_TILES.map((kpi, i) => (
+                  <div
+                    key={kpi.label}
+                    className={`flex items-center justify-between py-3.5 ${
+                      i < KPI_TILES.length - 1 ? "border-b border-white/[0.06]" : ""
                     }`}
                   >
-                    {tab}
-                  </span>
-                ))}
-              </div>
-
-              {/* Stats row */}
-              <div className="grid grid-cols-2 gap-3 mb-5">
-                {[
-                  { label: "Net Revenue", value: "$2.84M", delta: "↑ 12.4%" },
-                  { label: "Total Expenses", value: "$1.92M", delta: "↓ 3.1%" },
-                ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="p-4 bg-bz-surface rounded-bz-md border border-bz-border"
-                  >
-                    <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-bz-text-muted mb-2">
-                      {stat.label}
-                    </p>
-                    <p className="text-[22px] font-bold text-bz-text mb-1">{stat.value}</p>
-                    <span className="text-[10px] font-bold text-green-600">{stat.delta}</span>
+                    <div>
+                      <p className="text-[9px] font-semibold uppercase tracking-[0.08em] text-white/35 mb-1">
+                        {kpi.label}
+                      </p>
+                      <p className="text-[20px] font-bold text-white leading-none">{kpi.value}</p>
+                    </div>
+                    <span className="text-[10px] font-bold bg-bz-fire/[0.14] text-bz-fire px-2 py-1 rounded-bz-md">
+                      {kpi.delta}
+                    </span>
                   </div>
                 ))}
               </div>
 
-              {/* Sparkline chart */}
-              <div className="relative">
-                <svg
-                  width="100%"
-                  height="90"
-                  viewBox="0 0 300 90"
-                  preserveAspectRatio="none"
-                >
-                  <defs>
-                    <linearGradient id="dr-spark-fill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#C7FF35" stopOpacity={0.3} />
-                      <stop offset="100%" stopColor="#C7FF35" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M0,72 C30,58 60,62 90,46 S150,22 180,30 S240,18 270,10 L300,6 L300,90 L0,90 Z"
-                    fill="url(#dr-spark-fill)"
-                  />
-                  <path
-                    d="M0,72 C30,58 60,62 90,46 S150,22 180,30 S240,18 270,10 L300,6"
-                    fill="none"
-                    stroke="#C7FF35"
-                    strokeWidth="2"
-                  />
-                  <circle cx="270" cy="10" r="3.5" fill="#C7FF35" />
-                </svg>
-                <div
-                  className="absolute bg-bz-surface border border-bz-border rounded-bz-md px-3 py-2 shadow-sm"
-                  style={{ top: "8%", left: "72%" }}
-                >
-                  <p className="text-[10px] font-bold text-bz-text">Peak: Nov 14</p>
-                  <p className="text-[9px] text-bz-text-muted mt-0.5">Highest Revenue Day</p>
-                </div>
+              <div className="pt-4 pb-6 border-t border-white/[0.06] mt-4">
+                <p className="text-[9px] text-white/30 uppercase tracking-[0.08em] mb-2.5">
+                  Revenue trend · 12 weeks
+                </p>
+                <MiniBars values={HERO_BARS} tone="dark" height={32} highlightLast />
               </div>
-            </Card>
+            </div>
+
+            {/* Right — Report stream */}
+            <div className="px-6 pt-6 pb-0 flex flex-col">
+              <div className="flex items-center justify-between mb-5">
+                <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-white/45">
+                  Reports · Today
+                </p>
+                <span className="text-[9px] font-bold text-bz-fire">47 generated</span>
+              </div>
+
+              <div className="flex flex-col flex-1">
+                {REPORT_STREAM.map((r, i) => (
+                  <div
+                    key={r.name}
+                    className={`flex items-center justify-between gap-3 py-3.5 ${
+                      i < REPORT_STREAM.length - 1 ? "border-b border-white/[0.06]" : ""
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div
+                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                          r.live ? "bg-bz-fire" : "bg-white/[0.18]"
+                        }`}
+                      />
+                      <p
+                        className={`text-[12px] truncate ${
+                          r.live ? "text-white font-medium" : "text-white/60"
+                        }`}
+                      >
+                        {r.name}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[9px] text-white/25 hidden sm:block">{r.time}</span>
+                      {r.fmt ? (
+                        <span className="text-[9px] font-bold bg-white/[0.07] text-white/45 px-2 py-0.5 rounded">
+                          {r.fmt}
+                        </span>
+                      ) : (
+                        <span className="text-[9px] font-bold bg-bz-fire/[0.15] text-bz-fire px-2 py-0.5 rounded">
+                          Live
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-4 pb-6 border-t border-white/[0.06] mt-4 flex items-center justify-between">
+                <p className="text-[9px] text-white/30 uppercase tracking-[0.08em]">Next delivery</p>
+                <p className="text-[9px] font-semibold text-white/45">Tomorrow · 07:00 AM</p>
+              </div>
+            </div>
+
           </div>
-        </div>
+        </HeroCanvas>
       </Container>
     </Section>
   );
 }
 
-// ─── ANALYTICS SHOWCASE ────────────────────────────────────────────────────────
-
-function AnalyticsSection() {
+function RoleViewsSection() {
   return (
-    <Section tone="dark">
+    <Section tone="a">
       <Container>
-        <SectionHeading
-          eyebrow="Deep Analytics"
-          title={<>From raw data to<br />boardroom clarity</>}
-          tone="light"
-          align="left"
-          maxWidth={480}
-          className="mb-12"
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-          {/* Revenue Intelligence — span 3 */}
-          <div className="md:col-span-3 bg-white/[0.04] border border-white/10 rounded-bz-lg p-6">
-            <IconBadge tone="darkSurface" size="sm" className="mb-5">
-              <TrendingUp className="size-4" />
-            </IconBadge>
-            <h3 className="text-[17px] font-bold text-white mb-2">Revenue Intelligence</h3>
-            <p className="text-white/55 text-[14px] leading-[1.7] mb-6">
-              Multi-period trend analysis with comparative benchmarks against budgets and prior-year actuals.
-            </p>
-            <svg
-              width="100%"
-              height="60"
-              viewBox="0 0 300 60"
-              preserveAspectRatio="none"
-              className="mb-5"
-            >
-              <path
-                d="M0,52 C40,42 80,44 120,34 S180,18 210,22 S260,12 300,6"
-                fill="none"
-                stroke="#C7FF35"
-                strokeWidth="2"
-              />
-              <path
-                d="M0,56 C50,52 100,54 150,50 S220,44 300,40"
-                fill="none"
-                stroke="rgba(255,255,255,0.2)"
-                strokeWidth="1.5"
-                strokeDasharray="5 4"
-              />
-            </svg>
-            <div className="rounded-bz-md overflow-hidden border border-white/10 overflow-x-auto">
-              <div className="grid grid-cols-3 px-4 py-2.5 bg-white/[0.05] border-b border-white/10 min-w-[260px]">
-                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.08em]">Period</span>
-                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.08em]">Revenue</span>
-                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.08em]">Δ YoY</span>
-              </div>
-              {TREND_ROWS.map((row) => (
-                <div
-                  key={row.period}
-                  className="grid grid-cols-3 px-4 py-2.5 border-b border-white/[0.06] last:border-0 min-w-[260px]"
-                >
-                  <span className="text-[12px] text-white/60">{row.period}</span>
-                  <span className="text-[12px] text-white font-semibold">{row.rev}</span>
-                  <span className="text-[12px] text-bz-accent font-bold">{row.delta}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Report Library — span 3 */}
-          <div className="md:col-span-3 bg-white/[0.04] border border-white/10 rounded-bz-lg p-6">
-            <IconBadge tone="darkSurface" size="sm" className="mb-5">
-              <FileSpreadsheet className="size-4" />
-            </IconBadge>
-            <h3 className="text-[17px] font-bold text-white mb-2">Built-in Report Library</h3>
-            <p className="text-white/55 text-[14px] leading-[1.7] mb-6">
-              40+ ready-to-run templates covering every corner of your business — no configuration required.
-            </p>
-            <div className="grid grid-cols-3 gap-2.5">
-              {REPORT_TYPES.map(({ abbr, sub }) => (
-                <div
-                  key={abbr}
-                  className="bg-white/[0.05] border border-white/10 rounded-bz-md px-3 py-3 text-center"
-                >
-                  <div className="text-[15px] font-bold text-bz-accent mb-1">{abbr}</div>
-                  <div className="text-[9px] text-white/45 uppercase tracking-[0.06em]">{sub}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 40+ stat — span 2 */}
-          <div className="md:col-span-2 bg-white/[0.04] border border-white/10 rounded-bz-lg p-6">
-            <Stat value="40+" label="Report Templates" tone="light" size="lg" />
-            <p className="text-white/55 text-[14px] leading-[1.7] mt-4">
-              Preconfigured for finance, ops, HR, and sales — ready in seconds, not hours of setup.
-            </p>
-          </div>
-
-          {/* Export formats — span 2 */}
-          <div className="md:col-span-2 bg-white/[0.04] border border-white/10 rounded-bz-lg p-6">
-            <IconBadge tone="darkSurface" size="sm" className="mb-5">
-              <Download className="size-4" />
-            </IconBadge>
-            <h3 className="text-[17px] font-bold text-white mb-2">Export Any Format</h3>
-            <p className="text-white/55 text-[14px] mb-5">
-              Deliver reports to any system in exactly the format it needs.
-            </p>
-            <div className="flex flex-col gap-2">
-              {[
-                { fmt: "PDF", desc: "Branded, print-ready" },
-                { fmt: "XLS", desc: "Excel with formulas" },
-                { fmt: "CSV", desc: "Raw data pipeline" },
-              ].map((f) => (
-                <div
-                  key={f.fmt}
-                  className="flex justify-between items-center px-3 py-2.5 bg-white/[0.05] border border-white/[0.07] rounded-bz-md"
-                >
-                  <span className="text-[11px] font-bold text-bz-accent">{f.fmt}</span>
-                  <span className="text-[10px] text-white/40">{f.desc}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 99.9% accuracy stat — span 2 */}
-          <div className="md:col-span-2 bg-white/[0.04] border border-white/10 rounded-bz-lg p-6">
-            <Stat value="99.9%" label="Data Accuracy" tone="light" size="lg" />
-            <p className="text-white/55 text-[14px] leading-[1.7] mt-4">
-              Enterprise-grade reliability with bank-level encryption and zero-data-loss guarantees for every report.
-            </p>
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── REPORT FLOW ───────────────────────────────────────────────────────────────
-
-function ReportFlowSection() {
-  return (
-    <Section tone="white">
-      <Container>
-        <SectionHeading
-          eyebrow="Data Pipeline"
+        <SectionHead
+          index="01"
+          label="Dashboard flexibility"
           title={
             <>
-              From data entry to decision —
-              <br className="hidden md:block" />
-              {" "}automatically
+              One system.{" "}
+              <Heading.Muted>Every perspective.</Heading.Muted>
             </>
           }
-          align="center"
-          maxWidth={560}
-          className="mb-14"
+          description="Bizak adapts to how your organisation works — preconfigured views for each function, personalised for every role."
         />
+        <BentoGrid cols={3}>
+          <Bento tone="dark" hover dotGrid>
+            <Bento.Header title="Executive View" icon={<TrendingUp size={16} />} />
+            <Bento.Desc>
+              Board-ready P&amp;L, revenue trend, and forecast — updated the moment transactions post.
+            </Bento.Desc>
+            <Bento.Footer>
+              <DataRow label="Net Revenue" value="$2.84M" tone="dark" emphasis />
+              <DataRow label="EBITDA" value="32.4%" tone="dark" />
+              <DataRow label="Forecast vs Target" value="↑ 8.2%" tone="dark" emphasis />
+            </Bento.Footer>
+          </Bento>
 
-        <div className="relative">
-          {/* Animated dashed connector (desktop only) */}
-          <div className="hidden md:block absolute top-7 left-[8%] right-[8%] pointer-events-none">
-            <svg width="100%" height="2" style={{ overflow: "visible" }}>
-              <line
-                x1="0%"
-                y1="1"
-                x2="100%"
-                y2="1"
-                stroke="#C7FF35"
-                strokeWidth="2"
-                strokeDasharray="14 8"
-                className="biz-flow"
-              />
-            </svg>
-          </div>
+          <Bento tone="paper" hover>
+            <Bento.Header title="Operations View" icon={<Package size={16} />} />
+            <Bento.Desc>
+              Live inventory levels, active orders, and fulfilment velocity — for ops managers who can't afford a lag.
+            </Bento.Desc>
+            <Bento.Footer>
+              <DataRow label="Active Orders" value="2,841" />
+              <DataRow label="In-transit SKUs" value="412" />
+              <DataRow label="On-time Delivery" value="96.2%" emphasis />
+            </Bento.Footer>
+          </Bento>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
-            {FLOW_STEPS.map(({ Icon: StepIcon, label }) => (
-              <div key={label} className="flex flex-col items-center gap-3 text-center">
-                <div className="relative z-10 w-14 h-14 rounded-full border-2 border-bz-border bg-bz-surface flex items-center justify-center">
-                  <StepIcon className="size-5 text-bz-sage" />
-                </div>
-                <span className="text-[13px] font-semibold text-bz-text-muted">{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+          <Bento tone="paper" hover>
+            <Bento.Header title="Finance View" icon={<DollarSign size={16} />} />
+            <Bento.Desc>
+              AP/AR aging, cash position, and budget vs. actual by cost centre — live, not last month.
+            </Bento.Desc>
+            <Bento.Footer>
+              <DataRow label="Cash Position" value="$1.24M" emphasis />
+              <DataRow label="AR Overdue" value="$38,400" />
+              <DataRow label="Budget Utilisation" value="74.1%" />
+            </Bento.Footer>
+          </Bento>
+        </BentoGrid>
       </Container>
     </Section>
   );
 }
 
-// ─── CTA ───────────────────────────────────────────────────────────────────────
-
-function CTASection() {
+function DrillDownSection() {
   return (
-    <Section tone="dark">
-      <Container width="narrow">
-        <SectionHeading
+    <Section tone="b">
+      <Container>
+        <BigCard
+          text={{
+            title: (
+              <>
+                Click any number.
+                <br />
+                See its source.
+              </>
+            ),
+            body: "Every KPI, every report line, every journal entry traces back to the originating transaction in one click. Not just readable — fully audit-ready.",
+            bullets: [
+              "Dashboard KPI → P&L line → journal entry → source invoice",
+              "Every state change logged with user ID and timestamp",
+              "100% audit compliance — zero unlinked transactions",
+            ],
+            cta: {
+              variant: "accent",
+              withArrow: true,
+              href: "/contact",
+              children: "See it in action",
+            },
+          }}
+          visual={<DrillChainVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+function ReportCatalogSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="02"
+          label="Report library"
           title={
             <>
-              Make data your{" "}
-              <span className="text-bz-accent">competitive advantage</span>
+              40+ templates.{" "}
+              <Heading.Muted>Zero setup.</Heading.Muted>
             </>
           }
-          description="Join 10,000+ companies using Bizak to turn raw ERP data into instant strategic clarity — live dashboards, automated reports, zero manual effort."
-          tone="light"
-          align="center"
-          maxWidth={580}
-          className="mb-10"
+          description="Every standard financial and operational report, pre-built and ready to run — or customised in minutes with the drag-and-drop builder."
         />
-        <div className="flex flex-wrap justify-center gap-3">
-          <Button
-            variant="accent"
-            size="lg"
-            href="https://system.bizakerp.com/account/self-register"
-            withArrow
-          >
-            Start Free Trial
-          </Button>
-          <Button variant="ghostDark" size="lg" href="/contact">
-            Book a Demo
-          </Button>
-        </div>
+        <BentoGrid cols={12}>
+          <Bento span={7} tone="paper" hover>
+            <Bento.Header title="Built-in Report Library" icon={<FileSpreadsheet size={16} />} />
+            <Bento.Desc>
+              Covers every corner of your business — finance, ops, HR, and sales. No configuration required.
+            </Bento.Desc>
+            <Bento.Footer>
+              <div className="grid grid-cols-3 gap-2">
+                {REPORT_TYPES.map(({ abbr, sub }) => (
+                  <div
+                    key={abbr}
+                    className="bg-bz-section-b border border-bz-line rounded-bz-md px-3 py-3 text-center"
+                  >
+                    <div className="text-[14px] font-bold text-bz-text mb-0.5">{abbr}</div>
+                    <div className="text-[9px] text-bz-text-muted uppercase tracking-[0.06em]">{sub}</div>
+                  </div>
+                ))}
+              </div>
+            </Bento.Footer>
+          </Bento>
+
+          <Bento span={5} tone="dark">
+            <Bento.Header title="Templates Ready" icon={<BarChart2 size={16} />} />
+            <Bento.Footer>
+              <StatTile
+                value="40+"
+                desc="Pre-built reports covering finance, ops, HR, and sales — ready in seconds, not hours of setup."
+                tone="dark"
+              />
+            </Bento.Footer>
+          </Bento>
+
+          <Bento span={4} tone="paper" hover>
+            <Bento.Header title="Custom Report Builder" icon={<SlidersHorizontal size={16} />} />
+            <Bento.Desc>
+              Drag-and-drop builder with conditional filters, custom groupings, and calculated columns.
+            </Bento.Desc>
+          </Bento>
+
+          <Bento span={4} tone="paper" hover>
+            <Bento.Header title="Role-based Views" icon={<Eye size={16} />} />
+            <Bento.Desc>
+              Every team member sees exactly the data relevant to their role — nothing beyond their scope.
+            </Bento.Desc>
+          </Bento>
+
+          <Bento span={4} tone="paper" hover>
+            <Bento.Header title="Multi-entity Reporting" icon={<Layers size={16} />} />
+            <Bento.Desc>
+              Consolidated and per-entity reports across all branches and subsidiaries in one click.
+            </Bento.Desc>
+          </Bento>
+        </BentoGrid>
       </Container>
     </Section>
   );
 }
 
-// ─── PAGE ───────────────────────────────────────────────────────────────────────
+function AutoDeliverySection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <BigCard
+          reverse
+          text={{
+            title: (
+              <>
+                From entry to inbox.
+                <br />
+                Automatically.
+              </>
+            ),
+            body: "Every transaction auto-syncs, KPIs update instantly, and scheduled reports land in the right inbox — on time, every time. No manual exports. No chasing.",
+            bullets: [
+              "Daily, weekly, or custom schedule per recipient",
+              "PDF, Excel, and CSV — delivered in the right format",
+              "Drill-down links preserved in every delivered report",
+            ],
+            cta: {
+              variant: "accent",
+              withArrow: true,
+              href: "https://system.bizakerp.com/account/self-register",
+              children: "Start free trial",
+            },
+          }}
+          visual={<ScheduledDeliveryVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+// ─── PAGE ─────────────────────────────────────────────────────────────────────
 
 export function DashboardAndReportingPage() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <main>
-        <HeroCentered
-          tone="dark"
-          mesh={false}
-          badge={<HeroBadge tone="dark">Analytics & Reporting</HeroBadge>}
-          title={
-            <>
-              Every number.
-              <br />
-              In real time.
-            </>
-          }
-          description="Bizak transforms scattered ERP data into instant clarity — live KPI dashboards, scheduled reports, and drill-down analysis built for the decisions that matter."
-          actions={
-            <>
-              <Button variant="accent" size="lg" href="/contact" withArrow>
-                Request Demo
-              </Button>
-              <Button variant="ghostDark" size="lg" href="#features">
-                Explore Features
-              </Button>
-            </>
-          }
-          visual={
-            <>
-              <HeroStats />
-              <DashboardMockup />
-            </>
-          }
-        />
-        <FeaturesSection />
-        <DashboardTypesSection />
-        <AnalyticsSection />
-        <ReportFlowSection />
-        <CTASection />
-      </main>
-      <Footer />
-    </div>
+    <>
+      <HeroSection />
+      <RoleViewsSection />
+      <DrillDownSection />
+      <ReportCatalogSection />
+      <AutoDeliverySection />
+    </>
   );
 }

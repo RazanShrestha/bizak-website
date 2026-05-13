@@ -1,484 +1,576 @@
-import "../../styles/style.css";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
 import {
-  Plug, Unlink, Shuffle, Webhook, RefreshCw, Shield, Key,
-  Eye, CheckCircle, Calendar, Layers, Code, GitBranch, Upload, Activity,
-  Boxes,
+  Section, Container, SectionHead, BentoGrid, Bento, Pill, Heading,
+  BadgeGreen, BigCard, StepCard,
+} from "./bz";
+import {
+  Boxes, Upload, Unlink, Activity, Shield, Key,
+  GitBranch, RefreshCw, Webhook,
 } from "lucide-react";
-import {
-  Section, Container, SectionHeading, Button, Card, IconBadge, HeroBadge, HeroCentered, PillBadge, Stat,
-} from "./marketing";
 
-// ─── HERO VISUAL ─────────────────────────────────────────────────────────────
-const HUB_NODES = [
-  { abbr: "STR", x: 30,  y: 18,  pull: true  },
-  { abbr: "SHO", x: 138, y: 8,   pull: false },
-  { abbr: "HUB", x: 246, y: 18,  pull: true  },
-  { abbr: "QBO", x: 30,  y: 132, pull: false },
-  { abbr: "AWS", x: 138, y: 142, pull: true  },
-  { abbr: "SAL", x: 246, y: 132, pull: false },
+// ─── Hero visual ─────────────────────────────────────────────────────────────
+
+const SOURCES = [
+  { name: "Stripe",     cat: "Payments" },
+  { name: "Shopify",    cat: "Commerce" },
+  { name: "QuickBooks", cat: "Ledger"   },
+  { name: "SAP",        cat: "ERP"      },
 ];
 
-function SyncHubVisual() {
+const DESTINATIONS = [
+  { name: "Finance",   cat: "General Ledger" },
+  { name: "Inventory", cat: "Stock & WMS"    },
+  { name: "Sales",     cat: "CRM & Orders"   },
+  { name: "Payroll",   cat: "HR & Pay"       },
+];
+
+const LIVE_EVENTS = [
+  { code: "SO-1182",  route: "Shopify → Finance",      ago: "2s"  },
+  { code: "PAY-3002", route: "Stripe → Sales",         ago: "5s"  },
+  { code: "INV-947",  route: "QuickBooks → Inventory", ago: "11s" },
+];
+
+function FlowDiagramVisual() {
   return (
-    <div className="w-full max-w-[900px] mx-auto">
-      <div className="rounded-bz-lg border border-white/20 bg-white/[0.06] p-1.5 shadow-[0_0_60px_rgba(199,255,53,0.12)]">
-        <div className="rounded-bz-md bg-white/[0.04] px-4 py-5 sm:px-6 flex flex-col gap-4">
+    <div className="w-full max-w-[860px] mx-auto mt-12">
+      <div className="rounded-bz-xl border border-bz-line bg-bz-surface px-5 md:px-7 py-6">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-3">
 
-          {/* Window chrome */}
-          <div className="flex items-center justify-between">
-            <div className="flex gap-1.5">
-              {(["#ff5f57", "#ffbd2e", "#28c840"] as const).map((bg) => (
-                <div key={bg} style={{ background: bg }} className="w-2.5 h-2.5 rounded-full" />
-              ))}
+          {/* Source systems */}
+          <div className="flex flex-col gap-2 flex-1">
+            <div className="text-[9px] font-bold tracking-[0.12em] uppercase text-bz-text-soft mb-0.5">
+              External Systems
             </div>
-            <span className="text-[11px] font-bold text-white uppercase tracking-[0.12em]">
-              Bizak · Sync Hub
-            </span>
-            <div className="flex items-center gap-1.5">
+            {SOURCES.map((s) => (
               <div
-                className="biz-pulse-glow w-1.5 h-1.5 rounded-full bg-bz-accent shrink-0"
-                style={{ boxShadow: "0 0 8px #C7FF35" }}
-              />
-              <span className="text-[9px] font-bold text-bz-accent uppercase tracking-[0.14em]">Live</span>
-            </div>
-          </div>
-
-          {/* Hub SVG — node labels use white fill for visibility on dark bg */}
-          <div className="relative flex items-center justify-center">
-            <svg viewBox="0 0 280 160" className="w-full max-w-[420px] h-auto" fill="none">
-              <defs>
-                <radialGradient id="hubGlow" cx="0.5" cy="0.5" r="0.5">
-                  <stop offset="0%" stopColor="var(--bz-accent)" stopOpacity="0.35" />
-                  <stop offset="100%" stopColor="var(--bz-accent)" stopOpacity="0" />
-                </radialGradient>
-              </defs>
-              <circle cx="140" cy="80" r="50" fill="url(#hubGlow)" />
-              {HUB_NODES.map((n) => {
-                const cx1 = n.x + 22;
-                const cy1 = n.y + 12;
-                return (
-                  <g key={n.abbr}>
-                    <line x1="140" y1="80" x2={cx1} y2={cy1} stroke="rgba(122,130,109,0.18)" strokeWidth="1" />
-                    <line
-                      x1={n.pull ? cx1 : 140} y1={n.pull ? cy1 : 80}
-                      x2={n.pull ? 140 : cx1} y2={n.pull ? 80 : cy1}
-                      className="biz-flow" stroke="var(--bz-accent)" strokeWidth="1.4"
-                      strokeDasharray="3 7" strokeLinecap="round" opacity="0.85"
-                    />
-                  </g>
-                );
-              })}
-              <circle cx="140" cy="80" r="22" fill="rgba(199,255,53,0.18)" stroke="var(--bz-accent)" strokeWidth="1.4" />
-              <text x="140" y="83" textAnchor="middle" fontSize="9" fontWeight="800" fill="var(--bz-sage)" letterSpacing="0.5">BIZAK</text>
-              {HUB_NODES.map((n) => (
-                <g key={n.abbr}>
-                  <rect x={n.x} y={n.y} width="44" height="24" rx="5" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-                  <text x={n.x + 22} y={n.y + 16} textAnchor="middle" fontSize="9" fontWeight="800" fill="white" letterSpacing="0.5">{n.abbr}</text>
-                  <circle cx={n.x + 38} cy={n.y + 5} r="2.2" fill={n.pull ? "#16a34a" : "var(--bz-accent)"} />
-                </g>
-              ))}
-            </svg>
-          </div>
-
-          {/* Live event stream */}
-          <div className="border-t border-white/[0.07] pt-3">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-[9px] font-bold text-bz-sage uppercase tracking-[0.1em]">Live Event Stream</span>
-              <span className="text-[9px] font-bold text-[#16a34a]">2,184 today</span>
-            </div>
-            {[
-              { code: "SO-1182",  arrow: "→", target: "Shopify",    ago: "2s"  },
-              { code: "INV-947",  arrow: "←", target: "QuickBooks", ago: "8s"  },
-              { code: "PAY-3002", arrow: "→", target: "Stripe",     ago: "12s" },
-            ].map((e) => (
-              <div key={e.code} className="flex justify-between text-[10px] py-1 border-t border-white/[0.04]">
-                <span className="text-white font-bold tracking-[0.04em]">{e.code}</span>
-                <span className="text-bz-sage">{e.arrow} {e.target}</span>
-                <span className="text-[#16a34a] font-bold">{e.ago}</span>
+                key={s.name}
+                className="flex items-center justify-between gap-2 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3 py-2"
+              >
+                <span className="text-[12px] font-bold text-bz-text">{s.name}</span>
+                <span className="text-[10px] text-bz-text-muted">{s.cat}</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-bz-fire shrink-0" />
               </div>
             ))}
           </div>
 
+          {/* Connector arrow (desktop) */}
+          <div className="hidden md:flex flex-col items-center shrink-0 px-1 gap-1">
+            <div className="h-px w-10 border-t border-dashed border-bz-line" />
+            <span className="text-[11px] text-bz-text-soft">→</span>
+          </div>
+
+          {/* BIZAK hub */}
+          <div className="rounded-bz-xl border-2 border-bz-fire bg-bz-olive px-6 py-5 text-center shrink-0 md:w-[140px]">
+            <div className="text-[8px] font-bold tracking-[0.18em] uppercase text-bz-fire mb-2">
+              BIZAK HUB
+            </div>
+            <div className="text-[28px] font-extrabold text-bz-text-on-dark leading-none">2,184</div>
+            <div className="text-[9px] text-bz-text-on-dark-muted mt-1">syncs today</div>
+            <div className="flex items-center gap-1.5 justify-center mt-2.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-bz-fire shrink-0" />
+              <span className="text-[9px] font-bold text-bz-fire uppercase tracking-[0.12em]">Live</span>
+            </div>
+          </div>
+
+          {/* Connector arrow (desktop) */}
+          <div className="hidden md:flex flex-col items-center shrink-0 px-1 gap-1">
+            <div className="h-px w-10 border-t border-dashed border-bz-line" />
+            <span className="text-[11px] text-bz-text-soft">→</span>
+          </div>
+
+          {/* Destination modules */}
+          <div className="flex flex-col gap-2 flex-1">
+            <div className="text-[9px] font-bold tracking-[0.12em] uppercase text-bz-text-soft mb-0.5">
+              Bizak Modules
+            </div>
+            {DESTINATIONS.map((d) => (
+              <div
+                key={d.name}
+                className="flex items-center justify-between gap-2 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3 py-2"
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-bz-leaf shrink-0" />
+                <span className="text-[10px] text-bz-text-muted flex-1">{d.cat}</span>
+                <span className="text-[12px] font-bold text-bz-text">{d.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Live event strip */}
+        <div className="mt-5 pt-4 border-t border-bz-line-soft grid grid-cols-1 sm:grid-cols-3 gap-2">
+          {LIVE_EVENTS.map((e) => (
+            <div
+              key={e.code}
+              className="flex flex-col gap-0.5 rounded-bz-md bg-bz-paper-warm px-3 py-2 border border-bz-line-soft"
+            >
+              <span className="text-[11px] font-bold text-bz-text">{e.code}</span>
+              <span className="text-[10px] text-bz-text-muted">{e.route}</span>
+              <span className="text-[10px] font-bold text-bz-olive">{e.ago} ago</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-// ─── CHALLENGES ──────────────────────────────────────────────────────────────
-const CHALLENGES = [
-  { Icon: Boxes,    title: "Disconnected Systems", desc: "Sales lives in a CRM, payments in a gateway, inventory in a WMS. None of them know the others exist — until reconciliation day." },
-  { Icon: Upload,   title: "Manual CSV Loop",      desc: "Export from system A, clean in Excel, import into system B. Repeat every Monday. Repeat for every entity. Repeat for every team." },
-  { Icon: Unlink,   title: "Brittle Webhooks",     desc: "A vendor changes a field name and your sync silently breaks. By the time someone notices, the ledger has drifted by hundreds of orders." },
-  { Icon: Activity, title: "Silent Sync Drift",    desc: "Two systems drift apart line-by-line. By month-end, the bank, the CRM, and the ledger all disagree — and nobody knows which one to trust." },
-  { Icon: Shield,   title: "No Audit Lineage",     desc: "When a number looks wrong, can you trace it back to the original webhook payload? Most stacks can't — and your auditor will notice." },
-  { Icon: Key,      title: "Credential Sprawl",    desc: "API keys live in a junior developer's .env file. Rotation is manual, scopes are overgrown, and revoking access takes a sprint." },
+// ─── Connector library visual (inside BigCard) ────────────────────────────────
+
+const CONNECTOR_CATS = [
+  { abbr: "STR", cat: "Payments" }, { abbr: "SHO", cat: "Commerce" },
+  { abbr: "QBO", cat: "Ledger"   }, { abbr: "SAL", cat: "CRM"      },
+  { abbr: "BNK", cat: "Banking"  }, { abbr: "PAY", cat: "Payroll"  },
+  { abbr: "SAP", cat: "ERP"      }, { abbr: "AWS", cat: "Storage"  },
 ];
 
-function ChallengesSection() {
+function ConnectorGridVisual() {
   return (
-    <Section tone="light">
-      <Container>
-        <SectionHeading
-          eyebrow="The Integration Gap"
-          title="Six systems, six truths — and a thousand CSV files in between."
-          description="Most ERP stacks are surrounded by a graveyard of brittle SFTP jobs, ad-hoc Zapier flows, and half-written webhooks. By the time the data reaches the ledger, the answers are already wrong."
-          maxWidth={760}
-          className="mb-14"
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {CHALLENGES.map(({ Icon: CIcon, title, desc }) => (
-            <Card key={title} pad="lg" hover="lift">
-              <IconBadge tone="sage" size="md" className="mb-5"><CIcon className="size-5" /></IconBadge>
-              <h3 className="text-[16px] font-bold text-bz-text mb-2">{title}</h3>
-              <p className="text-[13px] text-bz-text-muted leading-[1.7]">{desc}</p>
-            </Card>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── SOLUTIONS ───────────────────────────────────────────────────────────────
-const SOLUTIONS = [
-  { Icon: Layers,    title: "200+ Pre-Built Connectors", desc: "From Stripe and Shopify to SAP and SWIFT — drop in a connector, authenticate, and the data flows. No glue code, no maintenance burden." },
-  { Icon: Shuffle,   title: "Bidirectional Sync",        desc: "Push and pull on the same channel. Sales orders flow in, fulfillment status flows out — with conflict resolution and idempotency baked in." },
-  { Icon: GitBranch, title: "Visual Field Mapper",       desc: "Map source schemas to Bizak entities through a drag-and-drop canvas. Transform, lookup, and route values without writing scripts." },
-  { Icon: RefreshCw, title: "Retry & Dead-Letter Queue", desc: "Transient failures retry with exponential backoff. Permanent failures land in the DLQ with full payload — replay or fix-and-resume in one click." },
-  { Icon: Shield,    title: "Audit-Grade Lineage",       desc: "Every record carries the originating payload, transform, and timestamp. Trace any ledger row back to the API response that produced it." },
-  { Icon: Code,      title: "Low-Code Recipe Builder",   desc: "When pre-builts aren't enough, compose a recipe with HTTP, JSON, and conditional logic. Ship custom integrations in hours, not sprints." },
-];
-
-function SolutionSection() {
-  return (
-    <Section tone="white">
-      <Container>
-        <SectionHeading
-          eyebrow="The Solution"
-          title="One integration layer for every system you run"
-          align="center"
-          className="mb-16"
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
-          {SOLUTIONS.map(({ Icon: SIcon, title, desc }) => (
-            <div key={title}>
-              <IconBadge tone="sage" size="md" className="mb-4"><SIcon className="size-5" /></IconBadge>
-              <h4 className="text-[16px] font-bold text-bz-text mb-2">{title}</h4>
-              <p className="text-[13px] text-bz-text-muted leading-[1.7]">{desc}</p>
+    <div className="flex flex-col gap-5 w-full">
+      <div className="flex items-baseline gap-5">
+        <div className="text-[40px] font-extrabold text-bz-fire leading-none">200+</div>
+        <div className="flex gap-5">
+          {[["8", "Categories"], ["<2 min", "Avg Setup"]].map(([v, l]) => (
+            <div key={l}>
+              <div className="text-[18px] font-bold text-bz-fire">{v}</div>
+              <div className="text-[9px] font-bold tracking-[0.1em] uppercase text-white/40 mt-0.5">{l}</div>
             </div>
           ))}
         </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── CAPABILITIES ────────────────────────────────────────────────────────────
-function CapabilitiesSection() {
-  return (
-    <Section tone="dark">
-      <Container>
-        <SectionHeading
-          eyebrow="Capabilities"
-          title="A connector platform built into your ERP, not bolted on."
-          tone="light"
-          maxWidth={620}
-          className="mb-16"
-        />
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-5">
-          {/* Connector marketplace — span 6 */}
-          <Card tone="dark" pad="lg" className="lg:col-span-6">
-            <div className="grid md:grid-cols-[auto_1fr] gap-8 md:gap-12 items-start">
-              <div>
-                <div className="text-[44px] font-bold text-bz-accent leading-none">200+</div>
-                <p className="text-[10px] font-bold tracking-[0.1em] uppercase text-white/45 mt-2">Connectors · Marketplace</p>
-                <div className="flex gap-7 mt-5">
-                  {[{ val: "8", lbl: "Categories" }, { val: "<2 min", lbl: "Avg Setup" }].map((s) => (
-                    <div key={s.lbl}>
-                      <div className="text-[22px] font-bold text-bz-accent">{s.val}</div>
-                      <div className="text-[9px] font-bold tracking-[0.1em] uppercase text-white/35 mt-1">{s.lbl}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="min-w-0">
-                <h4 className="text-[18px] font-bold text-white mb-2">The Connector Marketplace</h4>
-                <p className="text-[13px] text-white/45 leading-[1.6] mb-5">
-                  Every connector is versioned, certified, and maintained — so vendor API changes never become your problem.
-                </p>
-                <div className="grid grid-cols-4 gap-2.5">
-                  {[
-                    { abbr: "STR", cat: "Payments" }, { abbr: "SHO", cat: "Commerce" },
-                    { abbr: "QBO", cat: "Ledger"   }, { abbr: "SAL", cat: "CRM"      },
-                    { abbr: "BNK", cat: "Banking"  }, { abbr: "PAY", cat: "Payroll"  },
-                    { abbr: "SAP", cat: "ERP"      }, { abbr: "AWS", cat: "Storage"  },
-                  ].map((c) => (
-                    <div key={c.abbr} className="bg-white/[0.04] border border-white/10 rounded-bz-md py-2.5 px-2 text-center">
-                      <div className="text-[13px] font-extrabold text-bz-accent tracking-[0.04em]">{c.abbr}</div>
-                      <div className="text-[8px] font-semibold tracking-[0.1em] uppercase text-white/35 mt-0.5">{c.cat}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          {/* Field mapper — span 3 */}
-          <Card tone="dark" pad="lg" className="lg:col-span-3">
-            <h3 className="text-[18px] font-bold text-white mb-2">Field Mapper</h3>
-            <p className="text-[13px] text-white/50 leading-[1.6] mb-5">
-              Drag source fields onto Bizak entities. Add transforms, lookups, and conditional routes — without writing a line of code.
-            </p>
-            <div className="border border-white/10 rounded-bz-md overflow-hidden">
-              <div className="grid grid-cols-[1fr_auto_1fr] gap-2 px-3 py-2 bg-white/[0.04] text-[9px] font-bold tracking-[0.12em] uppercase text-white/45">
-                <span>Source</span><span>→</span><span>Target</span>
-              </div>
-              {[
-                { src: "stripe.charge.id",      tgt: "tx_external_id"   },
-                { src: "stripe.amount / 100",   tgt: "tx_amount_usd"    },
-                { src: "stripe.metadata.so",    tgt: "sales_order.code" },
-                { src: "stripe.created · ISO",  tgt: "tx_posted_at"     },
-              ].map((r) => (
-                <div key={r.src} className="grid grid-cols-[1fr_auto_1fr] gap-2 px-3 py-2 text-[11px] border-t border-white/5">
-                  <span className="text-white/55">{r.src}</span>
-                  <span className="text-bz-accent">→</span>
-                  <span className="text-[#4ade80]">{r.tgt}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          {/* Retry & Replay — span 3 */}
-          <Card tone="dark" pad="lg" className="lg:col-span-3">
-            <div className="flex justify-between items-start gap-4 mb-5">
-              <div>
-                <h3 className="text-[18px] font-bold text-white mb-2">Retry & Replay</h3>
-                <p className="text-[13px] text-white/50 leading-[1.6]">
-                  Failures retry automatically with exponential backoff. The unrecoverable ones land in a queryable dead-letter queue — replay any payload in a click.
-                </p>
-              </div>
-              <IconBadge tone="accent" size="lg" className="flex-shrink-0"><RefreshCw className="size-5" /></IconBadge>
-            </div>
-            <div className="grid grid-cols-3 gap-2.5">
-              {[["3", "Auto Retries"], ["5m", "Backoff Cap"], ["1-click", "DLQ Replay"]].map(([val, sub]) => (
-                <div key={sub} className="bg-white/[0.04] border border-white/10 rounded-bz-md py-3 text-center">
-                  <div className="text-[15px] font-bold text-bz-accent">{val}</div>
-                  <div className="text-[9px] font-bold tracking-[0.08em] uppercase text-white/40 mt-1">{sub}</div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          {/* Webhook router — span 2 */}
-          <Card tone="dark" pad="lg" className="lg:col-span-2">
-            <IconBadge tone="accent" size="lg" className="mb-5"><Webhook className="size-5" /></IconBadge>
-            <h4 className="text-[16px] font-bold text-white mb-2">Webhook Router</h4>
-            <p className="text-[13px] text-white/50 leading-[1.6]">
-              Receive, validate, dedupe, and fan out events to any module. Sub-second routing with HMAC verification on every payload.
-            </p>
-          </Card>
-
-          {/* Health monitoring — span 2 */}
-          <Card tone="dark" pad="lg" className="lg:col-span-2 relative border-bz-accent/40">
-            <span className="absolute top-4 right-5 text-[9px] font-bold text-bz-accent uppercase tracking-[0.2em] opacity-85">Watching</span>
-            <IconBadge tone="accent" size="lg" className="mb-5"><Eye className="size-5" /></IconBadge>
-            <h4 className="text-[16px] font-bold text-white mb-2">Health Monitoring</h4>
-            <p className="text-[13px] text-white/50 leading-[1.6]">
-              Per-connector dashboards with throughput, error rate, and latency percentiles. Alerts fire only on real degradation, not noise.
-            </p>
-          </Card>
-
-          {/* Vault — span 2 */}
-          <Card tone="dark" pad="lg" className="lg:col-span-2 flex flex-col">
-            <IconBadge tone="accent" size="lg" className="mb-5"><Shield className="size-5" /></IconBadge>
-            <h4 className="text-[16px] font-bold text-white mb-2">Vault & Scoped Secrets</h4>
-            <p className="text-[13px] text-white/50 leading-[1.6]">
-              Credentials encrypted at rest, scoped per connector, and rotated on a schedule. SOC 2 logged, never logged in plaintext.
-            </p>
-            <div className="mt-auto pt-4 flex gap-1.5 flex-wrap">
-              {["AES-256", "HMAC", "OAuth", "mTLS"].map((b) => (
-                <span key={b} className="text-[9px] font-bold px-2 py-1 rounded bg-bz-accent/10 text-bz-accent tracking-[0.06em] uppercase">{b}</span>
-              ))}
-            </div>
-          </Card>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── INSIGHTS ────────────────────────────────────────────────────────────────
-function InsightsSection() {
-  const lanes = [
-    { lbl: "Inbound · Webhooks", v: 84, color: "var(--bz-accent)" },
-    { lbl: "Outbound · API",     v: 62, color: "rgba(199,255,53,0.55)" },
-    { lbl: "Scheduled Pulls",    v: 38, color: "rgba(122,130,109,0.5)" },
-    { lbl: "Bulk Imports",       v: 24, color: "rgba(122,130,109,0.3)" },
-  ];
-  return (
-    <Section tone="white">
-      <Container>
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <Card pad="lg">
-            <div className="flex justify-between items-start mb-5">
-              <div>
-                <div className="text-[10px] font-bold tracking-[0.12em] uppercase text-bz-sage">Sync Volume · 24h</div>
-                <div className="text-[24px] font-extrabold text-bz-text mt-1">2.18M <span className="text-[12px] text-[#16a34a] font-bold">+8.6%</span></div>
-              </div>
-              <PillBadge tone="accent" dot>Healthy</PillBadge>
-            </div>
-            <div className="flex flex-col gap-3.5 py-5">
-              {lanes.map((l) => (
-                <div key={l.lbl} className="flex items-center gap-2.5">
-                  <span className="text-[10px] text-bz-text-muted font-semibold min-w-[110px]">{l.lbl}</span>
-                  <div className="flex-1 h-4 bg-bz-sage/[0.06] rounded overflow-hidden">
-                    <div className="h-full rounded" style={{ width: `${l.v}%`, background: l.color }} />
-                  </div>
-                  <span className="text-[10px] text-bz-sage font-bold min-w-[36px] text-right">{l.v * 18}k</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-3 pt-4 border-t border-bz-border flex items-center justify-between">
-              <span className="text-[11px] font-bold text-bz-text">p95 latency · 412ms</span>
-              <span className="text-[10px] text-[#16a34a] font-bold">▼ 18% vs last week</span>
-            </div>
-          </Card>
-
-          <div>
-            <SectionHeading
-              eyebrow="Reliability That Compounds"
-              title="Plug it in once, then forget it."
-              description="Bizak Integrations are versioned, certified, and self-healing. When a vendor changes their API, the connector updates — your recipes and dashboards keep working without a sprint of regression fixes."
-              maxWidth={500}
-              className="mb-6"
-            />
-            <ul className="flex flex-col gap-3">
-              {[
-                { bold: "Idempotent by Default", rest: " — Every payload carries a deterministic key, so duplicate webhooks never double-post." },
-                { bold: "Schema-Aware Mapping",  rest: " — Source schema changes surface as warnings before they break the ledger." },
-                { bold: "Replay Without Drift",  rest: " — DLQ payloads can be replayed on demand with full transform context preserved." },
-              ].map((item) => (
-                <li key={item.bold} className="flex gap-3">
-                  <CheckCircle className="size-5 text-bz-sage flex-shrink-0 mt-0.5" />
-                  <span className="text-[14px] text-bz-text-muted leading-[1.7]">
-                    <strong className="text-bz-text">{item.bold}</strong>{item.rest}
-                  </span>
-                </li>
-              ))}
-            </ul>
+      </div>
+      <div className="grid grid-cols-4 gap-2">
+        {CONNECTOR_CATS.map((c) => (
+          <div
+            key={c.abbr}
+            className="bg-white/[0.05] border border-white/[0.10] rounded-bz-md py-2.5 text-center"
+          >
+            <div className="text-[12px] font-extrabold text-bz-fire tracking-[0.04em]">{c.abbr}</div>
+            <div className="text-[8px] font-semibold tracking-[0.1em] uppercase text-white/35 mt-0.5">{c.cat}</div>
           </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── WORKFLOW STRIP ──────────────────────────────────────────────────────────
-const STEPS = [
-  { Icon: Plug,      label: "Connect"   },
-  { Icon: Key,       label: "Authorize" },
-  { Icon: GitBranch, label: "Map"       },
-  { Icon: Shuffle,   label: "Test"      },
-  { Icon: Calendar,  label: "Schedule"  },
-  { Icon: Eye,       label: "Monitor"   },
-];
-
-function WorkflowSection() {
-  return (
-    <Section tone="light">
-      <Container>
-        <SectionHeading
-          eyebrow="From Handshake to Heartbeat"
-          title="The end-to-end integration workflow"
-          align="center"
-          className="mb-14"
-        />
-        <div className="relative">
-          <div className="hidden md:block absolute top-7 left-[8%] right-[8%] h-px bg-bz-border" />
-          <div className="hidden md:block absolute top-7 left-[8%] right-[8%] h-px bg-bz-accent/60" />
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 relative">
-            {STEPS.map(({ Icon: SIcon, label }) => (
-              <div key={label} className="flex flex-col items-center text-center">
-                <div className="w-14 h-14 rounded-full bg-white border border-bz-border flex items-center justify-center mb-3 relative z-10">
-                  <SIcon className="size-6 text-bz-sage" />
-                </div>
-                <span className="text-[13px] font-bold text-bz-text">{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── CTA ─────────────────────────────────────────────────────────────────────
-function CTASection() {
-  return (
-    <Section tone="dark">
-      <Container width="narrow">
-        <SectionHeading
-          title={<>Plug Bizak in.<br />Stop hand-wiring data.</>}
-          description="Trade brittle CSVs and one-off webhooks for a governed integration layer. Your ERP, every system around it, one source of truth."
-          tone="light"
-          align="center"
-          maxWidth={580}
-          className="mb-10"
-        />
-        <div className="flex flex-wrap justify-center gap-3">
-          <Button variant="accent" size="lg" href="https://system.bizakerp.com/account/self-register" withArrow>Start Free Trial</Button>
-          <Button variant="ghostDark" size="lg" href="/contact">Book a Demo</Button>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── PAGE ────────────────────────────────────────────────────────────────────
-export function Integrations() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <main>
-        <HeroCentered
-          tone="dark"
-          mesh={false}
-          badge={<HeroBadge tone="dark">Integrations</HeroBadge>}
-          title={<>Every system in your stack,<br /><span className="text-bz-sage">speaking the same language.</span></>}
-          description="Bizak connects banks, ecommerce, payments, payroll, and 200+ external systems with bidirectional sync, automatic retries, and audit-grade lineage — so your ERP is always the single source of truth."
-          actions={
-            <>
-              <Button variant="accent" size="lg" href="/contact" withArrow>Request Demo</Button>
-              <Button variant="ghostDark" size="lg" href="#solutions">Browse Connectors</Button>
-            </>
-          }
-          visual={
-            <>
-              <div className="flex flex-wrap justify-center gap-8 md:gap-14 py-6 mb-8 border-y border-white/10">
-                {[
-                  { value: "200+",   label: "Connectors"   },
-                  { value: "99.99%", label: "Sync Uptime"  },
-                  { value: "< 60s",  label: "Sync Latency" },
-                ].map((s) => (
-                  <Stat key={s.label} value={s.value} label={s.label} tone="light" size="md" align="center" />
-                ))}
-              </div>
-              <SyncHubVisual />
-            </>
-          }
-        />
-        <ChallengesSection />
-        <SolutionSection />
-        <CapabilitiesSection />
-        <InsightsSection />
-        <WorkflowSection />
-        <CTASection />
-      </main>
-      <Footer />
+        ))}
+      </div>
     </div>
   );
 }
 
+// ─── Sync volume visual (inside BigCard reverse) ──────────────────────────────
+
+const SYNC_LANES = [
+  { lbl: "Inbound Webhooks", v: 84 },
+  { lbl: "Outbound API",     v: 62 },
+  { lbl: "Scheduled Pulls",  v: 38 },
+  { lbl: "Bulk Imports",     v: 24 },
+];
+
+function SyncVolumeVisual() {
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      <div>
+        <div className="text-[9px] font-bold tracking-[0.12em] uppercase text-white/40">Sync Volume · 24h</div>
+        <div className="flex items-baseline gap-2 mt-1">
+          <span className="text-[28px] font-extrabold text-bz-text-on-dark leading-none">2.18M</span>
+          <span className="text-[11px] font-bold text-bz-fire">+8.6%</span>
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">
+        {SYNC_LANES.map((l) => (
+          <div key={l.lbl} className="flex items-center gap-2.5">
+            <span className="text-[10px] text-white/50 font-medium min-w-[110px]">{l.lbl}</span>
+            <div className="flex-1 h-3 bg-white/[0.06] rounded-full overflow-hidden">
+              <div className="h-full rounded-full bg-bz-fire" style={{ width: `${l.v}%` }} />
+            </div>
+            <span className="text-[10px] font-bold text-bz-fire min-w-[38px] text-right">{l.v * 18}k</span>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-between pt-3 border-t border-white/[0.08]">
+        <span className="text-[11px] font-bold text-bz-text-on-dark">p95 latency · 412ms</span>
+        <span className="text-[10px] font-bold text-bz-fire">▼ 18% vs last week</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Capability bento mocks ──────────────────────────────────────────────────
+
+function MapperRowsMock() {
+  return (
+    <div className="rounded-bz-md border border-bz-line-soft overflow-hidden text-[11px]">
+      <div className="grid grid-cols-[1fr_16px_1fr] gap-1 px-3 py-1.5 bg-bz-section-b border-b border-bz-line-soft">
+        <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-bz-text-soft">Source</span>
+        <span />
+        <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-bz-text-soft">Target</span>
+      </div>
+      {[
+        ["stripe.amount / 100", "tx_amount_usd"],
+        ["stripe.charge.id",    "tx_external_id"],
+        ["stripe.metadata.so",  "sales_order.code"],
+      ].map(([s, t]) => (
+        <div key={s} className="grid grid-cols-[1fr_16px_1fr] gap-1 px-3 py-1.5 border-t border-bz-line-soft">
+          <span className="text-bz-text-muted truncate">{s}</span>
+          <span className="text-bz-olive font-bold text-center">→</span>
+          <span className="text-bz-olive font-medium truncate">{t}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function RetryStatsMock() {
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {[["3×", "Auto Retries"], ["5 min", "Backoff Cap"], ["1-click", "DLQ Replay"]].map(([v, l]) => (
+        <div key={l} className="rounded-bz-md border border-bz-line-soft bg-bz-section-b py-3 text-center">
+          <div className="text-[14px] font-bold text-bz-text">{v}</div>
+          <div className="text-[9px] font-bold uppercase tracking-[0.08em] text-bz-text-muted mt-0.5">{l}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function VaultBadgesMock() {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {["AES-256", "HMAC", "OAuth 2.0", "mTLS", "SOC 2"].map((b) => (
+        <span
+          key={b}
+          className="text-[9px] font-bold px-2 py-1 rounded-bz-pill bg-bz-olive/[0.07] text-bz-olive tracking-[0.06em] uppercase"
+        >
+          {b}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+// ─── Step card visuals ────────────────────────────────────────────────────────
+
+function ConnectVisual() {
+  return (
+    <div className="flex flex-col gap-2.5">
+      {[
+        { name: "Stripe",  status: "Connected",    active: true  },
+        { name: "Shopify", status: "Authorizing…", active: false },
+      ].map((s) => (
+        <div
+          key={s.name}
+          className="flex items-center justify-between gap-3 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-4 py-3"
+        >
+          <span className="text-[13px] font-bold text-bz-text">{s.name}</span>
+          <span className={`text-[11px] font-bold ${s.active ? "text-bz-olive" : "text-bz-text-muted"}`}>
+            {s.status}
+          </span>
+        </div>
+      ))}
+      <div className="flex items-center gap-1.5 mt-1">
+        <div className="w-1.5 h-1.5 rounded-full bg-bz-fire shrink-0" />
+        <span className="text-[10px] text-bz-text-muted">OAuth secured · AES-256 at rest</span>
+      </div>
+    </div>
+  );
+}
+
+function MapDeployVisual() {
+  return (
+    <div className="rounded-bz-md border border-bz-line-soft overflow-hidden">
+      <div className="grid grid-cols-[1fr_16px_1fr] gap-1 px-3 py-2 bg-bz-section-b text-[9px] font-bold tracking-[0.1em] uppercase text-bz-text-muted border-b border-bz-line-soft">
+        <span>Source</span>
+        <span />
+        <span>Target</span>
+      </div>
+      {[
+        ["stripe.amount / 100", "tx_amount_usd"],
+        ["stripe.charge.id",    "tx_external_id"],
+        ["stripe.metadata.so",  "sales_order.code"],
+        ["stripe.created · ISO","tx_posted_at"],
+      ].map(([s, t]) => (
+        <div key={s} className="grid grid-cols-[1fr_16px_1fr] gap-1 px-3 py-1.5 text-[11px] border-t border-bz-line-soft">
+          <span className="text-bz-text-muted truncate">{s}</span>
+          <span className="text-bz-olive font-bold text-center">→</span>
+          <span className="text-bz-olive font-medium truncate">{t}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MonitorVisual() {
+  return (
+    <div className="flex flex-col gap-2.5">
+      {[
+        { name: "Stripe · Payments",    uptime: "99.99%", latency: "182ms" },
+        { name: "Shopify · Commerce",   uptime: "99.97%", latency: "241ms" },
+        { name: "QuickBooks · Ledger",  uptime: "99.94%", latency: "318ms" },
+      ].map((c) => (
+        <div
+          key={c.name}
+          className="flex items-center gap-3 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3 py-2.5"
+        >
+          <span className="text-[12px] font-bold text-bz-text flex-1">{c.name}</span>
+          <span className="text-[10px] text-bz-text-muted">{c.latency}</span>
+          <span className="text-[11px] font-bold text-bz-olive">{c.uptime}</span>
+        </div>
+      ))}
+      <div className="text-[10px] text-bz-text-muted mt-1">
+        p95 latency · alerts on real degradation only
+      </div>
+    </div>
+  );
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const PAIN_POINTS = [
+  { Icon: Boxes,    title: "Disconnected Systems", desc: "Sales in a CRM, payments in a gateway, inventory in a WMS — none know the others exist until reconciliation day." },
+  { Icon: Upload,   title: "Manual CSV Loop",      desc: "Export from system A, clean in Excel, import into B. Repeat every Monday, every entity, every team." },
+  { Icon: Unlink,   title: "Brittle Webhooks",     desc: "A vendor changes a field name and your sync silently breaks. By month-end the ledger has drifted by hundreds of orders." },
+  { Icon: Activity, title: "Silent Sync Drift",    desc: "Two systems drift line-by-line. The bank, the CRM, and the ledger all disagree — and no one knows which one to trust." },
+  { Icon: Shield,   title: "No Audit Lineage",     desc: "Can you trace a ledger row back to its originating webhook payload? Most stacks can't — and your auditor will notice." },
+  { Icon: Key,      title: "Credential Sprawl",    desc: "API keys in .env files, overgrown scopes, manual rotation. Revoking access takes a sprint." },
+];
+
+// ─── Sections ─────────────────────────────────────────────────────────────────
+
+function HeroSection() {
+  return (
+    <Section tone="b" pad="hero">
+      <Container>
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>200+ Connectors · Live Data</BadgeGreen>
+          <Heading level={2} style={{ marginBottom: 36 }}>
+            Every system in your stack,{" "}
+            <Heading.Muted>speaking the same language.</Heading.Muted>
+          </Heading>
+          <div className="flex flex-wrap justify-center gap-[10px]">
+            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
+              Start free trial
+            </Pill>
+            <Pill variant="light" href="/contact">
+              Book a demo
+            </Pill>
+          </div>
+        </div>
+        <FlowDiagramVisual />
+      </Container>
+    </Section>
+  );
+}
+
+function DisconnectedStackSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="01"
+          label="The Integration Gap"
+          title={
+            <>
+              Six systems, six truths —{" "}
+              <Heading.Muted>and a thousand CSV files in between.</Heading.Muted>
+            </>
+          }
+          description="Most ERP stacks are surrounded by brittle SFTP jobs, ad-hoc Zapier flows, and half-written webhooks. By the time data reaches the ledger, the answers are already wrong."
+        />
+        <BentoGrid cols={3}>
+          {PAIN_POINTS.map(({ Icon: I, title, desc }) => (
+            <Bento key={title} tone="paper" hover>
+              <Bento.Header title={title} icon={<I size={16} />} />
+              <Bento.Desc>{desc}</Bento.Desc>
+            </Bento>
+          ))}
+        </BentoGrid>
+      </Container>
+    </Section>
+  );
+}
+
+function ConnectorLibrarySection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <SectionHead
+          index="02"
+          label="Connector Library"
+          title={
+            <>
+              200+ connectors.{" "}
+              <Heading.Muted>Pre-built, certified, maintained.</Heading.Muted>
+            </>
+          }
+          description="Drop in a connector, authenticate, and the data flows. No glue code, no maintenance burden — Bizak handles vendor API changes so you don't have to."
+        />
+        <BigCard
+          text={{
+            title: "The Connector Marketplace",
+            body: "Every connector is versioned, certified, and maintained. Vendor API updates are absorbed by Bizak — your recipes and dashboards keep working without a sprint of regression fixes.",
+            bullets: [
+              "8 categories: payments, commerce, banking, CRM, ERP, payroll, logistics, storage",
+              "Average setup time under 2 minutes — authenticate and data flows",
+              "Bidirectional sync with conflict resolution and idempotency built in",
+            ],
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Browse connectors" },
+          }}
+          visual={<ConnectorGridVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+function CapabilitiesSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="03"
+          label="Capabilities"
+          title={
+            <>
+              Enterprise-grade integration,{" "}
+              <Heading.Muted>built into your ERP.</Heading.Muted>
+            </>
+          }
+          description="A connector platform that lives inside Bizak — not bolted on. Field mapping, retries, webhooks, and credential management in one governed layer."
+        />
+        <BentoGrid cols={12}>
+          <Bento tone="paper" span={7}>
+            <Bento.Header title="Visual Field Mapper" icon={<GitBranch size={16} />} />
+            <Bento.Desc>
+              Map source schemas to Bizak entities via drag-and-drop. Add transforms, lookups, and conditional routes — no scripting required.
+            </Bento.Desc>
+            <Bento.Footer>
+              <MapperRowsMock />
+            </Bento.Footer>
+          </Bento>
+
+          <Bento tone="paper" span={5}>
+            <Bento.Header title="Retry & Dead-Letter Queue" icon={<RefreshCw size={16} />} />
+            <Bento.Desc>
+              Failures retry with exponential backoff. Unrecoverable payloads land in a queryable DLQ — replay any payload in one click.
+            </Bento.Desc>
+            <Bento.Footer>
+              <RetryStatsMock />
+            </Bento.Footer>
+          </Bento>
+
+          <Bento tone="paper" span={5}>
+            <Bento.Header title="Webhook Router" icon={<Webhook size={16} />} />
+            <Bento.Desc>
+              Receive, validate, dedupe, and fan-out events to any module. Sub-second routing with HMAC verification on every payload.
+            </Bento.Desc>
+          </Bento>
+
+          <Bento tone="paper" span={7}>
+            <Bento.Header title="Vault & Scoped Secrets" icon={<Shield size={16} />} />
+            <Bento.Desc>
+              Credentials encrypted at rest, scoped per connector, rotated on schedule. SOC 2 logged — never in plaintext, never in a .env file.
+            </Bento.Desc>
+            <Bento.Footer>
+              <VaultBadgesMock />
+            </Bento.Footer>
+          </Bento>
+        </BentoGrid>
+      </Container>
+    </Section>
+  );
+}
+
+function ReliabilitySection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <SectionHead
+          index="04"
+          label="Reliability That Compounds"
+          title={
+            <>
+              Plug it in once.{" "}
+              <Heading.Muted>Then forget it.</Heading.Muted>
+            </>
+          }
+          description="Bizak integrations are versioned, certified, and self-healing. When a vendor changes their API, the connector updates — your dashboards keep working."
+        />
+        <BigCard
+          reverse
+          text={{
+            title: "Self-healing by design",
+            body: "Every payload carries a deterministic idempotency key so duplicate webhooks never double-post. Schema changes surface as warnings before they break the ledger.",
+            bullets: [
+              "Idempotent by default — deterministic key on every payload, no double-posts",
+              "Schema-aware mapping — source changes warn before they reach the ledger",
+              "Replay without drift — DLQ payloads replay with full transform context preserved",
+            ],
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to an integration engineer" },
+          }}
+          visual={<SyncVolumeVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+function SetupWorkflowSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="05"
+          label="From Handshake to Heartbeat"
+          title={
+            <>
+              Three steps from{" "}
+              <Heading.Muted>first auth to live data.</Heading.Muted>
+            </>
+          }
+          description="Most connectors are live within minutes. No glue code, no maintenance sprints — just authenticate, map, and monitor."
+        />
+        <div className="flex flex-col gap-5">
+          <StepCard
+            number="01"
+            tag="Connect"
+            title="Authenticate and the data flows"
+            bullets={[
+              "OAuth 2.0, API key, and mTLS authentication modes supported",
+              "Credentials live in the Vault — encrypted at rest, never in code",
+            ]}
+            visual={<ConnectVisual />}
+          />
+          <StepCard
+            number="02"
+            tag="Configure"
+            title="Map fields, define transforms, set the schedule"
+            bullets={[
+              "Drag source fields onto Bizak entities in the visual mapper",
+              "Add transforms, lookups, and conditional routes without scripting",
+            ]}
+            visual={<MapDeployVisual />}
+          />
+          <StepCard
+            number="03"
+            tag="Monitor"
+            title="Per-connector health dashboards watch for you"
+            bullets={[
+              "Throughput, error rate, and latency percentiles per connector",
+              "Alerts fire on real degradation only — no noise from transient spikes",
+            ]}
+            visual={<MonitorVisual />}
+          />
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export function Integrations() {
+  return (
+    <>
+      <HeroSection />
+      <DisconnectedStackSection />
+      <ConnectorLibrarySection />
+      <CapabilitiesSection />
+      <ReliabilitySection />
+      <SetupWorkflowSection />
+    </>
+  );
+}

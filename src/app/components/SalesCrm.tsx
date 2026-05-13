@@ -1,6 +1,5 @@
 import "../../styles/style.css";
 import {
-  ArrowRight,
   ArrowUpRight,
   CheckCircle2,
   DollarSign,
@@ -12,7 +11,6 @@ import {
   Phone,
   Receipt,
   Sparkles,
-  TrendingUp,
 } from "lucide-react";
 import {
   BadgeGreen,
@@ -28,56 +26,22 @@ import {
 } from "./bz";
 
 // ════════════════════════════════════════════════════════════════════════════
-// [HERO] — Pipeline command panel: KPI strip + funnel + live activity rail
+// [HERO] — Pipeline snapshot: stage track + key metrics + top deals
 // ════════════════════════════════════════════════════════════════════════════
 
-const PIPELINE_STAGES: Array<{
-  stage: string;
-  count: number;
-  value: string;
-  share: number;
-  focus?: boolean;
-}> = [
-  { stage: "Lead", count: 28, value: "$1.24M", share: 36 },
-  { stage: "Qualified", count: 14, value: "$890K", share: 26 },
-  { stage: "Proposal", count: 9, value: "$620K", share: 18, focus: true },
-  { stage: "Negotiation", count: 4, value: "$320K", share: 9 },
-  { stage: "Closed · Q3", count: 6, value: "$420K", share: 11 },
+const PIPELINE_STAGES = [
+  { stage: "Lead" },
+  { stage: "Qualified" },
+  { stage: "Proposal", focus: true },
+  { stage: "Negotiation" },
+  { stage: "Closed · Q3" },
 ];
 
-const PIPELINE_EVENTS: Array<{
-  icon: typeof Mail;
-  accent: "fire" | "leaf" | "neutral";
-  who: string;
-  what: string;
-  tag: string;
-  time: string;
-}> = [
-  {
-    icon: Mail,
-    accent: "fire",
-    who: "Lumen Foods",
-    what: "Proposal sent 3 days ago · no reply from buyer",
-    tag: "Follow-up due",
-    time: "Now",
-  },
-  {
-    icon: CheckCircle2,
-    accent: "leaf",
-    who: "Atlas Cargo",
-    what: "Quote QT-8819 accepted · auto-posted to AR ledger",
-    tag: "Won · posted",
-    time: "12m",
-  },
-  {
-    icon: TrendingUp,
-    accent: "neutral",
-    who: "Northwind Retail",
-    what: "Advanced Qualified → Proposal · weighted +$54K",
-    tag: "Stage change",
-    time: "1h",
-  },
-];
+const HERO_DEALS = [
+  { who: "Lumen Foods",      stage: "Proposal",  value: "$220K", dot: "fire"    },
+  { who: "Atlas Cargo",      stage: "Won · Q3",  value: "$95K",  dot: "leaf"    },
+  { who: "Northwind Retail", stage: "Qualified", value: "$180K", dot: "neutral" },
+] as const;
 
 function PipelineHeroSection() {
   return (
@@ -101,172 +65,85 @@ function PipelineHeroSection() {
           </div>
         </div>
 
-        <PipelineCommandMock />
+        <PipelineSnapshotCard />
       </Container>
     </Section>
   );
 }
 
-function PipelineCommandMock() {
+function PipelineSnapshotCard() {
+  const focusIdx = PIPELINE_STAGES.findIndex((s) => s.focus);
   return (
     <div id="pipeline" className="mt-12 md:mt-16">
       <div className="overflow-hidden rounded-bz-2xl border border-bz-line-soft bg-bz-paper">
-        <PipelineHeaderBar />
-        <PipelineFunnelStrip />
-        <PipelineActivityRail />
-      </div>
-    </div>
-  );
-}
 
-function PipelineHeaderBar() {
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-4 px-4 py-4 md:px-6 md:py-5">
-      <div className="flex flex-wrap items-center gap-2">
-        <StatusChip variant="live">Live pipeline · Q3</StatusChip>
-        <span className="text-[10.5px] font-medium uppercase tracking-[0.1em] text-bz-text-soft">
-          Synced just now
-        </span>
-      </div>
-      <div className="flex items-center gap-4 md:gap-6">
-        <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
-            Open weighted
-          </p>
-          <p className="text-[19px] font-medium tabular-nums leading-tight text-bz-text">
-            $3.46M
-          </p>
-        </div>
-        <div className="hidden h-8 w-px bg-bz-line-soft sm:block" />
-        <div className="hidden sm:block">
-          <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
-            Win rate
-          </p>
-          <p className="inline-flex items-baseline gap-1.5 text-[19px] font-medium leading-tight tabular-nums text-bz-text">
-            38%
-            <span className="inline-flex items-center gap-0.5 text-[10.5px] font-medium text-emerald-700">
-              <TrendingUp size={10} strokeWidth={2.2} />
-              +4
-            </span>
-          </p>
-        </div>
-        <div className="hidden h-8 w-px bg-bz-line-soft md:block" />
-        <div className="hidden md:block">
-          <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
-            Advanced · 7d
-          </p>
-          <p className="text-[19px] font-medium tabular-nums leading-tight text-bz-text">
-            32
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PipelineFunnelStrip() {
-  const max = Math.max(...PIPELINE_STAGES.map((s) => s.share));
-  return (
-    <div className="border-y border-bz-line-soft bg-bz-paper-warm px-4 py-5 md:px-6 md:py-6">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[10.5px] font-medium uppercase tracking-[0.1em] text-bz-text-muted">
-          Pipeline by stage
-        </p>
-        <p className="text-[10.5px] tabular-nums text-bz-text-soft">
-          5 stages · 61 open deals
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 md:gap-3">
-        {PIPELINE_STAGES.map((s) => (
-          <div
-            key={s.stage}
-            className={[
-              "rounded-bz-md border bg-bz-paper px-3 py-3",
-              s.focus ? "border-bz-leaf-deep" : "border-bz-line-soft",
-            ].join(" ")}
-          >
-            <div className="mb-2 flex items-center justify-between gap-2">
-              <p className="truncate text-[10.5px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
-                {s.stage}
+        {/* KPI header */}
+        <div className="flex items-center justify-between border-b border-bz-line-soft px-6 py-4">
+          <StatusChip variant="live">Live · Q3</StatusChip>
+          <div className="flex items-center gap-5">
+            <div className="text-right">
+              <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
+                Open weighted
               </p>
-              {s.focus && (
-                <span className="inline-flex items-center gap-1 rounded-bz-pill bg-bz-fire px-1.5 py-0.5 text-[8.5px] font-medium uppercase tracking-[0.06em] text-bz-text">
-                  Focus
-                </span>
-              )}
+              <p className="text-[17px] font-medium tabular-nums leading-tight text-bz-text">
+                $3.46M
+              </p>
             </div>
-            <p className="text-[26px] font-medium leading-none tabular-nums text-bz-text">
-              {s.count}
-            </p>
-            <p className="mt-1 text-[11.5px] font-medium tabular-nums text-bz-text-muted">
-              {s.value}
-            </p>
-            <div className="mt-2.5 h-1 w-full overflow-hidden rounded-bz-pill bg-bz-line-soft">
-              <div
-                className={[
-                  "h-full rounded-bz-pill",
-                  s.focus ? "bg-bz-fire" : "bg-bz-leaf-deep",
-                ].join(" ")}
-                style={{ width: `${(s.share / max) * 100}%` }}
-              />
+            <div className="h-6 w-px bg-bz-line-soft" />
+            <div className="text-right">
+              <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
+                Win rate
+              </p>
+              <p className="text-[17px] font-medium tabular-nums leading-tight text-bz-text">
+                38%
+              </p>
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+        </div>
 
-function PipelineActivityRail() {
-  return (
-    <div className="px-4 py-4 md:px-6 md:py-5">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[10.5px] font-medium uppercase tracking-[0.1em] text-bz-text-muted">
-          Live activity · last hour
-        </p>
-        <a
-          href="#"
-          className="inline-flex items-center gap-1 text-[11px] font-medium text-bz-text hover:text-bz-text-muted"
-        >
-          Open queue
-          <ArrowUpRight size={11} strokeWidth={2} />
-        </a>
-      </div>
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-3">
-        {PIPELINE_EVENTS.map((e) => (
-          <div
-            key={e.who}
-            className="flex items-start gap-2.5 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3 py-2.5"
-          >
-            <span
-              className={[
-                "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-bz-md text-bz-text",
-                e.accent === "fire"
-                  ? "bg-bz-fire"
-                  : e.accent === "leaf"
-                  ? "bg-bz-leaf"
-                  : "border border-bz-line-soft bg-bz-paper",
-              ].join(" ")}
-            >
-              <e.icon size={13} strokeWidth={2} />
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-baseline justify-between gap-2">
-                <p className="truncate text-[12px] font-medium text-bz-text">{e.who}</p>
-                <p className="shrink-0 text-[10px] tabular-nums text-bz-text-soft">
-                  {e.time}
+        {/* Stage track */}
+        <div className="border-b border-bz-line-soft px-6 py-4">
+          <div className="flex gap-1.5">
+            {PIPELINE_STAGES.map((s, i) => (
+              <div key={s.stage} className="flex flex-1 flex-col gap-1.5">
+                <div
+                  className={[
+                    "h-[3px] rounded-bz-pill",
+                    i < focusIdx
+                      ? "bg-bz-leaf-deep"
+                      : i === focusIdx
+                      ? "bg-bz-fire"
+                      : "bg-bz-line-soft",
+                  ].join(" ")}
+                />
+                <p className="truncate text-[9.5px] font-medium uppercase tracking-[0.06em] text-bz-text-soft">
+                  {s.stage}
                 </p>
               </div>
-              <p className="mt-0.5 line-clamp-2 text-[11.5px] leading-snug text-bz-text-muted">
-                {e.what}
-              </p>
-              <p className="mt-1.5 text-[9.5px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
-                {e.tag}
-              </p>
-            </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        {/* Deal rows */}
+        <div className="divide-y divide-bz-line-soft">
+          {HERO_DEALS.map((d) => (
+            <div key={d.who} className="flex items-center gap-3 px-6 py-3">
+              <span
+                className={[
+                  "size-2 shrink-0 rounded-full",
+                  d.dot === "fire"
+                    ? "bg-bz-fire"
+                    : d.dot === "leaf"
+                    ? "bg-bz-leaf-deep"
+                    : "bg-bz-line",
+                ].join(" ")}
+              />
+              <p className="flex-1 text-[13px] font-medium text-bz-text">{d.who}</p>
+              <p className="text-[11px] text-bz-text-muted">{d.stage}</p>
+              <p className="text-[13px] font-medium tabular-nums text-bz-text">{d.value}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -441,219 +318,6 @@ function DealCommandSection() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [03] QUOTE TO CASH — document timeline + live ledger feed
-// ════════════════════════════════════════════════════════════════════════════
-
-type LedgerPost = { dr: string; cr: string; amt: string };
-
-const CHAIN_STEPS: Array<{
-  icon: typeof FileText;
-  ref: string;
-  label: string;
-  amount: string;
-  status: string;
-  time: string;
-  action: string;
-  posts: LedgerPost[];
-}> = [
-  {
-    icon: FileText,
-    ref: "QT-2024-8821",
-    label: "Quote",
-    amount: "$112,400",
-    status: "Sent · awaiting acceptance",
-    time: "28 Sep · 09:14",
-    action: "Accepted → one-click conversion to Sales Order",
-    posts: [],
-  },
-  {
-    icon: Receipt,
-    ref: "SO-1041",
-    label: "Sales Order",
-    amount: "$112,400",
-    status: "Approved · stock reserved at WH-A",
-    time: "28 Sep · 11:02",
-    action: "Inventory committed · ready to fulfil",
-    posts: [],
-  },
-  {
-    icon: FileSignature,
-    ref: "INV-2046",
-    label: "Invoice",
-    amount: "$112,400",
-    status: "Posted to accounts receivable",
-    time: "28 Sep · 14:32",
-    action: "Revenue recognised · VAT separated · AR debited",
-    posts: [
-      { dr: "AR · Axeon Logistics", cr: "Revenue", amt: "$104,200" },
-      { dr: "AR · Axeon Logistics", cr: "VAT 19%", amt: "$8,200" },
-    ],
-  },
-  {
-    icon: DollarSign,
-    ref: "PMT-441",
-    label: "Payment",
-    amount: "$112,400",
-    status: "Cleared · USD operating",
-    time: "02 Oct · 09:48",
-    action: "Cash debited · AR cleared · books balanced",
-    posts: [{ dr: "Cash · USD Operating", cr: "AR · Axeon", amt: "$112,400" }],
-  },
-];
-
-function QuoteToCashSection() {
-  return (
-    <Section tone="a">
-      <Container>
-        <SectionHead
-          index="03"
-          label="Quote to cash"
-          title={
-            <>
-              The document moves,{" "}
-              <Heading.Muted>the ledger writes itself.</Heading.Muted>
-            </>
-          }
-          description="One contract, one chain. Quote becomes order, order becomes invoice, invoice becomes cash — and the journal posts itself at every link. No re-keying, no reconciliation, no missing entry to chase at month-end."
-          titleMaxWidth={820}
-        />
-
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.05fr_1fr] lg:gap-5">
-          <DocumentChain />
-          <LedgerFeed />
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-function DocumentChain() {
-  return (
-    <div className="rounded-bz-lg border border-bz-line-soft bg-bz-paper p-5 md:p-6">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="text-[12.5px] font-medium text-bz-text">Document chain</p>
-          <p className="text-[10.5px] uppercase tracking-[0.08em] text-bz-text-soft">
-            Axeon Logistics · DL-2046
-          </p>
-        </div>
-        <StatusChip variant="live">4 of 4 linked</StatusChip>
-      </div>
-
-      <ol className="flex flex-col gap-3">
-        {CHAIN_STEPS.map((s, i) => (
-          <li key={s.ref} className="relative">
-            {i < CHAIN_STEPS.length - 1 && (
-              <span
-                className="absolute left-[18px] top-10 h-[calc(100%-22px)] w-px bg-bz-line"
-                aria-hidden
-              />
-            )}
-            <div className="flex gap-3">
-              <span className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-bz-md bg-bz-fire text-bz-text">
-                <s.icon size={14} strokeWidth={1.8} />
-              </span>
-              <div className="flex-1 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3.5 py-3">
-                <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2">
-                  <p className="text-[12px] font-medium text-bz-text">
-                    <span className="text-bz-text-soft">Step 0{i + 1}</span> · {s.label}
-                  </p>
-                  <p className="text-[10.5px] tabular-nums text-bz-text-soft">{s.time}</p>
-                </div>
-                <p className="text-[13.5px] font-medium tabular-nums text-bz-text">
-                  {s.ref} · {s.amount}
-                </p>
-                <p className="mt-0.5 text-[11.5px] text-bz-text-muted">{s.status}</p>
-                <p className="mt-2 flex items-start gap-1.5 text-[11.5px] text-bz-text">
-                  <ArrowRight
-                    size={11}
-                    strokeWidth={2}
-                    className="mt-[3px] shrink-0 text-bz-leaf-deep"
-                  />
-                  {s.action}
-                </p>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-}
-
-function LedgerFeed() {
-  const totalPosts = CHAIN_STEPS.reduce((acc, s) => acc + s.posts.length, 0);
-
-  return (
-    <div className="flex flex-col rounded-bz-lg border border-bz-line-soft bg-bz-paper p-5 md:p-6">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="text-[12.5px] font-medium text-bz-text">Live ledger</p>
-          <p className="text-[10.5px] uppercase tracking-[0.08em] text-bz-text-soft">
-            General journal · auto-posted
-          </p>
-        </div>
-        <StatusChip variant="posted">{totalPosts} entries</StatusChip>
-      </div>
-
-      <div className="flex flex-1 flex-col gap-3.5">
-        {CHAIN_STEPS.map((s) => (
-          <div key={s.ref}>
-            <div className="mb-1.5 flex items-center gap-2">
-              <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
-                From {s.ref}
-              </span>
-              <span className="h-px flex-1 bg-bz-line-soft" />
-            </div>
-            {s.posts.length === 0 ? (
-              <div className="rounded-bz-md border border-dashed border-bz-line-soft px-3 py-2">
-                <p className="text-[11.5px] italic text-bz-text-soft">
-                  Workflow event · no posting required
-                </p>
-              </div>
-            ) : (
-              <div className="overflow-hidden rounded-bz-md border border-bz-line-soft bg-bz-paper-warm">
-                {s.posts.map((p, j) => (
-                  <div
-                    key={p.dr + p.cr}
-                    className={[
-                      "grid grid-cols-[1fr_1fr_auto] items-center gap-3 px-3 py-2.5",
-                      j !== s.posts.length - 1 && "border-b border-bz-line-soft",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                  >
-                    <div className="min-w-0">
-                      <p className="text-[9px] uppercase tracking-[0.08em] text-bz-text-soft">DR</p>
-                      <p className="truncate text-[11.5px] font-medium text-bz-text">{p.dr}</p>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[9px] uppercase tracking-[0.08em] text-bz-text-soft">CR</p>
-                      <p className="truncate text-[11.5px] text-bz-text">{p.cr}</p>
-                    </div>
-                    <p className="text-right text-[12px] font-medium tabular-nums text-bz-text">
-                      {p.amt}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-5 flex items-center justify-between rounded-bz-md bg-bz-leaf px-3.5 py-2.5">
-        <p className="inline-flex items-center gap-1.5 text-[11.5px] font-medium text-bz-text">
-          <CheckCircle2 size={13} strokeWidth={2.2} />
-          Books balanced · DR = CR
-        </p>
-        <p className="text-[12px] font-medium tabular-nums text-bz-text">$112,400</p>
-      </div>
-    </div>
-  );
-}
-
-// ════════════════════════════════════════════════════════════════════════════
 // [04] FORECAST & IMPACT — close
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -766,7 +430,6 @@ export function SalesAndCrmPage() {
     <main>
       <PipelineHeroSection />
       <DealCommandSection />
-      <QuoteToCashSection />
       <ForecastImpactSection />
     </main>
   );

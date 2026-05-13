@@ -7990,13 +7990,16 @@
 }
 
 /* Consistent section padding — generous for premium feel */
-.bz-section { padding: 110px 16px; }
-@media (min-width: 880px) { .bz-section { padding: 140px 24px; } }
-@media (max-width: 600px) { .bz-section { padding: 80px 16px; } }
-.bz-section-tight { padding: 72px 16px; }
-@media (min-width: 880px) { .bz-section-tight { padding: 96px 24px; } }
-@media (max-width: 600px) { .bz-section-tight { padding: 56px 16px; } }
+.bz-section { padding: 110px 20px; }
+@media (min-width: 880px) { .bz-section { padding: 140px 40px; } }
+@media (max-width: 600px) { .bz-section { padding: 80px 20px; } }
+.bz-section-tight { padding: 72px 20px; }
+@media (min-width: 880px) { .bz-section-tight { padding: 96px 40px; } }
+@media (max-width: 600px) { .bz-section-tight { padding: 56px 20px; } }
 .bz-container { max-width: 1320px; margin: 0 auto; }
+.bz-container-px { padding-left: 20px; padding-right: 20px; }
+@media (min-width: 768px) { .bz-container-px { padding-left: 48px; padding-right: 48px; } }
+@media (min-width: 1024px) { .bz-container-px { padding-left: 80px; padding-right: 80px; } }
 
 /* Grid pattern — used on cards, hero containers, dividers */
 .bz-grid {
@@ -8404,7 +8407,7 @@
   display: flex;
   align-items: center;
   height: 64px;
-  padding: 0 10px 0 22px;
+  padding: 0;
   background: transparent;
   border: none;
   border-radius: 0;

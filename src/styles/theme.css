@@ -109,7 +109,7 @@
   --bz-section-y-tablet: 110px;
   --bz-section-y-mobile: 80px;
   --bz-section-y-tight:  96px;
-  --bz-section-x:        24px;
+  --bz-section-x:        40px;   /* desktop; mobile uses 20px */
   --bz-container:        1320px;
   --bz-container-narrow: 1200px;
   --bz-header-h:         76px;    /* LEGACY — header is no longer position:fixed.
