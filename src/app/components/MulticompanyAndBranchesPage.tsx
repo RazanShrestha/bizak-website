@@ -1,105 +1,270 @@
+import React from "react";
 import {
-  Building2, Coins, Boxes, FileSpreadsheet,
-  Handshake, Receipt, Lock, Layers, ShieldCheck,
-} from "lucide-react";
-import {
-  Section, Container, SectionHead, BentoGrid, Bento, Pill, PillGroup, Heading,
-  BadgeGreen, StepCard, BigCard, EntityRow, StatusChip, Tick,
+  Section,
+  Container,
+  SectionHead,
+  BigCard,
+  StepCard,
+  Pill,
+  PillGroup,
+  Heading,
+  BadgeGreen,
+  StatusChip,
+  DotGrid,
 } from "./bz";
+import { Settings } from "lucide-react";
 
-// ── Data ──────────────────────────────────────────────────────────────────────
+// ─── DATA ─────────────────────────────────────────────────────────────────────
 
-const PAINS = [
-  {
-    Icon: Boxes,
-    title: "Siloed Instances",
-    desc: "Every entity runs its own ERP, its own login, its own master data. Customers, items, and vendors get duplicated across the group with no shared truth.",
-  },
-  {
-    Icon: FileSpreadsheet,
-    title: "Excel-Bound Consolidation",
-    desc: "The group controller pulls trial balances from each subsidiary, hand-translates FX, and stitches them in a workbook nobody else can safely edit.",
-  },
-  {
-    Icon: Handshake,
-    title: "Manual Intercompany",
-    desc: "Sister entities transact constantly — yet every IC invoice is keyed twice, reconciled by hand, and almost always out of balance at period end.",
-  },
-  {
-    Icon: Receipt,
-    title: "Local-Tax Patchwork",
-    desc: "UK VAT, EU OSS, GCC VAT, US sales tax — each entity needs its own rules, but a single-CoA ERP forces compromises that fail the auditor.",
-  },
-  {
-    Icon: Coins,
-    title: "FX Drift & Translation Loss",
-    desc: "Exchange rates set in spreadsheets at month-end produce margins that don't reconcile. Every revision sends a ripple through the group pack.",
-  },
-  {
-    Icon: Lock,
-    title: "Permission Sprawl",
-    desc: "Branch managers need their own P&L — not the group's. A one-tenant ERP forces blunt access rules that leak data or block real work.",
-  },
+const HERO_ENTITIES = [
+  { flag: "🇺🇸", curr: "USD", rev: "$18.4M",   trend: "+8.2%"  },
+  { flag: "🇬🇧", curr: "GBP", rev: "£9.6M",    trend: "+4.1%"  },
+  { flag: "🇩🇪", curr: "EUR", rev: "€7.8M",    trend: "+6.3%"  },
+  { flag: "🇸🇬", curr: "SGD", rev: "S$11.2M",  trend: "+11.8%" },
+  { flag: "🇦🇪", curr: "AED", rev: "AED 6.8M", trend: "+3.2%"  },
+];
+
+const HERO_CLOSE_STEPS = [
+  { step: "FX Translation",    note: "5 currencies → USD" },
+  { step: "IC Eliminations",   note: "$4.1M eliminated"   },
+  { step: "Minority Interest", note: "12.5% DE, 20% SG"   },
+  { step: "Group P&L",         note: "$48.2M QTD"         },
 ];
 
 const TREE_NODES = [
-  { label: "Bizak Holdings",    scope: "Group",     indent: 0 },
-  { label: "Americas",          scope: "Region",    indent: 1 },
-  { label: "Bizak US Inc.",     scope: "Entity",    indent: 2 },
-  { label: "↳ Boston Branch",   scope: "Branch",    indent: 3 },
-  { label: "EMEA",              scope: "Region",    indent: 1 },
-  { label: "Bizak GmbH",        scope: "Entity",    indent: 2 },
-  { label: "↳ Berlin WH",       scope: "Warehouse", indent: 3 },
+  { label: "Bizak Holdings",  scope: "Group",     indent: 0 },
+  { label: "Americas",        scope: "Region",    indent: 1 },
+  { label: "Bizak US Inc.",   scope: "Entity",    indent: 2 },
+  { label: "↳ Boston Branch", scope: "Branch",    indent: 3 },
+  { label: "EMEA",            scope: "Region",    indent: 1 },
+  { label: "Bizak GmbH",      scope: "Entity",    indent: 2 },
+  { label: "↳ Berlin WH",     scope: "Warehouse", indent: 3 },
 ];
 
-// ── Hero mock ─────────────────────────────────────────────────────────────────
-
-const HERO_ENTITIES = [
-  { flag: "🇺🇸", code: "US", curr: "USD", rev: "$18.4M"   },
-  { flag: "🇬🇧", code: "UK", curr: "GBP", rev: "£9.6M"    },
-  { flag: "🇩🇪", code: "DE", curr: "EUR", rev: "€7.8M"    },
-  { flag: "🇦🇪", code: "AE", curr: "AED", rev: "AED 6.8M" },
-  { flag: "🇸🇬", code: "SG", curr: "SGD", rev: "S$11.2M"  },
-  { flag: "🇦🇺", code: "AU", curr: "AUD", rev: "A$2.8M"   },
+const ENTITY_STREAM = [
+  { entity: "Bizak US",  ref: "IC-2412", event: "IC invoice auto-posted both sides",  stat: "$24,800",   live: true  },
+  { entity: "Bizak DE",  ref: "FX-0841", event: "FX translation updated · EUR/USD",   stat: "€22,840",   live: true  },
+  { entity: "Bizak UK",  ref: "EC-0199", event: "Entity close triggered · Q3",        stat: "£9.6M",     live: false },
+  { entity: "Bizak SG",  ref: "EL-0042", event: "Elimination tag auto-set · IC",      stat: "S$11.2M",   live: false },
+  { entity: "Bizak AE",  ref: "TX-0392", event: "UAE VAT 5% posted · period",         stat: "AED 6.8M",  live: false },
+  { entity: "Bizak AU",  ref: "FX-0842", event: "AUD/USD daily rate applied",         stat: "A$2.8M",    live: false },
 ];
 
+const ENTITY_PROFILES = [
+  {
+    flag: "🇺🇸",
+    name: "Americas",
+    tagline: "Bizak US Inc. · USD",
+    config: ["Multi-location P&L", "US Sales Tax", "GAAP Chart of Accounts"],
+    active: true,
+  },
+  {
+    flag: "🇪🇺",
+    name: "EMEA",
+    tagline: "Bizak GmbH · EUR",
+    config: ["EU VAT · OSS/IOSS", "E-invoicing", "EMEA Standard CoA"],
+    active: false,
+  },
+  {
+    flag: "🇸🇬",
+    name: "APAC",
+    tagline: "Bizak APAC Pte. · SGD",
+    config: ["GST 9%", "Multi-branch", "APAC CoA"],
+    active: false,
+  },
+  {
+    flag: "🇦🇪",
+    name: "MEA",
+    tagline: "Bizak MEA FZ-LLC · AED",
+    config: ["UAE VAT 5%", "Free Zone Rules", "AED/USD FX"],
+    active: false,
+  },
+];
 
-function GroupConsoleMock() {
+const IMPACT_STATS = [
+  {
+    value: "<90s",
+    label: "Group close",
+    desc: "FX translation, IC eliminations, minority interest, and group P&L — run on demand, not at month-end.",
+  },
+  {
+    value: "38",
+    label: "Tax engines",
+    desc: "VAT, GST, US sales tax, withholding, e-invoicing, OSS/IOSS — pre-configured per entity, no add-on required.",
+  },
+  {
+    value: "100%",
+    label: "IC auto-matched",
+    desc: "Every intercompany invoice posts both sides in both currencies with elimination tags pre-applied for close.",
+  },
+];
+
+// ─── HERO MOCK ─────────────────────────────────────────────────────────────────
+
+// Top: full-width dark entity overview bar
+function HeroGroupBoard() {
   return (
-    <div className="w-full rounded-bz-xl border border-bz-line bg-bz-surface overflow-hidden">
-      <div className="flex items-end justify-between px-5 py-4 bg-bz-paper-warm border-b border-bz-line">
-        <div>
-          <div className="text-[10px] font-bold text-bz-text-muted uppercase tracking-[0.1em] mb-1.5">
-            Group Revenue · QTD
+    <div className="relative overflow-hidden rounded-bz-2xl bg-bz-olive px-5 py-5">
+      <DotGrid tone="dark" />
+      <div className="relative">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-bz-fire shrink-0" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/60">
+              Live · Group Console
+            </span>
           </div>
-          <div className="text-[26px] font-extrabold text-bz-text leading-none">
-            $48.2M{" "}
-            <span className="text-[13px] font-bold text-[#16a34a]">+12.4%</span>
+          <div className="hidden sm:flex items-center gap-2">
+            <span className="text-[10px] text-white/40 font-medium">Group Revenue</span>
+            <span className="text-[13px] font-bold text-bz-text-on-dark">$48.2M</span>
+            <span className="text-[9px] font-bold text-bz-fire bg-bz-fire/[0.12] px-1.5 py-0.5 rounded-bz-pill">
+              +12.4%
+            </span>
+          </div>
+          <StatusChip variant="live">Live</StatusChip>
+        </div>
+
+        {/* Entity tiles: 3 on mobile, 6 on md (5 entities + IC elimination) */}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2.5">
+          {HERO_ENTITIES.map((e, idx) => (
+            <div
+              key={e.curr}
+              className={`rounded-bz-xl bg-white/[0.06] border border-white/[0.08] px-3 md:px-4 py-3 ${
+                idx >= 3 ? "hidden md:block" : ""
+              }`}
+            >
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="text-[14px] leading-none">{e.flag}</span>
+                <span className="text-[8.5px] font-bold uppercase tracking-[0.08em] text-white/40">
+                  {e.curr}
+                </span>
+              </div>
+              <p className="text-[16px] md:text-[20px] font-bold text-bz-text-on-dark leading-none mb-2">
+                {e.rev}
+              </p>
+              <span className="text-[8px] font-bold text-bz-fire bg-bz-fire/[0.12] px-1.5 py-0.5 rounded-bz-pill">
+                {e.trend}
+              </span>
+            </div>
+          ))}
+          {/* IC Eliminations tile — desktop only */}
+          <div className="hidden md:block rounded-bz-xl bg-bz-fire/[0.08] border border-bz-fire/[0.20] px-3 md:px-4 py-3">
+            <div className="text-[8.5px] font-bold uppercase tracking-[0.08em] text-bz-fire/70 mb-2">
+              IC Elim.
+            </div>
+            <p className="text-[16px] md:text-[20px] font-bold text-bz-fire leading-none mb-2">
+              $4.1M
+            </p>
+            <span className="text-[8px] font-bold text-bz-fire bg-bz-fire/[0.12] px-1.5 py-0.5 rounded-bz-pill">
+              Auto
+            </span>
           </div>
         </div>
-        <StatusChip variant="live">Live</StatusChip>
-      </div>
-
-      <div className="divide-y divide-bz-line-soft">
-        {HERO_ENTITIES.slice(0, 4).map((e) => (
-          <div key={e.code} className="flex items-center gap-3.5 px-5 py-3.5">
-            <span className="text-[18px] leading-none">{e.flag}</span>
-            <span className="flex-1 text-[13px] font-medium text-bz-text">Bizak {e.code}</span>
-            <span className="text-[11px] text-bz-text-muted mr-3">{e.curr}</span>
-            <span className="text-[13px] font-bold text-bz-text">{e.rev}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="px-5 py-3 bg-bz-paper-warm border-t border-bz-line flex justify-between items-center">
-        <span className="text-[11px] font-bold text-bz-text">IC Eliminations · $4.1M</span>
-        <span className="text-[10px] font-bold text-[#16a34a]">● auto-matched</span>
       </div>
     </div>
   );
 }
 
-// ── Step-card visuals ─────────────────────────────────────────────────────────
+// Bottom-left: live IC auto-posting panel (light surface)
+function HeroICAutoPost() {
+  return (
+    <div className="rounded-bz-2xl border border-bz-line bg-bz-surface overflow-hidden flex flex-col h-full">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-bz-line-soft shrink-0">
+        <span className="text-[11px] font-semibold text-bz-text">Intercompany · Auto-posting</span>
+        <StatusChip variant="live">Live</StatusChip>
+      </div>
+
+      <div className="flex flex-col gap-2.5 px-5 py-4 flex-1">
+        {/* Seller side */}
+        <div className="rounded-bz-md bg-bz-paper-warm border border-bz-line-soft p-3">
+          <p className="text-[9px] font-bold tracking-[0.10em] uppercase text-bz-text-muted mb-2">
+            Seller · Bizak US Inc.
+          </p>
+          <div className="flex justify-between text-[11.5px] mb-1.5">
+            <span className="text-bz-text-muted">AR — Intercompany</span>
+            <span className="font-bold text-bz-text">DR $24,800</span>
+          </div>
+          <div className="flex justify-between text-[11.5px]">
+            <span className="text-bz-text-muted">Revenue — IC Sales</span>
+            <span className="text-bz-text-soft">CR $24,800</span>
+          </div>
+        </div>
+
+        {/* IC reference divider */}
+        <div className="flex items-center gap-2 py-0.5">
+          <div className="h-px flex-1 bg-bz-line-soft" />
+          <span className="text-[9px] font-bold text-bz-text-muted uppercase tracking-[0.08em]">
+            IC-2412 · FX 0.921
+          </span>
+          <div className="h-px flex-1 bg-bz-line-soft" />
+        </div>
+
+        {/* Buyer side */}
+        <div className="rounded-bz-md bg-bz-paper-warm border border-bz-line-soft p-3">
+          <p className="text-[9px] font-bold tracking-[0.10em] uppercase text-bz-text-muted mb-2">
+            Buyer · Bizak GmbH (DE)
+          </p>
+          <div className="flex justify-between text-[11.5px] mb-1.5">
+            <span className="text-bz-text-muted">Expense — IC Purchases</span>
+            <span className="text-bz-text-soft">DR €22,840</span>
+          </div>
+          <div className="flex justify-between text-[11.5px]">
+            <span className="text-bz-text-muted">AP — Intercompany</span>
+            <span className="font-bold text-bz-text">CR €22,840</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-5 py-3.5 border-t border-bz-line-soft bg-bz-paper-warm/40 shrink-0">
+        <p className="text-[10.5px] text-bz-text-muted leading-snug">
+          <span className="font-semibold text-bz-text">Zero manual entries</span>
+          {" "}· Elimination tagged automatically
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// Bottom-right: group close steps panel (paper surface)
+function HeroGroupClosePanel() {
+  return (
+    <div className="rounded-bz-2xl border border-bz-line bg-bz-paper overflow-hidden flex flex-col h-full">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-bz-line-soft shrink-0">
+        <span className="text-[11px] font-semibold text-bz-text">Group Close</span>
+        <span className="text-[9px] font-semibold text-bz-text-muted bg-bz-paper-warm px-2 py-0.5 rounded-bz-pill">
+          87s total
+        </span>
+      </div>
+
+      <div className="flex flex-col divide-y divide-bz-line-soft flex-1">
+        {HERO_CLOSE_STEPS.map((s) => (
+          <div key={s.step} className="flex items-center justify-between gap-3 px-5 py-3.5">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-1.5 h-1.5 rounded-full bg-bz-fire shrink-0" />
+              <div className="min-w-0">
+                <p className="text-[12px] font-medium text-bz-text truncate">{s.step}</p>
+                <p className="text-[10px] text-bz-text-muted mt-0.5">{s.note}</p>
+              </div>
+            </div>
+            <span className="text-[9px] font-bold text-bz-leaf-deep bg-bz-leaf-deep/[0.12] px-2 py-0.5 rounded-bz-pill shrink-0">
+              Done
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="px-5 py-3.5 border-t border-bz-line-soft bg-bz-paper-warm/40 shrink-0">
+        <p className="text-[10.5px] text-bz-text-muted leading-snug">
+          <span className="font-semibold text-bz-text">Last group close</span>
+          {" "}· Today, 08:41 AM
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─── STEP-CARD VISUAL ─────────────────────────────────────────────────────────
 
 function EntityTreeVisual() {
   return (
@@ -122,64 +287,7 @@ function EntityTreeVisual() {
   );
 }
 
-function EntityConfigVisual() {
-  const rows = [
-    { lbl: "Currency",        val: "EUR — Euro"        },
-    { lbl: "Tax Engine",      val: "EU VAT · OSS/IOSS" },
-    { lbl: "Chart of Accts",  val: "EMEA Standard CoA" },
-    { lbl: "Fiscal Year",     val: "Jan – Dec"          },
-    { lbl: "Reporting Curr",  val: "USD (Group)"        },
-    { lbl: "FX Rate",         val: "ECB Daily Rate"     },
-  ];
-  return (
-    <div className="rounded-bz-lg border border-bz-line bg-bz-surface overflow-hidden">
-      <div className="px-4 py-3 bg-bz-paper-warm border-b border-bz-line">
-        <div className="text-[11px] font-bold text-bz-text">Bizak GmbH — Entity Setup</div>
-        <div className="text-[10px] text-bz-text-muted mt-0.5">Functional currency: EUR</div>
-      </div>
-      {rows.map(({ lbl, val }) => (
-        <div key={lbl} className="flex justify-between px-4 py-2.5 text-[12px] border-t border-bz-line-soft">
-          <span className="text-bz-text-muted">{lbl}</span>
-          <span className="font-medium text-bz-text">{val}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ConsolidationVisual() {
-  const steps = [
-    { step: "FX Translation",    note: "5 currencies → USD" },
-    { step: "IC Eliminations",   note: "$4.1M eliminated"   },
-    { step: "Minority Interest", note: "12.5% DE, 20% SG"   },
-    { step: "Group P&L",         note: "$48.2M QTD Revenue"  },
-  ];
-  return (
-    <div className="rounded-bz-lg border border-bz-line bg-bz-surface overflow-hidden">
-      <div className="px-4 py-3 bg-bz-paper-warm border-b border-bz-line flex justify-between items-center">
-        <div className="text-[11px] font-bold text-bz-text">Group Consolidation</div>
-        <span className="text-[9px] font-bold text-[#16a34a] uppercase tracking-[0.1em]">Done in 87s</span>
-      </div>
-      <div className="p-4 flex flex-col gap-3">
-        {steps.map(({ step, note }) => (
-          <div key={step} className="flex items-center justify-between text-[12px]">
-            <div className="flex items-center gap-2">
-              <Tick size="sm" />
-              <span className="text-bz-text">{step}</span>
-            </div>
-            <span className="text-bz-text-muted text-[11px]">{note}</span>
-          </div>
-        ))}
-      </div>
-      <div className="px-4 py-3 border-t border-bz-line bg-bz-paper">
-        <div className="text-[10px] text-bz-text-muted">Last group close</div>
-        <div className="text-[14px] font-bold text-bz-text mt-0.5">Today, 08:41 AM</div>
-      </div>
-    </div>
-  );
-}
-
-// ── Auto-IC BigCard visual ────────────────────────────────────────────────────
+// ─── BIGCARD VISUAL ───────────────────────────────────────────────────────────
 
 function AutoICVisual() {
   return (
@@ -238,44 +346,7 @@ function AutoICVisual() {
   );
 }
 
-// ── Group revenue card ────────────────────────────────────────────────────────
-
-function GroupRevenueCard() {
-  const rows = [
-    { flag: "🇺🇸", name: "Bizak US Inc.",     amount: "$18.4M"   },
-    { flag: "🇬🇧", name: "Bizak Europe Ltd.", amount: "£9.6M"    },
-    { flag: "🇩🇪", name: "Bizak GmbH",        amount: "€7.8M"    },
-    { flag: "🇸🇬", name: "Bizak APAC Pte.",   amount: "S$11.2M"  },
-    { flag: "🇦🇪", name: "Bizak MEA FZ-LLC",  amount: "AED 6.8M" },
-  ];
-  return (
-    <div className="rounded-bz-xl border border-bz-line bg-bz-surface overflow-hidden">
-      <div className="px-5 py-4 border-b border-bz-line flex justify-between items-start">
-        <div>
-          <div className="text-[10px] font-bold tracking-[0.12em] uppercase text-bz-text-muted mb-1">
-            Revenue · Group QTD
-          </div>
-          <div className="text-[22px] font-extrabold text-bz-text leading-none">
-            $48.2M{" "}
-            <span className="text-[12px] font-bold text-[#16a34a]">+12.4%</span>
-          </div>
-        </div>
-        <StatusChip variant="live">Live</StatusChip>
-      </div>
-      <div className="p-4 flex flex-col gap-2">
-        {rows.map((e) => (
-          <EntityRow key={e.name} flag={e.flag} name={e.name} amount={e.amount} />
-        ))}
-      </div>
-      <div className="px-5 py-3 border-t border-bz-line flex justify-between items-center">
-        <span className="text-[11px] font-bold text-bz-text">IC Eliminations · $4.1M</span>
-        <span className="text-[10px] font-bold text-[#16a34a]">● auto-matched</span>
-      </div>
-    </div>
-  );
-}
-
-// ── Sections ──────────────────────────────────────────────────────────────────
+// ─── SECTIONS ─────────────────────────────────────────────────────────────────
 
 function HeroSection() {
   return (
@@ -284,124 +355,296 @@ function HeroSection() {
         <div className="flex flex-col items-center text-center">
           <BadgeGreen style={{ marginBottom: 28 }}>Platform Capability</BadgeGreen>
           <Heading level={2} style={{ marginBottom: 36 }}>
-            One ERP. Many entities.{" "}{<br/>}
-            Zero spreadsheet rollups.
+            One ERP. Many entities.{" "}
+            <Heading.Muted>Zero spreadsheet rollups.</Heading.Muted>
           </Heading>
           <PillGroup>
-            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+            <Pill
+              variant="dark"
+              withArrowUpRight
+              href="https://system.bizakerp.com/account/self-register"
+            >
+              Get Started
+            </Pill>
             <Pill variant="light" withArrow href="/contact">
               Request Demo
             </Pill>
           </PillGroup>
         </div>
-        <div className="bz-hero-visual">
-          <GroupConsoleMock />
+
+        {/* Mosaic: full-width dark entity board + IC auto-post panel + group close panel */}
+        <div className="bz-hero-visual mx-auto w-full max-w-[1140px] flex flex-col gap-3">
+          <HeroGroupBoard />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="md:col-span-2">
+              <HeroICAutoPost />
+            </div>
+            <div className="hidden md:block md:col-span-1">
+              <HeroGroupClosePanel />
+            </div>
+          </div>
         </div>
       </Container>
     </Section>
   );
 }
 
-function GroupPainSection() {
+// Cross-entity activity stream — every entity posts to the group view in real-time
+function EntityStreamSection() {
   return (
     <Section tone="a">
       <Container>
         <SectionHead
           index="01"
-          label="The Group Tax"
+          label="Cross-entity activity"
           title={
             <>
-              Six entities, six general ledgers —{" "}
-              <Heading.Muted>and one CFO running the rollup in Excel.</Heading.Muted>
+              One ledger.{" "}
+              <Heading.Muted>Every entity, live.</Heading.Muted>
             </>
           }
-          description="Most ERPs were built for a single legal entity. Add a branch, an acquisition, or a foreign subsidiary, and the architecture starts to leak — through CSV exports, manual elimination journals, and a month-end that always arrives a week late."
-          titleMaxWidth={700}
+          description="Every IC posting, FX update, VAT submission, and entity close event across all subsidiaries and branches posts to the group view the moment it happens."
         />
-        <BentoGrid cols={3}>
-          {PAINS.map(({ Icon, title, desc }) => (
-            <Bento key={title} tone="paper" hover>
-              <Bento.Header title={title} icon={<Icon className="size-5" />} />
-              <Bento.Desc>{desc}</Bento.Desc>
-            </Bento>
-          ))}
-        </BentoGrid>
-      </Container>
-    </Section>
-  );
-}
 
-function EntitySetupSection() {
-  return (
-    <Section tone="b">
-      <Container>
-        <SectionHead
-          index="02"
-          label="From new entity to group close"
-          title={
-            <>
-              Stand up a subsidiary.{" "}
-              <Heading.Muted>Roll up the group. In one afternoon.</Heading.Muted>
-            </>
-          }
-          titleMaxWidth={620}
-        />
-        <div className="flex flex-col gap-5">
-          <StepCard
-            number="01"
-            tag="Model"
-            title="Define your group hierarchy"
-            bullets={[
-              "Holding companies, subsidiaries, branches, and cost centres — all in one tree.",
-              "Roll up P&L at any level: group, region, country, or business unit.",
-              "No limit on entities or nesting depth.",
-            ]}
-            visual={<EntityTreeVisual />}
-          />
-          <StepCard
-            number="02"
-            tag="Configure"
-            title="Each entity gets its own books"
-            bullets={[
-              "Own chart of accounts, closing calendar, and fiscal schedule.",
-              "38 pre-wired tax engines — VAT, GST, withholding, e-invoicing.",
-              "Functional and reporting currency with daily or period FX rates.",
-            ]}
-            visual={<EntityConfigVisual />}
-          />
-          <StepCard
-            number="03"
-            tag="Close"
-            title="Roll up the group in 90 seconds"
-            bullets={[
-              "Automatic FX translation from functional to group currency.",
-              "IC invoices, loans, and transfers eliminate on demand.",
-              "Group P&L and balance sheet refresh live — not at month-end.",
-            ]}
-            cta={{ variant: "dark", withArrow: true, href: "/contact", children: "Request Demo" }}
-            visual={<ConsolidationVisual />}
-          />
+        <div className="rounded-bz-xl overflow-hidden border border-bz-line-soft">
+          {/* Stream header */}
+          <div className="flex items-center justify-between px-5 py-3 bg-bz-paper border-b border-bz-line-soft">
+            <div className="flex items-center gap-2.5">
+              <StatusChip variant="live">Live</StatusChip>
+              <span className="text-[10px] font-medium text-bz-text-muted">
+                6 entities streaming
+              </span>
+            </div>
+            <span className="text-[10px] text-bz-text-muted hidden sm:inline">
+              34 cross-entity events today
+            </span>
+          </div>
+
+          {/* Stream rows */}
+          <div className="flex flex-col divide-y divide-bz-line-soft">
+            {ENTITY_STREAM.map((entry) => (
+              <div
+                key={entry.ref}
+                className={`flex items-center gap-4 px-5 py-4 ${
+                  entry.live ? "bg-bz-fire/[0.03]" : ""
+                }`}
+              >
+                {/* Entity tag */}
+                <span
+                  className={`text-[10.5px] font-semibold shrink-0 w-28 hidden sm:block uppercase tracking-[0.07em] ${
+                    entry.live ? "text-bz-text" : "text-bz-text-muted"
+                  }`}
+                >
+                  {entry.entity}
+                </span>
+
+                {/* Ref */}
+                <span className="text-[11px] text-bz-text-soft w-20 shrink-0 hidden md:block tabular-nums">
+                  {entry.ref}
+                </span>
+
+                {/* Event description */}
+                <p
+                  className={`flex-1 text-[13px] min-w-0 truncate ${
+                    entry.live ? "font-medium text-bz-text" : "text-bz-text-muted"
+                  }`}
+                >
+                  <span className="sm:hidden font-semibold text-bz-text">
+                    {entry.entity} ·{" "}
+                  </span>
+                  {entry.event}
+                </p>
+
+                {/* Stat */}
+                <span
+                  className={`text-[12.5px] font-bold tabular-nums shrink-0 ${
+                    entry.live ? "text-bz-text" : "text-bz-text-soft"
+                  }`}
+                >
+                  {entry.stat}
+                </span>
+
+                {/* Live indicator */}
+                <div
+                  className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                    entry.live ? "bg-bz-fire" : "bg-bz-line"
+                  }`}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </Container>
     </Section>
   );
 }
 
+// Entity profiles — flat 4-col panel inside a dark section
+function EntityProfilesSection() {
+  return (
+    <Section tone="dark">
+      <Container>
+        <SectionHead
+          tone="dark"
+          index="02"
+          label="Entity configuration"
+          title={
+            <>
+              Every entity.{" "}
+              <Heading.Muted>Its own books, by default.</Heading.Muted>
+            </>
+          }
+          description="Each subsidiary, branch, or cost centre gets its own chart of accounts, tax engine, fiscal calendar, and reporting currency — all in one tenant."
+        />
+
+        {/* Entity panel: gap-px grid creates thin dividers without per-item border logic */}
+        <div className="rounded-bz-2xl overflow-hidden bg-bz-olive-soft">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/[0.08]">
+            {ENTITY_PROFILES.map((e) => (
+              <div
+                key={e.name}
+                className={`flex flex-col gap-5 p-7 lg:p-8 ${
+                  e.active ? "bg-bz-olive-dark" : "bg-bz-olive-soft"
+                }`}
+              >
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-[18px] leading-none">{e.flag}</span>
+                    <p
+                      className={`text-[22px] font-bold leading-none ${
+                        e.active ? "text-bz-fire" : "text-bz-text-on-dark"
+                      }`}
+                    >
+                      {e.name}
+                    </p>
+                  </div>
+                  <p className="text-[11px] text-white/50">{e.tagline}</p>
+                </div>
+
+                <div className="flex flex-col gap-2.5">
+                  {e.config.map((cfg) => (
+                    <div key={cfg} className="flex items-center gap-2">
+                      <div
+                        className={`w-1 h-1 rounded-full shrink-0 ${
+                          e.active ? "bg-bz-fire" : "bg-white/30"
+                        }`}
+                      />
+                      <span
+                        className={`text-[12.5px] ${
+                          e.active ? "text-white/90" : "text-white/55"
+                        }`}
+                      >
+                        {cfg}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-auto">
+                  <span
+                    className={`text-[9px] font-bold uppercase tracking-[0.10em] px-2.5 py-1 rounded-bz-pill ${
+                      e.active
+                        ? "bg-bz-fire/[0.15] text-bz-fire"
+                        : "bg-white/[0.06] text-white/40"
+                    }`}
+                  >
+                    {e.active ? "Active" : "Configured"}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Configuration note */}
+        <div className="mt-4 rounded-bz-xl border border-white/[0.08] bg-white/[0.03] px-5 sm:px-6 py-5">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
+            <div className="hidden sm:flex w-8 h-8 rounded-bz-md bg-white/[0.06] items-center justify-center shrink-0">
+              <Settings size={14} className="text-white/70" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-bz-text-on-dark mb-1">
+                New entity online in one afternoon
+              </p>
+              <p className="text-[12px] text-white/55 leading-relaxed">
+                Set currency, tax engine, chart of accounts, and fiscal calendar — then it's live and rolling up to the group.
+              </p>
+            </div>
+            <div className="flex items-baseline gap-1.5 sm:shrink-0">
+              <span className="text-[32px] font-bold text-bz-text-on-dark leading-none">38</span>
+              <span className="text-[11px] text-white/50">tax engines</span>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// Group hierarchy — StepCard showing the entity tree structure
+function GroupHierarchySection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <SectionHead
+          index="03"
+          label="Group hierarchy"
+          title={
+            <>
+              From holding to branch.{" "}
+              <Heading.Muted>One tree, any depth.</Heading.Muted>
+            </>
+          }
+          description="Model the full group structure — holding companies, subsidiaries, branches, and cost centres — and roll up P&L at any level."
+          titleMaxWidth={720}
+          spacing="tight"
+        />
+        <StepCard
+          number="03"
+          tag="Model → Configure → Close"
+          title="Stand up a subsidiary. Roll up the group. In one afternoon."
+          bullets={[
+            "Define the hierarchy: group, region, entity, branch — no depth limit.",
+          ]}
+          visual={<EntityTreeVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+// Intercompany automation — SectionHead + BigCard with auto-IC journal visual
 function AutoICSection() {
   return (
     <Section tone="a">
       <Container>
+        <SectionHead
+          index="04"
+          label="Intercompany automation"
+          title={
+            <>
+              One IC invoice.{" "}
+              <Heading.Muted>Both sides auto-posted.</Heading.Muted>
+            </>
+          }
+          description="When Bizak US sells to Bizak GmbH, a single transaction creates the AR and AP in both currencies — with a matched IC reference and elimination tags pre-applied for close."
+        />
         <BigCard
           text={{
             title: "One IC invoice. Both sides auto-posted.",
-            body: "When Bizak US sells to Bizak GmbH, a single transaction creates the AR in the seller and the AP in the buyer — in both currencies, with a matched IC reference and elimination tags pre-applied for close.",
+            body: "Every intercompany transaction posts in both entities, at the transaction-date FX rate, with a matched IC reference and elimination tags pre-applied.",
             bullets: [
               "Mirror posting in both entities, instantly.",
               "FX conversion at the transaction-date rate.",
               "Elimination tags ready for group close.",
               "Zero manual journal entries, zero reconciliation backlog.",
             ],
-            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Request Demo" },
+            cta: {
+              variant: "accent",
+              withArrow: true,
+              href: "/contact",
+              children: "Request Demo",
+            },
           }}
           visual={<AutoICVisual />}
         />
@@ -410,195 +653,63 @@ function AutoICSection() {
   );
 }
 
-function CapabilitiesSection() {
-  return (
-    <Section tone="dark">
-      <Container>
-        <SectionHead
-          index="03"
-          label="Capabilities"
-          title={
-            <>
-              Multi-entity architecture,{" "}
-              <Heading.Muted>baked into the core.</Heading.Muted>
-            </>
-          }
-          tone="dark"
-          titleMaxWidth={580}
-        />
-        <BentoGrid cols={12}>
-          <Bento tone="dark" dotGrid span={7}>
-            <Bento.Header
-              title="Entity Tree & Org Map"
-              icon={<Building2 className="size-5 text-bz-fire" />}
-            />
-            <Bento.Desc>
-              Model holding companies, subsidiaries, branches, and cost centres as a real hierarchy.
-              Roll up at any level — group, region, country, or business unit.
-            </Bento.Desc>
-            <Bento.Footer tone="dark">
-              {TREE_NODES.slice(0, 5).map((n) => (
-                <div
-                  key={n.label}
-                  className="flex justify-between text-[11px] py-1.5 border-t border-white/[0.06] first:border-0"
-                  style={{ paddingLeft: `${8 + n.indent * 8}px` }}
-                >
-                  <span className="text-white/60">{n.label}</span>
-                  <span className="text-bz-fire text-[10px] font-semibold">{n.scope}</span>
-                </div>
-              ))}
-            </Bento.Footer>
-          </Bento>
-
-          <Bento tone="dark" span={5}>
-            <Bento.Header
-              title="Auto Intercompany"
-              icon={<Handshake className="size-5 text-bz-fire" />}
-            />
-            <Bento.Desc>
-              Entity A invoices entity B — Bizak posts both sides in both currencies with matched IC
-              references and elimination tags pre-applied for close.
-            </Bento.Desc>
-            <Bento.Footer tone="dark">
-              <div className="grid grid-cols-3 gap-3">
-                {[["Auto", "Mirror Post"], ["Live", "FX Reval"], ["1-click", "IC Match"]].map(
-                  ([val, sub]) => (
-                    <div key={sub} className="text-center">
-                      <div className="text-[16px] font-bold text-bz-fire">{val}</div>
-                      <div className="text-[9px] font-semibold tracking-[0.06em] uppercase text-white/45 mt-0.5">
-                        {sub}
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-            </Bento.Footer>
-          </Bento>
-
-          <Bento tone="dark" span={4}>
-            <Bento.Header
-              title="Local Tax Engines"
-              icon={<Receipt className="size-5 text-bz-fire" />}
-            />
-            <Bento.Desc>
-              38 pre-configured rules — VAT, GST, sales tax, withholding. E-invoicing, OSS/IOSS, and
-              reverse-charge logic built in per entity.
-            </Bento.Desc>
-            <Bento.Footer tone="dark">
-              <div className="text-[30px] font-bold text-bz-fire leading-none">38</div>
-              <div className="text-[10px] font-semibold uppercase tracking-[0.06em] text-white/45 mt-1">
-                Tax Engines
-              </div>
-            </Bento.Footer>
-          </Bento>
-
-          <Bento tone="dark" span={4}>
-            <Bento.Header
-              title="Live Consolidation"
-              icon={<Layers className="size-5 text-bz-fire" />}
-            />
-            <Bento.Desc>
-              Group P&L and balance sheet refresh on demand. FX translation, IC eliminations, and
-              minority interest — all in under 90 seconds.
-            </Bento.Desc>
-            <Bento.Footer tone="dark">
-              <div className="text-[30px] font-bold text-bz-fire leading-none">&lt;90s</div>
-              <div className="text-[10px] font-semibold uppercase tracking-[0.06em] text-white/45 mt-1">
-                Group Close
-              </div>
-            </Bento.Footer>
-          </Bento>
-
-          <Bento tone="dark" span={4}>
-            <Bento.Header
-              title="Entity-Aware Roles"
-              icon={<ShieldCheck className="size-5 text-bz-fire" />}
-            />
-            <Bento.Desc>
-              Permissions scope to any node of the entity tree. Branch managers see their branch;
-              the group CFO sees everything.
-            </Bento.Desc>
-            <Bento.Footer tone="dark">
-              <div className="flex flex-wrap gap-1.5">
-                {["Group", "Region", "Entity", "Branch"].map((b) => (
-                  <span
-                    key={b}
-                    className="text-[9px] font-bold px-2 py-1 rounded-bz-pill bg-bz-fire/[0.12] text-bz-fire tracking-[0.06em] uppercase"
-                  >
-                    {b}
-                  </span>
-                ))}
-              </div>
-            </Bento.Footer>
-          </Bento>
-        </BentoGrid>
-      </Container>
-    </Section>
-  );
-}
-
-function GroupVisibilitySection() {
+// Impact — horizontal typographic stat strip, no cards
+function ImpactSection() {
   return (
     <Section tone="b">
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          <div>
-            <SectionHead
-              index="04"
-              label="Group Visibility"
-              title={
-                <>
-                  The whole group, on one screen —{" "}
-                  <Heading.Muted>without leaving the ledger.</Heading.Muted>
-                </>
-              }
-              description="No exports. No nightly batches. Bizak holds every entity in one tenant, so group reporting is just another scope on the same data your subsidiaries are posting into right now."
-              titleMaxWidth={460}
-              spacing="tight"
-            />
-            <ul className="flex flex-col gap-3 mt-6">
-              {[
-                {
-                  bold: "Functional + Reporting Currency",
-                  rest: " — Each entity transacts in its functional currency; the group sees translated values live, with daily, monthly, or custom FX rate sets.",
-                },
-                {
-                  bold: "Eliminations on the Fly",
-                  rest: " — IC invoices, loans, and inventory transfers eliminate automatically when you switch to the group view.",
-                },
-                {
-                  bold: "Drill from Group to Voucher",
-                  rest: " — Click a group P&L line, drop into the entity, the journal, then the source document — without a different tool.",
-                },
-              ].map(({ bold, rest }) => (
-                <li key={bold} className="flex gap-3">
-                  <Tick size="sm" className="mt-0.5 flex-shrink-0" />
-                  <span className="text-[14px] text-bz-text-muted leading-[1.7]">
-                    <strong className="text-bz-text">{bold}</strong>
-                    {rest}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <GroupRevenueCard />
+        <SectionHead
+          index="05"
+          label="Efficiency"
+          title={
+            <>
+              Measurable results.{" "}
+              <Heading.Muted>Every entity.</Heading.Muted>
+            </>
+          }
+          spacing="tight"
+          titleMaxWidth={520}
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-3 border-t border-bz-line-soft pt-10">
+          {IMPACT_STATS.map((s, i) => (
+            <div
+              key={s.label}
+              className={[
+                "py-8 sm:py-0",
+                i === 0 && "sm:pr-10",
+                i === 1 && "sm:px-10 sm:border-l sm:border-r sm:border-bz-line-soft",
+                i === 2 && "sm:pl-10",
+                i < 2 && "border-b border-bz-line-soft sm:border-b-0",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+            >
+              <div className="bz-stat-num" style={{ fontSize: 52, marginBottom: 10 }}>
+                {s.value}
+              </div>
+              <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-bz-text-muted mb-3">
+                {s.label}
+              </div>
+              <p className="text-[13.5px] text-bz-text-muted leading-relaxed">{s.desc}</p>
+            </div>
+          ))}
         </div>
       </Container>
     </Section>
   );
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// ─── PAGE ─────────────────────────────────────────────────────────────────────
 
 export function MulticompanyAndBranchesPage() {
   return (
     <>
       <HeroSection />
-      <GroupPainSection />
-      <EntitySetupSection />
+      <EntityStreamSection />
+      <EntityProfilesSection />
+      <GroupHierarchySection />
       <AutoICSection />
-      <CapabilitiesSection />
-      <GroupVisibilitySection />
+      <ImpactSection />
     </>
   );
 }

@@ -4,7 +4,7 @@ import bizakLogoVerticalDark from "../../assets/logo/SVG/all-black-vertical-lock
 import footerBgImage from "../../assets/footerimg.png";
 import { Heading, Pill, PillGroup } from "./bz";
 
-// ─── Footer CTA — dynamic per page ────────────────────────────────────────────
+// ─── Footer CTA dynamic per page ────────────────────────────────────────────
 //
 // Pages render <Footer cta={{...}} /> to override the closing CTA. Without a
 // prop, Footer falls back to the homepage default.
@@ -14,7 +14,7 @@ import { Heading, Pill, PillGroup } from "./bz";
 
 export interface FooterCta {
   title: React.ReactNode;          // e.g. "Take full control of your operations."
-  titleMuted?: React.ReactNode;    // e.g. "Start in minutes." — rendered as a faded inline span after title
+  titleMuted?: React.ReactNode;    // e.g. "Start in minutes." rendered as a faded inline span after title
   description?: React.ReactNode;   // sub-paragraph beneath the title
   primaryLabel?: string;           // primary button label, default "Get Started"
   primaryHref?: string;            // primary button href, default self-register
@@ -25,7 +25,7 @@ export interface FooterCta {
 const DEFAULT_CTA: FooterCta = {
   title: "Take full control of your operations.",
   titleMuted: "Start in minutes.",
-  description: "No setup cost. No long contracts. Cancel anytime — keep your data.",
+  description: "No setup cost. No long contracts. Cancel anytime keep your data.",
   primaryLabel: "Get Started",
   primaryHref: "https://system.bizakerp.com/account/self-register",
   secondaryLabel: "Request Demo",
@@ -78,7 +78,8 @@ const SOCIAL = [
   { Icon: Linkedin, href: "#", label: "LinkedIn" },
 ];
 
-export function Footer({ cta, isLightMode = false }: { cta?: FooterCta; isLightMode?: boolean } = {}) {
+export function Footer({ cta, isLightMode: _isLightMode = false }: { cta?: FooterCta; isLightMode?: boolean } = {}) {
+  const isLightMode = true; // EXPERIMENT: force light mode revert by changing `true` back to `_isLightMode`
   const c: FooterCta = { ...DEFAULT_CTA, ...(cta ?? {}) };
 
   return (
@@ -119,12 +120,12 @@ export function Footer({ cta, isLightMode = false }: { cta?: FooterCta; isLightM
             {/* Brand column */}
             <div>
               <img
-                src={isLightMode ? bizakLogoVerticalDark : bizakLogoVertical}
+                src={isLightMode ? bizakLogoVertical : bizakLogoVertical}
                 alt="Bizak ERP"
                 className="h-12 w-auto mb-6"
               />
-              <p className={`m-0 max-w-[280px] text-[14px] font-normal leading-[1.65] ${isLightMode ? "text-bz-text-muted" : "text-bz-text-on-dark-muted"}`}>
-                The operating system for modern business — finance, inventory, sales and operations in one unified workspace.
+              <p className="m-0 max-w-[280px] text-[14px] font-normal leading-[1.65] text-bz-text-on-dark-muted">
+                The operating system for modern business finance, inventory, sales and operations in one unified workspace.
               </p>
               {/* <div className="mt-[22px] flex flex-col gap-[10px]">
                 <Pill
@@ -164,7 +165,7 @@ export function Footer({ cta, isLightMode = false }: { cta?: FooterCta; isLightM
           </div>
 
           {/* Divider */}
-          <div className={`mt-14 h-px ${isLightMode ? "bg-bz-line" : "bg-white/[0.08]"}`} />
+          <div className="mt-14 h-px bg-white/[0.08]" />
 
           {/* Bottom row */}
           <div className="mt-7 flex flex-wrap items-center justify-between gap-[18px]">

@@ -1,14 +1,8 @@
 import {
-  Activity,
   Briefcase,
   Clock,
-  FileText,
   Handshake,
-  Layers,
   Receipt,
-  Repeat,
-  Search,
-  Timer,
   TrendingUp,
   Users,
 } from "lucide-react";
@@ -16,414 +10,225 @@ import {
   BadgeGreen,
   Bento,
   BentoGrid,
+  BigCard,
   Container,
+  DataRow,
   DotGrid,
   Heading,
   HeroCanvas,
+  JournalRow,
   Pill,
   PillGroup,
   Section,
   SectionHead,
-  StatTile,
+  StatusChip,
+  StepCard,
   StripeBar,
   Tick,
 } from "./bz";
 
-// ── Hero ─────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════════════════════════════════
 
-const HERO_PIPELINE = [
-  { stage: "Logged",    value: "$32,480", note: "Today",    state: "done"   },
-  { stage: "Approved",  value: "$28,140", note: "5h ago",   state: "done"   },
-  { stage: "Invoiced",  value: "$24,900", note: "Drafting", state: "live"   },
-  { stage: "Collected", value: "$18,420", note: "DSO 21d",  state: "queued" },
-] as const;
+const ACTIVE_TIMERS = [
+  { id: "TM-0041", client: "Hartwell & Locke", pct: 78  },
+  { id: "TM-0042", client: "Vector Capital",   pct: 52  },
+  { id: "TM-0043", client: "Northwind Health", pct: 100 },
+];
 
-const HERO_TEAM = [
-  { initials: "AR", name: "A. Reyes",  load: 102, state: "burn" },
-  { initials: "KI", name: "K. Ito",    load:  88, state: "good" },
-  { initials: "SP", name: "S. Patel",  load:  82, state: "good" },
-  { initials: "MS", name: "M. Singh",  load:  41, state: "idle" },
-  { initials: "JP", name: "J. Park",   load:  18, state: "idle" },
-] as const;
+const BILLING_PIPELINE = [
+  { label: "Logged",   pct: 94 },
+  { label: "Approved", pct: 88 },
+  { label: "Invoiced", pct: 82 },
+];
 
-function PracticeCommandMock() {
+const CONSULTANTS = [
+  { id: "A. Reyes", badge: "A", name: "Partner", status: "Active", pct: 88 },
+  { id: "K. Ito",   badge: "K", name: "Manager", status: "Active", pct: 72 },
+];
+
+const BILLING_EVENTS = [
+  { id: "TM-0041",  what: "Timer stopped · Hartwell & Locke",    flow: "WIP posted · $2,880",  t: "2m" },
+  { id: "INV-4218", what: "Invoice approved · Vector Capital",    flow: "GL posted · $10,200",  t: "5m" },
+];
+
+const CAPABILITIES = [
+  {
+    icon: Clock,
+    title: "Time & Expense Capture",
+    desc: "One-tap timers across web and mobile with AI-suggested entries from calendar and email. Offline sync. Zero re-keying.",
+  },
+  {
+    icon: Briefcase,
+    title: "Engagement Management",
+    desc: "Plan, staff and run every engagement end-to-end phases, milestones, deliverables and budget guardrails on one timeline.",
+  },
+  {
+    icon: Users,
+    title: "Resource Planning",
+    desc: "Live allocation view across every consultant. Spot over-loaded partners and idle analysts before the week is done.",
+  },
+  {
+    icon: Receipt,
+    title: "Flexible Billing",
+    desc: "T&M, fixed-fee, milestone, retainer, contingent every billing model, with auto-generated invoices and WIP statements.",
+  },
+  {
+    icon: Handshake,
+    title: "Client Portal & CRM",
+    desc: "A branded workspace for proposals, deliverables, approvals and statements replacing ten back-and-forth emails.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Profitability Analytics",
+    desc: "Live cost-to-bill, realisation and margin per engagement, partner and practice actionable while work is in flight.",
+  },
+];
+
+const TIMER_ENTRIES = [
+  { code: "TM-0041", name: "Partner hours",   qty: "8.5 hr"  },
+  { code: "TM-0042", name: "Associate hours", qty: "12.0 hr" },
+  { code: "TM-0043", name: "Analyst hours",   qty: "6.0 hr"  },
+];
+
+const APPROVED_ENGAGEMENTS = [
+  { ref: "INV-4218", desc: "Hartwell & Locke",    status: "Auto-posted" },
+  { ref: "INV-4217", desc: "Vector Capital", status: "Auto-posted" },
+];
+
+const BILLING_TYPES = ["Time", "Expenses", "Disbursements"];
+
+// ════════════════════════════════════════════════════════════════════════════
+// HERO MOCK
+// ════════════════════════════════════════════════════════════════════════════
+
+function PracticeCommandPanel() {
   return (
-    <div className="relative z-[2] w-full pb-10">
-      {/* Row 1 — timer + utilisation */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-3 mb-3">
-        {/* Timer — always visible */}
-        <div className="rounded-bz-xl border border-white/[0.08] bg-white/[0.04] p-4 md:p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-bz-fire" />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-fire">
-              Active timer · Live
-            </span>
-          </div>
-          {/* Stack on mobile, row on sm+ */}
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-bz-lg bg-bz-fire/15 text-bz-fire">
-                <Timer size={16} />
-              </span>
-              <div>
-                <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-white/[0.62]">
-                  Hartwell &amp; Locke · M&amp;A Diligence
+    <div className="flex flex-1 flex-col overflow-hidden rounded-bz-2xl border border-white/[0.08] bg-bz-paper">
+      <div className="flex items-center justify-between border-b border-bz-line-soft px-5 py-3.5">
+        <StatusChip variant="live">Live · 5</StatusChip>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[15px] font-bold tabular-nums text-bz-text">87.2%</span>
+          <span className="text-[10px] font-semibold text-bz-leaf-deep">↑ +4.3%</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 divide-y divide-bz-line-soft sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+        <div className="p-5">
+          <p className="mb-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
+            Active Timers
+          </p>
+          <div className="flex flex-col gap-4">
+            {ACTIVE_TIMERS.map((t) => (
+              <div key={t.id}>
+                <div className="mb-1.5 flex items-center justify-between">
+                  <span className="text-[10.5px] font-medium text-bz-text">{t.id}</span>
+                  <span className="text-[10px] text-bz-text-muted">{t.client}</span>
                 </div>
-                <div className="text-[11px] text-white/[0.6]">Lead partner · Senior associate</div>
-              </div>
-            </div>
-            <div className="text-[28px] sm:text-[40px] md:text-[52px] font-medium leading-none tabular-nums tracking-[-0.02em] text-bz-text-on-dark">
-              02:48:11
-            </div>
-          </div>
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            {[
-              { label: "Rate",         value: "$240 / hr",  cls: "text-bz-text-on-dark" },
-              { label: "Billable today", value: "$32,480",  cls: "text-bz-fire"         },
-              { label: "Realisation",  value: "94.2%",      cls: "text-bz-leaf"         },
-            ].map(({ label, value, cls }) => (
-              <div key={label} className="rounded-bz-md bg-white/[0.05] px-3 py-2">
-                <div className="text-[9.5px] uppercase tracking-[0.12em] text-white/[0.55]">{label}</div>
-                <div className={`text-[13px] font-medium ${cls}`}>{value}</div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <StripeBar pct={t.pct} />
+                  </div>
+                  <span className="w-8 text-right text-[10.5px] font-semibold tabular-nums text-bz-text">
+                    {t.pct}%
+                  </span>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Utilisation — hidden on small mobile to keep hero clean */}
-        <div className="hidden sm:flex flex-col rounded-bz-xl border border-white/[0.08] bg-white/[0.04] p-4 md:p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <Activity size={12} className="text-bz-leaf" />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">
-              Practice utilisation · Week 21
-            </span>
-          </div>
-          <div className="flex items-end gap-2">
-            <div className="text-[34px] md:text-[44px] font-medium leading-none tabular-nums tracking-[-0.02em] text-bz-text-on-dark">
-              87%
-            </div>
-            <span className="mb-1 text-[11px] text-bz-leaf">↑ 6.1pp QoQ</span>
-          </div>
-          <div className="mt-4">
-            <StripeBar pct={87} tone="dark" />
-          </div>
-          <div className="mt-4 grid grid-cols-5 gap-1.5">
-            {[78, 84, 72, 81, 46].map((h, i) => (
-              <div key={i} className="rounded-sm bg-bz-fire/70" style={{ height: 6 + (h / 100) * 28 }} />
-            ))}
-          </div>
-          <div className="mt-2 grid grid-cols-5 text-center text-[9px] text-white/[0.45]">
-            {["Mon", "Tue", "Wed", "Thu", "Fri"].map((d) => <span key={d}>{d}</span>)}
-          </div>
-        </div>
-      </div>
-
-      {/* Row 2 — team load · too cramped below sm */}
-      <div className="hidden sm:block rounded-bz-xl border border-white/[0.08] bg-white/[0.04] p-4 md:p-5 mb-3">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">Team load · live</span>
-          <span className="text-[10px] text-white/[0.5]">2 idle · 1 over-allocated</span>
-        </div>
-        <div className="grid grid-cols-5 gap-3">
-          {HERO_TEAM.map((m) => {
-            const cap = Math.min(m.load, 100);
-            const fill = m.state === "burn" ? "bg-[#f87171]" : m.state === "idle" ? "bg-white/[0.18]" : "bg-bz-fire";
-            const lbl  = m.state === "burn" ? "text-[#f87171]" : m.state === "idle" ? "text-white/[0.5]" : "text-bz-fire";
-            return (
-              <div key={m.initials} className="flex flex-col items-center text-center">
-                <span className="grid h-9 w-9 place-items-center rounded-full border border-white/[0.12] bg-white/[0.04] text-[10px] font-medium text-white/[0.82] tracking-[0.06em]">
-                  {m.initials}
-                </span>
-                <span className="mt-2 text-[10px] text-white/[0.6]">{m.name}</span>
-                <div className="mt-2 h-1 w-full rounded-full bg-white/[0.08] overflow-hidden">
-                  <div className={`h-full ${fill}`} style={{ width: `${cap}%` }} />
+        <div className="p-5">
+          <p className="mb-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
+            Billing Pipeline
+          </p>
+          <div className="flex flex-col gap-4">
+            {BILLING_PIPELINE.map((c) => (
+              <div key={c.label}>
+                <div className="mb-1.5 flex items-center justify-between">
+                  <span className="text-[10.5px] text-bz-text-muted">{c.label}</span>
+                  <span className="text-[10.5px] font-semibold tabular-nums text-bz-text">{c.pct}%</span>
                 </div>
-                <span className={`mt-1.5 text-[10px] font-medium tabular-nums ${lbl}`}>{m.load}%</span>
+                <StripeBar pct={c.pct} />
               </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Row 3 — time → bill pipeline */}
-      <div className="rounded-bz-xl border border-white/[0.08] bg-white/[0.04] p-4 md:p-5">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">Time → bill · today</span>
-          <span className="text-[10px] text-bz-leaf">0 re-keyed entries</span>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-          {HERO_PIPELINE.map((p, i) => (
-            <div key={p.stage} className="rounded-bz-md border border-white/[0.06] bg-white/[0.03] p-3">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[9.5px] font-semibold uppercase tracking-[0.12em] text-white/[0.5]">
-                  {String(i + 1).padStart(2, "0")} · {p.stage}
-                </span>
-                <span className={`inline-flex h-1.5 w-1.5 rounded-full ${
-                  p.state === "live" ? "bg-bz-fire" : p.state === "done" ? "bg-bz-leaf" : "bg-white/[0.25]"
-                }`} />
-              </div>
-              <div className="text-[17px] font-medium text-bz-text-on-dark tabular-nums">{p.value}</div>
-              <div className="text-[10px] text-white/[0.45] mt-0.5">{p.note}</div>
+            ))}
+            <div className="mt-0.5 flex items-center justify-between border-t border-bz-line-soft pt-3">
+              <span className="text-[10.5px] text-bz-text-muted">Realisation Rate</span>
+              <span className="text-[11px] font-bold tabular-nums text-bz-text">87.2%</span>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// HERO
+// ════════════════════════════════════════════════════════════════════════════
 
 function HeroSection() {
   return (
     <Section tone="b" pad="hero">
       <Container>
         <div className="flex flex-col items-center text-center">
-          <BadgeGreen style={{ marginBottom: 28 }}>Built for Practice Firms</BadgeGreen>
+          <BadgeGreen style={{ marginBottom: 28 }}>
+            Log. Bill. Ledger.
+          </BadgeGreen>
           <Heading level={2} style={{ marginBottom: 36 }}>
-            Bill every hour.{" "}
-            <Heading.Muted>Deliver every engagement.</Heading.Muted>
+            Capture every minute.{" "}{<br className="hidden md:block"/>}
+            <Heading.Muted>
+              Know every margin in real time.
+            </Heading.Muted>
           </Heading>
           <PillGroup>
             <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
-            <Pill variant="light" withArrow href="/contact">
+            <Pill variant="light" href="/contact">
               Request Demo
             </Pill>
           </PillGroup>
         </div>
-        <HeroCanvas>
-          <PracticeCommandMock />
+
+        <HeroCanvas className="flex flex-col !p-0 [&>.bz-hero-cards]:flex-1 [&>.bz-hero-cards]:flex [&>.bz-hero-cards]:flex-col [&>.bz-hero-cards]:items-stretch">
+          <div className="flex flex-1 flex-col p-[56px] max-[720px]:p-9 max-[480px]:p-4">
+            <PracticeCommandPanel />
+          </div>
         </HeroCanvas>
       </Container>
     </Section>
   );
 }
 
-// ── 01 · One tap to invoice ──────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// [01] THE PLATFORM consultant allocation map + event feed + feature bentos
+// ════════════════════════════════════════════════════════════════════════════
 
-const ONE_TAP_BULLETS = [
-  "One-tap timers across web, mobile and desktop with offline sync",
-  "AI proposes entries from calendar, mail and document activity",
-  "Approved time auto-flows to draft invoices and WIP reports",
-  "Fixed-fee, T&M, milestone, retainer — every billing model",
-];
-
-function OneTapVisual() {
-  return (
-    <div className="flex flex-col gap-3">
-      {/* Timer running */}
-      <div className="rounded-bz-xl border border-white/[0.08] bg-white/[0.04] p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="inline-flex h-1.5 w-1.5 rounded-full bg-bz-fire" />
-          <span className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-bz-fire">
-            Active · 01:14:32
-          </span>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <div className="text-[13px] font-medium text-bz-text-on-dark">Vector Capital</div>
-            <div className="text-[11px] text-white/[0.6] mt-0.5">Strategy review · $240 / hr</div>
-          </div>
-          <span className="rounded-bz-md bg-bz-fire/15 px-3 py-1.5 text-[12px] font-medium text-bz-fire tabular-nums">
-            $298.00
-          </span>
-        </div>
-      </div>
-
-      {/* Connector */}
-      <div className="flex items-center gap-3 px-1">
-        <div className="flex-1 h-px bg-white/[0.08]" />
-        <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-white/[0.35]">
-          approved · auto-posted
-        </span>
-        <div className="flex-1 h-px bg-white/[0.08]" />
-      </div>
-
-      {/* Draft invoice */}
-      <div className="rounded-bz-xl border border-bz-fire/25 bg-bz-fire/[0.04] p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <div className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-bz-fire">
-              Draft invoice · INV-4218
-            </div>
-            <div className="text-[11px] text-white/[0.6] mt-0.5">Hartwell &amp; Locke · May 2026</div>
-          </div>
-          <Receipt size={15} className="text-bz-fire mt-0.5" />
-        </div>
-        <div className="flex items-end justify-between gap-4">
-          <div className="flex gap-5">
-            <div>
-              <div className="text-[9px] uppercase tracking-[0.12em] text-white/[0.45]">Hours</div>
-              <div className="text-[13px] font-medium text-bz-text-on-dark tabular-nums">42.5h</div>
-            </div>
-            <div>
-              <div className="text-[9px] uppercase tracking-[0.12em] text-white/[0.45]">Rate</div>
-              <div className="text-[13px] font-medium text-bz-text-on-dark tabular-nums">$240</div>
-            </div>
-          </div>
-          <div className="text-[22px] font-medium text-bz-fire tabular-nums tracking-[-0.01em]">
-            $10,200
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function OneTapToInvoiceSection() {
+function CapabilitiesSection() {
   return (
     <Section tone="a">
       <Container>
         <SectionHead
           index="01"
-          label="From timer to invoice"
-          title={
-            <>
-              One tap starts the clock.{" "}
-              <Heading.Muted>Bizak does the rest.</Heading.Muted>
-            </>
+          label="The platform"
+          title={<>Six modules. <Heading.Muted>One practice system.</Heading.Muted></>}
+          titleMaxWidth={620}
+          actions={
+            <PillGroup>
+              <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+              <Pill variant="light" href="/contact">Request Demo</Pill>
+            </PillGroup>
           }
-          description="Friday-afternoon recall costs an average of 14% of revenue. Bizak captures time as it happens, lets AI propose the rest, and pushes approved hours straight into draft invoices — zero re-keying."
-        />
-        {/* 1-col on mobile (text above, panel below), 2-col on lg+ */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-          <div>
-            <ul className="flex flex-col gap-3.5 mb-8">
-              {ONE_TAP_BULLETS.map((b) => (
-                <li key={b} className="flex items-start gap-3 text-[14px] leading-[1.65] text-bz-text">
-                  <Tick size="sm" className="mt-[2px] shrink-0" />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-            <Pill variant="dark" withArrow href="/contact">Request Demo</Pill>
-          </div>
-          <div className="rounded-bz-3xl bg-bz-olive overflow-hidden p-5 md:p-6">
-            <OneTapVisual />
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ── 02 · Resource heatmap ────────────────────────────────────────────────────
-
-const HEATMAP_PEOPLE = [
-  { name: "A. Reyes",  role: "Senior partner", loads: [102, 96, 88, 72] },
-  { name: "K. Ito",    role: "Manager",        loads: [ 88, 92, 84, 76] },
-  { name: "S. Patel",  role: "Senior",         loads: [ 78, 82, 90, 86] },
-  { name: "M. Singh",  role: "Senior",         loads: [ 41, 58, 72, 80] },
-  { name: "J. Park",   role: "Analyst",        loads: [ 18, 24, 48, 64] },
-] as const;
-
-function cellTone(load: number) {
-  if (load > 100) return { bg: "bg-[#f87171]/90", text: "text-bz-text" };
-  if (load > 85)  return { bg: "bg-bz-fire",       text: "text-bz-text" };
-  if (load > 60)  return { bg: "bg-bz-fire/45",    text: "text-bz-text-on-dark" };
-  if (load > 40)  return { bg: "bg-bz-fire/20",    text: "text-white/[0.72]" };
-  return            { bg: "bg-white/[0.06]",     text: "text-white/[0.55]" };
-}
-
-function ResourceHeatmapSection() {
-  return (
-    <Section tone="dark">
-      <Container>
-        <SectionHead
-          index="02"
-          label="Real-time resourcing"
-          tone="dark"
-          title={
-            <>
-              See who's loaded, who's free,{" "}
-              <Heading.Muted>and who's about to burn.</Heading.Muted>
-            </>
-          }
-          description="A live four-week grid of every consultant's allocation — with overload warnings, idle alerts, and skill-aware suggestions for staffing the next engagement."
         />
 
-        <div className="relative overflow-hidden rounded-bz-3xl border border-white/[0.08] bg-bz-olive-soft p-5 md:p-8">
-          <DotGrid tone="dark" />
-          <div className="relative z-[1] overflow-x-auto">
-            <div className="grid min-w-[520px] grid-cols-[150px_repeat(4,1fr)] gap-2">
-              <div />
-              {["Week 21", "Week 22", "Week 23", "Week 24"].map((w) => (
-                <div key={w} className="text-[10px] font-semibold uppercase tracking-[0.12em] text-white/[0.55] text-center">
-                  {w}
-                </div>
-              ))}
-              {HEATMAP_PEOPLE.map((p) => (
-                <div key={p.name} className="contents">
-                  <div className="flex flex-col justify-center pr-2">
-                    <span className="text-[12px] font-medium text-bz-text-on-dark">{p.name}</span>
-                    <span className="text-[10px] text-white/[0.5]">{p.role}</span>
-                  </div>
-                  {p.loads.map((l, i) => {
-                    const t = cellTone(l);
-                    return (
-                      <div key={i} className={`grid h-11 place-items-center rounded-bz-md ${t.bg}`}>
-                        <span className={`text-[12px] font-medium tabular-nums ${t.text}`}>{l}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
+        <PracticeAllocationPanel />
 
-          <div className="relative z-[1] mt-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-white/[0.62]">
-              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-[#f87171]/90" /> Over capacity</span>
-              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-bz-fire" /> Healthy</span>
-              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-bz-fire/20" /> Idle</span>
-            </div>
-            <span className="text-[11px] text-bz-leaf">
-              Suggestion · move J. Park onto Hartwell &amp; Locke (W23) — frees A. Reyes by 18%
-            </span>
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ── 03 · Practice capabilities ───────────────────────────────────────────────
-
-const CAPABILITIES = [
-  { icon: Briefcase,  title: "Engagement & project management", desc: "Plan, staff and run every engagement from proposal to close — phases, milestones, deliverables and budget guardrails on one timeline." },
-  { icon: Clock,      title: "Time & expense capture",          desc: "One-tap timers, mobile entry, AI-suggested entries — and approval chains that feed invoices with zero re-keying." },
-  { icon: Users,      title: "Resource planning",               desc: "See who's loaded, who's free, and who's about to bench. Rebalance teams in real time and forecast hiring weeks ahead." },
-  { icon: Receipt,    title: "Flexible billing & retainers",    desc: "Fixed-fee, T&M, milestone, retainer, contingent — every model, with auto-generated invoices and WIP statements." },
-  { icon: Handshake,  title: "Client portal & CRM",             desc: "A branded client workspace for proposals, deliverables, approvals and statements — replacing ten back-and-forth emails." },
-  { icon: TrendingUp, title: "Profitability analytics",         desc: "Live cost-to-bill, realisation and margin per engagement, partner and practice — actionable while work is still in flight." },
-] as const;
-
-function PracticeCapabilitiesSection() {
-  return (
-    <Section tone="a">
-      <Container>
-        <SectionHead
-          index="03"
-          label="Practice operating picture"
-          title={
-            <>
-              Every part of a modern firm,{" "}
-              <Heading.Muted>on one connected platform.</Heading.Muted>
-            </>
-          }
-          titleMaxWidth={760}
-        />
-        <BentoGrid cols={3}>
+        <BentoGrid cols={3} className="mt-[18px]">
           {CAPABILITIES.map(({ icon: Icon, title, desc }) => (
-            <Bento key={title} tone="paper" hover>
-              <Bento.Header
-                title={title}
-                icon={
-                  <span className="grid h-10 w-10 place-items-center rounded-bz-lg bg-bz-fire/15 text-bz-fire">
-                    <Icon size={18} />
-                  </span>
-                }
-              />
+            <Bento key={title} tone="paper" hover minHeight={200}>
+              <Bento.Header title={title} icon={<Icon size={22} strokeWidth={1.4} color="#1F3422" />} />
               <Bento.Desc>{desc}</Bento.Desc>
             </Bento>
           ))}
@@ -433,157 +238,350 @@ function PracticeCapabilitiesSection() {
   );
 }
 
-// ── 04 · Engagement profitability ────────────────────────────────────────────
-
-const MARGIN_ENGAGEMENTS = [
-  { client: "Hartwell & Locke",       type: "T&M",       margin:  38, val: "+$42.1k" },
-  { client: "Vector Capital",         type: "Retainer",  margin:  29, val: "+$31.4k" },
-  { client: "Northwind Health",       type: "Milestone", margin:  22, val: "+$18.7k" },
-  { client: "Birchgrove Logistics",   type: "Fixed-fee", margin:  12, val:  "+$8.2k" },
-  { client: "Atlas Mineral Partners", type: "Fixed-fee", margin:  -8, val:  "-$6.3k" },
-] as const;
-
-function EngagementProfitabilitySection() {
+function PracticeAllocationPanel() {
   return (
-    <Section tone="b">
-      <Container>
-        <SectionHead
-          index="04"
-          label="Live engagement margin"
-          title={
-            <>
-              Know which engagement is bleeding{" "}
-              <Heading.Muted>while you can still fix it.</Heading.Muted>
-            </>
-          }
-          description="Bizak posts cost and revenue per engagement in real time — so the partner reviewing this Friday sees the same number the analyst posted Wednesday."
-        />
+    <div className="grid grid-cols-1 gap-[18px] lg:grid-cols-[1.4fr_1fr]">
+      {/* Consultant allocation dark olive panel */}
+      <div className="relative flex flex-col overflow-hidden rounded-bz-2xl bg-bz-olive p-7">
+        <DotGrid tone="dark" />
+        <div className="relative flex flex-col flex-1">
+          <div className="mb-5 flex items-start justify-between gap-3">
+            <div className="text-[10.5px] font-medium uppercase tracking-[0.18em] text-white/[0.55]">
+              Practice team · all consultants
+            </div>
+            <StatusChip variant="live">Live</StatusChip>
+          </div>
 
-        <div className="rounded-bz-3xl border border-bz-line-soft bg-bz-surface p-5 md:p-8">
-          <div className="flex flex-col">
-            {MARGIN_ENGAGEMENTS.map((e) => {
-              const neg = e.margin < 0;
-              const pct = Math.min(Math.abs(e.margin) * 1.6, 60);
-              return (
-                <div
-                  key={e.client}
-                  // Mobile: single flex row (name + value). Desktop: 3-col with bar.
-                  className="flex items-center justify-between gap-3 border-b border-bz-line-soft last:border-0 py-3 md:grid md:grid-cols-[1.6fr_3fr_0.6fr] md:items-center"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[13.5px] font-medium text-bz-text truncate">{e.client}</div>
-                    <div className="text-[11.5px] text-bz-text-muted">{e.type}</div>
-                  </div>
-
-                  <div className="hidden md:flex relative h-3 items-center">
-                    <div className="absolute inset-y-0 left-1/2 w-px bg-bz-line-soft" />
-                    <div
-                      className={`absolute h-full rounded-full ${neg ? "bg-[#f87171]" : "bg-bz-fire"}`}
-                      style={neg ? { right: "50%", width: `${pct}%` } : { left: "50%", width: `${pct}%` }}
-                    />
-                  </div>
-
-                  <div className={`shrink-0 text-right text-[13px] font-medium tabular-nums ${neg ? "text-[#f87171]" : "text-bz-text"}`}>
-                    {e.val}
-                    <span className="ml-1 text-[10.5px] text-bz-text-muted hidden sm:inline">
-                      ({e.margin > 0 ? "+" : ""}{e.margin}%)
+          <div className="mt-auto grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            {CONSULTANTS.map((c) => (
+              <div
+                key={c.id}
+                className="rounded-bz-xl border border-white/[0.06] bg-white/[0.04] p-3.5"
+              >
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-bz-pill bg-bz-leaf text-[10.5px] font-semibold text-[#1F3422]">
+                      {c.badge}
+                    </span>
+                    <span className="text-[11.5px] font-medium text-bz-text-on-dark">
+                      {c.id} · {c.name}
                     </span>
                   </div>
+                  <span className="text-[10.5px] text-white/[0.72]">{c.status}</span>
                 </div>
-              );
-            })}
+                <StripeBar pct={c.pct} tone="dark" />
+                <div className="mt-1.5 text-[10px] text-white/[0.55]">
+                  Utilisation {c.pct}%
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Billing event feed light panel */}
+      <div className="rounded-bz-2xl border border-bz-line-soft bg-bz-paper p-6">
+        <div className="mb-4 flex items-start justify-between gap-3 pb-24">
+          <div>
+            <div className="text-[11px] text-bz-text-muted">Billing event feed</div>
+            <div className="bz-stat-num" style={{ fontSize: 20 }}>last 60 seconds</div>
+          </div>
+          <div className="flex items-center gap-1.5 rounded-bz-pill bg-[#F4F5EF] px-2.5 py-1">
+            <span className="h-1.5 w-1.5 rounded-bz-pill bg-bz-leaf-deep" />
+            <span className="text-[10.5px] font-medium text-bz-text">Streaming</span>
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <StatTile value="87%"  desc="Average utilisation across the practice." />
-          <StatTile value="94.2%" desc="Realisation rate on approved time entries." />
-          <StatTile value="12 d" desc="Faster from work-done to invoice sent." />
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ── 05 · Practice lifecycle ──────────────────────────────────────────────────
-
-const LIFECYCLE = [
-  { icon: Search,    label: "Lead",     desc: "Capture inbound, qualify, route to a partner." },
-  { icon: FileText,  label: "Proposal", desc: "Scope, price and e-sign — from a template library." },
-  { icon: Handshake, label: "Engage",   desc: "Staff the team, set milestones, kick off." },
-  { icon: Timer,     label: "Deliver",  desc: "Track time, monitor budget, flag scope drift live." },
-  { icon: Receipt,   label: "Bill",     desc: "Approved hours auto-post to invoices and the GL." },
-  { icon: Repeat,    label: "Renew",    desc: "Client portal carries the relationship forward." },
-] as const;
-
-function PracticeLifecycleSection() {
-  return (
-    <Section tone="a">
-      <Container>
-        <SectionHead
-          index="05"
-          label="Engagement lifecycle"
-          title={
-            <>
-              From first conversation{" "}
-              <Heading.Muted>to lifetime client.</Heading.Muted>
-            </>
-          }
-          titleMaxWidth={680}
-        />
-
-        {/* 2-col on mobile, 3-col on sm, 6-col on lg */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {LIFECYCLE.map(({ icon: Icon, label, desc }, i) => (
-            <div key={label} className="rounded-bz-2xl border border-bz-line-soft bg-bz-surface p-4 flex flex-col gap-2.5">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-bz-text-muted">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className="grid h-9 w-9 place-items-center rounded-bz-lg bg-bz-leaf/30 text-bz-text">
-                <Icon size={16} />
-              </span>
-              <div>
-                <div className="text-[14px] font-medium text-bz-text">{label}</div>
-                <p className="mt-1 text-[12px] leading-[1.5] text-bz-text-muted">{desc}</p>
+        <div className="flex flex-col gap-2">
+          {BILLING_EVENTS.map((f) => (
+            <div key={f.id} className="rounded-bz-lg bg-bz-paper-warm px-3 py-2.5">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-[11.5px] font-medium text-bz-text">{f.id}</span>
+                <span className="text-[10.5px] text-bz-text-muted">{f.t}</span>
+              </div>
+              <div className="mt-0.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5">
+                <span className="text-[11px] text-bz-text-muted">{f.what}</span>
+                <span className="text-[10.5px] text-bz-text">{f.flow}</span>
               </div>
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
 
-        <div className="mt-8 flex flex-col gap-4 rounded-bz-2xl bg-bz-section-b p-5 md:p-6 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-start gap-3">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-bz-lg bg-bz-fire/15 text-bz-fire">
-              <Layers size={16} />
-            </span>
-            <div>
-              <div className="text-[14px] font-medium text-bz-text">One database behind every step</div>
-              <p className="mt-1 max-w-[560px] text-[12.5px] leading-[1.55] text-bz-text-muted">
-                Lead becomes proposal becomes engagement becomes invoice becomes journal entry —
-                without re-keying, exports, or a single spreadsheet.
-              </p>
-            </div>
+// ════════════════════════════════════════════════════════════════════════════
+// STEP VISUALS
+// ════════════════════════════════════════════════════════════════════════════
+
+function TimeEntryVisual() {
+  return (
+    <div className="w-full max-w-[380px] rounded-bz-xl border border-bz-line-soft bg-bz-paper p-4 shadow-[0_10px_28px_rgba(15,20,17,0.06)]">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <span className="text-[11px] text-bz-text-muted">Engagement · Hartwell & Locke · M&A</span>
+        <span className="rounded-bz-pill bg-bz-paper-warm px-2 py-0.5 text-[10px] font-semibold text-bz-text">
+          T&M
+        </span>
+      </div>
+      <div className="mb-2 rounded-bz-md bg-bz-paper-warm px-3 py-2.5">
+        <div className="text-[11.5px] font-medium text-bz-text">ENG-0182 · M&A Diligence</div>
+      </div>
+      <div className="mb-3 ml-3 flex flex-col gap-1.5 border-l border-bz-line-soft pl-3">
+        {TIMER_ENTRIES.map((e) => (
+          <div
+            key={e.code}
+            className="flex items-center justify-between gap-2 rounded-bz-md bg-bz-paper-warm px-3 py-2"
+          >
+            <span className="text-[11px] font-medium text-bz-text">{e.code}</span>
+            <span className="text-[10.5px] text-bz-text-muted">{e.name} · {e.qty}</span>
           </div>
-          <PillGroup className="shrink-0">
-            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Free Trial</Pill>
-            <Pill variant="light" withArrow href="/contact">Talk to Sales</Pill>
-          </PillGroup>
+        ))}
+      </div>
+      <DataRow label="Billable value" value="$6,360.00" emphasis />
+    </div>
+  );
+}
+
+function InvoiceDraftVisual() {
+  return (
+    <div className="w-full max-w-[380px] rounded-bz-xl border border-bz-line-soft bg-bz-paper p-4 shadow-[0_10px_28px_rgba(15,20,17,0.06)]">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <span className="text-[11px] text-bz-text-muted">INV-4218 · Vector Capital</span>
+        <StatusChip variant="live">Live</StatusChip>
+      </div>
+      <div className="mb-3 rounded-bz-md bg-bz-paper-warm px-3 py-2.5">
+        <div className="mb-0.5 text-[11.5px] font-medium text-bz-text">Approved by K. Ito</div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <span className="w-12 shrink-0 text-[10px] text-bz-text-muted">Before</span>
+          <div className="flex-1"><StripeBar pct={68} /></div>
+          <span className="w-7 text-right text-[10px] tabular-nums text-bz-text-muted">68%</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="w-12 shrink-0 text-[10px] font-semibold text-bz-text">After</span>
+          <div className="flex-1"><StripeBar pct={100} /></div>
+          <span className="w-7 text-right text-[10px] font-semibold tabular-nums text-bz-text">100%</span>
+        </div>
+      </div>
+      <div className="mt-3">
+      </div>
+    </div>
+  );
+}
+
+function MarginReportVisual() {
+  return (
+    <div className="w-full max-w-[380px] rounded-bz-xl border border-bz-line-soft bg-bz-paper p-4 shadow-[0_10px_28px_rgba(15,20,17,0.06)]">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <span className="text-[11px] text-bz-text-muted">Realisation rate · May 2026</span>
+        <StatusChip variant="posted">Healthy</StatusChip>
+      </div>
+      <div className="mb-3 rounded-bz-md bg-bz-paper-warm px-4 py-3 text-center">
+        <div className="bz-stat-num" style={{ fontSize: 32 }}>94.2%</div>
+      </div>
+      <div className="grid grid-cols-3 divide-x divide-bz-line-soft overflow-hidden rounded-bz-md border border-bz-line-soft">
+        {[
+          { label: "Logged",      val: "312h" },
+          { label: "Billed",      val: "294h" },
+          { label: "Written off", val: "18h"  },
+        ].map((s) => (
+          <div key={s.label} className="py-2 text-center">
+            <div className="text-[13px] font-bold tabular-nums text-bz-text">{s.val}</div>
+            <div className="text-[9.5px] text-bz-text-muted">{s.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [02] HOW IT WORKS
+// ════════════════════════════════════════════════════════════════════════════
+
+function HowItWorksSection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <SectionHead
+          index="02"
+          label="How it works"
+          title={<>From first minute to final payment <Heading.Muted>tracked at every step.</Heading.Muted></>}
+          titleMaxWidth={680}
+        />
+        <div className="flex flex-col gap-5">
+          <StepCard
+            number="01"
+            tag="Capture"
+            title="Log time as it happens no Friday recall needed."
+            bullets={["One-tap timers, AI-suggested entries from email and calendar."]}
+            visual={<TimeEntryVisual />}
+          />
+          <StepCard
+            number="02"
+            tag="Approve"
+            title="One-click partner approval triggers the invoice draft automatically."
+            bullets={["Approved hours auto-flow to a draft invoice and WIP statement."]}
+            visual={<InvoiceDraftVisual />}
+          />
+          <StepCard
+            number="03"
+            tag="Analyse"
+            title="Realisation and margin tracked per engagement while work is still in flight."
+            bullets={["Live cost-to-bill, write-off rate and partner contribution visible."]}
+            visual={<MarginReportVisual />}
+          />
         </div>
       </Container>
     </Section>
   );
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// [03] TIME TO BOOKS
+// ════════════════════════════════════════════════════════════════════════════
+
+function BillingJournalVisual() {
+  return (
+    <div className="w-full rounded-bz-xl bg-bz-paper p-5 text-bz-text">
+      <div className="mb-2.5 flex items-center justify-between gap-3">
+        <div className="text-[11.5px] text-bz-text-muted">Invoice approvals · today</div>
+        <Receipt size={16} color="#1F3422" />
+      </div>
+      <div className="bz-stat-num" style={{ fontSize: 28 }}>$989</div>
+      <div className="mb-4 text-[11px] text-bz-text-muted"></div>
+
+      <div className="flex flex-col gap-1.5">
+        {APPROVED_ENGAGEMENTS.map((r) => (
+          <div
+            key={r.ref}
+            className="flex items-center justify-between gap-2 rounded-bz-md bg-bz-paper-warm px-3 py-2"
+          >
+            <div className="flex min-w-0 items-center gap-2 overflow-hidden">
+              <Tick size="sm" className="shrink-0" />
+              <span className="shrink-0 text-[11px] font-medium text-bz-text">{r.ref}</span>
+              <span className="truncate text-[10.5px] text-bz-text-muted">{r.desc}</span>
+            </div>
+            <span className="shrink-0 text-[10.5px] font-medium text-bz-text">{r.status}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {/* {BILLING_TYPES.map((m) => (
+          <span
+            key={m}
+            className="rounded-bz-pill bg-[#F4F5EF] px-2.5 py-1 text-[10.5px] font-medium text-bz-text"
+          >
+            {m}
+          </span>
+        ))} */}
+      </div>
+    </div>
+  );
+}
+
+function TimeToBooksSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="03"
+          label="Time to books"
+          title={<>Every approval, <Heading.Muted>posted to the books automatically.</Heading.Muted></>}
+          titleMaxWidth={680}
+        />
+        <BigCard
+          text={{
+            title: "Every approved hour posted to the books.",
+            bullets: [
+              "Realisation rate tracked.",
+              "Time, expense and disbursements split.",
+            ],
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to Sales" },
+          }}
+          visual={<BillingJournalVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [04] PRACTICE, ON ONE LEDGER
+// ════════════════════════════════════════════════════════════════════════════
+
+function OneLedgerSection() {
+  return (
+    <Section tone="dark">
+      <Container>
+        <SectionHead
+          index="04"
+          label="One ledger"
+          tone="dark"
+          title={<>Every engagement event, <Heading.Muted>auto-posted to the same ledger that closes the books.</Heading.Muted></>}
+          titleMaxWidth={780}
+        />
+
+        <BentoGrid cols={3}>
+          <Bento tone="dark" hover dotGrid minHeight={260}>
+            <Bento.Header
+              title={<>Time approved →<br />WIP charged</>}
+              icon={<Clock size={22} strokeWidth={1.4} color="#DBE9B8" />}
+            />
+            <Bento.Desc>
+              Approved time entries debit WIP at billing rate.
+            </Bento.Desc>
+            <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
+              <JournalRow tone="dark" txn="TM-0041 · approve" debit="WIP Time" credit="Revenue Accrued" />
+            </Bento.Footer>
+          </Bento>
+
+          <Bento tone="dark" hover dotGrid minHeight={260}>
+            <Bento.Header
+              title={<>Invoice sent →<br />Revenue recognised</>}
+              icon={<Receipt size={22} strokeWidth={1.4} color="#DBE9B8" />}
+            />
+            <Bento.Desc>
+              Raising an invoice credits WIP and debits Accounts Receivable.
+            </Bento.Desc>
+            <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
+              <JournalRow tone="dark" txn="INV-4218 · raise" debit="Accounts Receivable" credit="WIP Time" />
+            </Bento.Footer>
+          </Bento>
+
+          <Bento tone="dark" hover dotGrid minHeight={260}>
+            <Bento.Header
+              title={<>Engagement close →<br />Margin posted</>}
+              icon={<TrendingUp size={22} strokeWidth={1.4} color="#DBE9B8" />}
+            />
+            <Bento.Desc>
+              Write-offs and margin differences post to the variance account.
+            </Bento.Desc>
+            <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
+              <JournalRow tone="dark" txn="ENG-0182 · close" debit="Write-off expense" credit="WIP Time" />
+            </Bento.Footer>
+          </Bento>
+        </BentoGrid>
+      </Container>
+    </Section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// PAGE
+// ════════════════════════════════════════════════════════════════════════════
 
 export function ProfessionalServicePage() {
   return (
     <main>
       <HeroSection />
-      <OneTapToInvoiceSection />
-      <ResourceHeatmapSection />
-      <PracticeCapabilitiesSection />
-      <EngagementProfitabilitySection />
-      <PracticeLifecycleSection />
+      <CapabilitiesSection />
+      <HowItWorksSection />
+      <TimeToBooksSection />
+      <OneLedgerSection />
     </main>
   );
 }

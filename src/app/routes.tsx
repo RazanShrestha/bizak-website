@@ -136,10 +136,10 @@ function DistributionPageLayout() {
       <Footer
         isLightMode
         cta={{
-          title: "Ship more, faster — with zero inventory surprises.",
-          titleMuted: "Every order tracked. Every margin known.",
+          title: "Ship more,",
+          titleMuted: "faster with zero inventory surprises.",
           description:
-            "Centralise purchasing, warehouses, and fulfillment on one ledger. COGS posts the moment you ship — no re-keying, full audit trail.",
+            "Centralise purchasing, warehouses, and fulfillment on one ledger.",
           primaryLabel: "Start free trial",
           secondaryLabel: "Talk to sales",
         }}
@@ -236,9 +236,9 @@ function FinancialManagementPageLayout() {
           title: "Take full control of your financial operations.",
           titleMuted: "Close month-end in hours, not weeks.",
           description:
-            "One ledger, auto-posted journals, real-time P&L — and a full audit trail behind every figure.",
+            "One ledger, auto-posted journals, real-time P&L and a full audit trail behind every figure.",
           primaryLabel: "Start free trial",
-          secondaryLabel: "Talk to finance team",
+          secondaryLabel: "Talk to sales",
         }}
       />
     </div>
@@ -255,7 +255,7 @@ function SalesAndCrmPageLayout() {
           title: "Take full control of your sales pipeline.",
           titleMuted: "From first lead to final payment.",
           description:
-            "Centralise leads, auto-route approvals, and post every sale straight to the ledger — one connected pipeline, zero re-keying.",
+            "Centralise leads, auto-route approvals, and post every sale straight to the ledger one connected pipeline, zero re-keying.",
           primaryLabel: "Start free trial",
           secondaryLabel: "Talk to sales",
         }}
@@ -293,12 +293,12 @@ function ProfessionalServicePageLayout() {
       <ProfessionalServicePage />
       <Footer
         cta={{
-          title: "Run a profitable practice, not a busy one.",
-          titleMuted: "Every billable minute captured, every engagement on the books.",
+          title: "Every billable minute,",
+          titleMuted: "every engagement on the books.",
           description:
-            "Unify time, talent and clients on Bizak — and turn every hour worked into invoiced, collected revenue.",
+            "Unify time, talent and clients on Bizak and turn every hour worked into invoiced.",
           primaryLabel: "Start free trial",
-          secondaryLabel: "Talk to practice team",
+          secondaryLabel: "Talk to sales",
         }}
       />
     </div>
@@ -380,12 +380,11 @@ function ProjectAndCostingPageLayout() {
       <ProjectAndJobCostingPage />
       <Footer
         cta={{
-          title: "Take full control of every project's margin.",
-          titleMuted: "From estimate to final billing, on one ledger.",
-          description:
-            "Capture every PO, timesheet and material draw on a project code the moment it's committed — and watch margin update the same day.",
+          title: "Take full control of",
+          titleMuted: "every project's margin.",
+          description: "Capture every PO, timesheet and material draw on a project code.",
           primaryLabel: "Start free trial",
-          secondaryLabel: "Talk to projects team",
+          secondaryLabel: "Talk to sales",
         }}
       />
     </div>
@@ -400,10 +399,10 @@ function WorkFlowAutomationPageLayout() {
       <WorkflowPage />
       <Footer
         cta={{
-          title: "Automate every approval in your business.",
-          titleMuted: "Routed, escalated, and logged — automatically.",
+          title: "Automate every approval.",
+          titleMuted: "Routed, escalated, and logged automatically.",
           description:
-            "Define your rules once. Bizak routes every request, escalates stalled approvals, and logs every decision with full chain of custody — zero email chasing.",
+            "Bizak routes every request, escalates stalled approvals, and logs every decision.",
           primaryLabel: "Start free trial",
           secondaryLabel: "Book a demo",
         }}
@@ -422,9 +421,8 @@ function IntegrationsPageLayout() {
       <Footer
         cta={{
           title: "Connect every system in your stack.",
-          titleMuted: "One integration layer, zero data wiring.",
           description:
-            "200+ pre-built connectors, bidirectional sync, and audit-grade lineage — all inside your ERP, not bolted on.",
+            "200+ pre-built connectors, bidirectional sync, and audit-grade lineage all inside your ERP, not bolted on.",
           primaryLabel: "Start free trial",
           secondaryLabel: "Book a demo",
         }}
@@ -443,9 +441,9 @@ function DashboardAndReportingPageLayout() {
           title: "See every number in your business, live.",
           titleMuted: "40+ reports. Role-based dashboards. Auto-delivered.",
           description:
-            "One platform, every metric — live KPIs, drillable reports, and scheduled delivery to every stakeholder.",
-          primaryLabel: "Start free trial",
-          secondaryLabel: "Book a demo",
+            "One platform, every metric live KPIs, drillable reports, and scheduled delivery to every stakeholder.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
         }}
       />
     </div>
@@ -463,7 +461,7 @@ function DocumentManagementPageLayout() {
           title: "Never lose a document again.",
           titleMuted: "Every file, every record, one system.",
           description:
-            "Store, tag, and attach every document to the records it belongs to — and find any file in seconds from anywhere in Bizak.",
+            "Store, tag, and attach every document to the records it belongs to and find any file in seconds from anywhere in Bizak.",
           primaryLabel: "Start free trial",
           secondaryLabel: "Book a demo",
         }}
@@ -482,7 +480,7 @@ function MulticompanyAndBranchesPageLayout() {
           title: "Run the whole group on one ERP.",
           titleMuted: "From new entity to live consolidation.",
           description:
-            "Stop stitching subsidiaries in spreadsheets. Every entity gets its own books — and your group gets a real-time consolidated view, every day of the month.",
+            "Stop stitching subsidiaries in spreadsheets. Every entity gets its own books and your group gets a real-time consolidated view, every day of the month.",
           primaryLabel: "Start free trial",
           secondaryLabel: "Book a demo",
         }}
@@ -501,7 +499,7 @@ function CareersPageLayout() {
       <Footer
         cta={{
           title: "Come build the operating system for modern business.",
-          titleMuted: "We're growing fast — so is the opportunity.",
+          titleMuted: "We're growing fast so is the opportunity.",
           description:
             "50,000+ companies. 120+ countries. One team making enterprise software feel effortless. Your next chapter starts here.",
           primaryLabel: "View open roles",
@@ -533,7 +531,7 @@ function StartupsAndSmesPageLayout() {
           title: "Still running your business on spreadsheets?",
           titleMuted: "Join 50,000+ companies that made the switch.",
           description:
-            "One platform for finance, sales, and inventory. Go live in three days — not three months.",
+            "One platform for finance, sales, and inventory. Go live in three days not three months.",
           primaryLabel: "Get Started",
           secondaryLabel: "Request Demo",
         }}
