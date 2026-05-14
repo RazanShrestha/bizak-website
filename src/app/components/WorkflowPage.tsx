@@ -1,6 +1,6 @@
 import "../../styles/style.css";
 import {
-  Section, Container, SectionHead, Pill, Heading, BadgeGreen,
+  Section, Container, SectionHead, Pill, PillGroup, Heading, BadgeGreen,
   Bento, BentoGrid, BigCard, StepCard, StatusChip,
 } from "./bz";
 import {
@@ -35,7 +35,7 @@ const APPROVAL_STAGES = [
 
 function ApprovalFlowMock() {
   return (
-    <div className="w-full max-w-[820px] mx-auto mt-10">
+    <div className="bz-hero-visual w-full max-w-[820px] mx-auto">
       <div className="rounded-bz-xl border border-bz-line bg-bz-surface overflow-hidden">
         <div className="flex items-center justify-between px-5 py-3 border-b border-bz-line-soft bg-bz-paper-warm">
           <span className="text-[12px] font-semibold text-bz-text-muted uppercase tracking-[0.1em]">
@@ -301,12 +301,12 @@ function HeroSection() {
             Stop chasing approvals.{" "}
             <Heading.Muted>Routes, escalates, and closes — automatically.</Heading.Muted>
           </Heading>
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="/contact">Request demo</Pill>
-            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/purchasing">
-              Explore purchasing
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+            <Pill variant="light" withArrow href="/contact">
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
         <ApprovalFlowMock />
       </Container>
@@ -433,7 +433,7 @@ function AuditTrailSection() {
               "Full chain of custody: who approved what, when, and why.",
               "Drill from any summary to the originating request in one click.",
             ],
-            cta: { variant: "accent", withArrow: true, href: "/contact", children: "See it in action" },
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Request Demo" },
           }}
           visual={<AuditLogVisual />}
         />

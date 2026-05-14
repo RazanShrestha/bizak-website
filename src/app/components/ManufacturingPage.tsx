@@ -6,7 +6,7 @@ import {
   PackageSearch,
   Settings2,
   ShieldCheck,
-  Sparkles,
+
 } from "lucide-react";
 import {
   BadgeGreen,
@@ -17,6 +17,7 @@ import {
   Heading,
   HeroCanvas,
   Pill,
+  PillGroup,
   Section,
   SectionHead,
   StatTile,
@@ -152,14 +153,14 @@ function HeroSection() {
               Hit every delivery date and know your production cost today.
             </Heading.Muted>
           </Heading>
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
-              Start free trial
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
+              Get Started
             </Pill>
-            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">
-              Book a demo
+            <Pill variant="light" withArrow href="/contact">
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
 
         <HeroCanvas className="flex flex-col !p-0 [&>.bz-hero-cards]:flex-1 [&>.bz-hero-cards]:flex [&>.bz-hero-cards]:flex-col [&>.bz-hero-cards]:items-stretch">
@@ -416,7 +417,7 @@ function FloorToLedgerSection() {
               variant: "accent",
               withArrow: true,
               href: "/contact",
-              children: "See it in action",
+              children: "Request Demo",
             },
           }}
           visual={<CostJournalVisual />}

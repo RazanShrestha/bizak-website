@@ -3,7 +3,7 @@ import {
   Handshake, Receipt, Lock, Layers, ShieldCheck,
 } from "lucide-react";
 import {
-  Section, Container, SectionHead, BentoGrid, Bento, Pill, Heading,
+  Section, Container, SectionHead, BentoGrid, Bento, Pill, PillGroup, Heading,
   BadgeGreen, StepCard, BigCard, EntityRow, StatusChip, Tick,
 } from "./bz";
 
@@ -287,14 +287,14 @@ function HeroSection() {
             One ERP. Many entities.{" "}{<br/>}
             Zero spreadsheet rollups.
           </Heading>
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withArrowUpRight href="/contact">Book a Demo</Pill>
-            <Pill variant="light" href="https://system.bizakerp.com/account/self-register">
-              Start Free Trial
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+            <Pill variant="light" withArrow href="/contact">
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
-        <div className="mt-14">
+        <div className="bz-hero-visual">
           <GroupConsoleMock />
         </div>
       </Container>
@@ -378,7 +378,7 @@ function EntitySetupSection() {
               "IC invoices, loans, and transfers eliminate on demand.",
               "Group P&L and balance sheet refresh live — not at month-end.",
             ]}
-            cta={{ variant: "dark", withTick: true, href: "/contact", children: "Book a Demo" }}
+            cta={{ variant: "dark", withArrow: true, href: "/contact", children: "Request Demo" }}
             visual={<ConsolidationVisual />}
           />
         </div>
@@ -401,7 +401,7 @@ function AutoICSection() {
               "Elimination tags ready for group close.",
               "Zero manual journal entries, zero reconciliation backlog.",
             ],
-            cta: { variant: "accent", withArrow: true, href: "/contact", children: "See it live" },
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Request Demo" },
           }}
           visual={<AutoICVisual />}
         />

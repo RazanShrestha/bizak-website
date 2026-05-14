@@ -34,6 +34,7 @@ import {
   Heading,
   HeroCanvas,
   Pill,
+  PillGroup,
   Section,
   SectionHead,
   StatusChip,
@@ -148,14 +149,14 @@ function HeroSection() {
             <Heading.Muted>from RFQ to receipt to the ledger.</Heading.Muted>
           </Heading>
 
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="/contact">
-              Request demo
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
+              Get Started
             </Pill>
-            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="#features">
-              View features
+            <Pill variant="light" withArrow href="/contact">
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
 
         <HeroCanvas>

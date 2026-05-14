@@ -4,7 +4,7 @@ import {
   RefreshCw,
   Route,
   ScanBarcode,
-  Sparkles,
+
   Truck,
 } from "lucide-react";
 import {
@@ -17,6 +17,7 @@ import {
   Heading,
   HeroCanvas,
   Pill,
+  PillGroup,
   Section,
   SectionHead,
   StatusChip,
@@ -145,14 +146,14 @@ function HeroSection() {
             <Heading.Muted>One operating system for distribution.</Heading.Muted>
           </Heading>
 
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
-              Start free trial
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
+              Get Started
             </Pill>
-            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">
-              Book a demo
+            <Pill variant="light" withArrow href="/contact">
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
 
         <HeroCanvas className="flex flex-col !p-0 [&>.bz-hero-cards]:flex-1 [&>.bz-hero-cards]:flex [&>.bz-hero-cards]:flex-col [&>.bz-hero-cards]:items-stretch">
@@ -349,7 +350,7 @@ function FulfillmentFlowSection() {
             tag="Deliver & Settle"
             title="Auto-invoice on shipment, COGS posted the same second"
             bullets={["COGS and revenue post to the ledger automatically the moment you dispatch."]}
-            cta={{ variant: "dark", withTick: true, href: "https://system.bizakerp.com/account/self-register", children: "See it live" }}
+            cta={{ variant: "dark", withArrowUpRight: true, href: "https://system.bizakerp.com/account/self-register", children: "Get Started" }}
             visual={<ShipmentSettleVisual />}
             className="!bg-bz-surface"
           />
@@ -411,7 +412,7 @@ function BatchTraceabilitySection() {
               "Expiry-date alerting with automated hold triggers before breach.",
               // "One-click batch recall — every affected order surfaced in seconds.",
             ],
-            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to sales team" },
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to Sales" },
           }}
           visual={<BatchTableVisual />}
         />
@@ -508,7 +509,7 @@ function MarginIntelligenceSection() {
               "Landed cost calculation: freight + duty + handling per unit.",
               "Live P&L per SKU — no month-end manual costing run.",
             ],
-            cta: { variant: "accent", withArrow: true, href: "https://system.bizakerp.com/account/self-register", children: "Start free trial" },
+            cta: { variant: "accent", withArrowUpRight: true, href: "https://system.bizakerp.com/account/self-register", children: "Free Trial" },
           }}
           visual={<SkuMarginsVisual />}
         />

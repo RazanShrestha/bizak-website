@@ -7,7 +7,7 @@ import { Heading } from "./Heading";
 //
 //   [01] HOW IT WORKS
 //   Replace spreadsheets and run smoothly,
-//   across every part of your business.                         [Get Started] [Book a demo]
+//   across every part of your business.                         [Get Started] [Request Demo]
 //
 // The `actions` slot is a flex row of CTAs (typically two <Pill>s).
 // When `actions` is provided, the title and actions are laid out as
@@ -18,7 +18,7 @@ import { Heading } from "./Heading";
 //     index="01"
 //     label="How it works"
 //     title={<>Replace spreadsheets, <Heading.Muted>run smoothly.</Heading.Muted></>}
-//     actions={<><Pill variant="dark" withTick>Get Started</Pill><Pill variant="light">Book a demo</Pill></>}
+//     actions={<><Pill variant="dark" withArrow>Get Started</Pill><Pill variant="light">Request Demo</Pill></>}
 //   />
 
 export type SectionHeadProps = {

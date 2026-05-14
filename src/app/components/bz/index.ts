@@ -19,6 +19,9 @@
 export { Pill } from "./Pill";
 export type { PillProps } from "./Pill";
 
+export { PillGroup } from "./PillGroup";
+export type { PillGroupProps } from "./PillGroup";
+
 export { Eyebrow } from "./Eyebrow";
 export type { EyebrowProps } from "./Eyebrow";
 

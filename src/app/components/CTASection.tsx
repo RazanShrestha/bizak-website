@@ -37,7 +37,7 @@ export function CTASection() {
             <button
               className="text-white px-10 py-5 rounded-md border-2 border-white/20 hover:border-white/40 transition-colors"
               style={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 18 }}>
-              Book a demo
+              Request Demo
             </button>
           </Link>
         </div>

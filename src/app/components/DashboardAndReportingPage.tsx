@@ -6,6 +6,7 @@ import {
   BentoGrid,
   Bento,
   Pill,
+  PillGroup,
   Heading,
   BadgeGreen,
   HeroCanvas,
@@ -19,7 +20,7 @@ import {
   Layers,
   TrendingUp,
   FileSpreadsheet,
-  Sparkles,
+
   Package,
   DollarSign,
   SlidersHorizontal,
@@ -153,22 +154,22 @@ function HeroSection() {
             Every number, live.{" "}
             <Heading.Muted>Every report, on demand.</Heading.Muted>
           </Heading>
-          <div className="flex flex-wrap justify-center gap-[10px]">
+          <PillGroup>
             <Pill
               variant="dark"
-              withTick
+              withArrowUpRight
               href="https://system.bizakerp.com/account/self-register"
             >
-              Start free trial
+              Get Started
             </Pill>
             <Pill
               variant="light"
-              iconLeft={<Sparkles size={13} />}
+              withArrow
               href="/contact"
             >
-              Book a demo
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
 
         <HeroCanvas>
@@ -352,7 +353,7 @@ function DrillDownSection() {
               variant: "accent",
               withArrow: true,
               href: "/contact",
-              children: "See it in action",
+              children: "Request Demo",
             },
           }}
           visual={<DrillChainVisual />}
@@ -457,9 +458,9 @@ function AutoDeliverySection() {
             ],
             cta: {
               variant: "accent",
-              withArrow: true,
+              withArrowUpRight: true,
               href: "https://system.bizakerp.com/account/self-register",
-              children: "Start free trial",
+              children: "Free Trial",
             },
           }}
           visual={<ScheduledDeliveryVisual />}

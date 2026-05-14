@@ -1,5 +1,5 @@
 import {
-  Section, Container, SectionHead, BentoGrid, Bento, Pill, Heading,
+  Section, Container, SectionHead, BentoGrid, Bento, Pill, PillGroup, Heading,
   BadgeGreen, StepCard, BigCard, StatusChip,
 } from "./bz";
 import {
@@ -131,14 +131,14 @@ function HeroSection() {
             Every file, exactly{" "}
             <Heading.Muted>where it belongs.</Heading.Muted>
           </Heading>
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
-            <Pill variant="light" href="/contact">Book a Demo</Pill>
-          </div>
+            <Pill variant="light" withArrow href="/contact">Request Demo</Pill>
+          </PillGroup>
         </div>
-        <div className="mt-16">
+        <div className="bz-hero-visual">
           <RecordAttachmentMock />
         </div>
       </Container>
@@ -314,7 +314,7 @@ function RecordContextSection() {
               "Files travel with the record through every status change",
               "Every attachment auto-links to the originating transaction",
             ],
-            cta: { variant: "accent", withArrow: true, href: "/contact", children: "See it in action" },
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Request Demo" },
           }}
           visual={<RecordTypesVisual />}
         />

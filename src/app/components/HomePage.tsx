@@ -2,7 +2,6 @@ import "../../styles/style.css";
 import * as React from "react";
 import {
   Activity,
-  Receipt,
   Layers,
   TrendingUp,
   Globe2,
@@ -14,10 +13,9 @@ import {
   Container,
   SectionHead,
   Pill,
+  PillGroup,
   Heading,
   BadgeGreen,
-  HeroCanvas,
-  HeroCard,
   Bento,
   BentoGrid,
   BigCard,
@@ -27,7 +25,6 @@ import {
   Accordion,
   FlagsRow,
   DataRow,
-  MiniBars,
   EntityRow,
   JournalRow,
   ModuleListItem,
@@ -90,37 +87,48 @@ const FAQS = [
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
-// HERO
+// HERO — split layout: copy left · platform live panel right
 // ════════════════════════════════════════════════════════════════════════════
+
+// ── Hero data ────────────────────────────────────────────────────────────────
+
+const HERO_POSTS = [
+  { source: "Sales · SO-1041",   entry: "AR → Revenue + VAT",  fresh: true  },
+  { source: "Shipment · SH-882", entry: "COGS → Inventory",    fresh: false },
+  { source: "Bank · AI match",   entry: "184 lines reconciled", fresh: false },
+];
+
+const HERO_OPS = [
+  { label: "Open orders", value: "32"    },
+  { label: "Active SKUs", value: "847"   },
+  { label: "Avg. OEE",    value: "87.4%" },
+  { label: "Entities",    value: "4"     },
+];
 
 function HeroSection() {
   return (
     <Section tone="b" pad="hero">
       <Container>
         <div className="flex flex-col items-center text-center">
-          <BadgeGreen style={{ marginBottom: 28 }}>
-            Now Live, Globally 🎉
-          </BadgeGreen>
-
+          <BadgeGreen style={{ marginBottom: 28 }}>Now Live, Globally 🎉</BadgeGreen>
           <Heading level={2} style={{ marginBottom: 36 }}>
             The operating system for modern business,{" "}
-            handling finance, inventory and operations in one place.
+            <Heading.Muted>finance and ops in one place.</Heading.Muted>
           </Heading>
-
-          <div className="flex flex-wrap justify-center gap-[10px]">
+          <PillGroup>
             <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
-            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">
-              Request demo
+            <Pill variant="light" href="/contact">
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
 
-        <HeroCanvas>
-          <HeroCardLedger />
-          <HeroCardInvoice />
-        </HeroCanvas>
+        <div className="bz-hero-visual mx-auto grid w-full max-w-[1100px] grid-cols-1 gap-3 sm:grid-cols-5">
+          <HeroAutoPostPanel />
+          <HeroOverviewCard />
+        </div>
 
         <LogoStrip />
       </Container>
@@ -128,50 +136,116 @@ function HeroSection() {
   );
 }
 
-function HeroCardLedger() {
+function HeroAutoPostPanel() {
   return (
-    <HeroCard
-      icon={<Activity size={12} />}
-      title="Live ledger"
-      badge="Live"
-      badgeVariant="live"
-      eyebrow="Cash position"
-      value="$1,242,180"
-    >
-      <div className="rounded-bz-lg bg-bz-paper-warm p-3">
-        <DataRow
-          label="Today's journal entries"
-          value="247 auto-posted"
-          emphasis
-          className="mb-1.5"
-        />
-        <MiniBars values={[40, 65, 50, 80, 60, 88, 92]} highlightLast />
+    <div className="relative overflow-hidden rounded-bz-2xl bg-bz-olive p-5 sm:col-span-2 sm:min-h-[460px]">
+      <DotGrid tone="dark" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-12 -top-12 size-44 rounded-bz-pill bg-bz-olive-soft/40"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-20 -left-10 size-36 rounded-bz-pill bg-bz-olive-soft/30"
+      />
+
+      <div className="relative flex h-full min-h-[280px] flex-col justify-between">
+        <div>
+          <div className="mb-5 flex items-center gap-2 text-[10.5px] font-medium uppercase tracking-[0.12em] text-white/[0.55]">
+            <span className="size-1.5 animate-pulse rounded-bz-pill bg-bz-fire" />
+            Auto-posting engine
+          </div>
+
+          <div className="flex flex-col gap-2">
+            {HERO_POSTS.map((e, i) => (
+              <div
+                key={i}
+                className={`flex flex-col gap-0.5 rounded-bz-lg px-3.5 py-2.5 ${
+                  e.fresh
+                    ? "border border-white/[0.06] bg-white/[0.08] shadow-[0_8px_24px_-12px_rgba(0,0,0,0.4)]"
+                    : "bg-white/[0.03]"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-medium text-bz-text-on-dark">
+                    {e.source}
+                  </span>
+                  {e.fresh && <StatusChip variant="live">Just now</StatusChip>}
+                </div>
+                <span className="text-[10.5px] text-white/[0.5]">{e.entry}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <p className="mb-0.5 text-[10px] font-medium uppercase tracking-[0.1em] text-white/[0.45]">
+            Entries auto-posted · today
+          </p>
+          <p className="bz-stat-num bz-stat-num-light" style={{ fontSize: 44 }}>247</p>
+          <p className="mt-0.5 text-[11px] text-white/[0.5]">0 manual journal entries</p>
+        </div>
       </div>
-    </HeroCard>
+    </div>
   );
 }
 
-function HeroCardInvoice() {
+function HeroOverviewCard() {
   return (
-    <HeroCard
-      icon={<Receipt size={12} />}
-      title="Invoice INV-2046"
-      badge="Posted"
-      badgeVariant="posted"
-      eyebrow="Apex Manufacturing GmbH"
-      value="$12,400.00"
-    >
-      <div className="flex flex-col gap-1.5 rounded-bz-lg bg-bz-paper-warm px-3 py-2.5">
-        <DataRow label="AR" value="+$12,400.00" />
-        <DataRow label="Revenue · VAT 19%" value="+$11,000 · +$1,400" />
+    <div className="relative overflow-hidden rounded-bz-2xl bg-bz-paper sm:col-span-3 sm:min-h-[460px]">
+      {/* Bizak app header */}
+      <div className="flex items-center justify-between bg-bz-olive px-5 py-4">
+        <span className="text-[15px] font-medium tracking-tight text-bz-text-on-dark">
+          Bizak<sup className="ml-0.5 text-[8px] opacity-60">®</sup>
+        </span>
+        <div className="flex flex-col items-end gap-1.5">
+          <span className="block h-[3px] w-9 rounded-bz-pill bg-white/30" />
+          <span className="block h-[3px] w-7 rounded-bz-pill bg-white/20" />
+        </div>
       </div>
-    </HeroCard>
+
+      <div className="flex flex-col gap-4 p-5">
+        <p className="text-[10.5px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
+          Business overview · Q1 2024
+        </p>
+
+        {/* Revenue — primary metric */}
+        <div className="flex items-center justify-between rounded-bz-md border border-bz-line-soft p-3">
+          <div className="flex items-center gap-2.5">
+            <span className="flex size-7 items-center justify-center rounded-bz-sm bg-bz-paper-warm">
+              <TrendingUp size={13} strokeWidth={1.8} className="text-bz-text" />
+            </span>
+            <span className="text-[12.5px] font-medium text-bz-text">Revenue</span>
+          </div>
+          <span className="text-[20px] font-medium tabular-nums text-bz-text">$4.82M</span>
+        </div>
+
+        {/* Operational metrics — 2 × 2 */}
+        <div className="grid grid-cols-2 gap-2.5">
+          {HERO_OPS.map((o) => (
+            <div key={o.label} className="rounded-bz-md border border-bz-line-soft p-3">
+              <p className="text-[10px] uppercase tracking-[0.08em] text-bz-text-muted">
+                {o.label}
+              </p>
+              <p className="mt-1.5 text-[13px] font-medium text-bz-text">{o.value}</p>
+              <span className="mt-2 block h-[3px] w-10 rounded-bz-pill bg-bz-line-soft" />
+            </div>
+          ))}
+        </div>
+
+        {/* Net income — emphasized total */}
+        <div className="mt-1 flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-4 py-3.5">
+          <span className="text-[13px] text-bz-text-muted">Net income</span>
+          <span className="text-[22px] font-medium tabular-nums text-bz-text">$812K</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
 function LogoStrip() {
   return (
-    <div className="mt-14 mb-2">
+    <div className="mb-2 mt-14">
       <p className="mb-[22px] text-center text-[12.5px] text-bz-text-muted">
         Trusted by thousands of teams &amp; organisations
       </p>
@@ -213,7 +287,7 @@ function HowItWorksSection() {
               "Finance, sales, inventory, manufacturing — pick what you need.",
               "Pre-configured for your industry. Live in one business day.",
             ]}
-            cta={{ variant: "dark", withTick: true, href: "/product", children: "Learn more" }}
+            cta={{ variant: "dark", withArrow: true, href: "/documentation", children: "Learn more" }}
             visual={<StepVisualSetup />}
           />
           <StepCard
@@ -224,7 +298,7 @@ function HowItWorksSection() {
               "Sales, shipments, payroll — all auto-post the right journals.",
               "Real-time books. No close-the-books marathon.",
             ]}
-            cta={{ variant: "dark", withTick: true, href: "/FinancialManagement", children: "Learn more" }}
+            cta={{ variant: "dark", withArrow: true, href: "/FinancialManagement", children: "Learn more" }}
             visual={<StepVisualConnect />}
           />
           <StepCard
@@ -235,7 +309,7 @@ function HowItWorksSection() {
               "Multi-entity, multi-currency, branch-level P&L from day one.",
               "99.8% consolidation accuracy — no separate close tool.",
             ]}
-            cta={{ variant: "dark", withTick: true, href: "/MulticompanyAndBranches", children: "Learn more" }}
+            cta={{ variant: "dark", withArrow: true, href: "/MulticompanyAndBranches", children: "Learn more" }}
             visual={<StepVisualScale />}
           />
         </div>
@@ -335,10 +409,10 @@ function PlatformSection() {
           title={<>A unified platform for finance, <Heading.Muted>inventory, sales and operations.</Heading.Muted></>}
           titleMaxWidth={680}
           actions={
-            <>
-              <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
-              <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">Book a demo</Pill>
-            </>
+            <PillGroup>
+              <Pill variant="dark" withArrow href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+              <Pill variant="light" href="/contact">Request Demo</Pill>
+            </PillGroup>
           }
         />
 
@@ -441,10 +515,10 @@ function ExclusiveSection() {
           title={<>More visibility, less manual work, <Heading.Muted>with features built for finance teams.</Heading.Muted></>}
           titleMaxWidth={720}
           actions={
-            <>
-              <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
-              <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">Book a demo</Pill>
-            </>
+            <PillGroup>
+              <Pill variant="dark" withArrow href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+              <Pill variant="light" href="/contact">Request Demo</Pill>
+            </PillGroup>
           }
         />
 
@@ -628,10 +702,10 @@ function FAQSection() {
                 spacing="none"
               />
             </div>
-            <div className="relative mt-8 flex flex-wrap gap-2">
-              <Pill variant="accent" href="/HelpCenter" withArrow>Visit help center</Pill>
-              <Pill variant="ghostDark" href="/contact">Talk to support</Pill>
-            </div>
+            <PillGroup className="relative mt-8">
+              <Pill variant="accent" href="https://system.bizakerp.com/account/self-register" withArrowUpRight>Get Started</Pill>
+              <Pill variant="ghostDark" href="/contact" withArrow>Talk to Sales</Pill>
+            </PillGroup>
           </div>
 
           {/* Accordion */}

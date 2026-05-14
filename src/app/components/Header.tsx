@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Pill } from "./bz";
 import {
   ChevronDown,
   Menu,
@@ -115,15 +116,6 @@ const megaMenus: Record<string, MegaMenuData> = {
           { icon: <Rocket size={16} />, title: "Startups & SMEs", description: "Pre-configured modules", href: "/StartupsAndSmes" },
           { icon: <Building2 size={16} />, title: "Mid-Market", description: "Advanced workflows", href: "/MidMarket" },
           { icon: <Globe size={16} />, title: "Enterprise", description: "Multi-entity, global", href: "/Enterprise" },
-        ],
-      },
-      {
-        heading: "By Function",
-        items: [
-          { icon: <DollarSign size={16} />, title: "Finance Teams", description: "Close, compliance, reporting" },
-          { icon: <Package size={16} />, title: "Operations", description: "Supply chain, fulfillment" },
-          { icon: <Users size={16} />, title: "Sales & Revenue", description: "Pipeline acceleration" },
-          { icon: <LayoutDashboard size={16} />, title: "IT & Admins", description: "Integrations, access control" },
         ],
       },
     ],
@@ -472,18 +464,25 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 
         {/* CTA buttons */}
         <div className="px-5 pt-5 pb-8 mt-4 border-t border-bz-line-soft flex flex-col gap-2.5">
-          <a
+          <Pill
+            variant="light"
             href="https://system.bizakerp.com"
             target="_blank"
             rel="noopener noreferrer"
             onClick={onClose}
-            className="bz-pill bz-pill-light justify-center"
+            className="justify-center"
           >
             Sign in
-          </a>
-          <a href="/contact" onClick={onClose} className="bz-pill bz-pill-dark justify-center">
-            Request Demo <ArrowRight size={14} />
-          </a>
+          </Pill>
+          <Pill
+            variant="dark"
+            href="/contact"
+            onClick={onClose}
+            className="justify-center"
+            withArrow
+          >
+            Request Demo
+          </Pill>
         </div>
       </div>
     </>
@@ -524,8 +523,8 @@ export function Header() {
     <>
       <header
         ref={headerRef}
-        className="relative bg-bz-section-b border-b"
-        style={{ padding: "8px 0 12px", borderBottomColor: "rgba(15,20,17,0.08)" }}
+        className="relative bg-bz-section-b border-b py-1 lg:pt-2 lg:pb-3"
+        style={{ borderBottomColor: "rgba(15,20,17,0.08)" }}
       >
         <div className="bz-container-px" style={{ maxWidth: 1320, margin: "0 auto" }}>
           <div className="bz-nav-card">
@@ -576,9 +575,9 @@ export function Header() {
               >
                 Sign in
               </a>
-              <a href="/contact" className="bz-pill bz-pill-dark" style={{ padding: "10px 18px" }}>
+              <Pill variant="dark" href="/contact" withArrow>
                 Request Demo
-              </a>
+              </Pill>
             </div>
 
             {/* Mobile hamburger */}

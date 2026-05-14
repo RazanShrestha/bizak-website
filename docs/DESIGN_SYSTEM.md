@@ -206,6 +206,7 @@ from `<body>`.
 | `--bz-section-x` | `24px` | Horizontal page gutter |
 | `--bz-container` | `1320px` | Default content max-width |
 | `--bz-container-narrow` | `1200px` | Narrower hero/CTA pages |
+| `--bz-hero-gap` | `78px` desktop / `48px` mobile (`--bz-hero-gap-mobile`) | Gap between the hero CTA pill row and the visual/mock immediately below. Consumed by `.bz-hero-canvas` and `.bz-hero-visual` (see §3.6). **Always use the class** — never hardcode this gap as `mt-10` / `mt-16` / `mt-[78px]` etc. on a hero mock wrapper. Change the token to shift the gap site-wide. |
 | `--bz-header-h` | `76px` | **LEGACY** — header is no longer fixed; this token exists for old shims but new code should not use it |
 
 ### 2.5 Shadows
@@ -234,13 +235,23 @@ debt.
 ```tsx
 <Pill
   variant="dark" | "light" | "ghost" | "ghostDark" | "accent" | "leaf"
-  size="sm" | "md" | "lg"
+  size="sm" | "md"
   href?
-  withTick?      // appends the green tick suffix
-  withArrow?
-  iconLeft?
-  iconRight?
+  withArrow?         // internal hrefs (→)
+  withArrowUpRight?  // external hrefs (↗) — system.bizakerp.com/*
 >Get Started</Pill>
+   // Exactly one arrow prop is mandatory.
+   // Legacy props removed: withTick, iconLeft, iconRight, size="lg".
+   // See §3.1.1 below for the 4 canonical CTA labels and arrow mapping.
+
+<PillGroup>
+  <Pill variant="dark"  withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+  <Pill variant="light" withArrow         href="/contact">Request Demo</Pill>
+</PillGroup>
+   // CSS-grid wrapper for adjacent pill PAIRS. 1fr 1fr → equal width
+   // (wider label drives both). Max 440px desktop, 100% mobile (both
+   // stay on one row). Do NOT wrap solo pills (StepCard cta=…, BigCard
+   // cta=…, Bento.Cta, standalone nav pills) in PillGroup.
 
 <Eyebrow index?="01" tone?="dark|light">How it works</Eyebrow>
    // renders "[01] HOW IT WORKS" when index is set
@@ -262,6 +273,38 @@ debt.
 
 <DotGrid tone="dark|light" />                       // position: absolute; inset: 0 grid overlay
 ```
+
+### 3.1.1 CTA conventions — the 4 canonical labels
+
+Every conversion CTA on the site maps to exactly one of four labels. **Do not invent new labels.** When migrating a page, substitute any older label per the table below.
+
+| Label | href | Variant (light surface) | Variant (dark surface) | Arrow |
+|---|---|---|---|---|
+| **Get Started** | `https://system.bizakerp.com/account/self-register` | `dark` | `accent` | `withArrowUpRight` |
+| **Free Trial** | `https://system.bizakerp.com/account/self-register` | `dark` | `accent` | `withArrowUpRight` |
+| **Request Demo** | `/contact` | `light` | `ghostDark` (secondary) / `accent` (primary on dark) | `withArrow` |
+| **Talk to Sales** | `/contact` | `light` | `ghostDark` | `withArrow` |
+
+**Standard hero pair.** Every page's hero CTA row is `Get Started` (dark, ↗) + `Request Demo` (light, →) inside `<PillGroup>`. Use `Free Trial` instead of `Get Started` only when the page leads explicitly with the trial-first story.
+
+**Standard closing pair (in `<Footer cta={…}>`).** `primaryLabel="Get Started"` + `secondaryLabel="Request Demo"` (or `Free Trial` + `Request Demo`). Set in the page's `*PageLayout` in `routes.tsx`.
+
+**Standard dark-surface pair.** On a dark olive panel (e.g. HomePage's FAQ intro card), primary is `accent` lime (`Get Started`) and secondary is `ghostDark` outlined (`Talk to Sales`). Both still go through `<PillGroup>`.
+
+**Solo pills** in `<StepCard cta=…>`, `<BigCard cta=…>`, `<Bento.Cta>` — same label and arrow rules, but **not** wrapped in PillGroup. If the StepCard / BigCard cta is the page's secondary "Learn more" pill that doesn't link to one of the 4 destinations, keep its descriptive label (e.g. "See finance link" → `/FinancialManagement`) — but still apply the arrow rule (internal = `withArrow`).
+
+**Label substitution table** (apply on sight whenever you touch a page):
+
+| Old label | New label |
+|---|---|
+| "Book a Demo" / "Book a demo" / "Request a Demo" / "Request demo" | "Request Demo" |
+| "Start free trial" / "Start Free Trial" | "Free Trial" |
+| "See it live" | "Get Started" (if href = self-register) / "Request Demo" (if href = `/contact`) |
+| "See it in action" | "Request Demo" (force href to `/contact`) |
+| "Talk to practice team" / "Talk to support" / "Talk to operations" / "Talk to ops" / "Talk to an integration engineer" / "Talk to sales team" | "Talk to Sales" |
+| "Browse connectors" / "Visit help center" / "View features" / "Explore purchasing" | "Request Demo" (force `/contact`) — or "Get Started" if the page is clearly self-serve |
+
+The migration of every page onto these labels landed in May 2026 with the introduction of `<PillGroup>`. From that point onward, **a Pill on any non-legacy page that fails these rules is a bug** — fix it in the same change.
 
 ### 3.2 Card shells
 
@@ -317,7 +360,12 @@ debt.
   index="02"
   label="Platform"
   title={<>A unified platform … <Heading.Muted>across every part.</Heading.Muted></>}
-  actions={<><Pill variant="dark" withTick>Get Started</Pill><Pill variant="light">Book demo</Pill></>}
+  actions={
+    <PillGroup>
+      <Pill variant="dark"  withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+      <Pill variant="light" withArrow         href="/contact">Request Demo</Pill>
+    </PillGroup>
+  }
 />
 
 <BentoGrid cols={2|3|4}>…</BentoGrid>                // owns its own breakpoints
@@ -366,13 +414,39 @@ Every marketing hero on the site is a **flat paper-cream surface** (using
 
 1. **`<BadgeGreen>`** above the `<h1>` — the pistachio confetti pill. Not a gradient. Not a `<PillBadge>` from the legacy primitives.
 2. **`<Heading level={1}>`** with `<Heading.Muted>` for the second-colour span.
-3. **Two `<Pill>` CTAs** — typically `<Pill variant="dark" withTick>` (primary) + `<Pill variant="light"><Sparkles/>Book a demo</Pill>` (secondary).
-4. **`<HeroCanvas>`** below (optional) — a dark olive panel with a grid overlay, holding 1–3 floating `<HeroCard>`s.
-5. **`<Marquee>`** logo strip at the bottom.
+3. **Two `<Pill>` CTAs in `<PillGroup>`** — the canonical pair is `Get Started` (dark, `withArrowUpRight`, self-register) + `Request Demo` (light, `withArrow`, `/contact`). See §3.1.1 for the 4-label canon. The PillGroup gives both pills equal width.
+4. **`<HeroCanvas>`** below (optional) — a dark olive panel with a grid overlay, holding 1–3 floating `<HeroCard>`s. Encodes the canonical gap below the CTA pills via `.bz-hero-canvas { margin-top: var(--bz-hero-gap) }`.
+5. **OR** `<div className="bz-hero-visual">` wrapping a page-specific paper-surface mock (e.g. `FinancialManagement`'s olive-panel + statement card, `Workflow`'s approval-flow board). Encodes the same `var(--bz-hero-gap)` so paper-surface and olive-canvas heroes share one measurement.
+6. **`<Marquee>`** logo strip at the bottom.
 
 The previous three hero options (`HeroCentered` / `HeroSplit` / `HeroPanel`)
 are legacy. New pages don't use them. The new hero is one shape — Centered,
 flat, paper, with optional HeroCanvas below.
+
+### The hero-gap rule
+
+The vertical space between the CTA pill row and whatever visual sits
+directly below it (`<HeroCanvas>` *or* a page-specific mock) is owned
+by **one token** — `--bz-hero-gap` (78px desktop / 48px mobile via
+`--bz-hero-gap-mobile`). Two CSS classes read it:
+
+- `.bz-hero-canvas` — applied automatically by the `<HeroCanvas>` primitive.
+- `.bz-hero-visual` — apply manually on the outer `<div>` of a non-canvas hero mock.
+
+```tsx
+// Option A — olive canvas (HomePage, Manufacturing, Distribution, Inventory, …)
+<HeroCanvas>
+  <HeroCard … />
+  <HeroCard … />
+</HeroCanvas>
+
+// Option B — paper-surface page-specific mock (FinancialManagement, Workflow, Integrations, …)
+<div className="bz-hero-visual mx-auto w-full max-w-[1140px] …">
+  <PageSpecificMock />
+</div>
+```
+
+**Never** write a fresh top-margin (`mt-10`, `mt-14`, `mt-16`, `mt-12 md:mt-16`, `mt-[48px] md:mt-[78px]`, etc.) on the hero mock wrapper — those are migration debt from before the token landed. To shift the gap site-wide, edit `--bz-hero-gap` / `--bz-hero-gap-mobile` in `theme.css`; both classes update everywhere.
 
 ```tsx
 <Section tone="b">
@@ -382,10 +456,10 @@ flat, paper, with optional HeroCanvas below.
       The operating system for modern business,
       <Heading.Muted> handling finance and ops in one place.</Heading.Muted>
     </Heading>
-    <div className="flex flex-wrap gap-2">
-      <Pill variant="dark" withTick href="/start">Get Started</Pill>
-      <Pill variant="light"><Sparkles/>Book a demo</Pill>
-    </div>
+    <PillGroup>
+      <Pill variant="dark"  withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+      <Pill variant="light" withArrow         href="/contact">Request Demo</Pill>
+    </PillGroup>
     <HeroCanvas>
       <HeroCard … />
       <HeroCard … />
@@ -420,13 +494,15 @@ Footer.**
     title: "Take full control of your financial operations.",
     titleMuted: "Close month-end in hours, not weeks.",
     description: "One ledger, auto-posted journals, real-time P&L — and a full audit trail behind every figure.",
-    primaryLabel: "Start free trial",
+    primaryLabel: "Get Started",
     primaryHref: "https://system.bizakerp.com/account/self-register",
-    secondaryLabel: "Talk to finance team",
+    secondaryLabel: "Request Demo",
     secondaryHref: "/contact",
   }}
 />
 ```
+
+**Use the canonical labels.** `primaryLabel` and `secondaryLabel` must be one of the four labels from §3.1.1 — typically `Get Started` + `Request Demo`, or `Free Trial` + `Request Demo` if the page leads with the trial story. Don't write "Start free trial" / "Talk to finance team" / etc.
 
 The `FooterCta` interface is exported from `src/app/components/Footer.tsx`.
 Reference implementation: `FinancialManagementPageLayout` in `routes.tsx`.
@@ -442,13 +518,76 @@ closing CTA.
 
 ---
 
+## 3.8 Mobile design quality (the second bar)
+
+The site has **two mobile bars** — both mandatory:
+
+1. **Structural correctness** — fits 375px without horizontal scroll, no broken grids, no fixed heights crushing content. Mechanics covered by `<Section>`, `<Container>`, `<BentoGrid>` breakpoints + the patterns in `.claude/skills/redesign-page/SKILL.md`.
+2. **Mobile design quality** — looks *intentionally designed* at 375px, not "the desktop layout, smaller." Mechanics covered below.
+
+The desktop view and the mobile view are **two distinct designs of the same content**. The mobile view earns its own design pass. A page that passes (1) but fails (2) — fits the viewport but feels cramped, busy, or bulky on a phone — is a failed redesign.
+
+### Why this is a design-system concern, not a per-page concern
+
+The temptation is to treat mobile as "make it not break." That's the *minimum* bar; the design-system bar is higher. A few principles that should hold across every page:
+
+- **Density drops on mobile.** A 4-tile bento that fills a hero panel on desktop should *reduce*, not *crush*, on mobile — typically to 2 tiles, or to a single hero summary card. The remaining tiles are `hidden md:block` (or replaced with a separate mobile-specific composition).
+- **Card interiors stay generous.** Outer/section padding shrinks on mobile, but a stacked single-column card with cramped internals reads worse than a roomy one. Card `p-5` is often bumped *up* (not down) on mobile.
+- **Decorative elements hide.** Anything that exists only because the desktop column was wide — sidecards, secondary metric tiles, large illustrations — drops on mobile rather than shrinking into a thumbnail.
+- **Mocks simplify, don't shrink.** Complex multi-axis charts, 6-row dashboards, sidebar+main-panel layouts — all get a *simpler representation* on mobile (headline number + 1-line summary, first 3 rows + "view more", main panel only).
+- **One-column ≠ more content.** When a grid collapses to one column, the empty horizontal space *is* the design. Don't fill it with extras.
+
+### Tokens & utilities that support this
+
+- `--bz-section-y` — already responsive (`140 / 110 / 80px`); section vertical padding scales automatically.
+- `--bz-text-h1` / `--bz-text-h2` — `clamp(...)` values; type scale is responsive at the token level. Don't override unless the layout genuinely breaks.
+- `--bz-hero-gap` / `--bz-hero-gap-mobile` — hero CTA → mock gap (`78 / 48px`). One token; both `.bz-hero-canvas` and `.bz-hero-visual` consume it.
+- Tailwind responsive prefixes (`sm:`, `md:`, `lg:`) — for per-component density tuning. Default breakpoints; no custom breakpoints in `theme.css`.
+- `hidden md:block` / `hidden md:grid` / `hidden md:flex` — the canonical "this only earns its place on desktop" utility.
+
+### When to write a separate mobile composition vs. responsive utility classes
+
+Two valid approaches; pick the one that matches the gap between desktop and mobile designs:
+
+```tsx
+// Approach A — small differences. Use responsive utilities on one composition.
+<Bento className="p-5 md:p-4">
+  <Bento.Header className="mb-3 md:mb-2" />
+  <Bento.Desc className="text-[14px] md:text-[13px] leading-relaxed" />
+</Bento>
+
+// Approach B — large differences (mock simplification). Two compositions, swap with hidden.
+<>
+  <div className="hidden md:block">
+    <DesktopComplexDashboard />          {/* 4 tiles + sidebar + chart */}
+  </div>
+  <div className="md:hidden">
+    <MobileSummaryCard />                {/* 1 hero stat + 2-row summary */}
+  </div>
+</>
+```
+
+Approach A is the default; reach for B only when the desktop mock would be unreadable at < 280px wide.
+
+### The mobile design-quality rule applies to every primitive
+
+When you add a new primitive to `bz/`, its responsive behaviour is part of the API contract — not an afterthought. Specifically:
+
+- The primitive must look intentional at 375px without consumer override. A `<Bento>` that requires the page to wrap it in `hidden md:block` to look good is a broken primitive.
+- The primitive's responsive tuning lives **in the primitive** (its `.bz-*` CSS class or its component's Tailwind classes), not in the page that uses it.
+- If a primitive has a fundamentally different mobile shape (e.g. a dense table primitive that should become a card list on mobile), build that into the primitive itself — don't make every consumer reinvent the swap.
+
+For the per-page workflow checklist (the design-quality questions to ask while walking a finished page top-to-bottom at 375px), see `.claude/skills/redesign-page/SKILL.md` §"Mobile design-quality cheatsheet."
+
+---
+
 ## 4. Page recipe (after Phase 1)
 
 ```tsx
 import {
-  Section, Container, SectionHead, Bento, BentoGrid, Pill, Heading,
+  Section, Container, SectionHead, Bento, BentoGrid, Pill, PillGroup, Heading,
   BadgeGreen, HeroCanvas, HeroCard, StepCard, Marquee,
-} from "./marketing";
+} from "./bz";
 import { Layers, ShieldCheck, Activity, Receipt } from "lucide-react";
 
 const FEATURES = [
@@ -466,10 +605,10 @@ function HeroSection() {
           The operating system for modern business,
           <Heading.Muted> finance and ops in one place.</Heading.Muted>
         </Heading>
-        <div className="flex flex-wrap gap-2">
-          <Pill variant="dark" withTick href="/start">Get Started</Pill>
-          <Pill variant="light">Book a demo</Pill>
-        </div>
+        <PillGroup>
+          <Pill variant="dark"  withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+          <Pill variant="light" withArrow         href="/contact">Request Demo</Pill>
+        </PillGroup>
         <HeroCanvas>
           <HeroCard icon={<Activity/>} title="Live ledger" badge="Live" value="$1,242,180"/>
           <HeroCard icon={<Receipt/>}  title="Invoice INV-2046" value="$12,400.00"/>

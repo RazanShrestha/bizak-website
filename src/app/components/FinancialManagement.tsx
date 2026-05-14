@@ -21,7 +21,7 @@ import {
   Package,
   ShieldCheck,
   ShoppingCart,
-  Sparkles,
+
   TrendingDown,
 } from "lucide-react";
 import {
@@ -33,6 +33,7 @@ import {
   EntityRow,
   Heading,
   Pill,
+  PillGroup,
   Section,
   SectionHead,
   StatusChip,
@@ -109,18 +110,18 @@ function HeroSection() {
             <Heading.Muted>close the books in hours, not weeks.</Heading.Muted>
           </Heading>
 
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="/contact">
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
+              Get Started
+            </Pill>
+            <Pill variant="light" href="/contact">
               Request Demo
             </Pill>
-            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="#features">
-              View features
-            </Pill>
-          </div>
+          </PillGroup>
         </div>
 
         {/* Page-specific mock — editorial dark panel + invoice card ─── */}
-        <div className="mx-auto mt-14 grid w-full max-w-[1100px] grid-cols-1 gap-3 sm:mt-20 sm:grid-cols-5">
+        <div className="bz-hero-visual mx-auto grid w-full max-w-[1100px] grid-cols-1 gap-3 sm:grid-cols-5">
           <HeroOlivePanel />
           <HeroStatementCard />
         </div>

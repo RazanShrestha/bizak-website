@@ -115,6 +115,11 @@
   --bz-container-narrow: 1200px;
   --bz-header-h:         76px;    /* LEGACY — header is no longer position:fixed.
                                      Pages must NOT add paddingTop:76 shims. */
+  --bz-hero-gap:         78px;    /* gap between hero CTA buttons and the visual/mock
+                                     directly below. Consumed by .bz-hero-canvas and
+                                     .bz-hero-visual — change here to shift the gap
+                                     site-wide. */
+  --bz-hero-gap-mobile:  48px;
 
   /* ── Shadows (no gradients — use shadows for depth) ─────────────── */
   --bz-shadow-card:  0 1px 2px rgba(15, 20, 17, 0.04);

@@ -10,7 +10,6 @@ import {
   Paperclip,
   Phone,
   Receipt,
-  Sparkles,
 } from "lucide-react";
 import {
   BadgeGreen,
@@ -19,6 +18,7 @@ import {
   DotGrid,
   Heading,
   Pill,
+  PillGroup,
   Section,
   SectionHead,
   StatusChip,
@@ -55,14 +55,14 @@ function PipelineHeroSection() {
             <Heading.Muted>one connected pipeline on one ledger.</Heading.Muted>
           </Heading>
 
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="/contact">
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
+              Get Started
+            </Pill>
+            <Pill variant="light" withArrow href="/contact">
               Request Demo
             </Pill>
-            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="#pipeline">
-              See it in action
-            </Pill>
-          </div>
+          </PillGroup>
         </div>
 
         <PipelineSnapshotCard />
@@ -74,7 +74,7 @@ function PipelineHeroSection() {
 function PipelineSnapshotCard() {
   const focusIdx = PIPELINE_STAGES.findIndex((s) => s.focus);
   return (
-    <div id="pipeline" className="mt-12 md:mt-16">
+    <div id="pipeline" className="bz-hero-visual">
       <div className="overflow-hidden rounded-bz-2xl border border-bz-line-soft bg-bz-paper">
 
         {/* KPI header */}

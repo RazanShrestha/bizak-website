@@ -325,7 +325,7 @@ export function HeroSection() {
               className="bg-white border border-[#e8eae4] text-[#333] text-base font-bold px-8 py-4 rounded-lg hover:bg-[#F8F9F7] transition-all shadow-sm"
               style={{ fontFamily: "Inter, sans-serif" }}
             >
-              Book a demo
+              Request Demo
             </button>
           </Link>
         </div>

@@ -2,7 +2,7 @@ import { Instagram, Twitter, Facebook, Linkedin, Sparkles } from "lucide-react";
 import bizakLogoVertical from "../../assets/logo/SVG/dark-mode-vertical-lockup.svg";
 import bizakLogoVerticalDark from "../../assets/logo/SVG/all-black-vertical-lockup.svg";
 import footerBgImage from "../../assets/footerimg.png";
-import { Heading, Pill } from "./bz";
+import { Heading, Pill, PillGroup } from "./bz";
 
 // ─── Footer CTA — dynamic per page ────────────────────────────────────────────
 //
@@ -18,7 +18,7 @@ export interface FooterCta {
   description?: React.ReactNode;   // sub-paragraph beneath the title
   primaryLabel?: string;           // primary button label, default "Get Started"
   primaryHref?: string;            // primary button href, default self-register
-  secondaryLabel?: string;         // secondary button label, default "Book a demo"
+  secondaryLabel?: string;         // secondary button label, default "Request Demo"
   secondaryHref?: string;          // secondary button href, default "/contact"
 }
 
@@ -28,7 +28,7 @@ const DEFAULT_CTA: FooterCta = {
   description: "No setup cost. No long contracts. Cancel anytime — keep your data.",
   primaryLabel: "Get Started",
   primaryHref: "https://system.bizakerp.com/account/self-register",
-  secondaryLabel: "Book a demo",
+  secondaryLabel: "Request Demo",
   secondaryHref: "/contact",
 };
 
@@ -102,18 +102,14 @@ export function Footer({ cta, isLightMode = false }: { cta?: FooterCta; isLightM
               {c.description}
             </p>
           )}
-          <div className="flex flex-wrap justify-center gap-[10px] mt-1">
+          <PillGroup className="mt-1">
             <Pill variant="accent" href={c.primaryHref} withArrowUpRight>
               {c.primaryLabel}
             </Pill>
-            <Pill
-              variant={isLightMode ? "ghost" : "ghostDark"}
-              iconLeft={<Sparkles size={13} />}
-              href={c.secondaryHref}
-            >
+            <Pill variant={isLightMode ? "ghost" : "ghostDark"} href={c.secondaryHref}>
               {c.secondaryLabel}
             </Pill>
-          </div>
+          </PillGroup>
         </div>
 
         {/* Framed card */}
@@ -130,7 +126,7 @@ export function Footer({ cta, isLightMode = false }: { cta?: FooterCta; isLightM
               <p className={`m-0 max-w-[280px] text-[14px] font-normal leading-[1.65] ${isLightMode ? "text-bz-text-muted" : "text-bz-text-on-dark-muted"}`}>
                 The operating system for modern business — finance, inventory, sales and operations in one unified workspace.
               </p>
-              <div className="mt-[22px] flex flex-col gap-[10px]">
+              {/* <div className="mt-[22px] flex flex-col gap-[10px]">
                 <Pill
                   variant="accent"
                   href="https://system.bizakerp.com"
@@ -147,7 +143,7 @@ export function Footer({ cta, isLightMode = false }: { cta?: FooterCta; isLightM
                 >
                   Talk to sales
                 </Pill>
-              </div>
+              </div> */}
             </div>
 
             {/* Link columns */}

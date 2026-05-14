@@ -230,9 +230,9 @@ override its copy via a `cta` prop passed in the route layout.
     title: "Take full control of your financial operations.",
     titleMuted: "Close month-end in hours, not weeks.",
     description: "One ledger, auto-posted journals, real-time P&L — and a full audit trail behind every figure.",
-    primaryLabel: "Start free trial",
+    primaryLabel: "Get Started",
     primaryHref: "https://system.bizakerp.com/account/self-register",
-    secondaryLabel: "Talk to finance team",
+    secondaryLabel: "Request Demo",
     secondaryHref: "/contact",
   }}
 />
@@ -242,6 +242,16 @@ If no `cta` prop is passed, the Footer uses the generic default copy
 ("Take full control of your operations.…"). Override per-page when the
 page sells a specific module — the override copy should reinforce the
 page's narrative (see §4).
+
+**Use the 4 canonical CTA labels everywhere — including the Footer.**
+`primaryLabel` + `secondaryLabel` must each be one of: **Get Started**,
+**Free Trial** (both → self-register), **Request Demo**, **Talk to Sales**
+(both → `/contact`). The standard closing pair is `Get Started` +
+`Request Demo`; use `Free Trial` instead of `Get Started` only when the
+page leads explicitly with the trial story. Do not invent labels like
+"Start free trial", "Talk to finance team", "Talk to practice team",
+"Book a demo" — see §7.4 for the full label canon and the substitution
+table.
 
 **Do not** render a separate dark CTA `<Section>` above the Footer.
 That's the legacy pattern (the previous `<Section tone="dark">` closing
@@ -256,7 +266,7 @@ The hero has a **fixed shell** and a **per-page-invented mock**.
 
 **Fixed shell** (same on every page):
 - Centered on `bg-bz-section-b` (paper-cream surface, `<Section tone="b" pad="hero">`).
-- `<BadgeGreen>` above `<Heading>`, two `<Pill>` CTAs (`variant="dark" withTick` + `variant="light"`).
+- `<BadgeGreen>` above `<Heading>`, two `<Pill>` CTAs wrapped in `<PillGroup>`. The canonical CTA pair is **Get Started** (dark, ↗, self-register) + **Request Demo** (light, →, `/contact`) — see §7.4 for the full label canon.
 - No `.biz-mesh` radial-gradient backdrop (retired).
 
 **Per-page-invented mock** (the visual below the CTAs):
@@ -359,6 +369,41 @@ To avoid it:
   3-metric closing summary that another page already has** — the page
   hasn't earned its sections. Stop and ask: what does THIS page need
   to show that no other Bizak page needs to show? Build that instead.
+
+### 7.4 CTA copy — the 4 canonical labels
+
+Every conversion CTA on every page uses one of exactly **four labels**.
+This is brand voice, not just engineering convention: the site funnels
+every visitor through the same four doors, so the labels are part of how
+Bizak sounds.
+
+| Label | Destination | When to use |
+|---|---|---|
+| **Get Started** | `system.bizakerp.com/account/self-register` | Default primary CTA on every page. Implies "click → make an account → use the product." |
+| **Free Trial** | same self-register URL | Use instead of *Get Started* only when the page leads explicitly with the trial-first story (e.g. Distribution's per-SKU margin page). Same destination, different framing. |
+| **Request Demo** | `/contact` | Default secondary CTA on every page. Implies "click → talk to a human → see the product live." |
+| **Talk to Sales** | `/contact` | Lower-funnel direct contact — used when the section is about complex multi-entity / multi-warehouse / multi-line problems where "demo" understates what the prospect needs (e.g. on dark closing-CTA cards, or on enterprise-flavoured BigCard CTAs). |
+
+**Standard hero pair**: *Get Started* + *Request Demo*.
+**Standard closing pair (in `<Footer cta={…}>`)**: *Get Started* + *Request Demo* (or *Free Trial* + *Request Demo*).
+**Standard dark-surface pair**: same labels, different variant — primary lime `accent`, secondary outlined `ghostDark`.
+
+**Navigational pills are NOT conversion CTAs** and may keep descriptive labels — e.g. `<Pill href="#open-roles" withArrow>View Open Roles</Pill>` on the Careers hero scrolls within the page, doesn't try to convert. The 4-label rule applies only to pills whose href is `system.bizakerp.com/*` or `/contact`.
+
+**Label substitution table** (apply on sight whenever you migrate a page):
+
+| Old label | New label |
+|---|---|
+| "Book a Demo" / "Book a demo" / "Request a Demo" / "Request demo" | "Request Demo" |
+| "Start free trial" / "Start Free Trial" | "Free Trial" |
+| "See it live" | "Get Started" (if href = self-register) / "Request Demo" (if href = `/contact`) |
+| "See it in action" | "Request Demo" (force href to `/contact`) |
+| "Talk to practice team" / "Talk to support" / "Talk to operations" / "Talk to ops" / "Talk to an integration engineer" / "Talk to sales team" / "Talk to finance team" | "Talk to Sales" |
+| "Browse connectors" / "Visit help center" / "View features" / "Explore purchasing" | "Request Demo" (force `/contact`) — or "Get Started" if the page is clearly self-serve |
+
+Engineering rules for the `<Pill>` / `<PillGroup>` primitives that paint
+these labels live in `/CLAUDE.md` §"CTA conventions" and
+`/docs/DESIGN_SYSTEM.md` §3.1.1.
 
 ---
 

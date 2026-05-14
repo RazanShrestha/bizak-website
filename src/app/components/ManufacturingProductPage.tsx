@@ -1,7 +1,7 @@
 import "../../styles/style.css";
 import {
   Activity,
-  Sparkles,
+
   Layers,
   ClipboardList,
   CalendarRange,
@@ -21,6 +21,7 @@ import {
   Container,
   SectionHead,
   Pill,
+  PillGroup,
   Heading,
   BadgeGreen,
   HeroCanvas,
@@ -167,14 +168,14 @@ function HeroSection() {
             <Heading.Muted>finished good, on time, every run.</Heading.Muted>
           </Heading>
 
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
-              Start free trial
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
+              Get Started
             </Pill>
-            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">
-              Book a demo
+            <Pill variant="light" withArrow href="/contact">
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
 
         <HeroCanvas>
@@ -653,12 +654,12 @@ function CostsToLedgerSection() {
           }
           titleMaxWidth={880}
           actions={
-            <>
-              <Pill variant="dark" withTick href="/FinancialManagement">See finance link</Pill>
-              <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">
-                Talk to ops
+            <PillGroup>
+              <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+              <Pill variant="light" withArrow href="/contact">
+                Request Demo
               </Pill>
-            </>
+            </PillGroup>
           }
         />
 

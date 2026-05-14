@@ -4,7 +4,7 @@ import {
   PackagePlus,
   RefreshCw,
   ScanBarcode,
-  Sparkles,
+
   Truck,
   Warehouse,
 } from "lucide-react";
@@ -20,6 +20,7 @@ import {
   HeroCanvas,
   JournalRow,
   Pill,
+  PillGroup,
   Section,
   SectionHead,
   StatusChip,
@@ -81,14 +82,14 @@ function HeroSection() {
             <Heading.Muted>and every movement, on the same ledger.</Heading.Muted>
           </Heading>
 
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
-            <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">
-              Book a demo
+            <Pill variant="light" withArrow href="/contact">
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
 
         <HeroCanvas className="flex flex-col !p-0 [&>.bz-hero-cards]:flex-1 [&>.bz-hero-cards]:flex [&>.bz-hero-cards]:flex-col [&>.bz-hero-cards]:items-stretch">
@@ -206,10 +207,10 @@ function LiveFloorSection() {
           title={<>Where every unit is, <Heading.Muted>right this second.</Heading.Muted></>}
           titleMaxWidth={720}
           actions={
-            <>
-              <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
-              <Pill variant="light" iconLeft={<Sparkles size={13} />} href="/contact">Book a demo</Pill>
-            </>
+            <PillGroup>
+              <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
+              <Pill variant="light" withArrow href="/contact">Request Demo</Pill>
+            </PillGroup>
           }
         />
 
@@ -459,7 +460,7 @@ function CountsSection() {
               "Lot, serial and batch trace, end to end",
               "Variance reconciliation, fully audited",
             ],
-            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to operations" },
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to Sales" },
           }}
           visual={<CountSheetVisual />}
         />

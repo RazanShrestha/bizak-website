@@ -8121,6 +8121,26 @@
   white-space: nowrap;
   line-height: 1;
 }
+/* Size modifiers */
+.bz-pill-sm {
+  padding: 9px 16px;
+  font-size: 12.5px;
+  gap: 6px;
+}
+
+/* CTA pair wrapper — equal-width buttons, desktop cap, full-width on mobile */
+.bz-pill-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  max-width: 440px;
+}
+/* Grid blockifies inline-flex items, so pills fill their cell; center the label */
+.bz-pill-group .bz-pill {
+  justify-content: center;
+}
+
 .bz-pill-dark {
   background: var(--bz-deep);
   color: var(--bz-paper);
@@ -8159,17 +8179,6 @@
 }
 .bz-pill-leaf:hover { background: #c9dba1; }
 
-/* Check tick used inside primary buttons */
-.bz-pill-tick {
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  background: var(--bz-fire);
-  color: var(--bz-deep);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
 
 /* Green confetti badge — matches Ruul's _w-green-badge */
 .bz-badge-green {
@@ -8287,18 +8296,26 @@
   .bz-step-visual { padding: 24px; min-height: 260px; order: 1; }
 }
 
-/* Hero canvas */
+/* Hero visual gap — the space between the hero CTA pill row and whatever
+   visual/mock sits directly below it inside <Section pad="hero">.
+   Both .bz-hero-canvas (olive panel) and .bz-hero-visual (generic wrapper
+   for page-specific mocks that don't use HeroCanvas) consume the same
+   --bz-hero-gap token so the gap stays consistent across every page. */
 .bz-hero-canvas {
   position: relative;
   border-radius: 28px;
   overflow: hidden;
   background: var(--bz-olive);
   padding: 56px 24px 0;
-  margin-top: 78px;
+  margin-top: var(--bz-hero-gap);
   min-height: 460px;
 }
+.bz-hero-visual {
+  margin-top: var(--bz-hero-gap);
+}
 @media (max-width: 720px) {
-  .bz-hero-canvas { padding: 36px 16px 0; min-height: 380px; margin-top: 78px; border-radius: 22px; }
+  .bz-hero-canvas { padding: 36px 16px 0; min-height: 380px; margin-top: var(--bz-hero-gap-mobile); border-radius: 22px; }
+  .bz-hero-visual { margin-top: var(--bz-hero-gap-mobile); }
 }
 .bz-hero-canvas-grid {
   position: absolute;
@@ -8406,12 +8423,15 @@
 .bz-nav-card {
   display: flex;
   align-items: center;
-  height: 64px;
+  height: 52px;
   padding: 0;
   background: transparent;
   border: none;
   border-radius: 0;
   box-shadow: none;
+}
+@media (min-width: 1024px) {
+  .bz-nav-card { height: 64px; }
 }
 .bz-nav-card-dark {
   background: var(--bz-olive);

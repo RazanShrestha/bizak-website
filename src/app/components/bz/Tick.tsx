@@ -4,7 +4,7 @@ import { cn } from "../ui/utils";
 
 // Pistachio-circle + lime-check icon. Used as the bullet marker in step
 // cards, multi-entity bullets, and as the suffix on primary pill CTAs
-// (via <Pill withTick>).
+// (via <Pill withArrow>).
 //   <Tick />
 //   <Tick size="sm" />
 

@@ -21,6 +21,7 @@ import {
   Bento,
   BentoGrid,
   Pill,
+  PillGroup,
   Heading,
   BadgeGreen,
   StatusChip,
@@ -149,7 +150,7 @@ const PROCESS_STEPS = [
 
 function CulturePanelMock() {
   return (
-    <div className="mt-14 mx-auto w-full max-w-[1040px] rounded-bz-2xl border border-bz-line-soft bg-bz-olive overflow-hidden">
+    <div className="bz-hero-visual mx-auto w-full max-w-[1040px] rounded-bz-2xl border border-bz-line-soft bg-bz-olive overflow-hidden">
       {/* Header */}
       <div className="px-6 pt-5 pb-4 flex items-center justify-between border-b border-white/[0.08]">
         <div>
@@ -236,10 +237,10 @@ function HeroSection() {
           <p className="text-[16px] text-bz-text-muted leading-[1.7] max-w-[560px] mb-10">
             Bizak powers 50,000+ businesses across 120+ countries. Join the team making enterprise software feel effortless — and building the next chapter of global commerce.
           </p>
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="#open-roles">View Open Roles</Pill>
-            <Pill variant="light" href="#culture">Our Culture</Pill>
-          </div>
+          <PillGroup>
+            <Pill variant="dark" withArrow href="#open-roles">View Open Roles</Pill>
+            <Pill variant="light" withArrow href="#culture">Our Culture</Pill>
+          </PillGroup>
         </div>
         <CulturePanelMock />
       </Container>

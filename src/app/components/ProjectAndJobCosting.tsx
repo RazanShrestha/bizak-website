@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-  Sparkles,
+
   HardHat,
   ClipboardList,
   Receipt,
@@ -15,6 +15,7 @@ import {
   Container,
   SectionHead,
   Pill,
+  PillGroup,
   Heading,
   BadgeGreen,
   StatusChip,
@@ -168,7 +169,7 @@ const PORTFOLIO_STATS = [
 
 function ProjectScoreboardCard() {
   return (
-    <div className="mt-12 md:mt-16 mx-auto w-full max-w-[1140px] rounded-bz-3xl border border-bz-line bg-bz-surface p-5 md:p-8 shadow-[0_24px_56px_-30px_rgba(15,20,17,0.18)]">
+    <div className="bz-hero-visual mx-auto w-full max-w-[1140px] rounded-bz-3xl border border-bz-line bg-bz-surface p-5 md:p-8 shadow-[0_24px_56px_-30px_rgba(15,20,17,0.18)]">
       {/* Header row */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
@@ -306,22 +307,22 @@ function ProjectScoreboardHero() {
               is happening not after billing closes.
             </Heading.Muted>
           </Heading>
-          <div className="flex flex-wrap justify-center gap-[10px]">
+          <PillGroup>
             <Pill
               variant="dark"
-              withTick
+              withArrowUpRight
               href="https://system.bizakerp.com/account/self-register"
             >
-              Start free trial
+              Get Started
             </Pill>
             <Pill
               variant="light"
-              iconLeft={<Sparkles size={13} />}
+              withArrow
               href="/contact"
             >
-              Book a demo
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
         <ProjectScoreboardCard />
       </Container>

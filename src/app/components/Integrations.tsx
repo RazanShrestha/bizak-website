@@ -1,5 +1,5 @@
 import {
-  Section, Container, SectionHead, BentoGrid, Bento, Pill, Heading,
+  Section, Container, SectionHead, BentoGrid, Bento, Pill, PillGroup, Heading,
   BadgeGreen, BigCard, StepCard, DotGrid,
 } from "./bz";
 import {
@@ -19,7 +19,7 @@ const HERO_CONNECTORS = [
 
 function ConnectorShowcaseMock() {
   return (
-    <div className="w-full mt-10 rounded-bz-xl overflow-hidden border border-white/[0.06]">
+    <div className="bz-hero-visual w-full rounded-bz-xl overflow-hidden border border-white/[0.06]">
       <div className="relative bg-bz-olive overflow-hidden px-5 py-4 border-b border-white/[0.06]">
         <DotGrid tone="dark" />
         <div className="relative flex items-center justify-between">
@@ -283,14 +283,14 @@ function HeroSection() {
             Every system in your stack,{" "}
             <Heading.Muted>speaking the same language.</Heading.Muted>
           </Heading>
-          <div className="flex flex-wrap justify-center gap-[10px]">
-            <Pill variant="dark" withTick href="https://system.bizakerp.com/account/self-register">
-              Start free trial
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
+              Get Started
             </Pill>
-            <Pill variant="light" href="/contact">
-              Book a demo
+            <Pill variant="light" withArrow href="/contact">
+              Request Demo
             </Pill>
-          </div>
+          </PillGroup>
         </div>
         <ConnectorShowcaseMock />
       </Container>
@@ -350,7 +350,7 @@ function ConnectorLibrarySection() {
               "Average setup time under 2 minutes — authenticate and data flows",
               "Bidirectional sync with conflict resolution and idempotency built in",
             ],
-            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Browse connectors" },
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Request Demo" },
           }}
           visual={<ConnectorGridVisual />}
         />
@@ -442,7 +442,7 @@ function ReliabilitySection() {
               "Schema-aware mapping — source changes warn before they reach the ledger",
               "Replay without drift — DLQ payloads replay with full transform context preserved",
             ],
-            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to an integration engineer" },
+            cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to Sales" },
           }}
           visual={<SyncVolumeVisual />}
         />

@@ -15,11 +15,21 @@ import {
 
 | Layer | Files | Purpose |
 |---|---|---|
-| Atoms | `Pill`, `Eyebrow`, `Heading`, `BadgeGreen`, `Flag`, `StatusChip`, `StripeBar`, `Tick`, `DotGrid` | Single-element building blocks. |
+| Atoms | `Pill`, `PillGroup`, `Eyebrow`, `Heading`, `BadgeGreen`, `Flag`, `StatusChip`, `StripeBar`, `Tick`, `DotGrid` | Single-element building blocks. |
 | Layout | `Container`, `Section`, `HeroCanvas`, `SectionHead`, `BentoGrid` | Page scaffolding + section heads. |
 | Card shells | `Bento`, `BigCard`, `StepCard`, `HeroCard` | Repeating card shapes. |
 | Patterns | `Marquee`, `Carousel`, `Accordion`, `FlagsRow` | Higher-level interaction patterns. |
-| Micro-viz | `DataRow`, `MiniBars`, `EntityRow`, `JournalRow`, `ModuleListItem` | Rows / mini-charts that fill card insides. |
+| Micro-viz | `DataRow`, `MiniBars`, `EntityRow`, `JournalRow`, `ModuleListItem`, `StatTile` | Rows / mini-charts that fill card insides. |
+
+## CSS utility classes (paint without a React wrapper)
+
+A few `.bz-*` classes in `src/styles/style.css` are paint without a
+dedicated React primitive. Pages apply them via `className="…"`:
+
+| Class | Purpose |
+|---|---|
+| `.bz-page` | Outer wrapper for every `*PageLayout` in `routes.tsx`. Carries `overflow-x: clip` + `text-wrap: balance` — the project's mobile-overflow guard. |
+| `.bz-hero-visual` | Wrapper for a page-specific hero mock that is NOT a `<HeroCanvas>` (e.g. `FinancialManagement`'s olive-panel + statement card, `Workflow`'s approval-flow board). Encodes `var(--bz-hero-gap)` / `var(--bz-hero-gap-mobile)` so paper-surface mocks share the olive-canvas spacing — never hardcode `mt-*` on the mock wrapper. See `/CLAUDE.md` §"Hero spacing convention" for the canonical Options A / B. |
 
 ## Rules
 
@@ -33,6 +43,15 @@ import {
    lives in the primitive that owns the layout.
 6. **No `onMouseEnter`/`onMouseLeave` style mutations.** Use `:hover` in
    the primitive's CSS class or Tailwind `hover:` utilities.
+7. **CTAs are canonical.** Every conversion `<Pill>` uses one of 4
+   labels (Get Started / Free Trial / Request Demo / Talk to Sales) and
+   exactly one arrow (`withArrowUpRight` ↗ for external,
+   `withArrow` → for internal). Adjacent Pill pairs go inside
+   `<PillGroup>`; solo pills do not. The Pill primitive's only props
+   are `variant`, `size="sm|md"`, `href`, `withArrow`, and
+   `withArrowUpRight` — legacy `withTick`/`iconLeft`/`iconRight`/`size="lg"`
+   were removed. Full canon: `/CLAUDE.md` §"CTA conventions" and
+   `/docs/DESIGN_SYSTEM.md` §3.1.1.
 
 ## Adding a new primitive
 

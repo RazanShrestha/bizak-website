@@ -11,7 +11,7 @@ import { Pill, type PillProps } from "./Pill";
 //     tag="Set up"
 //     title="Pick your modules and go live"
 //     bullets={["Finance, sales, inventory…", "Pre-configured for your industry."]}
-//     cta={{ variant: "dark", withTick: true, href: "/product", children: "Learn more" }}
+//     cta={{ variant: "dark", withArrow: true, href: "/product", children: "Learn more" }}
 //     visual={<StepVisualSetup/>}
 //   />
 //
