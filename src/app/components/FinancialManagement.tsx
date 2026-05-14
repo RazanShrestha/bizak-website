@@ -354,8 +354,7 @@ function MultiEntityBento() {
         icon={<Building2 size={26} strokeWidth={1.4} color="#1F3422" />}
       />
       <Bento.Desc>
-        Consolidate subsidiaries across currencies into a single source of truth — FX translation and
-        intercompany eliminations included.
+        Consolidate subsidiaries across currencies into a single source of truth.
       </Bento.Desc>
       <Bento.Footer tone="light" className="flex flex-col gap-1.5">
         {rows.map((r) => (
@@ -374,7 +373,6 @@ function FinancialControlBento() {
   }> = [
     { abbr: "M", label: "Manager approval", status: "ok" },
     { abbr: "CF", label: "CFO review > $50k", status: "review" },
-    { abbr: "L", label: "Compliance log", status: "muted" },
   ];
   return (
     <Bento tone="dark" hover dotGrid minHeight={360}>
@@ -383,9 +381,8 @@ function FinancialControlBento() {
         icon={<ShieldCheck size={26} strokeWidth={1.4} color="#DBE9B8" />}
       />
       <Bento.Desc>
-        Maintain strict fiscal hygiene with conditional routing, budget checks and full approval logs
-        on every payment.
-      </Bento.Desc>
+        Maintain strict fiscal hygiene with conditional routing, budget checks.
+      </Bento.Desc>            
       <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
         {rows.map((r) => (
           <div
@@ -453,7 +450,7 @@ function AuditIntegrationBento() {
   const trail = [
     { trail: "Journal_Entry", ref: "#JE-2024-8821" },
     { trail: "Bank_Statement", ref: "#BS-990-22" },
-    { trail: "Vendor_Invoice", ref: "#INV-AX-402" },
+    // { trail: "Vendor_Invoice", ref: "#INV-AX-402" },
   ];
   return (
     <Bento tone="dark" hover minHeight={300}>
@@ -462,8 +459,7 @@ function AuditIntegrationBento() {
         icon={<ClipboardList size={26} strokeWidth={1.4} color="#DBE9B8" />}
       />
       <Bento.Desc>
-        Direct ledger posting and automated 3-way matching across every connected system, with a
-        100% audit score on every transaction.
+        Direct ledger posting and automated{<br/>}3-way matching.
       </Bento.Desc>
       <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
         {trail.map((r) => (
@@ -504,22 +500,22 @@ function ReportingSection() {
         <BentoGrid cols={2} gap={20}>
           <ReportingCell
             title="One-click financial statements"
-            body="Income, balance sheet and cash flow — auto-consolidated across every entity and refreshed the moment a transaction posts."
+            body="Income, balance sheet and cash flow auto-consolidated across every entity."
             visual={<StatementMockVisual />}
           />
           <ReportingCell
             title="Drill from totals to journals"
-            body="Every number resolves to its source journal entry in a single click. A full audit trail behind every figure, by default."
+            body="Every number resolves to its source journal entry in a single click."
             visual={<DrillTrailVisual />}
           />
           <ReportingCell
             title="Anomaly detection, built-in"
-            body="Variance from budget, aged AR, expense outliers — surfaced automatically the moment they emerge, not at month-end."
+            body="Variance from budget, aged AR, expense outliers surfaced automatically."
             visual={<AnomalyVisual />}
           />
           <ReportingCell
             title="Export the way auditors want it"
-            body="GAAP, IFRS and locale-specific formats — ready out of the box, exported as PDF, XBRL or Excel without template chasing."
+            body="GAAP, IFRS and locale-specific formats ready out of the box."
             visual={<ExportVisual />}
           />
         </BentoGrid>
@@ -544,7 +540,7 @@ function ReportingCell({
       minHeight={460}
       style={{ background: "var(--bz-section-b)" }}
     >
-      <div className="flex h-full flex-col items-center text-center">
+      <div className="flex h-full flex-col items-center text-center text-wrap">
         <h3 className="bz-bento-title max-w-[440px] text-balance">{title}</h3>
 
         <div className="my-auto flex w-full items-center justify-center py-8">
@@ -739,9 +735,10 @@ function ConnectivitySection() {
               <Heading.Muted>Every module.</Heading.Muted>
             </>
           }
-          description="Every event in Bizak — a shipment, a payment, a payroll run — auto-posts to the General Ledger in real time. No manual coding. No month-end catch-up."
+          description="Every event in Bizak auto-posts to the General Ledger in real time."
           titleMaxWidth={760}
         />
+        <div className="pb-8"></div>
 
         <div className="relative mx-auto max-w-[1100px]">
           {/* Top row of sources */}
@@ -842,23 +839,6 @@ function ConnectivitySection() {
               <SourceChip key={s.label} icon={s.icon} label={s.label} sub={s.sub} />
             ))}
           </div>
-        </div>
-
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-          {[
-            { icon: ShieldCheck,    label: "No manual coding"  },
-            { icon: Activity,       label: "Real-time posting" },
-            { icon: ClipboardList,  label: "Full audit trail"  },
-            { icon: Building2,      label: "Multi-entity ready" },
-          ].map(({ icon: Icon, label }) => (
-            <span
-              key={label}
-              className="inline-flex items-center gap-2 rounded-bz-pill border border-white/[0.08] bg-white/[0.04] px-3.5 py-2 text-[11px] font-medium uppercase tracking-[0.08em] text-white/[0.72]"
-            >
-              <Icon size={13} strokeWidth={2} className="text-bz-fire" />
-              {label}
-            </span>
-          ))}
         </div>
       </Container>
     </Section>

@@ -75,10 +75,10 @@ function HeroSection() {
     <Section tone="b" pad="hero">
       <Container>
         <div className="flex flex-col items-center text-center">
-          <BadgeGreen style={{ marginBottom: 28 }}>Live stock on every shelf 📦</BadgeGreen>
+          <BadgeGreen style={{ marginBottom: 28 }}>Live stock on every shelf</BadgeGreen>
 
           <Heading level={2} style={{ marginBottom: 36 }}>
-            Know what's on every shelf, right now —{" "}
+            Know what's on every shelf, right now{" "}
             <Heading.Muted>and every movement, on the same ledger.</Heading.Muted>
           </Heading>
 
@@ -86,7 +86,7 @@ function HeroSection() {
             <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
-            <Pill variant="light" withArrow href="/contact">
+            <Pill variant="light" href="/contact">
               Request Demo
             </Pill>
           </PillGroup>
@@ -209,7 +209,7 @@ function LiveFloorSection() {
           actions={
             <PillGroup>
               <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
-              <Pill variant="light" withArrow href="/contact">Request Demo</Pill>
+              <Pill variant="light" href="/contact">Request Demo</Pill>
             </PillGroup>
           }
         />
@@ -321,7 +321,7 @@ function FlowSection() {
         <SectionHead
           index="02"
           label="The flow"
-          title={<>Receive, store, ship — <Heading.Muted>every step traced, every journal posted.</Heading.Muted></>}
+          title={<>Receive, store, ship <Heading.Muted>every step traced, every journal posted.</Heading.Muted></>}
           titleMaxWidth={820}
         />
 

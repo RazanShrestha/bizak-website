@@ -25,7 +25,7 @@ const sectionVariants = cva("relative w-full", {
     pad: {
       default: "py-[80px] md:py-[110px] xl:py-[140px]",
       tight: "py-[56px] md:py-[72px] xl:py-[96px]",
-      hero: "pt-[56px] md:pt-[78px] pb-[56px] md:pb-[78px]",
+      hero: "pt-[48px] md:pt-[78px] pb-[48px] md:pb-[78px]",
       none: "",
     },
   },

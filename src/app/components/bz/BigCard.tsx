@@ -48,7 +48,7 @@ export function BigCard({
       )}
       {...rest}
     >
-      <div className="bz-big-card-text">
+      <div className="bz-big-card-text text-wrap">
         <div>
           <h3
             className="bz-bento-title"

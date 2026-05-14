@@ -1,7 +1,7 @@
 import "../../styles/style.css";
 import * as React from "react";
 import {
-  Activity,
+  AlertTriangle,
   ArrowUpRight,
   BarChart3,
   BookOpen,
@@ -9,15 +9,15 @@ import {
   CheckCircle2,
   ChevronRight,
   ClipboardCheck,
-  Clock,
   DollarSign,
+  FileSpreadsheet,
+  FileText,
   Landmark,
   Network,
   Package,
   Receipt,
   ShieldCheck,
   ShoppingCart,
-  Sparkles,
   Tags,
   TrendingDown,
   Warehouse,
@@ -28,17 +28,13 @@ import {
   Bento,
   BentoGrid,
   Container,
-  DataRow,
   DotGrid,
-  EntityRow,
   Heading,
-  HeroCanvas,
   Pill,
   PillGroup,
   Section,
   SectionHead,
   StatusChip,
-  StripeBar,
 } from "./bz";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -100,122 +96,179 @@ const METRICS = [
 // [HERO]
 // ════════════════════════════════════════════════════════════════════════════
 
-const PIPELINE_STAGES = [
-  {
-    label: "RFQ",
-    dot: "bg-bz-text-soft",
-    total: "$74k",
-    items: [
-      { ref: "RFQ-7703", amt: "$52k"   },
-      { ref: "RFQ-7701", amt: "$22k"   },
-    ],
-  },
-  {
-    label: "PO Issued",
-    dot: "bg-bz-fire",
-    total: "$70.2k",
-    items: [
-      { ref: "PO-8821", amt: "$48.2k" },
-      { ref: "PO-8819", amt: "$22k"   },
-    ],
-  },
-  {
-    label: "In Transit",
-    dot: "bg-amber-400",
-    total: "$48.2k",
-    items: [
-      { ref: "GRN-990", amt: "$48.2k" },
-    ],
-  },
-  {
-    label: "3-Way Match",
-    dot: "bg-emerald-500",
-    total: "$48.2k",
-    items: [
-      { ref: "INV-AX-402", amt: "$48.2k" },
-    ],
-  },
-] as const;
-
 function HeroSection() {
   return (
     <Section tone="b" pad="hero">
       <Container>
         <div className="flex flex-col items-center text-center">
-          <BadgeGreen style={{ marginBottom: 28 }}>Purchasing</BadgeGreen>
+          <BadgeGreen style={{ marginBottom: 28 }}>Built for Buyers</BadgeGreen>
 
           <Heading level={2} style={{ marginBottom: 36 }}>
-            Control purchasing and vendor relationships,{" "}
-            <Heading.Muted>from RFQ to receipt to the ledger.</Heading.Muted>
+            From first RFQ to final ledger post,{" "}{<br className="hidden md:block"/>}
+            <Heading.Muted>procurement that runs itself.</Heading.Muted>
           </Heading>
 
           <PillGroup>
             <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
-            <Pill variant="light" withArrow href="/contact">
+            <Pill variant="light" href="/contact">
               Request Demo
             </Pill>
           </PillGroup>
         </div>
 
-        <HeroCanvas>
-          <div className="bz-hero-card" style={{ width: 660 }}>
-            {/* Header */}
-            <div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="inline-flex size-6 items-center justify-center rounded-bz-pill bg-bz-olive text-bz-leaf">
-                  <ShoppingCart size={12} />
-                </span>
-                <span className="text-[12.5px] font-medium text-bz-text">Procurement pipeline</span>
-              </div>
-              <StatusChip variant="live">Live</StatusChip>
-            </div>
-
-            {/* Scrollable on mobile, 4 columns on desktop */}
-            <div className="overflow-x-auto">
-              <div className="min-w-[480px]">
-                <div className="grid grid-cols-4 gap-2">
-                  {PIPELINE_STAGES.map((stage) => (
-                    <div key={stage.label} className="flex flex-col gap-1.5">
-                      {/* Stage label */}
-                      <div className="flex items-center gap-1.5 pb-1">
-                        <span className={`size-1.5 shrink-0 rounded-bz-pill ${stage.dot}`} />
-                        <span className="text-[10px] font-medium text-bz-text">{stage.label}</span>
-                      </div>
-                      {/* Items */}
-                      {stage.items.map((item) => (
-                        <div
-                          key={item.ref}
-                          className="rounded-bz-md bg-bz-paper-warm px-2.5 py-2"
-                        >
-                          <p className="text-[11px] font-medium text-bz-text">{item.ref}</p>
-                          <p className="mt-0.5 text-[10px] tabular-nums text-bz-text-muted">
-                            {item.amt}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Totals */}
-                <div className="mt-2.5 grid grid-cols-4 gap-2 border-t border-bz-line-soft pt-2.5">
-                  {PIPELINE_STAGES.map((stage) => (
-                    <p
-                      key={stage.label}
-                      className="text-[11.5px] font-medium tabular-nums text-bz-text"
-                    >
-                      {stage.total}
-                    </p>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </HeroCanvas>
+        {/* Page-specific mock — editorial dark panel + PO card ─── */}
+        <div className="bz-hero-visual mx-auto grid w-full max-w-[1100px] grid-cols-1 gap-3 sm:grid-cols-5">
+          <HeroOlivePanel />
+          <HeroPurchaseOrderCard />
+        </div>
       </Container>
     </Section>
+  );
+}
+
+function HeroOlivePanel() {
+  return (
+    <div className="relative overflow-hidden rounded-bz-2xl bg-bz-olive p-5 sm:col-span-2 sm:min-h-[460px]">
+      <DotGrid tone="dark" />
+
+      {/* Editorial flat accent block — no gradient, just an offset shape */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-12 -top-12 size-44 rounded-bz-pill bg-bz-olive-soft/40"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-20 -left-10 size-36 rounded-bz-pill bg-bz-olive-soft/30"
+      />
+
+      <div className="relative flex h-full min-h-[280px] flex-col justify-between">
+        <div className="flex items-center gap-2 text-[10.5px] font-medium uppercase tracking-[0.12em] text-white/[0.55]">
+          <span className="size-1.5 rounded-bz-pill bg-bz-fire" />
+          Purchase order
+        </div>
+
+        <div className="flex flex-col gap-2.5">
+          {/* Floating approval chip */}
+          <div className="flex items-center justify-between rounded-bz-lg bg-bz-paper p-3 shadow-[0_18px_40px_-22px_rgba(0,0,0,0.6)]">
+            <div className="flex items-center gap-2.5">
+              <span className="flex size-7 items-center justify-center rounded-bz-pill border border-bz-line text-bz-text">
+                <CheckCircle2 size={14} strokeWidth={2} />
+              </span>
+              <span className="text-[13px] font-medium text-bz-text">
+                PO-8821
+              </span>
+            </div>
+            <span className="rounded-bz-pill bg-bz-paper-warm px-2.5 py-1 text-[10.5px] font-medium text-bz-text-muted">
+              Approved
+            </span>
+          </div>
+
+          {/* Primary action — pill-dark button */}
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 rounded-bz-lg bg-bz-deep py-3.5 text-[13.5px] font-medium text-bz-text-on-dark transition-colors hover:bg-bz-olive-dark"
+          >
+            Issue purchase order
+            <ArrowUpRight size={14} strokeWidth={2} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HeroPurchaseOrderCard() {
+  const rows = [
+    { label: "Raw materials",  value: "$36,800" },
+    { label: "Logistics fee",  value: "$4,200",  muted: true },
+    { label: "VAT (10%)",      value: "$7,200",  muted: true },
+  ];
+  return (
+    <div className="relative overflow-hidden rounded-bz-2xl bg-bz-paper sm:col-span-3 sm:min-h-[460px]">
+      {/* Dark olive header strip */}
+      <div className="flex items-center justify-between bg-bz-olive px-5 py-4">
+        <span className="text-[16px] font-medium tracking-tight text-bz-text-on-dark">
+          Bizak
+          <sup className="ml-0.5 text-[8px] opacity-60">®</sup>
+        </span>
+        <div className="flex flex-col items-end gap-1.5">
+          <span className="block h-[3px] w-9 rounded-bz-pill bg-white/30" />
+          <span className="block h-[3px] w-7 rounded-bz-pill bg-white/20" />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 p-5">
+        {/* Vendor / Order no. pair */}
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: "Vendor",    value: "Axis Mfg · USD" },
+            { label: "Order no.", value: "PO-8821" },
+          ].map((p) => (
+            <div
+              key={p.label}
+              className="rounded-bz-md border border-bz-line-soft p-3"
+            >
+              <p className="text-[10px] uppercase tracking-[0.08em] text-bz-text-muted">
+                {p.label}
+              </p>
+              <p className="mt-1.5 text-[13px] font-medium text-bz-text">
+                {p.value}
+              </p>
+              <span className="mt-2 block h-[3px] w-12 rounded-bz-pill bg-bz-line-soft" />
+            </div>
+          ))}
+        </div>
+
+        <p className="text-[10.5px] font-medium uppercase tracking-[0.08em] text-bz-text-soft">
+          Purchase order lines
+        </p>
+
+        {/* Line item rows */}
+        <div className="flex flex-col gap-2">
+          {rows.map((r, i) => (
+            <div
+              key={r.label}
+              className={
+                i === 0
+                  ? "flex items-center justify-between rounded-bz-md border border-bz-line-soft p-3"
+                  : "flex items-center justify-between px-1"
+              }
+            >
+              {i === 0 ? (
+                <>
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-7 items-center justify-center rounded-bz-sm bg-bz-paper-warm text-bz-text">
+                      <FileText size={13} strokeWidth={1.8} />
+                    </span>
+                    <span className="text-[12.5px] font-medium text-bz-text">
+                      {r.label}
+                    </span>
+                  </div>
+                  <span className="text-[13px] font-medium tabular-nums text-bz-text">
+                    {r.value}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="text-[12px] text-bz-text-muted">{r.label}</span>
+                  <span className="block h-[3px] w-16 rounded-bz-pill bg-bz-line-soft" />
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* PO total — emphasized total row */}
+        <div className="mt-1 flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-4 py-3.5">
+          <span className="text-[13px] text-bz-text-muted">PO total</span>
+          <span className="text-[22px] font-medium tabular-nums text-bz-text">
+            $48,200
+          </span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -276,13 +329,56 @@ function TechnicalShowcaseSection() {
         />
 
         <BentoGrid cols={2}>
-          <VendorScorecardBento />
           <ApprovalChainBento />
+          <VendorScorecardBento />
           <ThreeWayMatchBento />
           <AuditTrailBento />
         </BentoGrid>
       </Container>
     </Section>
+  );
+}
+
+function ApprovalChainBento() {
+  const rows: Array<{ label: string; status: "ok" | "review" | "muted"; sub: string }> = [
+    { label: "Manager approval", status: "ok",     sub: "Cleared · 2 min"   },
+    { label: "CFO review > $50k", status: "review", sub: "Awaiting · routed" },
+    { label: "Compliance log",   status: "muted",  sub: "Auto-posted"       },
+  ];
+  return (
+    <Bento tone="paper" hover minHeight={360}>
+      <Bento.Header
+        title="Approval chain"
+        icon={<Network size={26} strokeWidth={1.4} color="#1F3422" />}
+      />
+      <Bento.Desc>
+        Dynamic multi-level approval routing with conditional logic.
+      </Bento.Desc>
+      <Bento.Footer tone="light" className="flex flex-col gap-1.5">
+        {rows.map((r) => (
+          <div
+            key={r.label}
+            className="flex items-center justify-between rounded-bz-md bg-bz-paper-warm px-3 py-2.5"
+          >
+            <div className="min-w-0">
+              <p className="text-[12px] font-medium text-bz-text">{r.label}</p>
+              <p className="truncate text-[10.5px] uppercase tracking-[0.06em] text-bz-text-muted">
+                {r.sub}
+              </p>
+            </div>
+            <span
+              className={
+                r.status === "ok"
+                  ? "size-1.5 rounded-bz-pill bg-emerald-500"
+                  : r.status === "review"
+                  ? "size-1.5 rounded-bz-pill bg-bz-fire"
+                  : "size-1.5 rounded-bz-pill bg-bz-line"
+              }
+            />
+          </div>
+        ))}
+      </Bento.Footer>
+    </Bento>
   );
 }
 
@@ -299,8 +395,7 @@ function VendorScorecardBento() {
         icon={<Building2 size={26} strokeWidth={1.4} color="#DBE9B8" />}
       />
       <Bento.Desc>
-        Maintain a high-performance supplier network with automated ratings, contract health and
-        real-time status tracking.
+        Maintain a high-performance supplier network with automated ratings.
       </Bento.Desc>
       <Bento.Footer tone="dark" className="flex flex-col gap-3.5">
         <div className="flex items-center gap-3">
@@ -339,55 +434,11 @@ function VendorScorecardBento() {
   );
 }
 
-function ApprovalChainBento() {
-  const rows: Array<{ label: string; status: "ok" | "review" | "muted"; sub: string }> = [
-    { label: "Manager approval", status: "ok", sub: "Cleared · 2 min" },
-    { label: "CFO review > $50k", status: "review", sub: "Awaiting · routed" },
-    { label: "Compliance log", status: "muted", sub: "Auto-posted" },
-  ];
-  return (
-    <Bento tone="paper" hover minHeight={360}>
-      <Bento.Header
-        title="Approval chain"
-        icon={<Network size={26} strokeWidth={1.4} color="#1F3422" />}
-      />
-      <Bento.Desc>
-        Dynamic multi-level approval routing with conditional logic — every PO touched, every
-        threshold escalated.
-      </Bento.Desc>
-      <Bento.Footer tone="light" className="flex flex-col gap-1.5">
-        {rows.map((r) => (
-          <div
-            key={r.label}
-            className="flex items-center justify-between rounded-bz-md bg-bz-paper-warm px-3 py-2.5"
-          >
-            <div className="min-w-0">
-              <p className="text-[12px] font-medium text-bz-text">{r.label}</p>
-              <p className="truncate text-[10.5px] uppercase tracking-[0.06em] text-bz-text-muted">
-                {r.sub}
-              </p>
-            </div>
-            <span
-              className={
-                r.status === "ok"
-                  ? "size-1.5 rounded-bz-pill bg-emerald-500"
-                  : r.status === "review"
-                  ? "size-1.5 rounded-bz-pill bg-bz-fire"
-                  : "size-1.5 rounded-bz-pill bg-bz-line"
-              }
-            />
-          </div>
-        ))}
-      </Bento.Footer>
-    </Bento>
-  );
-}
-
 function ThreeWayMatchBento() {
   const docs = [
-    { label: "PO-2024-8821", role: "Purchase order", amt: "$48,200", ok: true },
-    { label: "GRN-990-22", role: "Goods receipt", amt: "$48,200", ok: true },
-    { label: "INV-AX-402", role: "Vendor invoice", amt: "$48,200", ok: true },
+    { label: "PO-2024-8821",  role: "", amt: "$48,200", ok: true },
+    { label: "GRN-990-22",    role: "",  amt: "$48,200", ok: true },
+    { label: "INV-AX-402",    role: "", amt: "$48,200", ok: true },
   ];
   return (
     <Bento tone="leaf" hover minHeight={300}>
@@ -396,8 +447,7 @@ function ThreeWayMatchBento() {
         icon={<ClipboardCheck size={26} strokeWidth={1.4} color="#1F3422" />}
       />
       <Bento.Desc style={{ color: "#1F3422", opacity: 0.78 }}>
-        PO, goods receipt and vendor invoice reconcile automatically — exceptions surfaced, the
-        rest posted to AP without a keystroke.
+        PO, goods receipt and vendor invoice reconciled automatically.
       </Bento.Desc>
       <Bento.Footer className="bg-[rgba(31,52,34,0.08)] flex flex-col gap-1.5">
         {docs.map((d) => (
@@ -425,8 +475,8 @@ function ThreeWayMatchBento() {
 function AuditTrailBento() {
   const trail = [
     { type: "PURCHASE_ORDER", id: "#PO-2024-8821" },
-    { type: "GOODS_RECEIPT", id: "#GRN-990-22" },
-    { type: "VENDOR_INVOICE", id: "#INV-AX-402" },
+    { type: "GOODS_RECEIPT",  id: "#GRN-990-22"   },
+    { type: "VENDOR_INVOICE", id: "#INV-AX-402"   },
   ];
   return (
     <Bento tone="dark" hover minHeight={300}>
@@ -435,9 +485,10 @@ function AuditTrailBento() {
         icon={<ShieldCheck size={26} strokeWidth={1.4} color="#DBE9B8" />}
       />
       <Bento.Desc>
-        Every procurement event — quote, PO, receipt, invoice — links to its source document and
-        ledger entry. One click to inspect, anytime.
+        Every procurement event quote, PO, receipt, invoice links to its source document and
+        ledger entry.
       </Bento.Desc>
+      <div className="pb-12"></div>
       <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
         {trail.map((r) => (
           <div
@@ -459,7 +510,7 @@ function AuditTrailBento() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [03] REPORTING — procurement intelligence
+// [03] REPORTING — "Click any spend line, see the full procurement trail."
 // ════════════════════════════════════════════════════════════════════════════
 
 function ReportingSection() {
@@ -475,277 +526,207 @@ function ReportingSection() {
               <Heading.Muted>see the full procurement trail.</Heading.Muted>
             </>
           }
-          description="From quarterly spend down to the originating RFQ — every figure on a procurement dashboard resolves to its source transaction."
+          description="From quarterly spend down to the originating RFQ every figure on a procurement dashboard."
           titleMaxWidth={780}
         />
 
-        <BentoGrid cols={12}>
-          <Bento tone="paper" span={8} minHeight={420}>
-            <SpendAnalyticsPanel />
-          </Bento>
-          <Bento tone="paper" span={4} minHeight={420}>
-            <ProcurementKpiPanel />
-          </Bento>
-          <Bento tone="paper" span={5} minHeight={380}>
-            <TopVendorsPanel />
-          </Bento>
-          <Bento tone="paper" span={7} minHeight={380}>
-            <SpendTrailPanel />
-          </Bento>
+        <BentoGrid cols={2} gap={20}>
+          <ReportingCell
+            title="One-click spend dashboards"
+            body="From quarterly commitments down to the line item consolidated across every entity."
+            visual={<SpendSummaryVisual />}
+          />
+          <ReportingCell
+            title="Drill from spend to purchase orders"
+            body="Every spend figure resolves to its originating RFQ, PO, and goods receipt in a single click."
+            visual={<PurchaseDrillVisual />}
+          />
+          <ReportingCell
+            title="Price variance detection, built-in"
+            body="Vendor price deviations and budget overruns surface automatically."
+            visual={<PriceVarianceVisual />}
+          />
+          <ReportingCell
+            title="Export the way auditors want it"
+            body="PDF, Excel and CSV for every PO list, approval log and vendor spend summary."
+            visual={<PurchasingExportVisual />}
+          />
         </BentoGrid>
       </Container>
     </Section>
   );
 }
 
-function SpendAnalyticsPanel() {
+function ReportingCell({
+  title,
+  body,
+  visual,
+}: {
+  title: string;
+  body: string;
+  visual: React.ReactNode;
+}) {
   return (
-    <>
-      <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <div className="mb-1.5 flex items-center gap-2">
-            <span className="inline-flex size-7 items-center justify-center rounded-bz-md bg-bz-leaf text-[#1F3422]">
-              <TrendingDown size={14} strokeWidth={1.8} />
-            </span>
-            <h3 className="text-[15px] font-medium text-bz-text">Executive spend analytics</h3>
-          </div>
-          <p className="text-[12px] text-bz-text-muted">
-            Consolidated global entity performance · synced 2 minutes ago
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <StatusChip variant="posted">FY2024</StatusChip>
-          <StatusChip variant="live">Live</StatusChip>
-        </div>
-      </div>
+    <Bento
+      tone="paper"
+      hover
+      minHeight={460}
+      style={{ background: "var(--bz-section-b)" }}
+    >
+      <div className="flex h-full flex-col items-center text-center text-wrap">
+        <h3 className="bz-bento-title max-w-[440px] text-balance">{title}</h3>
 
-      <div className="relative h-[220px] overflow-hidden rounded-bz-lg border border-bz-line-soft bg-bz-paper-warm p-4">
-        <svg
-          width="100%"
-          height="100%"
-          viewBox="0 0 800 200"
-          fill="none"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0 60C50 70 100 130 150 110C200 90 250 30 300 60C350 90 400 150 450 140C500 130 550 80 600 100C650 120 700 170 750 160"
-            stroke="var(--bz-olive)"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-          <path
-            d="M0 90C50 95 100 110 150 115C200 120 250 100 300 110C350 120 400 130 450 130C500 130 550 110 600 115C650 120 700 130 750 135"
-            stroke="var(--bz-text-muted)"
-            strokeDasharray="8 8"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            fill="none"
-          />
-        </svg>
-        <div className="absolute left-1/2 top-[14%] -translate-x-1/2 rounded-bz-md border border-bz-line-soft bg-bz-paper px-3 py-2 text-center whitespace-nowrap">
-          <div className="mb-0.5 text-[9px] font-medium uppercase tracking-[0.1em] text-bz-text-muted">
-            Peak spend
-          </div>
-          <div className="text-[15px] font-medium tabular-nums text-bz-text">$1.24M</div>
-          <div className="text-[9px] text-bz-text-muted">Vendor: Axis Mfg</div>
+        <div className="my-auto flex w-full items-center justify-center py-8">
+          {visual}
         </div>
-      </div>
 
-      <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
-        <div className="flex items-center gap-2">
-          <StatusChip variant="posted">PDF</StatusChip>
-          <StatusChip variant="posted">Excel</StatusChip>
-          <StatusChip variant="posted">CSV</StatusChip>
-        </div>
-        <a
-          href="#"
-          className="inline-flex items-center gap-1 text-[12px] font-medium text-bz-text hover:text-bz-text-muted"
-        >
-          Drill into POs
-          <ArrowUpRight size={13} strokeWidth={2} />
-        </a>
+        <p className="max-w-[420px] text-[13.5px] leading-[1.65] text-bz-text-muted">
+          {body}
+        </p>
       </div>
-    </>
+    </Bento>
   );
 }
 
-function ProcurementKpiPanel() {
-  const tiles: Array<{
-    icon: React.ElementType;
-    label: string;
-    value: string;
-    sub?: string;
-    intent?: "good" | "bad" | "neutral";
-    bar?: number;
-  }> = [
-    { icon: DollarSign, label: "Vendor spend", value: "$428k", sub: "↓ 4.2%", intent: "good" },
-    { icon: TrendingDown, label: "Cost variance", value: "0.82%", sub: "Target met", intent: "neutral" },
-    { icon: Clock, label: "Cycle time", value: "3.2d", sub: "↓ 12%", intent: "good" },
-    { icon: BarChart3, label: "Budget util.", value: "74%", bar: 74 },
-  ];
+// ── Reporting visuals ────────────────────────────────────────────────────────
+
+function SpendSummaryVisual() {
   return (
-    <>
-      <div className="mb-4 flex items-start justify-between">
-        <div>
-          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
-            This quarter
-          </div>
-          <h3 className="mt-1.5 text-[15px] font-medium text-bz-text">Procurement KPIs</h3>
-        </div>
-        <StatusChip variant="posted">Q3</StatusChip>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2.5">
-        {tiles.map(({ icon: Icon, label, value, sub, intent, bar }) => (
-          <div
-            key={label}
-            className="rounded-bz-lg border border-bz-line-soft bg-bz-paper-warm p-3.5"
-          >
-            <Icon size={18} strokeWidth={1.8} className="text-bz-text" />
-            <div className="mt-3.5">
-              <div className="mb-1 text-[10px] font-medium uppercase tracking-[0.1em] text-bz-text-muted">
-                {label}
-              </div>
-              <div className="text-[18px] font-medium tabular-nums text-bz-text">{value}</div>
-              {sub && (
-                <div
-                  className={
-                    intent === "good"
-                      ? "mt-1 text-[10.5px] font-medium text-emerald-700"
-                      : intent === "bad"
-                      ? "mt-1 text-[10.5px] font-medium text-rose-600"
-                      : "mt-1 text-[10.5px] font-medium text-bz-text-muted"
-                  }
-                >
-                  {sub}
-                </div>
-              )}
-              {bar !== undefined && (
-                <div className="mt-2.5">
-                  <StripeBar pct={bar} />
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
-
-function TopVendorsPanel() {
-  const vendors = [
-    { flag: "🇺🇸", name: "Axis Manufacturing", amount: "$1.24M", pct: 38 },
-    { flag: "🇩🇪", name: "Helio Components", amount: "€820k", pct: 24 },
-    { flag: "🇬🇧", name: "Northwind Supply", amount: "£540k", pct: 18 },
-    { flag: "🇯🇵", name: "Sakai Logistics", amount: "¥28M", pct: 12 },
-  ];
-  return (
-    <>
-      <div className="mb-4 flex items-start justify-between">
-        <div>
-          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
-            By spend
-          </div>
-          <h3 className="mt-1.5 text-[15px] font-medium text-bz-text">Top vendors</h3>
-        </div>
-        <StatusChip variant="posted">YTD</StatusChip>
-      </div>
-
-      <div className="flex flex-col gap-2.5">
-        {vendors.map((v) => (
-          <div key={v.name}>
-            <EntityRow flag={v.flag} name={v.name} amount={v.amount} />
-            <div className="mt-1.5">
-              <StripeBar pct={v.pct} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
-
-function SpendTrailPanel() {
-  const path = [
-    { label: "Q3 Spend", value: "$3.61M" },
-    { label: "Direct mat.", value: "$1.62M" },
-    { label: "Axis Mfg", value: "$1.24M" },
-    { label: "PO-8821", value: "$48,200", final: true },
-  ];
-  const events = [
-    { date: "14 · Sep", ref: "RFQ-7702", desc: "RFQ issued · 3 bidders", amt: "$48,200" },
-    { date: "21 · Sep", ref: "PO-8821",  desc: "PO approved · CFO routed", amt: "$48,200" },
-    { date: "28 · Sep", ref: "GRN-990",  desc: "Goods receipt · 250 units", amt: "$48,200" },
-  ];
-  return (
-    <>
-      <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
-            Audit trail
-          </div>
-          <h3 className="mt-1.5 text-[15px] font-medium text-bz-text">
-            Spend → vendor → PO
-          </h3>
-        </div>
-        <span className="inline-flex items-center gap-1.5 rounded-bz-pill bg-bz-leaf px-2.5 py-1 text-[10.5px] font-medium text-[#1F3422]">
-          <Sparkles size={11} strokeWidth={2} />
-          One click
+    <div className="w-full max-w-[300px] overflow-hidden rounded-bz-2xl bg-bz-paper-warm shadow-[0_18px_40px_-28px_rgba(0,0,0,0.18)]">
+      <div className="flex items-center justify-between bg-bz-olive px-4 py-3">
+        <span className="text-[13px] font-medium tracking-tight text-bz-text-on-dark">
+          Bizak<sup className="ml-0.5 text-[7px] opacity-60">®</sup>
         </span>
-      </div>
-
-      <div className="mb-5 flex flex-wrap items-center gap-2">
-        {path.map((p, i) => (
-          <div key={p.label} className="flex items-center gap-2">
-            <div
-              className={[
-                "flex items-center gap-2 rounded-bz-md px-3 py-2 text-[11.5px] font-medium tabular-nums",
-                p.final
-                  ? "bg-bz-olive text-bz-text-on-dark"
-                  : "border border-bz-line-soft bg-bz-paper text-bz-text",
-              ].join(" ")}
-            >
-              <span className={p.final ? "text-white/[0.62]" : "text-bz-text-muted"}>{p.label}</span>
-              <span>{p.value}</span>
-            </div>
-            {i !== path.length - 1 && (
-              <ChevronRight size={13} strokeWidth={2.2} className="text-bz-text-soft" />
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="overflow-hidden rounded-bz-lg border border-bz-line-soft">
-        <div className="hidden grid-cols-[80px_1fr_100px] gap-3 bg-bz-paper-warm px-4 py-2.5 text-[10px] font-medium uppercase tracking-[0.08em] text-bz-text-soft sm:grid">
-          <span>Date</span>
-          <span>Reference · Description</span>
-          <span className="text-right">Amount</span>
+        <div className="flex flex-col items-end gap-1">
+          <span className="block h-[3px] w-7 rounded-bz-pill bg-white/30" />
+          <span className="block h-[3px] w-5 rounded-bz-pill bg-white/20" />
         </div>
-        {events.map((e, i) => (
-          <div
-            key={e.ref}
+      </div>
+      <div className="flex flex-col gap-3 bg-bz-paper p-4">
+        <div className="flex items-center justify-between">
+          <span className="block h-[3px] w-20 rounded-bz-pill bg-bz-line-soft" />
+          <span className="text-[10.5px] uppercase tracking-[0.08em] text-bz-text-soft">
+            Total spend
+          </span>
+        </div>
+        <div className="flex items-center justify-between rounded-bz-md bg-bz-paper-warm px-3 py-2.5">
+          <span className="block h-[3px] w-14 rounded-bz-pill bg-bz-line" />
+          <span className="text-[18px] font-medium tabular-nums text-bz-text">
+            $3.61M
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PurchaseDrillVisual() {
+  const path = [
+    { label: "Q3 Spend"   },
+    { label: "Direct mat." },
+    { label: "Axis Mfg"   },
+    { label: "PO-8821", final: true },
+  ];
+  return (
+    <div className="flex max-w-[340px] flex-wrap items-center justify-center gap-1.5">
+      {path.map((p, i) => (
+        <React.Fragment key={p.label}>
+          <span
             className={[
-              "grid grid-cols-[60px_1fr_90px] items-center gap-3 px-4 py-3 sm:grid-cols-[80px_1fr_100px]",
-              i !== events.length - 1 && "border-b border-bz-line-soft",
-            ]
-              .filter(Boolean)
-              .join(" ")}
+              "rounded-bz-md px-2.5 py-1.5 text-[11.5px] font-medium tabular-nums",
+              p.final
+                ? "bg-bz-olive text-bz-text-on-dark"
+                : "border border-bz-line-soft bg-bz-paper text-bz-text",
+            ].join(" ")}
           >
-            <span className="text-[11px] text-bz-text-muted">{e.date}</span>
-            <div className="min-w-0">
-              <p className="text-[12px] font-medium text-bz-text">{e.ref}</p>
-              <p className="truncate text-[11px] text-bz-text-muted">{e.desc}</p>
-            </div>
-            <span className="text-right text-[12.5px] font-medium tabular-nums text-bz-text">
-              {e.amt}
+            {p.label}
+          </span>
+          {i !== path.length - 1 && (
+            <ChevronRight size={12} strokeWidth={2.2} className="text-bz-text-soft" />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+function PriceVarianceVisual() {
+  const alerts = [
+    {
+      icon: AlertTriangle,
+      title: "Axis Mfg · Unit price",
+      delta: "+8.2%",
+      tone: "bad" as const,
+    },
+    {
+      icon: TrendingDown,
+      title: "Helio Components",
+      delta: "−4.1%",
+      tone: "good" as const,
+    },
+  ];
+  return (
+    <div className="flex w-full max-w-[300px] flex-col gap-2">
+      {alerts.map(({ icon: Icon, title, delta, tone }) => {
+        const chip =
+          tone === "bad"
+            ? "bg-rose-500/10 text-rose-600"
+            : "bg-bz-leaf text-[#1F3422]";
+        return (
+          <div
+            key={title}
+            className="flex items-center gap-3 rounded-bz-lg border border-bz-line-soft bg-bz-paper px-3.5 py-3"
+          >
+            <span
+              className={`flex size-8 shrink-0 items-center justify-center rounded-bz-md ${chip}`}
+            >
+              <Icon size={14} strokeWidth={2} />
+            </span>
+            <span className="flex-1 text-left text-[12.5px] font-medium text-bz-text">
+              {title}
+            </span>
+            <span
+              className={`rounded-bz-pill px-2 py-0.5 text-[10.5px] font-medium tabular-nums ${chip}`}
+            >
+              {delta}
             </span>
           </div>
-        ))}
-      </div>
-    </>
+        );
+      })}
+    </div>
+  );
+}
+
+function PurchasingExportVisual() {
+  const formats = [
+    { icon: FileText,        label: "PDF",   active: true  },
+    { icon: FileSpreadsheet, label: "Excel"                },
+    { icon: BookOpen,        label: "CSV"                  },
+  ];
+  return (
+    <div className="flex w-full max-w-[320px] items-center justify-center gap-2.5">
+      {formats.map(({ icon: Icon, label, active }) => (
+        <div
+          key={label}
+          className={[
+            "flex w-[88px] flex-col items-center gap-2 rounded-bz-lg border px-3 py-4 transition-colors",
+            active
+              ? "border-bz-olive bg-bz-olive text-bz-text-on-dark"
+              : "border-bz-line-soft bg-bz-paper text-bz-text",
+          ].join(" ")}
+        >
+          <span
+            className={[
+              "flex size-9 items-center justify-center rounded-bz-md",
+              active ? "bg-white/[0.08]" : "bg-bz-paper-warm",
+            ].join(" ")}
+          >
+            <Icon size={15} strokeWidth={1.8} />
+          </span>
+          <span className="text-[11.5px] font-medium">{label}</span>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -754,23 +735,23 @@ function SpendTrailPanel() {
 // ════════════════════════════════════════════════════════════════════════════
 
 const SOURCES_TOP = [
-  { icon: Tags,          label: "RFQs",       sub: "Bid · Score"        },
-  { icon: ShoppingCart,  label: "POs",        sub: "Approve · Issue"    },
-  { icon: Warehouse,     label: "Receipts",   sub: "Match · Reconcile"  },
+  { icon: Tags,         label: "RFQs",      sub: "Bid · Score"        },
+  { icon: ShoppingCart, label: "POs",        sub: "Approve · Issue"    },
+  { icon: Warehouse,    label: "Receipts",   sub: "Match · Reconcile"  },
 ] as const;
 
 const SOURCES_BOTTOM = [
-  { icon: Package,       label: "Inventory",  sub: "Update · Replenish" },
-  { icon: Receipt,       label: "AP invoices",sub: "3-way · Pay"        },
-  { icon: Landmark,      label: "Finance",    sub: "Post · Reconcile"   },
+  { icon: Package,  label: "Inventory",   sub: "Update · Replenish" },
+  { icon: Receipt,  label: "AP invoices", sub: "3-way · Pay"        },
+  { icon: Landmark, label: "Finance",     sub: "Post · Reconcile"   },
 ] as const;
 
 const GL_ROWS = [
-  { time: "14:32", source: "Purch · PO-8821",   debit: "Inventory",     credit: "AP · VAT",       amt: "$48,200", fresh: true },
-  { time: "14:28", source: "RFQ · 7702",         debit: "Commit",        credit: "Budget reserve", amt: "$48,200"              },
-  { time: "14:25", source: "GRN · 990-22",       debit: "Inventory",     credit: "GR/IR",          amt: "$36,800"              },
-  { time: "14:21", source: "Purch · PO-8809",    debit: "Direct mat.",   credit: "AP",             amt: "$12,400"              },
-  { time: "14:18", source: "Purch · PO-8804",    debit: "Inventory",     credit: "AP · VAT",       amt: "$24,600"              },
+  { time: "14:32", source: "Purch · PO-8821",  debit: "Inventory",   credit: "AP · VAT",       amt: "$48,200", fresh: true },
+  { time: "14:28", source: "RFQ · 7702",        debit: "Commit",      credit: "Budget reserve", amt: "$48,200"              },
+  { time: "14:25", source: "GRN · 990-22",      debit: "Inventory",   credit: "GR/IR",          amt: "$36,800"              },
+  { time: "14:21", source: "Purch · PO-8809",   debit: "Direct mat.", credit: "AP",             amt: "$12,400"              },
+  { time: "14:18", source: "Purch · PO-8804",   debit: "Inventory",   credit: "AP · VAT",       amt: "$24,600"              },
 ];
 
 function ConnectivitySection() {
@@ -787,23 +768,27 @@ function ConnectivitySection() {
               <Heading.Muted>directly to inventory and finance.</Heading.Muted>
             </>
           }
-          description="Every step in the procurement cycle — RFQ, PO, receipt, invoice — auto-posts to the General Ledger in real time. No re-keying, no spreadsheet reconciliation."
+          description="Every step in the procurement cycle RFQ, PO, receipt, invoice auto-posts to the General Ledger in real time."
           titleMaxWidth={780}
         />
+        <div className="pb-8"></div>
 
         <div className="relative mx-auto max-w-[1100px]">
+          {/* Top row of sources */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
             {SOURCES_TOP.map((s) => (
               <SourceChip key={s.label} icon={s.icon} label={s.label} sub={s.sub} />
             ))}
           </div>
 
+          {/* Connector row */}
           <div className="hidden h-8 grid-cols-3 gap-4 sm:grid">
             {SOURCES_TOP.map((_, i) => (
               <Connector key={i} />
             ))}
           </div>
 
+          {/* Live purchasing hub panel */}
           <div className="relative my-4 overflow-hidden rounded-bz-2xl bg-bz-olive-soft p-5 sm:my-0 sm:p-7">
             <DotGrid tone="dark" />
             <div className="relative">
@@ -874,34 +859,19 @@ function ConnectivitySection() {
             </div>
           </div>
 
+          {/* Connector row */}
           <div className="hidden h-8 grid-cols-3 gap-4 sm:grid">
             {SOURCES_BOTTOM.map((_, i) => (
               <Connector key={i} />
             ))}
           </div>
 
+          {/* Bottom row of sources */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
             {SOURCES_BOTTOM.map((s) => (
               <SourceChip key={s.label} icon={s.icon} label={s.label} sub={s.sub} />
             ))}
           </div>
-        </div>
-
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-          {[
-            { icon: ShieldCheck, label: "No re-keying" },
-            { icon: Activity,    label: "Real-time posting" },
-            { icon: ClipboardCheck, label: "3-way matched" },
-            { icon: BookOpen,    label: "Full PO audit trail" },
-          ].map(({ icon: Icon, label }) => (
-            <span
-              key={label}
-              className="inline-flex items-center gap-2 rounded-bz-pill border border-white/[0.08] bg-white/[0.04] px-3.5 py-2 text-[11px] font-medium uppercase tracking-[0.08em] text-white/[0.72]"
-            >
-              <Icon size={13} strokeWidth={2} className="text-bz-fire" />
-              {label}
-            </span>
-          ))}
         </div>
       </Container>
     </Section>

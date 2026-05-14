@@ -1,3 +1,4 @@
+import "../../styles/style.css";
 import * as React from "react";
 import {
 
@@ -177,10 +178,10 @@ function ProjectScoreboardCard() {
             <HardHat size={18} strokeWidth={1.8} />
           </span>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-muted">
+            <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
               Project · PRJ-0481
             </p>
-            <p className="text-[15px] font-semibold text-bz-text">
+            <p className="text-[14px] font-medium text-bz-text">
               Metropolis Tower · Foundations + Core
             </p>
           </div>
@@ -198,12 +199,12 @@ function ProjectScoreboardCard() {
             key={k.label}
             className="rounded-bz-lg border border-bz-line-soft bg-bz-paper px-4 py-4"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-bz-text-muted">
+            <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
               {k.label}
             </p>
             <p
               className={
-                "mt-1.5 text-[22px] font-semibold leading-none " +
+                "mt-1.5 text-[22px] font-medium tabular-nums leading-none " +
                 (k.accent ? "text-bz-leaf-deep" : "text-bz-text")
               }
             >
@@ -217,7 +218,7 @@ function ProjectScoreboardCard() {
       {/* Phase tracker */}
       <div className="mt-6 rounded-bz-lg border border-bz-line-soft bg-bz-paper px-5 py-5">
         <div className="flex items-center justify-between">
-          <p className="text-[12px] font-semibold text-bz-text">
+          <p className="text-[12px] font-medium text-bz-text">
             Phase tracker
           </p>
           <p className="text-[11px] text-bz-text-muted">
@@ -267,7 +268,7 @@ function ProjectScoreboardCard() {
       {/* Today's cost feed */}
       <div className="mt-6">
         <div className="mb-3 flex items-center justify-between">
-          <p className="text-[12px] font-semibold text-bz-text">
+          <p className="text-[12px] font-medium text-bz-text">
             Today on this project
           </p>
           <span className="inline-flex items-center gap-1 text-[11px] text-bz-text-muted">
@@ -284,7 +285,7 @@ function ProjectScoreboardCard() {
                 <span className="text-[12px] font-medium text-bz-text">{row.txn}</span>
                 <span className="text-[10.5px] text-bz-text-muted">{row.code}</span>
               </div>
-              <span className="text-[12px] font-semibold text-bz-text">{row.amount}</span>
+              <span className="text-[12px] font-medium tabular-nums text-bz-text">{row.amount}</span>
             </div>
           ))}
         </div>
@@ -338,10 +339,10 @@ function CaptureVisualPO() {
   return (
     <div className="flex h-full flex-col gap-2 p-2">
       <div className="rounded-bz-lg border border-bz-line-soft bg-bz-surface p-4">
-        <p className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-bz-text-muted">
+        <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
           Purchase order
         </p>
-        <p className="mt-1 text-[15px] font-semibold text-bz-text">PO #8841</p>
+        <p className="mt-1 text-[14px] font-medium text-bz-text">PO #8841</p>
         <div className="mt-3 flex flex-col gap-1.5">
           <DataRow label="Project"   value="Metropolis Tower" />
           <DataRow label="Cost code" value="03-300 · Concrete" />
@@ -365,7 +366,7 @@ function CaptureVisualTime() {
     <div className="flex h-full flex-col gap-2 p-2">
       <div className="rounded-bz-lg border border-bz-line-soft bg-bz-surface p-4">
         <div className="flex items-center justify-between">
-          <p className="text-[12.5px] font-semibold text-bz-text">
+          <p className="text-[12.5px] font-medium text-bz-text">
             Crew · Grade II — Civil
           </p>
           <StatusChip variant="live">Approved</StatusChip>
@@ -390,12 +391,12 @@ function CaptureVisualTime() {
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="rounded-bz-lg bg-bz-paper-warm px-3 py-2">
-          <p className="text-[9.5px] uppercase tracking-[0.12em] text-bz-text-muted">Hours</p>
-          <p className="text-[13px] font-semibold text-bz-text">46.0h</p>
+          <p className="text-[10px] uppercase tracking-[0.12em] text-bz-text-muted">Hours</p>
+          <p className="text-[13px] font-medium tabular-nums text-bz-text">46.0h</p>
         </div>
         <div className="rounded-bz-lg bg-bz-paper-warm px-3 py-2">
-          <p className="text-[9.5px] uppercase tracking-[0.12em] text-bz-text-muted">Burdened</p>
-          <p className="text-[13px] font-semibold text-bz-text">$3,134.40</p>
+          <p className="text-[10px] uppercase tracking-[0.12em] text-bz-text-muted">Burdened</p>
+          <p className="text-[13px] font-medium tabular-nums text-bz-text">$3,134.40</p>
         </div>
       </div>
     </div>
@@ -411,7 +412,7 @@ function CaptureVisualMaterial() {
   return (
     <div className="flex h-full flex-col gap-2 p-2">
       <div className="flex items-center justify-between rounded-bz-lg border border-bz-line-soft bg-bz-surface px-4 py-2.5">
-        <span className="text-[11px] font-semibold text-bz-text">
+        <span className="text-[11px] font-medium text-bz-text">
           Material draw · Metropolis Tower
         </span>
         <StatusChip variant="live">Posted</StatusChip>
@@ -429,7 +430,7 @@ function CaptureVisualMaterial() {
               <p className="text-[11.5px] font-medium text-bz-text">{r.item}</p>
               <p className="text-[10px] text-bz-text-muted">From {r.stock}</p>
             </div>
-            <span className="text-[11.5px] font-semibold text-bz-text">{r.amount}</span>
+            <span className="text-[11.5px] font-medium tabular-nums text-bz-text">{r.amount}</span>
           </div>
         ))}
       </div>
@@ -437,7 +438,7 @@ function CaptureVisualMaterial() {
         <span className="text-[10.5px] font-medium text-bz-text">
           Inventory ↓ &nbsp;·&nbsp; Project cost ↑
         </span>
-        <span className="text-[10.5px] font-semibold text-bz-leaf-deep">
+        <span className="text-[10.5px] font-medium tabular-nums text-bz-leaf-deep">
           $2,662.00
         </span>
       </div>
@@ -497,7 +498,7 @@ function ResourceHeatmap() {
           {RESOURCE_WEEKS.map((w) => (
             <div
               key={w}
-              className="text-center text-[9.5px] font-semibold uppercase tracking-[0.1em] text-bz-text-muted"
+              className="text-center text-[10px] font-medium uppercase tracking-[0.08em] text-bz-text-muted"
             >
               {w}
             </div>
@@ -586,10 +587,10 @@ function PortfolioCommand() {
           titleMaxWidth={820}
         />
         <BentoGrid cols={12} gap={20}>
-          <Bento tone="paper" span={7} minHeight={420}>
+          <Bento tone="paper" hover span={7} minHeight={420}>
             <Bento.Header
-              title={<>Resource heatmap</>}
-              icon={<Layers size={18} className="text-bz-text-muted" strokeWidth={1.7} />}
+              title="Resource heatmap"
+              icon={<Layers size={26} strokeWidth={1.4} color="#1F3422" />}
             />
             <Bento.Desc>
               Crew and equipment load across the next seven weeks. Bizak flags any
@@ -600,10 +601,10 @@ function PortfolioCommand() {
             </div>
           </Bento>
 
-          <Bento tone="paper" span={5} minHeight={420}>
+          <Bento tone="paper" hover span={5} minHeight={420}>
             <Bento.Header
-              title={<>Milestone schedule</>}
-              icon={<CalendarRange size={18} className="text-bz-text-muted" strokeWidth={1.7} />}
+              title="Milestone schedule"
+              icon={<CalendarRange size={26} strokeWidth={1.4} color="#1F3422" />}
             />
             <Bento.Desc>
               Every active project on one timeline — start, finish, slack — coloured
@@ -644,14 +645,14 @@ function PnLTree() {
             <span
               className={
                 "text-[12.5px] " +
-                (isHeader ? "font-semibold text-bz-text-on-dark" : "text-white/[0.78]")
+                (isHeader ? "font-medium text-bz-text-on-dark" : "text-white/[0.78]")
               }
             >
               {row.label}
             </span>
             <span
               className={
-                "text-[12.5px] font-semibold " +
+                "text-[12.5px] font-medium tabular-nums " +
                 (row.accent ? "text-bz-fire" : "text-bz-text-on-dark")
               }
             >
@@ -668,12 +669,12 @@ function DrillPanel() {
   return (
     <div className="rounded-bz-2xl border border-white/[0.08] bg-white/[0.04] p-6">
       <div className="flex items-center justify-between">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">
+        <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/[0.62]">
           Source of truth
         </p>
         <StatusChip variant="live">Drilling</StatusChip>
       </div>
-      <p className="mt-2 text-[16px] font-semibold text-bz-text-on-dark">
+      <p className="mt-2 text-[16px] font-medium tabular-nums text-bz-text-on-dark">
         Equipment Hire · $42,800
       </p>
       <p className="mt-1 text-[11.5px] text-white/[0.6]">
@@ -705,37 +706,35 @@ function DrillThroughMargin() {
     <Section tone="dark">
       <DotGrid tone="dark" />
       <Container>
-        <div className="relative">
-          <SectionHead
-            index="03"
-            label="Audit trail"
-            tone="dark"
-            title={
-              <>
-                Click any number on the project P&amp;L,{" "}
-                <Heading.Muted>land on the transaction that booked it.</Heading.Muted>
-              </>
-            }
-            description="No spreadsheet exports, no support tickets to finance — every figure on the project margin resolves to its source PO, timesheet, or material draw."
-            titleMaxWidth={820}
-          />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div className="rounded-bz-2xl border border-white/[0.08] bg-white/[0.04] p-6">
-              <div className="flex items-center justify-between">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">
-                  Project P&amp;L · Metropolis Tower
-                </p>
-                <span className="text-[11px] text-white/[0.6]">FY26 · YTD</span>
-              </div>
-              <div className="mt-4">
-                <PnLTree />
-              </div>
-              <p className="mt-4 text-[10.5px] text-white/[0.55]">
-                Click <span className="text-bz-fire">Equipment</span> →
+        <SectionHead
+          index="03"
+          label="Audit trail"
+          tone="dark"
+          title={
+            <>
+              Click any number on the project P&amp;L,{" "}
+              <Heading.Muted>land on the transaction that booked it.</Heading.Muted>
+            </>
+          }
+          description="No spreadsheet exports, no support tickets to finance — every figure on the project margin resolves to its source PO, timesheet, or material draw."
+          titleMaxWidth={820}
+        />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="rounded-bz-2xl border border-white/[0.08] bg-white/[0.04] p-6">
+            <div className="flex items-center justify-between">
+              <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/[0.62]">
+                Project P&amp;L · Metropolis Tower
               </p>
+              <span className="text-[11px] text-white/[0.6]">FY26 · YTD</span>
             </div>
-            <DrillPanel />
+            <div className="mt-4">
+              <PnLTree />
+            </div>
+            <p className="mt-4 text-[10.5px] text-white/[0.55]">
+              Click <span className="text-bz-fire">Equipment</span> →
+            </p>
           </div>
+          <DrillPanel />
         </div>
       </Container>
     </Section>
@@ -752,10 +751,10 @@ function BillingScheduleVisual() {
       {BILLING_SCHEDULE.map((p, i) => (
         <div
           key={p.period}
-          className="flex items-center justify-between rounded-bz-lg bg-[#F4F5EF] px-4 py-3"
+          className="flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-4 py-3"
         >
           <div>
-            <p className="text-[11.5px] font-semibold text-bz-text">{p.period}</p>
+            <p className="text-[11.5px] font-medium text-bz-text">{p.period}</p>
             <p className="text-[10.5px] text-bz-text-muted">
               Billed {p.billed} · earned {p.earned}
             </p>
@@ -780,8 +779,8 @@ function WipRollForward() {
           emphasis={row.emphasis}
         />
       ))}
-      <div className="mt-2 rounded-bz-lg bg-[#F4F5EF] px-3 py-2.5 text-[10.5px] text-bz-text-muted">
-        <span className="font-semibold text-bz-text">Percent-complete</span> on
+      <div className="mt-2 rounded-bz-lg bg-bz-paper-warm px-3 py-2.5 text-[10.5px] text-bz-text-muted">
+        <span className="font-medium text-bz-text">Percent-complete</span> on
         cost-to-cost — recalculated nightly from the live cost ledger.
       </div>
     </div>
@@ -805,10 +804,10 @@ function WipAndBilling() {
           titleMaxWidth={780}
         />
         <BentoGrid cols={2} gap={20}>
-          <Bento tone="paper" minHeight={360}>
+          <Bento tone="paper" hover minHeight={360}>
             <Bento.Header
-              title={<>Progress billing schedule</>}
-              icon={<ClipboardList size={18} className="text-bz-text-muted" strokeWidth={1.7} />}
+              title="Progress billing schedule"
+              icon={<ClipboardList size={26} strokeWidth={1.4} color="#1F3422" />}
             />
             <Bento.Desc>
               Application-style billings flow on the milestone schedule, with
@@ -818,10 +817,10 @@ function WipAndBilling() {
               <BillingScheduleVisual />
             </div>
           </Bento>
-          <Bento tone="paper" minHeight={360}>
+          <Bento tone="paper" hover minHeight={360}>
             <Bento.Header
-              title={<>WIP roll-forward</>}
-              icon={<GitBranch size={18} className="text-bz-text-muted" strokeWidth={1.7} />}
+              title="WIP roll-forward"
+              icon={<GitBranch size={26} strokeWidth={1.4} color="#1F3422" />}
             />
             <Bento.Desc>
               Costs to date, earned revenue and recognised margin — drawn from
@@ -849,12 +848,12 @@ function WipAndBilling() {
 
 export function ProjectAndJobCostingPage() {
   return (
-    <>
+    <main>
       <ProjectScoreboardHero />
       <CostCaptureFlow />
       <PortfolioCommand />
       <DrillThroughMargin />
       <WipAndBilling />
-    </>
+    </main>
   );
 }

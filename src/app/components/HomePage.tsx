@@ -95,7 +95,6 @@ const FAQS = [
 const HERO_POSTS = [
   { source: "Sales · SO-1041",   entry: "AR → Revenue + VAT",  fresh: true  },
   { source: "Shipment · SH-882", entry: "COGS → Inventory",    fresh: false },
-  { source: "Bank · AI match",   entry: "184 lines reconciled", fresh: false },
 ];
 
 const HERO_OPS = [
@@ -176,6 +175,7 @@ function HeroAutoPostPanel() {
               </div>
             ))}
           </div>
+          <div className="pb-12"></div>
         </div>
 
         <div className="mt-6">
@@ -704,7 +704,7 @@ function FAQSection() {
             </div>
             <PillGroup className="relative mt-8">
               <Pill variant="accent" href="https://system.bizakerp.com/account/self-register" withArrowUpRight>Get Started</Pill>
-              <Pill variant="ghostDark" href="/contact" withArrow>Talk to Sales</Pill>
+              <Pill variant="ghostDark" href="/contact">Talk to Sales</Pill>
             </PillGroup>
           </div>
 

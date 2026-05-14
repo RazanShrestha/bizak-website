@@ -8376,7 +8376,7 @@
   line-height: 1.2;
   margin: 0 0 14px;
 }
-.bz-bento-desc { font-size: 14px; line-height: 1.55; color: var(--bz-text-muted); margin: 0; }
+.bz-bento-desc { font-size: 14px; line-height: 1.55; color: var(--bz-text-muted); margin: 0; text-wrap: wrap; }
 @media (max-width: 600px) { .bz-bento { padding: 24px; border-radius: 18px; min-height: auto; } }
 
 /* Big card (Multi-entity) — proper mobile responsive grid */

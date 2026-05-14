@@ -141,7 +141,7 @@ function DistributionPageLayout() {
           description:
             "Centralise purchasing, warehouses, and fulfillment on one ledger. COGS posts the moment you ship — no re-keying, full audit trail.",
           primaryLabel: "Start free trial",
-          secondaryLabel: "Talk to operations team",
+          secondaryLabel: "Talk to sales",
         }}
       />
     </div>
@@ -156,11 +156,11 @@ function PurchasingPageLayout() {
       <Footer
         cta={{
           title: "Take full control of your procurement operations.",
-          titleMuted: "From RFQ to receipt, all on one ledger.",
+          // titleMuted: "",
           description:
-            "Centralise vendors, auto-route approvals, and 3-way match every PO straight to the ledger — zero re-keying, full audit trail.",
-          primaryLabel: "Start free trial",
-          secondaryLabel: "Talk to procurement team",
+            "Centralise vendors, auto-route approvals, and 3-way match every PO.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
         }}
       />
     </div>
@@ -279,7 +279,7 @@ function InventoryAndWarehousePageLayout() {
           titleMuted: "inventory and warehouse.",
           description: "Track every SKU in real time, automate replenishment.",
           primaryLabel: "Start free trial",
-          secondaryLabel: "Talk to operations team",
+          secondaryLabel: "Talk to sales",
         }}
       />
     </div>
@@ -312,12 +312,11 @@ function ManufacturingPageLayout() {
       <ManufacturingPage />
       <Footer
         cta={{
-          title: "Run your factory floor with complete precision.",
-          titleMuted: "From raw material to finished good, on time, every run.",
-          description:
-            "Plan production, manage BOMs, schedule work orders and post manufacturing cost straight to the ledger — one connected operating system, zero re-keying.",
+          title: "Built for the factory floor.",
+          titleMuted: "From raw material to finished good.",
+          description: "Plan production, track BOMs, and post costs to the ledger all in one place.",
           primaryLabel: "Start free trial",
-          secondaryLabel: "Talk to ops team",
+          secondaryLabel: "Talk to sales",
         }}
       />
     </div>
@@ -331,12 +330,29 @@ function ManufacturingProductPageLayout() {
       <ManufacturingProductPage />
       <Footer
         cta={{
-          title: "Run your factory floor with complete precision.",
-          titleMuted: "From raw material to finished good, on time, every run.",
-          description:
-            "Plan production, manage BOMs, schedule work orders and post manufacturing cost straight to the ledger — one connected operating system, zero re-keying.",
+          title: "Built for the factory floor.",
+          titleMuted: "From raw material to finished good.",
+          description: "Plan production, track BOMs, and post costs to the ledger all in one place.",
           primaryLabel: "Start free trial",
-          secondaryLabel: "Talk to ops team",
+          secondaryLabel: "Talk to sales",
+        }}
+      />
+    </div>
+  );
+}
+
+function RetailAndEcommercePageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <RetailAndEcommercePage />
+      <Footer
+        cta={{
+          title: "Sell everywhere, fulfil flawlessly.",
+          titleMuted: "Every margin, always known.",
+          description: "One platform for every channel, warehouse, and book.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
         }}
       />
     </div>
@@ -507,6 +523,25 @@ function PointOfSalesPageLayout() {
   );
 }
 
+function StartupsAndSmesPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <StartupsAndSmes />
+      <Footer
+        cta={{
+          title: "Still running your business on spreadsheets?",
+          titleMuted: "Join 50,000+ companies that made the switch.",
+          description:
+            "One platform for finance, sales, and inventory. Go live in three days — not three months.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
+        }}
+      />
+    </div>
+  );
+}
+
 
 function HomeLayout() {
   return (
@@ -644,7 +679,7 @@ export const router = createBrowserRouter([
       { path: "ProjectAndCosting", Component: ProjectAndCostingPageLayout },
       { path: "manufacturing",    Component: ManufacturingPageLayout     },
       { path: "manufacturingProduct",    Component: ManufacturingProductPageLayout           },
-      { path: "Retail", Component: RetailAndEcommercePage    },
+      { path: "Retail", Component: RetailAndEcommercePageLayout },
       { path: "ProfessionalService", Component: ProfessionalServicePageLayout },
       { path: "DashboardAndReporting", Component: DashboardAndReportingPageLayout },
       { path: "Integrations", Component: IntegrationsPageLayout },
@@ -652,7 +687,7 @@ export const router = createBrowserRouter([
       { path: "DocumentManagement", Component: DocumentManagementPageLayout },
       { path: "careers", Component: CareersPageLayout },
       { path: "PointOfSales", Component: PointOfSalesPageLayout },
-      { path: "StartupsAndSmes", Component: StartupsAndSmes },
+      { path: "StartupsAndSmes", Component: StartupsAndSmesPageLayout },
       { path: "MidMarket",       Component: MidMarket       },
       { path: "Enterprise",      Component: Enterprise       },
       { path: "support",         Component: HelpCenter       },

@@ -87,7 +87,7 @@ function BentoHeader({
         "flex items-start justify-between gap-3",
         className,
       )}
-      style={{ marginBottom: 72 }}
+      style={{ }}
     >
       <h3 className="bz-bento-title">{title}</h3>
       {icon && <span className="flex-shrink-0">{icon}</span>}
