@@ -1,95 +1,103 @@
 import { useState } from "react";
 import {
-  Zap,
-  Layers,
-  BadgeCheck,
-  Users,
-  DollarSign,
-  BarChart3,
-  Globe,
-  Clock,
-  Heart,
-  BookOpen,
+  Rocket,
+  GitMerge,
+  Globe2,
+  MessagesSquare,
+  Compass,
+  Repeat2,
+  Banknote,
+  HeartPulse,
+  GraduationCap,
   Laptop,
-  MapPin,
+  CalendarClock,
+  Plane,
+  ShieldCheck,
+  ArrowRight,
   type LucideIcon,
 } from "lucide-react";
 import {
   Section,
   Container,
   SectionHead,
-  Bento,
-  BentoGrid,
-  Pill,
-  PillGroup,
   Heading,
   BadgeGreen,
+  Pill,
+  PillGroup,
+  Bento,
+  BentoGrid,
+  BigCard,
+  Marquee,
   StatusChip,
+  StripeBar,
 } from "./bz";
 import { cn } from "./ui/utils";
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
-const ACTIVITY_FEED: { Icon: LucideIcon; text: string; time: string }[] = [
-  { Icon: Zap,        text: "v4.2 shipped to 50,000+ customers worldwide",      time: "just now" },
-  { Icon: BadgeCheck, text: "PR merged automated close time reduced by 40%",  time: "12m ago"  },
-  { Icon: Layers,     text: "Design review complete Inventory v2 approved",   time: "1h ago"   },
-  { Icon: Globe,      text: "New enterprise customer onboarded in Singapore",    time: "2h ago"   },
-  { Icon: Clock,      text: "Team standup wrapped async for the rest of day", time: "3h ago"   },
+// The team scrolling teammate cards in the hero marquee.
+const TEAM: { initials: string; name: string; role: string; city: string; flag: string }[] = [
+  { initials: "AR", name: "Aanya Rao",        role: "Staff Engineer",     city: "Bengaluru",  flag: "🇮🇳" },
+  { initials: "PS", name: "Prabin Shrestha",  role: "QA Engineer",        city: "Kathmandu",  flag: "🇳🇵" },
+  { initials: "RT", name: "Riya Thapa",       role: "Product Designer",   city: "Pokhara",    flag: "🇳🇵" },
+  { initials: "DM", name: "Dev Mehta",        role: "Engineering Lead",   city: "Mumbai",     flag: "🇮🇳" },
+  { initials: "AH", name: "Anika Hossain",    role: "Product Manager",    city: "Dhaka",      flag: "🇧🇩" },
+  { initials: "SF", name: "Sahil Fernando",   role: "Backend Engineer",   city: "Colombo",    flag: "🇱🇰" },
+  { initials: "MK", name: "Maya Karki",       role: "Customer Success",   city: "Kathmandu",  flag: "🇳🇵" },
+  { initials: "BS", name: "Bilal Siddiqui",   role: "Solutions Engineer", city: "Lahore",     flag: "🇵🇰" },
+  { initials: "TS", name: "Tashi Sherpa",     role: "Account Executive",  city: "Thimphu",    flag: "🇧🇹" },
+  { initials: "NB", name: "Nisha Bhandari",   role: "Data Engineer",      city: "Bengaluru",  flag: "🇮🇳" },
 ];
 
-const CULTURE_PILLARS: { Icon: LucideIcon; title: string; desc: string }[] = [
-  { Icon: Laptop,   title: "Remote-first",        desc: "Work from anywhere, always"      },
-  { Icon: Clock,    title: "Async culture",        desc: "No 9-5, no micromanagement"      },
-  { Icon: BookOpen, title: "$2k learning budget",  desc: "Books, courses, conferences"     },
-  { Icon: Globe,    title: "120+ countries",       desc: "One global, diverse team"        },
+const RELEASE_ROWS = [
+  { label: "Modules updated", value: "12"     },
+  { label: "Regions live",    value: "South Asia" },
+  { label: "Rollout time",    value: "4m 12s" },
+  { label: "Manual steps",    value: "0"      },
 ];
 
-const VALUES: { num: string; title: string; body: string; Icon: LucideIcon }[] = [
+const CULTURE: { Icon: LucideIcon; title: string; desc: string; tone: "paper" | "dark" | "fire" }[] = [
   {
-    num: "01",
-    title: "Move with conviction",
-    body: "We decide fast, commit fully, and course-correct with data not committees. Velocity is a feature.",
-    Icon: Zap,
+    Icon: Globe2,
+    title: "Remote-first, by design",
+    desc: "No HQ, no second-class remote. We've been distributed since day one, so you work from wherever you think best.",
+    tone: "paper",
   },
   {
-    num: "02",
-    title: "Think in systems",
-    body: "Every problem lives inside a larger system. We understand the whole before optimising a part. Depth over hacks.",
-    Icon: Layers,
+    Icon: MessagesSquare,
+    title: "Async over interrupt",
+    desc: "Decisions live in writing, not in meetings you had to attend. Deep-work blocks are protected and timezones respected.",
+    tone: "dark",
   },
   {
-    num: "03",
-    title: "Own every outcome",
-    body: "Responsibility doesn't stop at the handoff. We see things through, raise blockers early, and celebrate what ships.",
-    Icon: BadgeCheck,
+    Icon: Compass,
+    title: "Ownership, not hierarchy",
+    desc: "The person closest to the problem makes the call. Titles open doors; they don't win arguments.",
+    tone: "fire",
   },
   {
-    num: "04",
-    title: "Win as one team",
-    body: "120 countries, one culture. We build bridges across timezones, functions, and backgrounds because the best ideas ignore org charts.",
-    Icon: Users,
+    Icon: Repeat2,
+    title: "Ship to learn",
+    desc: "Small changes, shipped weekly, measured honestly. We correct course with data instead of debating it in a room.",
+    tone: "paper",
   },
 ];
 
 const BENEFITS: { Icon: LucideIcon; label: string; sub: string }[] = [
-  { Icon: DollarSign, label: "Competitive Salary",   sub: "Top-of-market pay benchmarked quarterly" },
-  { Icon: BarChart3,  label: "Equity Package",        sub: "Meaningful ownership in what you build" },
-  { Icon: Globe,      label: "Remote-First",          sub: "Work from anywhere, always" },
-  { Icon: Clock,      label: "Flexible Hours",        sub: "Async-first, no micromanagement" },
-  { Icon: Heart,      label: "Health & Wellness",     sub: "Comprehensive medical, dental, vision" },
-  { Icon: BookOpen,   label: "$2k Learning Budget",   sub: "Books, courses, conferences your call" },
-  { Icon: Laptop,     label: "Home Office Stipend",   sub: "$800 to set up your ideal workspace" },
-  { Icon: MapPin,     label: "Team Retreats",         sub: "Annual global offsite, quarterly meetups" },
+  { Icon: Banknote,      label: "Salary and equity",   sub: "Top-of-market pay, reviewed twice a year, with real ownership." },
+  { Icon: HeartPulse,    label: "Health, fully covered", sub: "Medical, dental and vision for you and your family." },
+  { Icon: GraduationCap, label: "$2,000 to learn",     sub: "Books, courses and conferences. Your call, every year." },
+  { Icon: Laptop,        label: "Home-office setup",   sub: "An $800 stipend to build a workspace that works for you." },
+  { Icon: CalendarClock, label: "Flexible time off",   sub: "Take the leave you need, on a 20-day floor, not a ceiling." },
+  { Icon: Plane,         label: "Annual offsite",      sub: "The whole company together, somewhere new, once a year." },
 ];
 
 type Job = { title: string; type: string; location: string };
-type Department = { dept: string; color: string; jobs: Job[] };
+type Team = { team: string; jobs: Job[] };
 
-const OPEN_ROLES: Department[] = [
+const OPEN_ROLES: Team[] = [
   {
-    dept: "Engineering",
-    color: "#4F8EF7",
+    team: "Engineering",
     jobs: [
       { title: "Staff Frontend Engineer",               type: "Full-time", location: "Remote" },
       { title: "Senior Backend Engineer",               type: "Full-time", location: "Remote / Kathmandu" },
@@ -99,35 +107,31 @@ const OPEN_ROLES: Department[] = [
     ],
   },
   {
-    dept: "Product & Design",
-    color: "#B57BF5",
+    team: "Product & Design",
     jobs: [
-      { title: "Senior Product Manager ERP Core", type: "Full-time", location: "Remote" },
-      { title: "Senior Product Designer",           type: "Full-time", location: "Remote" },
-      { title: "UX Researcher",                     type: "Full-time", location: "Remote" },
+      { title: "Senior Product Manager, ERP Core", type: "Full-time", location: "Remote" },
+      { title: "Senior Product Designer",          type: "Full-time", location: "Remote" },
+      { title: "UX Researcher",                    type: "Full-time", location: "Remote" },
     ],
   },
   {
-    dept: "Go-to-Market",
-    color: "#F5A623",
+    team: "Go-to-Market",
     jobs: [
-      { title: "Enterprise Account Executive APAC", type: "Full-time", location: "Singapore / Remote" },
-      { title: "Senior Solutions Engineer",           type: "Full-time", location: "Remote" },
-      { title: "Head of Content & SEO",               type: "Full-time", location: "Remote" },
-      { title: "Sales Development Representative",    type: "Full-time", location: "Remote" },
+      { title: "Enterprise Account Executive, South Asia", type: "Full-time", location: "Kathmandu / Remote" },
+      { title: "Senior Solutions Engineer",          type: "Full-time", location: "Remote" },
+      { title: "Head of Content & SEO",              type: "Full-time", location: "Remote" },
+      { title: "Sales Development Representative",   type: "Full-time", location: "Remote" },
     ],
   },
   {
-    dept: "Finance & Operations",
-    color: "#3ECFAD",
+    team: "Finance & Operations",
     jobs: [
       { title: "Senior Financial Analyst",   type: "Full-time", location: "Kathmandu / Remote" },
       { title: "Revenue Operations Manager", type: "Full-time", location: "Remote" },
     ],
   },
   {
-    dept: "Customer Success",
-    color: "#FF6B6B",
+    team: "Customer Success",
     jobs: [
       { title: "Senior Implementation Consultant", type: "Full-time", location: "Remote" },
       { title: "Customer Success Manager",         type: "Full-time", location: "Remote" },
@@ -135,293 +139,310 @@ const OPEN_ROLES: Department[] = [
   },
 ];
 
-const PROCESS_STEPS = [
-  { num: "01", label: "Apply",       detail: "5 min",    desc: "Submit your application. No cover letter required we value clarity over formality." },
-  { num: "02", label: "Intro Call",  detail: "30 min",   desc: "A relaxed conversation with our recruiter. We want to understand your story and goals." },
-  { num: "03", label: "Assessment",  detail: "3–5 days", desc: "A focused take-home or live exercise relevant to your role. Fair, scoped, and paid." },
-  { num: "04", label: "Team Rounds", detail: "2–3 hrs",  desc: "Meet the people you'd work with. Ask hard questions we'll do the same." },
-  { num: "05", label: "Offer",       detail: "48 hrs",   desc: "We move fast. Expect a clear, competitive offer with full transparency on equity." },
+const TOTAL_ROLES = OPEN_ROLES.reduce((s, t) => s + t.jobs.length, 0);
+
+const PROCESS: { n: string; label: string; duration: string; desc: string }[] = [
+  { n: "1", label: "Application",     duration: "10 min",       desc: "Tell us about your work, not your life story. No cover letter, no twelve-field form." },
+  { n: "2", label: "Intro call",      duration: "30 min",       desc: "A relaxed conversation about your story, your goals, and what you want to build next." },
+  { n: "3", label: "Craft interview", duration: "Paid, scoped", desc: "A focused exercise on real, role-relevant work. Take-home or live, your call. We pay for your time." },
+  { n: "4", label: "Meet the team",   duration: "2 to 3 hrs",   desc: "Sessions with the people you'd actually work with. Bring hard questions; we will too." },
+  { n: "5", label: "Offer",           duration: "Within 48 hrs", desc: "A clear, transparent offer with a full breakdown of salary and equity. No pressure games." },
 ];
 
-// ─── HERO MOCK ────────────────────────────────────────────────────────────────
-// "Team Pulse" careers-specific dark panel with live headcount data,
-// 2-column activity feed + culture pillars. No internal HR numbers.
-// Sits directly on the section-b surface (no HeroCanvas wrapper).
+// ─── HERO ─────────────────────────────────────────────────────────────────────
+// A scrolling strip of real teammates one remote team across South Asia, in motion.
 
-function CulturePanelMock() {
+function TeammateCard({ initials, name, role, city, flag }: (typeof TEAM)[number]) {
   return (
-    <div className="bz-hero-visual mx-auto w-full max-w-[1040px] rounded-bz-2xl border border-bz-line-soft bg-bz-olive overflow-hidden">
-      {/* Header */}
-      <div className="px-6 pt-5 pb-4 flex items-center justify-between border-b border-white/[0.08]">
-        <div>
-          <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-bz-text-on-dark-muted">
-            Bizak Team
-          </div>
-          <div className="text-[16px] font-semibold text-bz-text-on-dark mt-0.5">
-            Remote · Async · Always shipping
-          </div>
+    <div className="flex w-[256px] shrink-0 flex-col gap-3.5 rounded-bz-xl border border-bz-line-soft bg-bz-surface p-4">
+      <div className="flex items-center gap-3">
+        <span className="grid size-10 shrink-0 place-items-center rounded-bz-pill bg-bz-leaf text-[13px] font-semibold text-bz-deep">
+          {initials}
+        </span>
+        <div className="min-w-0">
+          <div className="truncate text-[13.5px] font-semibold text-bz-text">{name}</div>
+          <div className="truncate text-[12px] text-bz-text-muted">{role}</div>
         </div>
-        <StatusChip variant="live">Hiring now</StatusChip>
       </div>
-
-      {/* 2-column body */}
-      <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr]">
-        {/* Activity feed */}
-        <div className="px-6 py-5">
-          <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-bz-text-on-dark-muted mb-4">
-            Today's highlights
-          </div>
-          <div className="flex flex-col">
-            {ACTIVITY_FEED.map(({ Icon, text, time }, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "flex items-center gap-3 py-3",
-                  i < ACTIVITY_FEED.length - 1 && "border-b border-white/[0.06]"
-                )}
-              >
-                <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center shrink-0">
-                  <Icon size={13} className="text-bz-fire" />
-                </div>
-                <div className="flex-1 min-w-0 text-[13px] text-bz-text-on-dark-muted leading-[1.4]">
-                  {text}
-                </div>
-                <div className="text-[11px] text-bz-text-on-dark-soft shrink-0 pl-3">
-                  {time}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Culture pillars */}
-        <div className="px-6 py-5 border-t border-white/[0.08] md:border-t-0 md:border-l border-white/[0.08]">
-          <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-bz-text-on-dark-muted mb-4">
-            Life at Bizak
-          </div>
-          <div className="flex flex-col gap-4">
-            {CULTURE_PILLARS.map(({ Icon, title, desc }) => (
-              <div key={title} className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-bz-md bg-bz-fire-soft flex items-center justify-center shrink-0">
-                  <Icon size={14} className="text-bz-fire" />
-                </div>
-                <div className="min-w-0">
-                  <div className="text-[13px] font-semibold text-bz-text-on-dark">{title}</div>
-                  <div className="text-[12px] text-bz-text-on-dark-muted mt-0.5">{desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="flex items-center gap-1.5 border-t border-bz-line-soft pt-2.5 text-[12px] text-bz-text-muted">
+        <span className="text-[13px] leading-none">{flag}</span>
+        <span>{city}</span>
       </div>
     </div>
   );
 }
 
-// ─── SECTIONS ─────────────────────────────────────────────────────────────────
-
 function HeroSection() {
-  const totalOpen = OPEN_ROLES.reduce((s, d) => s + d.jobs.length, 0);
-
   return (
     <Section tone="b" pad="hero">
       <Container>
         <div className="flex flex-col items-center text-center">
           <BadgeGreen style={{ marginBottom: 28 }}>
-            {totalOpen} open roles · hiring now
+            {TOTAL_ROLES} open roles · hiring across South Asia 🌏
           </BadgeGreen>
-          <Heading level={2} style={{ marginBottom: 16 }}>
-            Build what the{" "}
-            <Heading.Muted>world runs on.</Heading.Muted>
+          <Heading level={2} style={{ marginBottom: 20 }}>
+            Build what businesses{" "}
+            <Heading.Muted>can't operate without.</Heading.Muted>
           </Heading>
-          <p className="text-[16px] text-bz-text-muted leading-[1.7] max-w-[560px] mb-10">
-            Bizak powers 50,000+ businesses across 120+ countries. Join the team making enterprise software feel effortless and building the next chapter of global commerce.
+          <p className="mb-9 max-w-[580px] text-[16px] leading-[1.7] text-bz-text-muted">
+            Bizak runs finance, inventory and operations for growing businesses
+            across South Asia. We're the remote-first team behind it, and
+            we're growing fast.
           </p>
           <PillGroup>
-            <Pill variant="dark" withArrow href="#open-roles">View Open Roles</Pill>
-            <Pill variant="light" withArrow href="#culture">Our Culture</Pill>
+            <Pill variant="dark" withArrow href="#open-roles">View open roles</Pill>
+            <Pill variant="light" withArrow href="#life">Life at Bizak</Pill>
           </PillGroup>
         </div>
-        <CulturePanelMock />
+
+        <div className="bz-hero-visual">
+          <Marquee speed="60s">
+            {TEAM.map((t) => (
+              <TeammateCard key={t.name} {...t} />
+            ))}
+          </Marquee>
+        </div>
       </Container>
     </Section>
   );
 }
 
-function ValuesSection() {
+// ─── 01 · THE WORK ────────────────────────────────────────────────────────────
+// Why the work matters code here ships to the real economy.
+
+function ReleaseImpactCard() {
   return (
-    <Section id="culture" tone="a">
+    <div className="w-full max-w-[380px] rounded-bz-xl bg-bz-paper p-5 text-bz-text">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <span className="flex size-8 items-center justify-center rounded-bz-sm bg-bz-paper-warm">
+            <Rocket size={15} strokeWidth={1.7} className="text-bz-text" />
+          </span>
+          <div>
+            <div className="text-[12.5px] font-semibold leading-tight text-bz-text">
+              Release v4.2.0
+            </div>
+            <div className="text-[10.5px] text-bz-text-muted">Production</div>
+          </div>
+        </div>
+        <StatusChip variant="live">Shipped</StatusChip>
+      </div>
+
+      <div className="mt-4">
+        <div className="mb-1.5 flex items-center justify-between text-[11px] text-bz-text-muted">
+          <span>Rollout progress</span>
+          <span className="font-semibold text-bz-text">100%</span>
+        </div>
+        <StripeBar pct={100} />
+      </div>
+
+      <div className="mt-4 flex flex-col gap-1.5">
+        {RELEASE_ROWS.map((r) => (
+          <div
+            key={r.label}
+            className="flex items-center justify-between rounded-bz-sm border border-bz-line-soft px-3 py-2"
+          >
+            <span className="text-[12px] text-bz-text-muted">{r.label}</span>
+            <span className="text-[12.5px] font-semibold tabular-nums text-bz-text">
+              {r.value}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 flex items-center gap-2 border-t border-bz-line-soft pt-3 text-[11.5px] text-bz-text-muted">
+        <GitMerge size={13} className="text-bz-text" />
+        Authored by 6 engineers. Merged 2 hours ago.
+      </div>
+    </div>
+  );
+}
+
+function TheWorkSection() {
+  return (
+    <Section tone="a">
       <Container>
         <SectionHead
           index="01"
-          label="Our Culture"
+          label="The work"
           title={
             <>
-              Principles that shape{" "}
-              <Heading.Muted>how we work.</Heading.Muted>
+              You won't be shipping{" "}
+              <Heading.Muted>another disposable dashboard.</Heading.Muted>
             </>
           }
-          description="We don't just ship software we're building a company that attracts and keeps exceptional people. These aren't posters on a wall; they're the decisions we make every day."
+          description="Bizak is the ledger growing businesses trust with their money, their stock and their payroll. The work here is infrastructure: measured, owned end to end, and in production fast."
+          titleMaxWidth={760}
         />
-        <BentoGrid cols={2}>
-          {VALUES.map(({ num, title, body, Icon }) => (
-            <Bento key={num} tone="paper" hover className="relative overflow-hidden">
-              <span
-                aria-hidden
-                className="absolute -top-3 right-4 text-[120px] font-black leading-none select-none pointer-events-none text-bz-text opacity-[0.04]"
-              >
-                {num}
-              </span>
-              <div className="flex flex-col gap-5">
-                <div className="w-10 h-10 rounded-bz-lg bg-bz-fire-soft flex items-center justify-center shrink-0">
-                  <Icon size={18} className="text-bz-text" />
-                </div>
-                <h3 className="text-[20px] font-bold text-bz-text tracking-[-0.01em]">
-                  {title}
-                </h3>
-                <p className="text-[14px] text-bz-text-muted leading-[1.7]">{body}</p>
-              </div>
-            </Bento>
-          ))}
-        </BentoGrid>
+
+        <BigCard
+          text={{
+            title: "Code that reaches the real economy",
+            body: "No staging-environment theatre. What you ship runs payroll, posts journals and moves inventory for real companies the moment it lands.",
+            bullets: [
+              "You scope it, build it, and run it. End to end.",
+              "Weekly releases, with no change-freeze bureaucracy.",
+              "On call for what you ship, backed by the whole team.",
+            ],
+            cta: {
+              variant: "accent",
+              withArrow: true,
+              href: "#open-roles",
+              children: "See open roles",
+            },
+          }}
+          visual={<ReleaseImpactCard />}
+        />
       </Container>
     </Section>
   );
 }
 
-function BenefitsSection() {
+// ─── 02 · LIFE AT BIZAK ───────────────────────────────────────────────────────
+
+function LifeAtBizakSection() {
   return (
-    <Section tone="b">
+    <Section id="life" tone="b">
       <Container>
         <SectionHead
           index="02"
-          label="Why Bizak"
+          label="Life at Bizak"
           title={
             <>
-              Built for the people{" "}
-              <Heading.Muted>who build it.</Heading.Muted>
+              A team built for{" "}
+              <Heading.Muted>focus, not friction.</Heading.Muted>
             </>
           }
-          description="We invest in our people because building world-class software requires world-class conditions."
+          description="We optimise for the conditions that let good people do their best work: autonomy, quiet, and trust."
         />
+
         <BentoGrid cols={4}>
-          {BENEFITS.map(({ Icon, label, sub }) => (
-            <Bento key={label} tone="paper" hover minHeight={160}>
-              <div className="flex flex-col gap-3">
-                <div className="w-9 h-9 rounded-bz-lg bg-bz-leaf flex items-center justify-center shrink-0">
-                  <Icon size={16} className="text-bz-text" />
-                </div>
-                <div className="text-[14px] font-bold text-bz-text">{label}</div>
-                <div className="text-[13px] text-bz-text-muted leading-[1.55]">{sub}</div>
-              </div>
-            </Bento>
-          ))}
+          {CULTURE.map(({ Icon, title, desc, tone }) => {
+            const iconColor = tone === "dark" ? "#DBE9B8" : "#1F3422";
+            return (
+              <Bento key={title} tone={tone} hover dotGrid={tone === "dark"}>
+                <Bento.Header
+                  title={title}
+                  icon={<Icon size={24} strokeWidth={1.5} color={iconColor} />}
+                />
+                <Bento.Desc
+                  className="mt-1"
+                  style={tone === "fire" ? { color: "#1F3422", opacity: 0.78 } : undefined}
+                >
+                  {desc}
+                </Bento.Desc>
+              </Bento>
+            );
+          })}
         </BentoGrid>
+
+        <div className="mt-4 rounded-bz-2xl border border-bz-line-soft bg-bz-paper p-7 md:p-9">
+          <div className="mb-6 text-[12px] font-semibold uppercase tracking-[0.14em] text-bz-text-muted">
+            Plus the essentials, properly handled
+          </div>
+          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+            {BENEFITS.map(({ Icon, label, sub }) => (
+              <div key={label} className="flex gap-3.5">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-bz-md bg-bz-leaf">
+                  <Icon size={16} className="text-bz-text" />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[14px] font-semibold text-bz-text">{label}</div>
+                  <div className="mt-1 text-[13px] leading-[1.55] text-bz-text-muted">
+                    {sub}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </Container>
     </Section>
+  );
+}
+
+// ─── 03 · OPEN ROLES ──────────────────────────────────────────────────────────
+
+function RoleRow({ job }: { job: Job }) {
+  return (
+    <a
+      href="/contact"
+      className="group flex items-center justify-between gap-4 rounded-bz-lg border border-bz-line-soft bg-bz-surface px-5 py-4 transition-colors duration-150 hover:border-bz-line"
+    >
+      <div className="min-w-0">
+        <div className="text-[15px] font-semibold text-bz-text">{job.title}</div>
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-bz-text-muted">
+          <span>{job.type}</span>
+          <span className="size-[3px] rounded-bz-pill bg-bz-line" />
+          <span>{job.location}</span>
+        </div>
+      </div>
+      <ArrowRight
+        size={18}
+        className="shrink-0 text-bz-text-muted transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-bz-text"
+      />
+    </a>
   );
 }
 
 function OpenRolesSection() {
-  const [activeDept, setActiveDept] = useState<string | null>(null);
-  const displayed = activeDept
-    ? OPEN_ROLES.filter((d) => d.dept === activeDept)
+  const [activeTeam, setActiveTeam] = useState<string | null>(null);
+  const displayed = activeTeam
+    ? OPEN_ROLES.filter((t) => t.team === activeTeam)
     : OPEN_ROLES;
+
+  const filters: (string | null)[] = [null, ...OPEN_ROLES.map((t) => t.team)];
 
   return (
     <Section id="open-roles" tone="a">
       <Container width="narrow">
         <SectionHead
           index="03"
-          label="Open Roles"
+          label="Open roles"
           title={
             <>
-              Find your next{" "}
-              <Heading.Muted>challenge.</Heading.Muted>
+              Find the role with{" "}
+              <Heading.Muted>your name on it.</Heading.Muted>
             </>
           }
-          actions={
-            <>
-              <button
-                type="button"
-                onClick={() => setActiveDept(null)}
-                className={cn(
-                  "px-4 h-9 rounded-bz-pill border text-[13px] font-semibold transition-colors duration-150",
-                  activeDept === null
-                    ? "bg-bz-deep text-bz-text-on-dark border-bz-deep"
-                    : "bg-transparent text-bz-text-muted border-bz-line hover:bg-bz-section-b"
-                )}
-              >
-                All
-              </button>
-              {OPEN_ROLES.map((d) => {
-                const isActive = activeDept === d.dept;
-                return (
-                  <button
-                    key={d.dept}
-                    type="button"
-                    onClick={() =>
-                      setActiveDept((prev) => (prev === d.dept ? null : d.dept))
-                    }
-                    className={cn(
-                      "px-4 h-9 rounded-bz-pill border text-[13px] font-semibold transition-colors duration-150",
-                      !isActive &&
-                        "bg-transparent text-bz-text-muted border-bz-line hover:bg-bz-section-b"
-                    )}
-                    style={
-                      isActive
-                        ? {
-                            borderColor: d.color,
-                            color: d.color,
-                            background: `${d.color}18`,
-                          }
-                        : undefined
-                    }
-                  >
-                    {d.dept}
-                  </button>
-                );
-              })}
-            </>
-          }
+          description="Remote, with a handful of hybrid options. Don't see your exact fit? We still want to hear from you."
         />
 
-        <div className="flex flex-col gap-8">
+        <div className="mb-10 flex flex-wrap gap-2.5">
+          {filters.map((f) => {
+            const isActive = activeTeam === f;
+            return (
+              <button
+                key={f ?? "all"}
+                type="button"
+                onClick={() => setActiveTeam(f)}
+                className={cn(
+                  "h-9 rounded-bz-sm border px-4 text-[13px] font-semibold transition-colors duration-150",
+                  isActive
+                    ? "border-bz-deep bg-bz-deep text-bz-text-on-dark"
+                    : "border-bz-line bg-transparent text-bz-text-muted hover:bg-bz-section-b",
+                )}
+              >
+                {f ?? "All teams"}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-col gap-10">
           {displayed.map((group) => (
-            <div key={group.dept}>
-              <div className="flex items-center gap-3 mb-4">
-                <span
-                  className="size-2.5 rounded-full shrink-0"
-                  style={{ background: group.color }}
-                />
-                <span className="text-[13px] font-bold text-bz-text tracking-[0.02em]">
-                  {group.dept}
+            <div key={group.team}>
+              <div className="mb-4 flex items-center gap-3">
+                <span className="text-[13px] font-semibold text-bz-text">
+                  {group.team}
                 </span>
-                <span className="text-[12px] text-bz-text-muted">
-                  {group.jobs.length} roles
+                <span className="rounded-bz-sm bg-bz-section-b px-2 py-0.5 text-[11px] font-medium text-bz-text-muted">
+                  {group.jobs.length} open
                 </span>
               </div>
-
               <div className="flex flex-col gap-2.5">
                 {group.jobs.map((job) => (
-                  <div
-                    key={job.title}
-                    className="flex items-center justify-between gap-4 px-5 py-4 rounded-bz-lg border border-bz-line-soft bg-bz-surface hover:border-bz-line transition-colors duration-150"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[15px] font-bold text-bz-text mb-1">
-                        {job.title}
-                      </div>
-                      <div className="flex gap-3 flex-wrap text-[12px] text-bz-text-muted">
-                        <span>{job.type}</span>
-                        <span className="hidden sm:block self-center size-[3px] rounded-full bg-bz-line" />
-                        <span>{job.location}</span>
-                      </div>
-                    </div>
-                    <Pill variant="dark" size="sm" href="/contact">
-                      Apply
-                    </Pill>
-                  </div>
+                  <RoleRow key={job.title} job={job} />
                 ))}
               </div>
             </div>
@@ -432,78 +453,70 @@ function OpenRolesSection() {
   );
 }
 
-function HiringProcessSection() {
+// ─── 04 · HOW WE HIRE ─────────────────────────────────────────────────────────
+
+function HiringSection() {
   return (
     <Section tone="b">
-      <Container width="narrow">
+      <Container>
         <SectionHead
           index="04"
-          label="Hiring Process"
+          label="How we hire"
           title={
             <>
-              No mystery,{" "}
-              <Heading.Muted>no maze.</Heading.Muted>
+              A process that{" "}
+              <Heading.Muted>respects your time.</Heading.Muted>
             </>
           }
-          description="We respect your time. Here's exactly what to expect from first click to signed offer."
+          description="Five steps, roughly two weeks, zero mystery. Here is exactly what to expect from first click to signed offer."
         />
 
-        <div className="relative grid grid-cols-1 md:grid-cols-5 gap-y-10">
-          <div
-            aria-hidden
-            className="hidden md:block absolute top-8 left-[10%] right-[10%] h-px bg-bz-line z-0"
-          />
-          {PROCESS_STEPS.map((step, i) => (
-            <div
-              key={step.num}
-              className="relative z-10 flex flex-col items-center text-center px-2"
-            >
-              <div
-                className={cn(
-                  "size-16 rounded-full border-2 flex items-center justify-center mb-5",
-                  i === 0
-                    ? "bg-bz-deep border-bz-deep text-bz-text-on-dark"
-                    : "bg-bz-section-a border-bz-line text-bz-text"
-                )}
-              >
-                <span className="text-[13px] font-bold tracking-[0.04em]">
-                  {step.num}
-                </span>
-              </div>
-              <div className="text-[15px] font-bold text-bz-text mb-1.5">
-                {step.label}
-              </div>
-              <span className="inline-flex items-center rounded-bz-pill bg-bz-leaf px-3 py-0.5 text-[11px] font-semibold text-bz-text mb-3">
-                {step.detail}
-              </span>
-              <p className="text-[13px] text-bz-text-muted leading-[1.6]">
-                {step.desc}
-              </p>
-            </div>
-          ))}
-        </div>
+        <div className="max-w-[720px]">
+          <div className="flex flex-col">
+            {PROCESS.map((step, i) => {
+              const last = i === PROCESS.length - 1;
+              return (
+                <div key={step.n} className="flex gap-5 md:gap-7">
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={cn(
+                        "grid size-11 shrink-0 place-items-center rounded-bz-pill border text-[14px] font-semibold",
+                        last
+                          ? "border-bz-fire bg-bz-fire text-bz-deep"
+                          : "border-bz-line bg-bz-surface text-bz-text",
+                      )}
+                    >
+                      {step.n}
+                    </div>
+                    {!last && <div className="my-1.5 w-px flex-1 bg-bz-line" />}
+                  </div>
+                  <div className={cn("min-w-0", last ? "pb-0" : "pb-9")}>
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <h3 className="text-[17px] font-semibold text-bz-text">
+                        {step.label}
+                      </h3>
+                      <span className="rounded-bz-sm bg-bz-leaf px-2 py-0.5 text-[11px] font-semibold text-bz-deep">
+                        {step.duration}
+                      </span>
+                    </div>
+                    <p className="mt-2 max-w-[520px] text-[14px] leading-[1.65] text-bz-text-muted">
+                      {step.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
-        <div className="mt-16 flex flex-col sm:flex-row items-start sm:items-center gap-5 p-6 rounded-bz-xl border border-bz-line bg-bz-section-a">
-          <div className="size-10 rounded-full bg-bz-fire flex items-center justify-center shrink-0">
-            <BadgeCheck className="size-5 text-bz-deep" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-[15px] font-bold text-bz-text mb-1">
-              Our commitment to every candidate
-            </div>
-            <div className="text-[14px] text-bz-text-muted leading-[1.6]">
-              You'll always hear back from us even if it's a no. We share detailed feedback after every technical stage and won't leave you waiting more than 5 business days.
-            </div>
-          </div>
-          <div className="flex gap-6 shrink-0">
-            <div className="text-center">
-              <div className="text-[22px] font-bold text-bz-text leading-none">5</div>
-              <div className="text-[12px] text-bz-text-muted mt-1">day response SLA</div>
-            </div>
-            <div className="text-center">
-              <div className="text-[22px] font-bold text-bz-text leading-none">100%</div>
-              <div className="text-[12px] text-bz-text-muted mt-1">feedback rate</div>
-            </div>
+          <div className="mt-6 flex items-start gap-4 rounded-bz-xl border border-bz-line bg-bz-section-a p-5 md:p-6">
+            <span className="grid size-10 shrink-0 place-items-center rounded-bz-pill bg-bz-fire">
+              <ShieldCheck size={18} className="text-bz-deep" />
+            </span>
+            <p className="text-[14px] leading-[1.65] text-bz-text">
+              <strong className="font-semibold">You'll always hear back.</strong>{" "}
+              Even when it's a no, you get a real answer within five business
+              days, plus honest feedback after every interview stage.
+            </p>
           </div>
         </div>
       </Container>
@@ -515,12 +528,12 @@ function HiringProcessSection() {
 
 export function CareersPage() {
   return (
-    <>
+    <main>
       <HeroSection />
-      <ValuesSection />
-      <BenefitsSection />
+      <TheWorkSection />
+      <LifeAtBizakSection />
       <OpenRolesSection />
-      <HiringProcessSection />
-    </>
+      <HiringSection />
+    </main>
   );
 }

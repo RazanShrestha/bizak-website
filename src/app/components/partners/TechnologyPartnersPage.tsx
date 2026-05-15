@@ -32,7 +32,7 @@ import {
 const METRICS = [
   { v: "84 ms",  l: "P50 latency" },
   { v: "99.98%", l: "Uptime · 30d" },
-  { v: "200+",   l: "Live apps" },
+  { v: "v2",     l: "Stable API" },
 ];
 
 const EVENTS = [

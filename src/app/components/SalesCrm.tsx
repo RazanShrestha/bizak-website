@@ -76,13 +76,13 @@ const FEATURES = [
 
 const METRICS = [
   {
-    value: "30%",
+    value: "Shorter cycles",
     label: "Faster deal closure",
-    desc: "Auto-routed follow-ups and stage automation halve average sales cycles.",
+    desc: "Auto-routed follow-ups and stage automation shorten average sales cycles.",
   },
   {
-    value: "2×",
-    label: "Pipeline visibility",
+    value: "Full visibility",
+    label: "Pipeline clarity",
     desc: "Real-time stage tracking across all reps, regions and product lines.",
   },
   {
@@ -341,9 +341,9 @@ function TechnicalShowcaseSection() {
 
 function PipelineIntelligenceBento() {
   const rows = [
-    { flag: "🇺🇸", name: "Axeon Logistics",  amount: "$112K" },
-    { flag: "🇩🇪", name: "Meier Systems",    amount: "$88K"  },
-    { flag: "🇬🇧", name: "Northwind Retail", amount: "$74K"  },
+    { flag: "🇳🇵", name: "Axeon Logistics",  amount: "$112K" },
+    { flag: "🇮🇳", name: "Meier Systems",    amount: "$88K"  },
+    { flag: "🇧🇩", name: "Northwind Retail", amount: "$74K"  },
   ];
   return (
     <Bento tone="paper" hover minHeight={360}>
@@ -896,7 +896,7 @@ function MetricsSection() {
         <BentoGrid cols={3}>
           {METRICS.map((m) => (
             <Bento key={m.label} tone="paper" hover minHeight={220}>
-              <div className="bz-stat-num" style={{ fontSize: 48, marginBottom: 12 }}>
+              <div className="bz-stat-num" style={{ fontSize: 28, marginBottom: 12 }}>
                 {m.value}
               </div>
               <div className="mb-3 text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">

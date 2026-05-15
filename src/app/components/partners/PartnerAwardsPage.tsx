@@ -26,19 +26,19 @@ import { Footer } from "../Footer";
 const CATEGORIES = [
   { Icon: Crown,       title: "Partner of the Year",          desc: "Highest combined score across delivery health, growth, and CSAT." },
   { Icon: Rocket,      title: "Rising Star",                  desc: "Best performance for a partner under two years in the network." },
-  { Icon: Globe,       title: "Regional Excellence",          desc: "Top partner in each of APAC, EMEA, North America, and LATAM." },
+  { Icon: Globe,       title: "Regional Excellence",          desc: "Top partner in each South Asian market Bizak serves." },
   { Icon: TrendingUp,  title: "Growth Award",                 desc: "Largest YoY ARR growth for partners scaling their book." },
   { Icon: Star,        title: "Customer Champion",            desc: "Highest customer NPS across delivered implementations." },
   { Icon: Heart,       title: "Industry Specialist",          desc: "Manufacturing, Distribution, Retail, and Services category leaders." },
 ];
 
 const WINNERS_2024 = [
-  { award: "Partner of the Year",    name: "Atlas SI",            region: "APAC",   tier: "Platinum" as const },
-  { award: "Rising Star",            name: "Polaris Bridge",      region: "LATAM",  tier: "Silver" as const   },
-  { award: "Growth Award",           name: "Northbeam Consulting", region: "NA",     tier: "Gold" as const     },
-  { award: "Customer Champion",      name: "Verdant Ops",         region: "EMEA",   tier: "Gold" as const     },
-  { award: "Manufacturing Specialist", name: "Lattice Solutions", region: "APAC",   tier: "Platinum" as const },
-  { award: "Services Specialist",    name: "Aurora Cloud Group",  region: "APAC",   tier: "Gold" as const     },
+  { award: "Partner of the Year",    name: "Atlas SI",            region: "India",      tier: "Platinum" as const },
+  { award: "Rising Star",            name: "Polaris Bridge",      region: "Pakistan",   tier: "Silver" as const   },
+  { award: "Growth Award",           name: "Northbeam Consulting", region: "Nepal",      tier: "Gold" as const     },
+  { award: "Customer Champion",      name: "Verdant Ops",         region: "Sri Lanka",  tier: "Gold" as const     },
+  { award: "Manufacturing Specialist", name: "Lattice Solutions", region: "India",      tier: "Platinum" as const },
+  { award: "Services Specialist",    name: "Aurora Cloud Group",  region: "India",      tier: "Gold" as const     },
 ];
 
 const TIMELINE = [
@@ -73,7 +73,7 @@ function HeroSection() {
             </div>
             <div className="mt-12 pt-10 border-t border-white/10 flex flex-wrap gap-x-10 gap-y-5">
               <Stat value="6" label="Categories" />
-              <Stat value="48" label="Countries eligible" />
+              <Stat value="South Asia" label="Partners eligible" />
               <Stat value="Sep 24" label="Awards night" />
             </div>
           </div>
@@ -82,27 +82,27 @@ function HeroSection() {
             <div className="absolute -top-20 -right-20 size-64 rounded-full bg-bz-accent/[0.08] blur-3xl pointer-events-none" />
             <div className="relative">
               <div className="flex items-center justify-between mb-6">
-                <PillBadge tone="accent">2024 Recap</PillBadge>
+                <PillBadge tone="accent">Partner spotlight</PillBadge>
                 <Trophy className="size-5 text-bz-accent" />
               </div>
               <div className="text-[14px] font-bold text-white/40 uppercase tracking-[0.1em] mb-3">
-                Partner of the Year 2024
+                Partner of the Year nominee
               </div>
               <div className="text-[28px] font-bold tracking-[-0.015em] mb-2">Atlas SI</div>
-              <div className="text-[13px] text-white/50 mb-6">Bengaluru · APAC · Platinum</div>
+              <div className="text-[13px] text-white/50 mb-6">India · South Asia · Platinum</div>
 
               <p className="text-[14px] text-white/65 leading-[1.7] mb-7">
-                "Atlas raised the bar on what enterprise manufacturing implementations can look like 23 go-lives across APAC, an average customer NPS of 78, and a peer-led architect community now spanning four countries."
+                "Atlas raises the bar on what manufacturing implementations can look like a strong record of go-lives across the region, healthy customer outcomes, and a growing peer-led architect community."
               </p>
 
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { v: "23",   l: "Go-lives" },
-                  { v: "NPS 78", l: "Avg CSAT" },
-                  { v: "+74%", l: "ARR growth" },
+                  { v: "Go-lives", l: "Delivered" },
+                  { v: "Healthy", l: "Customer CSAT" },
+                  { v: "Growing", l: "Services book" },
                 ].map((s) => (
                   <div key={s.l} className="rounded-bz-md border border-white/10 bg-white/[0.03] p-3 text-center">
-                    <div className="text-[18px] font-bold tabular-nums text-bz-accent">{s.v}</div>
+                    <div className="text-[16px] font-bold text-bz-accent">{s.v}</div>
                     <div className="text-[10.5px] text-white/50 mt-0.5 uppercase tracking-[0.06em]">
                       {s.l}
                     </div>
@@ -162,11 +162,11 @@ function WinnersSection() {
       <Container width="narrow">
         <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
           <SectionHeading
-            eyebrow="2024 Winners"
-            title="The bar set last year."
+            eyebrow="2026 Finalists"
+            title="The firms in the running."
             maxWidth={520}
           />
-          <PillBadge tone="neutral">Announced at BizakConnect 2024</PillBadge>
+          <PillBadge tone="neutral">Announced at BizakConnect 2026</PillBadge>
         </div>
 
         <div className="rounded-bz-xl border border-bz-border bg-bz-surface overflow-hidden">
@@ -296,7 +296,7 @@ function ClosingCta() {
           <Sparkles className="size-6 text-bz-accent mx-auto mb-5" />
           <SectionHeading
             title={<>The work deserves to be seen.</>}
-            description="Awards open globally. If you've delivered something exceptional this year, we want it on the BizakConnect stage."
+            description="Awards open to partners across South Asia. If you've delivered something exceptional this year, we want it on the BizakConnect stage."
             tone="light"
             align="center"
             maxWidth={620}

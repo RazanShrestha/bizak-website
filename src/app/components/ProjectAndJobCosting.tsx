@@ -78,18 +78,18 @@ const FEATURES = [
 
 const METRICS = [
   {
-    value: "20%",
-    label: "Lift in project margin",
+    value: "Healthier margin",
+    label: "Less margin leakage",
     desc: "Once every cost lands on a project code in real time, margin leakage closes and projects finish closer to estimate.",
   },
   {
-    value: "35%",
-    label: "Fewer uncaptured costs",
+    value: "Fewer gaps",
+    label: "Costs fully captured",
     desc: "Field timesheets, material draws and PO leakage captured automatically no reconciliation lag at month-end.",
   },
   {
-    value: "100%",
-    label: "Audit trail coverage",
+    value: "Audit-ready",
+    label: "Full trail coverage",
     desc: "Every figure on the project margin resolves to its originating PO, timesheet or material draw fully audit-ready.",
   },
 ] as const;
@@ -867,7 +867,7 @@ function MetricsSection() {
         <BentoGrid cols={3}>
           {METRICS.map((m) => (
             <Bento key={m.label} tone="paper" hover minHeight={220}>
-              <div className="bz-stat-num" style={{ fontSize: 48, marginBottom: 12 }}>
+              <div className="bz-stat-num" style={{ fontSize: 28, marginBottom: 12 }}>
                 {m.value}
               </div>
               <div className="mb-3 text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">

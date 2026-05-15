@@ -92,7 +92,7 @@ function HeroSection() {
               <div>
                 <Eyebrow className="mb-5">Supply Chain Testimonial</Eyebrow>
                 <p className="text-[1.15rem] font-medium italic leading-[1.4] tracking-[-0.01em] text-bz-text">
-                  "Bizak gave us a 360-degree view of our global supply chain we never
+                  "Bizak gave us a 360-degree view of our supply chain we never
                   thought possible in this industry."
                 </p>
               </div>
@@ -181,7 +181,7 @@ function AllStories() {
       <Container>
         <SectionHead
           title="All Stories"
-          description="Browse 250+ success stories from industry leaders leveraging Bizak to redefine excellence."
+          description="Browse success stories from businesses across South Asia using Bizak to run better."
         />
 
         {/* Filter chips rectangular, outlined when inactive, solid when active */}

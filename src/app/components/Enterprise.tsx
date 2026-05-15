@@ -15,7 +15,7 @@ import {
 
 const FLOW: { icon: LucideIcon; module: string; title: string; detail: string }[] = [
   { icon: Building2, module: "Entities",      title: "Books closed",        detail: "67 entities locked for the period" },
-  { icon: Coins,     module: "Currencies",    title: "FX revalued",         detail: "40 currencies translated to group" },
+  { icon: Coins,     module: "Currencies",    title: "FX revalued",         detail: "Local currencies translated to group" },
   { icon: GitMerge,  module: "Consolidation", title: "Intercompany cleared", detail: "Eliminations posted automatically" },
   { icon: BarChart3, module: "Reporting",     title: "Group P&L live",      detail: "Board pack ready in real time" },
 ];
@@ -27,7 +27,7 @@ const SYMPTOMS = [
 
 const STACK: { icon: LucideIcon; name: string; cat: string; tag: string }[] = [
   { icon: Server,          name: "SAP ECC",            cat: "Core finance · HQ",        tag: "On-prem"           },
-  { icon: Database,        name: "Oracle EBS",         cat: "APAC subsidiaries",        tag: "Separate instance" },
+  { icon: Database,        name: "Oracle EBS",         cat: "Regional subsidiaries",    tag: "Separate instance" },
   { icon: Layers,          name: "Hyperion",           cat: "Group consolidation",      tag: "Manual upload"     },
   { icon: Table2,          name: "Excel",              cat: "Intercompany eliminations", tag: "Manual entry"      },
   { icon: FileSpreadsheet, name: "Local GL packages",  cat: "12 regional entities",     tag: "Unsynced"          },
@@ -37,7 +37,7 @@ const STACK: { icon: LucideIcon; name: string; cat: string; tag: string }[] = [
 const REPLACES: { old: string; icon: LucideIcon; module: string }[] = [
   { old: "SAP ECC",       icon: Landmark,      module: "Multi-entity Financials"   },
   { old: "Hyperion",      icon: GitMerge,      module: "Live Consolidation"        },
-  { old: "Oracle EBS",    icon: Globe,         module: "Global Operations"         },
+  { old: "Oracle EBS",    icon: Globe,         module: "Regional Operations"       },
   { old: "Excel",         icon: ArrowLeftRight, module: "Intercompany Eliminations" },
   { old: "Manual filing", icon: ShieldCheck,   module: "Compliance Automation"     },
   { old: "Custom glue",   icon: Plug,          module: "Open Integration Platform" },
@@ -50,7 +50,7 @@ const STAGES: {
   {
     icon: Building2, stage: "Your group today", range: "67 legal entities", current: true,
     desc: "Run your current structure on one consolidated ledger, closing every entity together.",
-    modules: ["Multi-entity consolidation", "40+ currencies", "IFRS & GAAP reporting"],
+    modules: ["Multi-entity consolidation", "Multi-currency support", "IFRS & GAAP reporting"],
   },
   {
     icon: TrendingUp, stage: "The next acquisition", range: "+ new entities", current: false,
@@ -58,17 +58,17 @@ const STAGES: {
     modules: ["New-entity templates", "Chart-of-accounts mapping", "Day-one consolidation"],
   },
   {
-    icon: Globe, stage: "New markets", range: "+ new countries", current: false,
-    desc: "Enter a jurisdiction without a new system local tax and statutory rules are built in.",
+    icon: Globe, stage: "New markets", range: "+ new regions", current: false,
+    desc: "Enter a new market without a new system local tax and statutory rules are built in.",
     modules: ["Local tax & VAT", "Data residency controls", "Statutory reporting"],
   },
 ];
 
 const FAQS = [
-  { q: "How long does an enterprise implementation take?",            a: "Most global rollouts go live in about 20 weeks. A dedicated enterprise team follows an SLA-backed playbook architecture review, a single-entity pilot, then a staged regional rollout. Every milestone is contractually guaranteed, so there are no surprises and no overruns." },
+  { q: "How long does an enterprise implementation take?",            a: "Most regional rollouts go live in about 20 weeks. A dedicated enterprise team follows an SLA-backed playbook architecture review, a single-entity pilot, then a staged regional rollout. Every milestone is contractually guaranteed, so there are no surprises and no overruns." },
   { q: "Can Bizak replace SAP or Oracle?",                            a: "Yes. Bizak Enterprise carries multi-entity financials, consolidation, procurement, inventory and projects in one platform replacing a legacy ERP and the regional bolt-ons around it. Teams typically migrate in months, not the 18 to 36 a traditional re-implementation takes." },
   { q: "How does multi-entity consolidation work?",                   a: "Every legal entity keeps its own books, in its own currency, under its own statutory rules. Bizak rolls them into one live group view automatically with intercompany eliminations, FX revaluation and IFRS or GAAP-ready financials. Month-end close drops from three weeks to two days." },
-  { q: "Is Bizak secure and compliant enough for regulated industries?", a: "Security is built into the core, not bolted on. Bizak Enterprise is SOC 2 Type II, ISO 27001 and PCI DSS certified, with GDPR and HIPAA coverage, SSO and SAML, SCIM provisioning, field-level RBAC and an immutable audit trail behind every figure." },
+  { q: "Is Bizak secure and compliant enough for regulated industries?", a: "Security is built into the core, not bolted on. Bizak Enterprise gives you encryption at rest and in transit, SSO and SAML, SCIM provisioning, field-level RBAC and an immutable audit trail behind every figure, with data-residency controls for regional compliance needs." },
 ];
 
 // ─── HERO ─────────────────────────────────────────────────────────────────────
@@ -297,7 +297,7 @@ function OnePlatformSection() {
         />
         <BigCard
           text={{
-            title: "One platform, sized for a global enterprise.",
+            title: "One platform, sized for a regional enterprise.",
             bullets: [
               "Compliance, multi-entity and security built into the core, never bolted on.",
               "Group books update in real time, the moment a regional entity posts.",
@@ -367,10 +367,10 @@ function StepArchitectureVisual() {
 
 function StepRolloutVisual() {
   const regions = [
-    { label: "AMER · 14 entities", on: true  },
-    { label: "EMEA · 21 entities", on: true  },
-    { label: "APAC · 17 entities", on: true  },
-    { label: "MEA · 15 entities",  on: false },
+    { label: "Nepal · 14 entities",      on: true  },
+    { label: "India · 21 entities",      on: true  },
+    { label: "Bangladesh · 17 entities", on: true  },
+    { label: "Sri Lanka · 15 entities",  on: false },
   ];
   return (
     <StepVisualShell label="Staged rollout">
@@ -407,7 +407,7 @@ function StepLiveVisual() {
           </span>
           <div>
             <p className="text-[12.5px] font-medium text-bz-text">Your group is live</p>
-            <p className="text-[10.5px] text-bz-text-muted">67 entities · 40 currencies</p>
+            <p className="text-[10.5px] text-bz-text-muted">67 entities · multi-currency</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2.5">

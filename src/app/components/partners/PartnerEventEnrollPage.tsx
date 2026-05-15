@@ -42,7 +42,7 @@ const ROLES_TRAINING = [
   "Other",
 ];
 
-const REGIONS = ["Asia Pacific", "EMEA", "North America", "Latin America"];
+const REGIONS = ["Nepal", "India", "Bangladesh", "Sri Lanka", "Pakistan"];
 
 type Enrollee = { id: string; name: string; email: string; role: string };
 
@@ -315,7 +315,7 @@ function EnrollmentSection({ event }: { event: PartnerEvent }) {
   const [form, setForm] = useState<FormState>({
     firmName: "",
     billingEmail: "",
-    region: "Asia Pacific",
+    region: "Nepal",
     enrollees: [newEnrollee(0)],
     notes: "",
     consent: false,

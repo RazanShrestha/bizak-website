@@ -14,9 +14,9 @@ import {
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
 const FLOW: { icon: LucideIcon; module: string; title: string; detail: string }[] = [
-  { icon: Building2, module: "Multi-company", title: "Branches close",  detail: "Dubai, Cairo and London post locally" },
+  { icon: Building2, module: "Multi-company", title: "Branches close",  detail: "Kathmandu, Delhi and Dhaka post locally" },
   { icon: GitMerge,  module: "Intercompany",  title: "Entries matched", detail: "Interco balances auto-eliminated" },
-  { icon: Layers,    module: "Consolidation", title: "Group rolled up", detail: "Three currencies translated to USD" },
+  { icon: Layers,    module: "Consolidation", title: "Group rolled up", detail: "Three currencies translated to group" },
   { icon: BarChart3, module: "Reporting",     title: "Board pack live", detail: "Consolidated P&L ready to send" },
 ];
 
@@ -59,7 +59,7 @@ const STAGES: {
   },
   {
     icon: Globe, stage: "Enterprise scale", range: "500+ people", current: false,
-    desc: "Run a global group with the controls, SLAs and governance enterprise demands.",
+    desc: "Run a regional group with the controls, SLAs and governance enterprise demands.",
     modules: ["Unlimited entities", "SSO, SCIM and custom SLA", "Dedicated success team"],
   },
 ];
@@ -337,9 +337,9 @@ function StepVisualShell({
 
 function StepImportVisual() {
   const files = [
-    { name: "dubai-hq.csv", meta: "Ledger + balances", done: true },
-    { name: "cairo.csv",    meta: "Ledger + balances", done: true },
-    { name: "london.csv",   meta: "importing…",        done: false },
+    { name: "kathmandu-hq.csv", meta: "Ledger + balances", done: true },
+    { name: "delhi.csv",        meta: "Ledger + balances", done: true },
+    { name: "dhaka.csv",        meta: "importing…",        done: false },
   ];
   return (
     <StepVisualShell label="Entity migration">

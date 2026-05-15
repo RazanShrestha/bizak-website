@@ -32,10 +32,10 @@ import {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const HERO_STATS: { value: string; label: string }[] = [
-  { value: "120+ yrs", label: "Combined leadership experience" },
-  { value: "4", label: "Global hubs" },
-  { value: "32", label: "Countries served" },
-  { value: "18", label: "Industries operated in" },
+  { value: "Operator-led", label: "Leadership that has run the work" },
+  { value: "Kathmandu", label: "Where the team is based" },
+  { value: "South Asia", label: "The region we serve" },
+  { value: "Multi-industry", label: "Experience across sectors" },
 ];
 
 type SocialLink = { label: string; href: string; icon: LucideIcon };
@@ -58,11 +58,11 @@ const FOUNDERS: Founder[] = [
     shortRole: "Founder & CEO",
     image:
       "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=80",
-    bio: "David spent fifteen years running operations inside global manufacturers before starting Bizak in 2018. He founded the company on a single conviction that complexity should never be the cost of growth and still spends most weeks in the room with operators figuring out how to take more friction out of their day.",
+    bio: "David ran operations inside manufacturers before starting Bizak. He founded the company on a single conviction that complexity should never be the cost of growth and still spends most weeks in the room with operators figuring out how to take more friction out of their day.",
     highlights: [
-      { value: "15 yrs", label: "Operating leader before founding Bizak" },
-      { value: "50K+", label: "Customers onboarded under his tenure" },
-      { value: "32", label: "Countries on the platform today" },
+      { value: "Operations", label: "Operating leader before founding Bizak" },
+      { value: "Operator-first", label: "Builds Bizak alongside its customers" },
+      { value: "South Asia", label: "The region Bizak serves" },
     ],
     social: [
       { label: "LinkedIn", href: "#", icon: Linkedin },
@@ -77,11 +77,11 @@ const FOUNDERS: Founder[] = [
     shortRole: "Co-founder & CTO",
     image:
       "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=900&q=80",
-    bio: "Priya leads the engineering organisation that designed Bizak's unified ledger and the modular architecture beneath every product line. Before Bizak, she shipped large-scale financial systems for two of the world's largest banks. She believes the best architecture is the one operators never have to think about.",
+    bio: "Priya leads the engineering organisation that designed Bizak's unified ledger and the modular architecture beneath every product line. Before Bizak, she shipped large-scale financial systems for major banks. She believes the best architecture is the one operators never have to think about.",
     highlights: [
-      { value: "200+", label: "Engineers across four hubs" },
-      { value: "Zero", label: "Hours of unscheduled downtime in 2025" },
-      { value: "9.4M", label: "Monthly transactions on the core engine" },
+      { value: "Engineering", label: "Leads the team behind the platform" },
+      { value: "Reliable", label: "Built for predictable, steady uptime" },
+      { value: "Unified ledger", label: "Designed the core engine" },
     ],
     social: [
       { label: "LinkedIn", href: "#", icon: Linkedin },
@@ -102,68 +102,68 @@ type Leader = {
 
 const LEADERSHIP: Leader[] = [
   {
-    name: "Marcus Chen",
+    name: "Bibek Gurung",
     role: "Chief Operating Officer",
-    bio: "Runs the global operations function from implementation delivery to customer success across all four hubs.",
+    bio: "Runs the operations function from implementation delivery to customer success for every Bizak customer.",
     image:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
-    location: "Singapore",
+    location: "Kathmandu",
   },
   {
-    name: "Sara Lindqvist",
+    name: "Sunita Adhikari",
     role: "Chief Financial Officer",
-    bio: "Brings two decades of CFO leadership at SaaS scale-ups; oversees finance, legal, and risk for the Bizak group.",
+    bio: "Brings deep CFO experience at fast-growing SaaS companies; oversees finance, legal, and risk for Bizak.",
     image:
       "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80",
-    location: "London",
+    location: "Kathmandu",
   },
   {
     name: "Rohan Sharma",
     role: "Chief Product Officer",
-    bio: "Translates operator pain into the Bizak roadmap. Twelve years in B2B product, four shipping ERPs at global scale.",
+    bio: "Translates operator pain into the Bizak roadmap, with a background in B2B product and ERP.",
     image:
       "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=600&q=80",
     location: "Bengaluru",
   },
   {
-    name: "Elena Rossi",
+    name: "Anjali Verma",
     role: "Chief Revenue Officer",
-    bio: "Leads global go-to-market. Built and scaled enterprise revenue functions at three of the most-loved B2B brands.",
+    bio: "Leads go-to-market across South Asia. Built and scaled enterprise revenue functions at growing B2B companies.",
     image:
       "https://images.unsplash.com/photo-1589571894960-20bbe2828d0a?auto=format&fit=crop&w=600&q=80",
-    location: "Milan",
+    location: "Mumbai",
   },
   {
-    name: "James Whitford",
+    name: "Imran Karim",
     role: "Chief Customer Officer",
     bio: "Owns the post-sale experience implementation, support, success and the renewal rate that follows from it.",
     image:
       "https://images.unsplash.com/photo-1552058544-f2b08422138a?auto=format&fit=crop&w=600&q=80",
-    location: "New York",
+    location: "Dhaka",
   },
   {
-    name: "Aiko Tanaka",
+    name: "Dipika Rai",
     role: "Chief People Officer",
-    bio: "Designs how Bizak hires, grows, and retains the operators behind the platform. Twenty nationalities, one playbook.",
+    bio: "Designs how Bizak hires, grows, and retains the operators behind the platform. One team, one playbook.",
     image:
       "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=600&q=80",
-    location: "Tokyo",
+    location: "Pokhara",
   },
   {
-    name: "Daniel Okafor",
+    name: "Sanjay Pradhan",
     role: "VP, Engineering",
-    bio: "Leads the platform and infrastructure teams that keep Bizak running for 50,000+ businesses, every minute of every day.",
+    bio: "Leads the platform and infrastructure teams that keep Bizak running for every customer, every minute of every day.",
     image:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
-    location: "Lagos",
+    location: "Kathmandu",
   },
   {
-    name: "Hannah Becker",
+    name: "Nadia Fernando",
     role: "VP, Design",
     bio: "Owns the craft bar across product, marketing, and brand. Believes good design is what survives a long operating week.",
     image:
       "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=600&q=80",
-    location: "Berlin",
+    location: "Colombo",
   },
 ];
 
@@ -205,7 +205,7 @@ const PRINCIPLES: Principle[] = [
     eyebrow: "Principle 03",
     title: "Long-term decisions",
     description:
-      "Quarterly noise is loud. We optimise for the next decade for the customer who'll still be on Bizak in 2035 and the engineer who'll still be proud of the codebase.",
+      "Quarterly noise is loud. We optimise for the long term for the customer who'll still be on Bizak years from now and the engineer who'll still be proud of the codebase.",
     bullets: [
       "Architecture choices weighed in years, not sprints",
       "Capital allocated to compounding investments",
@@ -225,19 +225,19 @@ const ADVISORS: Advisor[] = [
   {
     name: "Maya Hernandez",
     role: "Board Chair",
-    background: "Former CEO, FieldOps Industries · 30+ yrs in industrial software",
+    background: "Former CEO, FieldOps Industries · Veteran of industrial software",
     initials: "MH",
   },
   {
     name: "Dr. Anders Kjellberg",
     role: "Independent Director",
-    background: "Operating Partner, Northrock Capital · Ex-CFO, two NYSE SaaS leaders",
+    background: "Operating Partner, Northrock Capital · Former CFO at listed SaaS leaders",
     initials: "AK",
   },
   {
     name: "Renée Yamamoto",
     role: "Advisor Product",
-    background: "Former CPO, Stripe Atlas · Built finance products used in 80+ countries",
+    background: "Former CPO, Stripe Atlas · Built finance products at scale",
     initials: "RY",
   },
   {
@@ -249,10 +249,10 @@ const ADVISORS: Advisor[] = [
 ];
 
 const FOOTPRINT: { city: string; region: string; team: string }[] = [
-  { city: "London", region: "EMEA HQ", team: "Finance · GTM · Customer" },
-  { city: "Singapore", region: "APAC HQ", team: "Operations · Implementation" },
+  { city: "Kathmandu", region: "Headquarters", team: "Finance · GTM · Customer" },
+  { city: "Pokhara", region: "Operations Hub", team: "Operations · Implementation" },
   { city: "Bengaluru", region: "Engineering Hub", team: "Product · Platform · QA" },
-  { city: "New York", region: "Americas Hub", team: "Customer · Partnerships" },
+  { city: "Dhaka", region: "Regional Hub", team: "Customer · Partnerships" },
 ];
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
@@ -274,8 +274,8 @@ function HeroSection() {
           <p className="mt-5 max-w-[660px] text-[17px] leading-[1.7] text-bz-text-muted">
             Bizak is led by people who have run the functions our customers run
             finance, operations, product, support at the size and pace of
-            mid-market businesses worldwide. Meet the team setting the bar for
-            how modern ERP gets built.
+            growing businesses across South Asia. Meet the team setting the bar
+            for how modern ERP gets built.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
@@ -410,7 +410,7 @@ function ExecutiveTeamSection() {
         <SectionHeading
           eyebrow="Executive team"
           title="Operators leading every function."
-          description="Across product, engineering, go-to-market, and customer experience eight leaders, four hubs, one shared bar for craft."
+          description="Across product, engineering, go-to-market, and customer experience eight leaders, one team, one shared bar for craft."
           maxWidth={760}
           className="mb-14"
         />
@@ -572,10 +572,10 @@ function SpotlightSection() {
 
           <div className="grid grid-cols-2 gap-4">
             {[
-              { value: "97%", label: "Customer renewal rate" },
-              { value: "4.9", label: "Customer satisfaction (5.0)" },
-              { value: "8 wks", label: "Median time to first go-live" },
-              { value: "120+", label: "Years of leadership experience" },
+              { value: "High", label: "Customer renewal" },
+              { value: "Loved", label: "By the operators who use it" },
+              { value: "Weeks", label: "To first go-live" },
+              { value: "Operator-led", label: "Leadership across the team" },
             ].map((s) => (
               <div
                 key={s.label}
@@ -662,13 +662,13 @@ function FootprintSection() {
         <div className="rounded-bz-2xl border border-bz-border bg-bz-bg/60 p-8 md:p-10">
           <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
             <div className="max-w-[420px]">
-              <Eyebrow>Global footprint</Eyebrow>
+              <Eyebrow>Where we work</Eyebrow>
               <h3 className="mt-3 text-[22px] font-bold tracking-[-0.01em] text-bz-text md:text-[26px]">
                 Four hubs. One leadership team.
               </h3>
               <p className="mt-3 text-[14.5px] leading-[1.7] text-bz-text-muted">
-                Every region has a seat at the leadership table the team
-                wakes up close to the customers it serves.
+                Every part of South Asia has a seat at the leadership table the
+                team wakes up close to the customers it serves.
               </p>
             </div>
 
@@ -723,7 +723,7 @@ function BottomCta() {
               </h2>
               <p className="mt-4 max-w-[560px] text-[16px] leading-[1.7] text-bz-text-muted">
                 We're hiring engineers, designers, implementation leads, and
-                customer specialists across every hub. If you've ever wanted
+                customer specialists across the team. If you've ever wanted
                 to build the system you wished your last company had this
                 is the room.
               </p>
@@ -740,9 +740,9 @@ function BottomCta() {
 
           <div className="relative mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-bz-border pt-7 text-[13px] text-bz-text-muted">
             {[
-              { icon: Briefcase, label: "Roles in 4 global hubs" },
-              { icon: Users, label: "20+ nationalities, one team" },
-              { icon: Award, label: "Top-rated employer 2025" },
+              { icon: Briefcase, label: "Roles across South Asia" },
+              { icon: Users, label: "One team, one mission" },
+              { icon: Award, label: "A workplace people stay at" },
             ].map(({ icon: Tick, label }) => (
               <span key={label} className="inline-flex items-center gap-2">
                 <Tick className="size-4 text-bz-sage" strokeWidth={1.8} />

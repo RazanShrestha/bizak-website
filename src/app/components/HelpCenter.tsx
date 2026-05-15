@@ -2,11 +2,9 @@ import { useState } from "react";
 import "../../styles/style.css";
 import {
   ArrowRight,
-  ArrowUpRight,
   BookOpen,
-  ChevronDown,
+  ChevronRight,
   CreditCard,
-  FileText,
   Info,
   LifeBuoy,
   Mail,
@@ -21,183 +19,23 @@ import {
   TrendingUp,
   Users,
   Workflow,
-  Wrench,
   XCircle,
   type LucideIcon,
 } from "lucide-react";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
 import {
-  Button,
-  Card,
+  Accordion,
+  BadgeGreen,
+  Bento,
+  BentoGrid,
   Container,
-  Eyebrow,
-  HeroBadge,
-  IconBadge,
-  PillBadge,
+  Heading,
   Section,
-  SectionHeading,
-} from "./marketing";
+  SectionHead,
+} from "./bz";
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
-const POPULAR_TOPICS = [
-  "Getting Started",
-  "Pricing & Billing",
-  "Data Migration",
-  "Integrations",
-  "Security",
-  "Mobile App",
-];
-
-const HERO_STATS: { value: string; label: string }[] = [
-  { value: "< 4 hrs", label: "Avg. response time" },
-  { value: "98%", label: "Customer satisfaction" },
-  { value: "24 / 7", label: "Live chat coverage" },
-  { value: "200+", label: "Help articles & guides" },
-];
-
-const CHANNELS: {
-  icon: LucideIcon;
-  badge: string;
-  title: string;
-  description: string;
-  detailLabel: string;
-  detail: string;
-  cta: string;
-  href: string;
-  highlight?: boolean;
-}[] = [
-  {
-    icon: MessageSquare,
-    badge: "Fastest response",
-    title: "Live chat",
-    description:
-      "Talk to a Bizak specialist in real time. Best for urgent product issues, guided walkthroughs, and live troubleshooting.",
-    detailLabel: "Available",
-    detail: "Mon – Fri, 9am – 8pm NPT",
-    cta: "Start a chat",
-    href: "#",
-    highlight: true,
-  },
-  {
-    icon: Mail,
-    badge: "Always on",
-    title: "Email support",
-    description:
-      "Send a detailed message and get a documented response. Ideal for complex queries, account questions, and follow-ups.",
-    detailLabel: "Write to",
-    detail: "support@bizakerp.com.np",
-    cta: "Send an email",
-    href: "mailto:support@bizakerp.com.np",
-  },
-  {
-    icon: LifeBuoy,
-    badge: "Guided process",
-    title: "Submit a request",
-    description:
-      "Open a ticket and we'll route it to the right specialist implementation, billing, integrations, or data.",
-    detailLabel: "First reply",
-    detail: "Within 1 business day",
-    cta: "Open the form",
-    href: "/contact",
-  },
-];
-
-const CATEGORIES: {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  count: string;
-  filter: FaqKey;
-}[] = [
-  {
-    icon: Info,
-    title: "General Information",
-    description: "What Bizak ERP is, who it's built for, and how it differs from typical accounting software.",
-    count: "12 articles",
-    filter: "general",
-  },
-  {
-    icon: Sparkles,
-    title: "Features & Functionality",
-    description: "Accounting, inventory, sales, HR, CRM, and reporting every core module explained.",
-    count: "34 articles",
-    filter: "features",
-  },
-  {
-    icon: Workflow,
-    title: "Implementation & Integration",
-    description: "Setup phases, data migration, third-party connectors, and rollout best practices.",
-    count: "21 articles",
-    filter: "implementation",
-  },
-  {
-    icon: Users,
-    title: "Training & Onboarding",
-    description: "On-site sessions, webinars, video tutorials, and personalised training plans.",
-    count: "18 articles",
-    filter: "training",
-  },
-  {
-    icon: Shield,
-    title: "Security & Data Privacy",
-    description: "Encryption, access controls, audit logs, backups, and disaster recovery.",
-    count: "15 articles",
-    filter: "security",
-  },
-  {
-    icon: CreditCard,
-    title: "Pricing & Licensing",
-    description: "Subscription tiers, billing cycles, free trials, and optional add-on modules.",
-    count: "10 articles",
-    filter: "pricing",
-  },
-  {
-    icon: Settings2,
-    title: "Customisation & Scalability",
-    description: "Custom workflows, fields, dashboards, and architecture for growing teams.",
-    count: "16 articles",
-    filter: "customisation",
-  },
-  {
-    icon: Monitor,
-    title: "System Requirements",
-    description: "Browsers, mobile apps, bandwidth, and multi-platform compatibility.",
-    count: "8 articles",
-    filter: "system",
-  },
-  {
-    icon: RefreshCcw,
-    title: "Upgrades & Updates",
-    description: "How automatic cloud updates work and what's included in your plan.",
-    count: "9 articles",
-    filter: "upgrades",
-  },
-  {
-    icon: TrendingUp,
-    title: "Migration from Existing Systems",
-    description: "Move from legacy systems with full assessment, mapping, and validation.",
-    count: "13 articles",
-    filter: "migration",
-  },
-  {
-    icon: MessageSquare,
-    title: "Feedback & Improvement",
-    description: "Submit feature requests, track status, and join product roadmap conversations.",
-    count: "7 articles",
-    filter: "feedback",
-  },
-  {
-    icon: XCircle,
-    title: "Cancellation & Termination",
-    description: "Cancellation policy, fees, and how your data is exported on termination.",
-    count: "6 articles",
-    filter: "cancellation",
-  },
-];
-
-// ─── FAQ data ─────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// TYPES
+// ════════════════════════════════════════════════════════════════════════════
 
 type FaqKey =
   | "general"
@@ -218,6 +56,200 @@ type FaqGroup = {
   label: string;
   faqs: { q: string; a: string }[];
 };
+
+type Channel = {
+  icon: LucideIcon;
+  badge: string;
+  title: string;
+  description: string;
+  detailLabel: string;
+  detail: string;
+  cta: string;
+  href: string;
+  highlight?: boolean;
+};
+
+// ════════════════════════════════════════════════════════════════════════════
+// CONTENT DATA
+// ════════════════════════════════════════════════════════════════════════════
+
+const POPULAR_TOPICS: { label: string; key: FaqKey }[] = [
+  { label: "Getting started", key: "general" },
+  { label: "Pricing & billing", key: "pricing" },
+  { label: "Data migration", key: "migration" },
+  { label: "Integrations", key: "implementation" },
+  { label: "Security", key: "security" },
+  { label: "Mobile app", key: "system" },
+];
+
+const CATEGORIES: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  count: string;
+  filter: FaqKey;
+}[] = [
+  {
+    icon: Info,
+    title: "General information",
+    description: "What Bizak ERP is, who it's built for, and how it differs from typical accounting software.",
+    count: "12 articles",
+    filter: "general",
+  },
+  {
+    icon: Sparkles,
+    title: "Features & functionality",
+    description: "Accounting, inventory, sales, HR, CRM, and reporting every core module explained.",
+    count: "34 articles",
+    filter: "features",
+  },
+  {
+    icon: Workflow,
+    title: "Implementation & integration",
+    description: "Setup phases, data migration, third-party connectors, and rollout best practices.",
+    count: "21 articles",
+    filter: "implementation",
+  },
+  {
+    icon: Users,
+    title: "Training & onboarding",
+    description: "On-site sessions, webinars, video tutorials, and personalised training plans.",
+    count: "18 articles",
+    filter: "training",
+  },
+  {
+    icon: Shield,
+    title: "Security & data privacy",
+    description: "Encryption, access controls, audit logs, backups, and disaster recovery.",
+    count: "15 articles",
+    filter: "security",
+  },
+  {
+    icon: CreditCard,
+    title: "Pricing & licensing",
+    description: "Subscription tiers, billing cycles, free trials, and optional add-on modules.",
+    count: "10 articles",
+    filter: "pricing",
+  },
+  {
+    icon: Settings2,
+    title: "Customisation & scalability",
+    description: "Custom workflows, fields, dashboards, and architecture for growing teams.",
+    count: "16 articles",
+    filter: "customisation",
+  },
+  {
+    icon: Monitor,
+    title: "System requirements",
+    description: "Browsers, mobile apps, bandwidth, and multi-platform compatibility.",
+    count: "8 articles",
+    filter: "system",
+  },
+  {
+    icon: RefreshCcw,
+    title: "Upgrades & updates",
+    description: "How automatic cloud updates work and what's included in your plan.",
+    count: "9 articles",
+    filter: "upgrades",
+  },
+  {
+    icon: TrendingUp,
+    title: "Migration from existing systems",
+    description: "Move from legacy systems with full assessment, mapping, and validation.",
+    count: "13 articles",
+    filter: "migration",
+  },
+  {
+    icon: MessageSquare,
+    title: "Feedback & improvement",
+    description: "Submit feature requests, track status, and join product roadmap conversations.",
+    count: "7 articles",
+    filter: "feedback",
+  },
+  {
+    icon: XCircle,
+    title: "Cancellation & termination",
+    description: "Cancellation policy, fees, and how your data is exported on termination.",
+    count: "6 articles",
+    filter: "cancellation",
+  },
+];
+
+const CHANNELS: Channel[] = [
+  {
+    icon: MessageSquare,
+    badge: "Fastest response",
+    title: "Live chat",
+    description:
+      "Talk to a Bizak specialist in real time. Best for urgent product issues, guided walkthroughs, and live troubleshooting.",
+    detailLabel: "Available",
+    detail: "Mon to Fri, 9am to 8pm NPT",
+    cta: "Start a chat",
+    href: "#",
+    highlight: true,
+  },
+  {
+    icon: Mail,
+    badge: "Always on",
+    title: "Email support",
+    description:
+      "Send a detailed message and get a documented response. Ideal for complex queries, account questions, and follow-ups.",
+    detailLabel: "Write to",
+    detail: "support@bizakerp.com.np",
+    cta: "Send an email",
+    href: "mailto:support@bizakerp.com.np",
+  },
+  {
+    icon: LifeBuoy,
+    badge: "Guided process",
+    title: "Submit a request",
+    description:
+      "Open a ticket and we'll route it to the right specialist: implementation, billing, integrations, or data.",
+    detailLabel: "First reply",
+    detail: "Within 1 business day",
+    cta: "Open the form",
+    href: "/contact",
+  },
+];
+
+const SUPPORT_STATS: { value: string; label: string }[] = [
+  { value: "Same day", label: "Typical first response" },
+  { value: "Specialist", label: "Routed to the right team" },
+  { value: "Mon to Fri", label: "Live chat coverage" },
+];
+
+const RESOURCES: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  cta: string;
+  href: string;
+}[] = [
+  {
+    icon: BookOpen,
+    title: "Product & API documentation",
+    description:
+      "The full reference for every module, every endpoint, and every webhook. Built for both end users and integration developers.",
+    cta: "Open the docs",
+    href: "/Documentation",
+  },
+  {
+    icon: PlayCircle,
+    title: "Get started in 30 minutes",
+    description:
+      "A guided video walkthrough: sign up, configure your first modules, and run a full day-one workflow. No prior ERP experience required.",
+    cta: "Watch the series",
+    href: "/TrainingAndCertification",
+  },
+  {
+    icon: Users,
+    title: "Bizak user community",
+    description:
+      "Trade playbooks with other Bizak users, get answers from the team, and influence the roadmap. Open to every customer at every plan.",
+    cta: "Join the forum",
+    href: "/CommunityForum",
+  },
+];
 
 const FAQ_GROUPS: FaqGroup[] = [
   {
@@ -278,7 +310,7 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "How long does implementation take?",
-        a: "Mid-market deployments typically complete in 4 – 8 weeks. Enterprise rollouts with multi-entity, multi-currency, or complex integration requirements may take 8 – 16 weeks. We'll give you a realistic timeline once we understand your scope.",
+        a: "Mid-market deployments typically complete in 4 to 8 weeks. Enterprise rollouts with multi-entity, multi-currency, or complex integration requirements may take 8 to 16 weeks. We'll give you a realistic timeline once we understand your scope.",
       },
       {
         q: "Does Bizak integrate with my existing tools?",
@@ -490,248 +522,157 @@ const FAQ_GROUPS: FaqGroup[] = [
   },
 ];
 
-const RESOURCES: { icon: LucideIcon; tag: string; title: string; description: string; cta: string; href: string }[] = [
-  {
-    icon: BookOpen,
-    tag: "Documentation",
-    title: "Product & API documentation",
-    description:
-      "The full reference for every module, every endpoint, and every webhook. Built for both end users and integration developers.",
-    cta: "Open the docs",
-    href: "#",
-  },
-  {
-    icon: PlayCircle,
-    tag: "Video tutorials",
-    title: "Get started in 30 minutes",
-    description:
-      "A guided video walkthrough sign up, configure your first modules, and run a full day-one workflow. No prior ERP experience required.",
-    cta: "Watch the series",
-    href: "#",
-  },
-  {
-    icon: Users,
-    tag: "Community",
-    title: "Bizak user community",
-    description:
-      "Trade playbooks with other Bizak users, get answers from the team, and influence the roadmap. Open to every customer at every plan.",
-    cta: "Join the forum",
-    href: "#",
-  },
-];
-
-// ─── Search index ─────────────────────────────────────────────────────────────
-
-const SEARCH_INDEX = FAQ_GROUPS.flatMap((g) =>
-  g.faqs.map((f) => ({ q: f.q, group: g.label, key: g.key })),
+// Flat index of every question used by the hero search field.
+const SEARCH_INDEX: { q: string; group: string; key: FaqKey }[] = FAQ_GROUPS.flatMap(
+  (g) => g.faqs.map((f) => ({ q: f.q, group: g.label, key: g.key })),
 );
 
-// ─── Hero ─────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// [HERO] search-led entry point
+// ════════════════════════════════════════════════════════════════════════════
 
-function HeroSection() {
+function HeroSection({ onPickTopic }: { onPickTopic: (key: FaqKey) => void }) {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
 
-  const trimmed = query.trim();
+  const trimmed = query.trim().toLowerCase();
   const results =
     trimmed.length > 1
-      ? SEARCH_INDEX.filter((item) => item.q.toLowerCase().includes(trimmed.toLowerCase())).slice(0, 6)
+      ? SEARCH_INDEX.filter((i) => i.q.toLowerCase().includes(trimmed)).slice(0, 6)
       : [];
+  const showPanel = focused && trimmed.length > 1;
 
-  const showDropdown = focused && results.length > 0;
+  const pick = (key: FaqKey) => {
+    setFocused(false);
+    onPickTopic(key);
+  };
 
   return (
-    <Section pad="hero" tone="light" className="biz-mesh overflow-hidden">
-      <Container width="narrow" className="relative">
-        <div className="flex flex-col items-center text-center">
-          <HeroBadge>Bizak Help Center</HeroBadge>
-          <h1 className="mt-4 max-w-[820px] text-[clamp(40px,5.5vw,68px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
-            How can we{" "}
-            <span className="relative inline-block">
-              help you
-              <span className="absolute inset-x-0 bottom-1 -z-0 h-[10px] rounded-full bg-bz-accent/55" />
-            </span>{" "}
-            today?
-          </h1>
-          <p className="mt-5 max-w-[640px] text-[17px] leading-[1.7] text-bz-text-muted">
-            Search the knowledge base, browse help by topic, or talk to a Bizak
-            specialist directly. We're here to make your ERP work for you.
+    <Section tone="dark" pad="hero">
+      <Container>
+        <div className="mx-auto flex max-w-[720px] flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>Bizak Help Center</BadgeGreen>
+
+          <Heading level={1} tone="dark" style={{ marginBottom: 20 }}>
+            How can we <Heading.Muted>help you today?</Heading.Muted>
+          </Heading>
+
+          <p className="max-w-[540px] text-[15px] leading-[1.7] text-bz-text-on-dark-muted md:text-[17px]">
+            Search the knowledge base, browse help by topic, or talk to a Bizak specialist.
           </p>
 
-          {/* Search */}
-          <div className="relative mt-9 w-full max-w-[680px]">
-            <div className="flex h-[58px] items-center gap-3 rounded-bz-pill border border-bz-border bg-bz-surface pl-5 pr-2 shadow-[0_8px_28px_rgba(15,17,14,0.06)] focus-within:border-bz-sage-mid focus-within:shadow-[0_12px_36px_rgba(15,17,14,0.08)]">
-              <Search className="size-5 shrink-0 text-bz-text-soft" strokeWidth={1.8} />
+          {/* Search field the page's primary entry point */}
+          <div className="relative mt-9 w-full max-w-[620px]">
+            <div className="flex h-[58px] items-center gap-2.5 rounded-bz-lg border border-bz-line bg-bz-surface pl-5 pr-2 transition-colors focus-within:border-bz-text-muted">
+              <Search size={18} strokeWidth={1.8} className="shrink-0 text-bz-text-soft" />
               <input
+                type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => setFocused(true)}
-                onBlur={() => setTimeout(() => setFocused(false), 180)}
-                type="text"
-                placeholder="Search articles, guides, FAQs…"
+                onBlur={() => setFocused(false)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && results.length > 0) pick(results[0].key);
+                }}
+                placeholder="Search articles, guides and FAQs"
                 aria-label="Search the help center"
-                className="flex-1 bg-transparent text-[15px] text-bz-text placeholder:text-bz-text-soft focus:outline-none"
+                className="min-w-0 flex-1 bg-transparent text-[14.5px] text-bz-text placeholder:text-bz-text-soft focus:outline-none"
               />
               <button
                 type="button"
-                aria-label="Submit search"
-                className="inline-flex h-[42px] items-center gap-1.5 rounded-bz-pill bg-bz-deep px-5 text-[13px] font-semibold text-white transition-colors hover:bg-black"
+                onClick={() => results.length > 0 && pick(results[0].key)}
+                className="inline-flex h-[44px] shrink-0 items-center rounded-bz-md bg-bz-deep px-5 text-[13px] font-medium text-bz-text-on-dark transition-colors hover:bg-bz-olive"
               >
                 Search
-                <ArrowRight className="size-[14px]" />
               </button>
             </div>
 
-            {showDropdown && (
-              <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-20 overflow-hidden rounded-bz-xl border border-bz-border bg-bz-surface shadow-[0_24px_64px_rgba(15,17,14,0.12)]">
-                {results.map((r, i) => (
-                  <a
-                    key={`${r.q}-${i}`}
-                    href="#faq"
-                    className="flex items-center gap-3 border-b border-bz-border-soft px-5 py-3 text-left last:border-b-0 hover:bg-bz-bg"
-                  >
-                    <Search className="size-[14px] text-bz-sage" strokeWidth={2} />
-                    <span className="flex-1 truncate text-[14px] text-bz-text">{r.q}</span>
-                    <span className="shrink-0 rounded-bz-pill bg-bz-sage-soft px-2 py-[3px] text-[10px] font-bold uppercase tracking-[0.1em] text-bz-sage">
-                      {r.group}
-                    </span>
-                  </a>
-                ))}
+            {showPanel && (
+              <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-20 overflow-hidden rounded-bz-lg border border-bz-line bg-bz-surface text-left shadow-[0_24px_60px_-22px_rgba(15,20,17,0.28)]">
+                {results.length > 0 ? (
+                  results.map((r) => (
+                    <button
+                      key={r.q}
+                      type="button"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        pick(r.key);
+                      }}
+                      className="flex w-full items-center gap-3 border-b border-bz-line-soft px-4 py-3 transition-colors last:border-b-0 hover:bg-bz-paper-warm"
+                    >
+                      <Search size={13} strokeWidth={2} className="shrink-0 text-bz-text-soft" />
+                      <span className="min-w-0 flex-1 truncate text-[13.5px] text-bz-text">
+                        {r.q}
+                      </span>
+                      <span className="shrink-0 rounded-bz-sm bg-bz-paper-warm px-2 py-[3px] text-[10px] font-semibold uppercase tracking-[0.08em] text-bz-text-muted">
+                        {r.group}
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  <p className="px-4 py-5 text-[13px] leading-[1.6] text-bz-text-muted">
+                    No articles match that search. Try a different term, or browse
+                    topics below.
+                  </p>
+                )}
               </div>
             )}
           </div>
-
-          {/* Popular topics */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-bz-text-soft">
-              Popular
-            </span>
-            {POPULAR_TOPICS.map((t) => (
-              <a
-                key={t}
-                href="#faq"
-                className="rounded-bz-pill border border-bz-border bg-bz-surface px-3.5 py-1.5 text-[12.5px] font-medium text-bz-text-muted transition-colors hover:border-bz-sage-mid hover:bg-bz-sage-soft hover:text-bz-text"
-              >
-                {t}
-              </a>
-            ))}
-          </div>
-
-          {/* Stats strip */}
-          <div className="mt-14 grid w-full grid-cols-2 gap-x-6 gap-y-8 border-t border-bz-border pt-10 md:grid-cols-4">
-            {HERO_STATS.map((s) => (
-              <div key={s.label} className="flex flex-col items-center text-center md:items-start md:text-left">
-                <span className="text-[28px] font-bold tracking-[-0.02em] text-bz-text md:text-[32px]">
-                  {s.value}
-                </span>
-                <span className="mt-1 text-[12px] uppercase tracking-[0.1em] text-bz-text-soft">
-                  {s.label}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
       </Container>
     </Section>
   );
 }
 
-// ─── Channels ─────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// [01] TOPIC DIRECTORY a hairline index of the knowledge base
+// ════════════════════════════════════════════════════════════════════════════
 
-function ChannelsSection() {
+function TopicDirectorySection({ onPick }: { onPick: (key: FaqKey) => void }) {
   return (
-    <Section tone="white" pad="default">
+    <Section tone="a">
       <Container>
-        <SectionHeading
-          eyebrow="Talk to us"
-          title="Three ways to reach the support team"
-          description="Pick the channel that fits the moment. We answer every message, and we'll route you to the right specialist."
-          maxWidth={720}
-          className="mb-12"
+        <SectionHead
+          index="01"
+          label="Knowledge base"
+          title={
+            <>
+              Find your topic,{" "}
+              <Heading.Muted>read the answers.</Heading.Muted>
+            </>
+          }
+          description="Twelve focus areas covering everything from your first day on Bizak to enterprise-scale configuration. Pick one to jump straight to its questions."
+          titleMaxWidth={620}
         />
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          {CHANNELS.map(({ icon: ChannelIcon, ...c }) => (
-            <Card
-              key={c.title}
-              tone="light"
-              pad="lg"
-              hover="lift"
-              className={c.highlight ? "border-bz-sage-mid" : ""}
-            >
-              <div className="flex items-start justify-between">
-                <IconBadge size="lg" tone={c.highlight ? "accent" : "sage"}>
-                  <ChannelIcon className="size-5" strokeWidth={1.8} />
-                </IconBadge>
-                <PillBadge tone={c.highlight ? "accent" : "neutral"} dot={c.highlight}>
-                  {c.badge}
-                </PillBadge>
-              </div>
-
-              <h3 className="mt-7 text-[22px] font-bold tracking-[-0.01em] text-bz-text">
-                {c.title}
-              </h3>
-              <p className="mt-3 text-[14.5px] leading-[1.7] text-bz-text-muted">{c.description}</p>
-
-              <div className="mt-7 flex items-center gap-3 rounded-bz-lg bg-bz-bg px-4 py-3">
-                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-                  {c.detailLabel}
-                </span>
-                <span className="ml-auto text-[13px] font-semibold text-bz-text">{c.detail}</span>
-              </div>
-
-              <a
-                href={c.href}
-                className="mt-6 inline-flex items-center gap-1.5 text-[13.5px] font-bold text-bz-sage transition-colors hover:text-bz-sage-hover"
-              >
-                {c.cta}
-                <ArrowRight className="size-[14px]" />
-              </a>
-            </Card>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── Categories ───────────────────────────────────────────────────────────────
-
-function CategoriesSection({ onPick }: { onPick: (key: FaqKey) => void }) {
-  return (
-    <Section tone="light" pad="default">
-      <Container>
-        <SectionHeading
-          eyebrow="Knowledge base"
-          title="Browse help by topic"
-          description="Twelve focus areas covering everything from your first day on Bizak to enterprise-scale configuration."
-          maxWidth={720}
-          className="mb-12"
-        />
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {CATEGORIES.map(({ icon: CatIcon, ...cat }) => (
+        <div className="grid grid-cols-1 border-t border-bz-line-soft md:grid-cols-2 md:gap-x-12">
+          {CATEGORIES.map(({ icon: Icon, ...cat }) => (
             <button
               key={cat.title}
               type="button"
               onClick={() => onPick(cat.filter)}
-              className="group relative flex flex-col rounded-bz-xl border border-bz-border bg-bz-surface p-6 text-left transition-all duration-200 hover:-translate-y-[2px] hover:border-bz-sage-mid hover:shadow-[0_16px_40px_rgba(15,17,14,0.06)]"
+              className="group flex cursor-pointer items-center gap-4 border-b border-bz-line-soft py-5 text-left"
             >
-              <div className="flex items-center justify-between">
-                <IconBadge size="md" tone="sage">
-                  <CatIcon className="size-[18px]" strokeWidth={1.8} />
-                </IconBadge>
-                <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-bz-text-soft">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-bz-md border border-bz-line-soft bg-bz-surface text-bz-text transition-colors group-hover:border-bz-text-soft">
+                <Icon size={18} strokeWidth={1.6} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[15px] font-medium text-bz-text">
+                  {cat.title}
+                </span>
+                <span className="mt-0.5 hidden truncate text-[13px] text-bz-text-muted sm:block">
+                  {cat.description}
+                </span>
+              </span>
+              <span className="flex shrink-0 items-center gap-3 pl-2">
+                <span className="text-[12px] tabular-nums text-bz-text-soft">
                   {cat.count}
                 </span>
-              </div>
-              <h3 className="mt-5 text-[16.5px] font-bold tracking-[-0.01em] text-bz-text">
-                {cat.title}
-              </h3>
-              <p className="mt-2 text-[13.5px] leading-[1.65] text-bz-text-muted">{cat.description}</p>
-              <span className="mt-5 inline-flex items-center gap-1 text-[12.5px] font-bold text-bz-sage transition-transform duration-200 group-hover:translate-x-0.5">
-                Read articles
-                <ArrowUpRight className="size-[13px]" strokeWidth={2.2} />
+                <ChevronRight
+                  size={16}
+                  strokeWidth={2}
+                  className="text-bz-text-soft transition-all group-hover:translate-x-0.5 group-hover:text-bz-text"
+                />
               </span>
             </button>
           ))}
@@ -741,7 +682,9 @@ function CategoriesSection({ onPick }: { onPick: (key: FaqKey) => void }) {
   );
 }
 
-// ─── FAQ ──────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// [02] FAQ topic-filtered accordion
+// ════════════════════════════════════════════════════════════════════════════
 
 function FaqSection({
   activeKey,
@@ -750,111 +693,64 @@ function FaqSection({
   activeKey: FaqKey;
   onChange: (key: FaqKey) => void;
 }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
   const activeGroup = FAQ_GROUPS.find((g) => g.key === activeKey) ?? FAQ_GROUPS[0];
 
   return (
-    <Section tone="white" pad="default" id="faq">
+    <Section tone="b" id="faq">
       <Container>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[320px_1fr] lg:gap-16">
-          {/* Sidebar */}
-          <aside className="lg:sticky lg:top-[100px] lg:self-start">
-            <Eyebrow>Frequently asked</Eyebrow>
-            <h2 className="mt-3 text-[34px] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text md:text-[40px]">
-              Answers, organised by topic.
-            </h2>
-            <p className="mt-4 text-[15.5px] leading-[1.7] text-bz-text-muted">
-              The questions Bizak users ask us most often. Pick a topic to filter
-              or use the search bar at the top of the page.
-            </p>
+        <div className="mx-auto max-w-[820px]">
+          <SectionHead
+            index="02"
+            label="Answers"
+            title={
+              <>
+                Frequently asked,{" "}
+                <Heading.Muted>clearly answered.</Heading.Muted>
+              </>
+            }
+            description="Pick a topic to filter the list, or search from the top of the page."
+          />
 
-            {/* Topic filter */}
-            <div className="mt-7 flex flex-wrap gap-2 lg:flex-col lg:gap-1">
-              {FAQ_GROUPS.map((g) => {
-                const isActive = g.key === activeKey;
-                return (
-                  <button
-                    key={g.key}
-                    type="button"
-                    onClick={() => {
-                      onChange(g.key);
-                      setOpenIndex(0);
-                    }}
-                    className={[
-                      "inline-flex items-center justify-between rounded-bz-md px-4 py-2.5 text-[13.5px] font-semibold transition-colors",
-                      isActive
-                        ? "bg-bz-deep text-white"
-                        : "bg-transparent text-bz-text-muted hover:bg-bz-bg hover:text-bz-text",
-                    ].join(" ")}
-                    aria-pressed={isActive}
-                  >
-                    <span>{g.label}</span>
-                    <span
-                      className={[
-                        "ml-3 hidden text-[11px] font-bold tabular-nums lg:inline",
-                        isActive ? "text-white/60" : "text-bz-text-soft",
-                      ].join(" ")}
-                    >
-                      {String(g.faqs.length).padStart(2, "0")}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </aside>
+          {/* Topic filter chips */}
+          <div className="flex flex-wrap gap-2">
+            {FAQ_GROUPS.map((g) => {
+              const active = g.key === activeKey;
+              return (
+                <button
+                  key={g.key}
+                  type="button"
+                  onClick={() => onChange(g.key)}
+                  aria-pressed={active}
+                  className={
+                    "rounded-bz-sm border px-3.5 py-2 text-[12.5px] font-medium transition-colors " +
+                    (active
+                      ? "border-bz-deep bg-bz-deep text-bz-text-on-dark"
+                      : "border-bz-line-soft bg-bz-surface text-bz-text-muted hover:border-bz-text-soft hover:text-bz-text")
+                  }
+                >
+                  {g.label}
+                </button>
+              );
+            })}
+          </div>
 
-          {/* Accordion list */}
-          <div>
-            <div className="mb-6 flex items-center justify-between border-b border-bz-border pb-5">
-              <div>
-                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-bz-sage">
-                  {activeGroup.label}
-                </span>
-                <h3 className="mt-1 text-[20px] font-bold text-bz-text">
-                  {activeGroup.faqs.length} questions in this topic
-                </h3>
-              </div>
-              <PillBadge tone="neutral">FAQ</PillBadge>
+          {/* Accordion remounts on topic change so it resets to the first item */}
+          <div className="mt-9">
+            <div className="flex items-baseline justify-between border-b border-bz-line-soft pb-3">
+              <span className="text-[13px] font-medium text-bz-text">
+                {activeGroup.label}
+              </span>
+              <span className="text-[12px] tabular-nums text-bz-text-soft">
+                {activeGroup.faqs.length} questions
+              </span>
             </div>
-
-            <div className="flex flex-col">
-              {activeGroup.faqs.map((faq, i) => {
-                const isOpen = openIndex === i;
-                return (
-                  <div key={faq.q} className="border-b border-bz-border">
-                    <button
-                      type="button"
-                      onClick={() => setOpenIndex(isOpen ? null : i)}
-                      className="flex w-full items-start justify-between gap-6 py-6 text-left transition-colors hover:text-bz-sage"
-                      aria-expanded={isOpen}
-                    >
-                      <span className="text-[16.5px] font-semibold text-bz-text">{faq.q}</span>
-                      <ChevronDown
-                        className={[
-                          "mt-0.5 size-5 shrink-0 text-bz-text-soft transition-transform duration-200",
-                          isOpen && "rotate-180 text-bz-sage",
-                        ]
-                          .filter(Boolean)
-                          .join(" ")}
-                        strokeWidth={2}
-                      />
-                    </button>
-                    <div
-                      className={[
-                        "grid transition-[grid-template-rows] duration-300 ease-out",
-                        isOpen ? "grid-rows-[1fr] pb-7" : "grid-rows-[0fr]",
-                      ].join(" ")}
-                    >
-                      <div className="overflow-hidden">
-                        <p className="max-w-[720px] text-[15px] leading-[1.75] text-bz-text-muted">
-                          {faq.a}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <Accordion key={activeKey} defaultOpen={0}>
+              {activeGroup.faqs.map((f) => (
+                <Accordion.Item key={f.q} question={f.q}>
+                  {f.a}
+                </Accordion.Item>
+              ))}
+            </Accordion>
           </div>
         </div>
       </Container>
@@ -862,45 +758,111 @@ function FaqSection({
   );
 }
 
-// ─── Resources (dark) ─────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// [03] TALK TO US support channels on a dark canvas
+// ════════════════════════════════════════════════════════════════════════════
 
-function ResourcesSection() {
+function ChannelCard({
+  icon: Icon,
+  badge,
+  title,
+  description,
+  detailLabel,
+  detail,
+  cta,
+  href,
+  highlight,
+}: Channel) {
   return (
-    <Section tone="dark" pad="default">
-      <Container>
-        <SectionHeading
-          eyebrow="Learn & grow"
-          eyebrowTone="accent"
-          title="Beyond the help center"
-          description="Tutorials, deep documentation, and a community of Bizak operators ready to share what's worked for them."
-          tone="light"
-          maxWidth={720}
-          className="mb-12"
+    <div
+      className={
+        "flex flex-col rounded-bz-xl border bg-white/[0.04] p-6 " +
+        (highlight ? "border-white/[0.18]" : "border-white/[0.08]")
+      }
+    >
+      <div className="flex items-center justify-between gap-3">
+        <span
+          className={
+            "flex size-10 items-center justify-center rounded-bz-md " +
+            (highlight
+              ? "bg-bz-fire text-bz-olive"
+              : "bg-white/[0.06] text-bz-text-on-dark")
+          }
+        >
+          <Icon size={17} strokeWidth={1.8} />
+        </span>
+        <span
+          className={
+            "text-[10px] font-semibold uppercase tracking-[0.1em] " +
+            (highlight ? "text-bz-fire" : "text-white/[0.5]")
+          }
+        >
+          {badge}
+        </span>
+      </div>
+
+      <h3 className="mt-5 text-[17px] font-medium text-bz-text-on-dark">{title}</h3>
+      <p className="mt-2 flex-1 text-[13.5px] leading-[1.65] text-white/[0.6]">
+        {description}
+      </p>
+
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/[0.08] pt-4">
+        <span className="shrink-0 text-[11px] uppercase tracking-[0.08em] text-white/[0.45]">
+          {detailLabel}
+        </span>
+        <span className="min-w-0 truncate text-[12px] font-medium text-bz-text-on-dark">
+          {detail}
+        </span>
+      </div>
+
+      <a
+        href={href}
+        className="mt-4 inline-flex items-center gap-1.5 self-start text-[13px] font-medium text-bz-fire transition-opacity hover:opacity-70"
+      >
+        {cta}
+        <ArrowRight size={14} strokeWidth={2} />
+      </a>
+    </div>
+  );
+}
+
+function ContactSection() {
+  return (
+    <Section tone="dark">
+      <Container width="narrow">
+        <SectionHead
+          tone="dark"
+          index="03"
+          label="Talk to us"
+          title={
+            <>
+              Prefer a human?{" "}
+              <Heading.Muted>We're one message away.</Heading.Muted>
+            </>
+          }
+          description="Three ways to reach the support team. Every message gets answered, and routed to the right specialist."
         />
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          {RESOURCES.map(({ icon: ResIcon, ...r }) => (
-            <Card key={r.title} tone="dark" pad="lg" className="group flex flex-col">
-              <div className="flex items-center gap-3">
-                <IconBadge size="md" tone="darkSurface">
-                  <ResIcon className="size-[18px]" strokeWidth={1.8} />
-                </IconBadge>
-                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/60">
-                  {r.tag}
-                </span>
-              </div>
-              <h3 className="mt-7 text-[20px] font-bold tracking-[-0.01em] text-white">
-                {r.title}
-              </h3>
-              <p className="mt-3 flex-1 text-[14.5px] leading-[1.7] text-white/60">{r.description}</p>
-              <a
-                href={r.href}
-                className="mt-7 inline-flex items-center gap-1.5 text-[13.5px] font-bold text-bz-accent transition-transform duration-200 group-hover:translate-x-0.5"
-              >
-                {r.cta}
-                <ArrowRight className="size-[14px]" />
-              </a>
-            </Card>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+          {CHANNELS.map((c) => (
+            <ChannelCard key={c.title} {...c} />
+          ))}
+        </div>
+
+        {/* Support promise the numbers behind the channels */}
+        <div className="mt-3 grid grid-cols-1 divide-y divide-white/[0.08] rounded-bz-xl border border-white/[0.08] bg-white/[0.03] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          {SUPPORT_STATS.map((s) => (
+            <div
+              key={s.label}
+              className="flex flex-col items-center px-6 py-7 text-center"
+            >
+              <span className="text-[26px] font-medium tabular-nums text-bz-text-on-dark">
+                {s.value}
+              </span>
+              <span className="mt-1.5 text-[11px] uppercase tracking-[0.12em] text-white/[0.5]">
+                {s.label}
+              </span>
+            </div>
           ))}
         </div>
       </Container>
@@ -908,93 +870,69 @@ function ResourcesSection() {
   );
 }
 
-// ─── Bottom CTA ───────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// [04] RESOURCES ways to go deeper
+// ════════════════════════════════════════════════════════════════════════════
 
-function BottomCta() {
+function ResourcesSection() {
   return (
-    <Section tone="light" pad="default">
-      <Container width="narrow">
-        <div className="relative overflow-hidden rounded-bz-2xl border border-bz-border bg-bz-surface p-10 md:p-16">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-bz-accent/10 blur-3xl"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -bottom-24 -left-24 h-[320px] w-[320px] rounded-full bg-bz-sage/10 blur-3xl"
-          />
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="04"
+          label="Keep learning"
+          title={
+            <>
+              Beyond the help center,{" "}
+              <Heading.Muted>everything to go deeper.</Heading.Muted>
+            </>
+          }
+          titleMaxWidth={640}
+        />
 
-          <div className="relative grid grid-cols-1 items-center gap-10 md:grid-cols-[1fr_auto]">
-            <div>
-              <PillBadge tone="sage" dot>
-                Still need help
-              </PillBadge>
-              <h2 className="mt-5 text-[clamp(28px,3.5vw,44px)] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text">
-                A Bizak specialist is one click away.
-              </h2>
-              <p className="mt-4 max-w-[560px] text-[16px] leading-[1.7] text-bz-text-muted">
-                Can't find what you're looking for? Talk to our team and we'll
-                get back to you within one business day or jump straight into
-                a free trial and explore the platform yourself.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 md:items-end">
-              <Button variant="primary" size="lg" href="/contact" withArrow>
-                Contact support
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                href="https://system.bizakerp.com/account/self-register"
-              >
-                Start a free trial
-              </Button>
-            </div>
-          </div>
-
-          <div className="relative mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-bz-border pt-7 text-[13px] text-bz-text-muted">
-            {[
-              { icon: Wrench, label: "Free implementation guidance" },
-              { icon: FileText, label: "No credit card required" },
-              { icon: Shield, label: "Cancel anytime" },
-            ].map(({ icon: Tick, label }) => (
-              <span key={label} className="inline-flex items-center gap-2">
-                <Tick className="size-4 text-bz-sage" strokeWidth={1.8} />
-                {label}
-              </span>
-            ))}
-          </div>
-        </div>
+        <BentoGrid cols={3}>
+          {RESOURCES.map(({ icon: Icon, ...r }) => (
+            <Bento key={r.title} tone="paper" hover minHeight={250}>
+              <Bento.Header
+                title={r.title}
+                icon={<Icon size={24} strokeWidth={1.5} className="text-bz-olive" />}
+              />
+              <Bento.Desc className="flex-1">{r.description}</Bento.Desc>
+              <Bento.Cta variant="light" withArrow href={r.href}>
+                {r.cta}
+              </Bento.Cta>
+            </Bento>
+          ))}
+        </BentoGrid>
       </Container>
     </Section>
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// PAGE
+// ════════════════════════════════════════════════════════════════════════════
 
 export function HelpCenter() {
-  const [activeFaq, setActiveFaq] = useState<FaqKey>("general");
+  const [activeTopic, setActiveTopic] = useState<FaqKey>("general");
 
-  const handlePickCategory = (key: FaqKey) => {
-    setActiveFaq(key);
-    if (typeof window !== "undefined") {
-      const el = document.getElementById("faq");
-      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const pickTopic = (key: FaqKey) => {
+    setActiveTopic(key);
+    if (typeof document !== "undefined") {
+      document.getElementById("faq")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   };
 
   return (
-    <div>
-      <Header />
-      <main>
-        <HeroSection />
-        <ChannelsSection />
-        <CategoriesSection onPick={handlePickCategory} />
-        <FaqSection activeKey={activeFaq} onChange={setActiveFaq} />
-        <ResourcesSection />
-        <BottomCta />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <HeroSection onPickTopic={pickTopic} />
+      <TopicDirectorySection onPick={pickTopic} />
+      <FaqSection activeKey={activeTopic} onChange={setActiveTopic} />
+      <ContactSection />
+      <ResourcesSection />
+    </main>
   );
 }

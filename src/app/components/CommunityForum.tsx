@@ -168,7 +168,7 @@ const INITIAL_THREADS: Thread[] = [
         initials: "SB",
         posted: "1d ago",
         body:
-          "Three things matter, in this order: (1) auto-posting for recurring journals depreciation, prepaid amortisation, accruals. (2) Daily bank-feed match instead of monthly; the cumulative cost of reconciling 30 days at month-end is the killer. (3) Parallel reconciliation queues by GL family, not by entity auditors can review them concurrently. We've seen 40+ teams cut close to under 2 days with this exact pattern.",
+          "Three things matter, in this order: (1) auto-posting for recurring journals depreciation, prepaid amortisation, accruals. (2) Daily bank-feed match instead of monthly; the cumulative cost of reconciling 30 days at month-end is the killer. (3) Parallel reconciliation queues by GL family, not by entity auditors can review them concurrently. We've seen teams cut close to under 2 days with this exact pattern.",
         votes: 142,
         isSolution: true,
         isBizakTeam: true,
@@ -1128,7 +1128,7 @@ function HeroSection({
                   className="size-[14px] text-bz-sage"
                   strokeWidth={1.8}
                 />
-                12,200 questions resolved
+                Questions resolved by real operators
               </span>
               <span aria-hidden className="size-1 rounded-full bg-bz-text-soft/40" />
               <span>Median first reply &lt; 6 hours</span>
@@ -1207,7 +1207,7 @@ function HeroSection({
                 <p className="mt-3 text-[12.5px] leading-[1.6] text-bz-text">
                   Three things matter: auto-posting for recurring journals,
                   daily bank-feed match instead of monthly, and parallel
-                  reconciliation queues. 40+ teams cut close to under 2 days
+                  reconciliation queues. Teams cut close to under 2 days
                   with this exact pattern.
                 </p>
               </div>
@@ -1990,14 +1990,14 @@ function BottomStrip({
                     className="size-3.5 text-bz-accent"
                     strokeWidth={1.8}
                   />
-                  18,400+ members
+                  A growing community
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2
                     className="size-3.5 text-bz-accent"
                     strokeWidth={1.8}
                   />
-                  94% answered
+                  Most questions answered
                 </span>
               </div>
             </div>

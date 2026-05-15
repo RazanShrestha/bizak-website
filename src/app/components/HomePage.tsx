@@ -42,16 +42,26 @@ import {
 // ════════════════════════════════════════════════════════════════════════════
 
 const LOGOS_BASE = "https://raw.githubusercontent.com/gilbarbara/logos/main/logos";
+// Client logos served from public/logos/.
 const LOGOS = [
-  "microsoft", "shopify", "slack", "salesforce", "hubspot", "stripe",
-  "adobe", "oracle", "atlassian", "notion", "figma",
+  { name: "Abbott",                   file: "abbott.svg" },
+  { name: "InDrive",                  file: "indrive.svg" },
+  { name: "CloudFactory",             file: "cloudfactory.png" },
+  { name: "L&T",                      file: "lnt.svg" },
+  { name: "GE",                       file: "ge.svg" },
+  { name: "GuardSix",                 file: "guardsix.svg" },
+  { name: "Laminar Tiles",            file: "laminar.svg" },
+  { name: "Glenmark Pharmaceuticals", file: "glenmark.png" },
+  { name: "Abacus Insights",          file: "abacus.svg" },
+  { name: "Siemens",                  file: "siemens.svg" },
+  { name: "Himal Power Limited",      file: "himalpower.png" },
 ];
 const BANKS = [
   "microsoft-azure", "stripe", "xero", "quickbooks",
   "shopify", "salesforce", "hubspot", "slack", "zapier",
 ];
 
-const FLAGS = ["🇺🇸","🇬🇧","🇩🇪","🇫🇷","🇪🇸","🇮🇹","🇳🇱","🇨🇦","🇯🇵","🇸🇬","🇦🇺","🇧🇷","🇮🇳"];
+const FLAGS = ["🇳🇵","🇮🇳","🇧🇩","🇱🇰","🇵🇰","🇧🇹","🇲🇻"];
 
 const PLATFORM_BENTOS = [
   { tone: "dark",  icon: Layers,     title: <>One ledger,<br/>every module</>,         desc: "Every transaction posts the right journals automatically no re-keying." },
@@ -61,28 +71,28 @@ const PLATFORM_BENTOS = [
 ] as const;
 
 const MULTI_ENTITY_ROWS = [
-  { ccy: "USD", flag: "🇺🇸", amount: "$2.14M", pct: 44 },
-  { ccy: "EUR", flag: "🇪🇺", amount: "€1.28M", pct: 28 },
-  { ccy: "GBP", flag: "🇬🇧", amount: "£820k",  pct: 18 },
-  { ccy: "JPY", flag: "🇯🇵", amount: "¥58.6M", pct: 10 },
+  { ccy: "NPR", flag: "🇳🇵", amount: "Rs 2.4M", pct: 44 },
+  { ccy: "INR", flag: "🇮🇳", amount: "₹1.6M",   pct: 28 },
+  { ccy: "BDT", flag: "🇧🇩", amount: "Tk 1.1M", pct: 18 },
+  { ccy: "LKR", flag: "🇱🇰", amount: "Rs 0.6M", pct: 10 },
 ];
 
 const TESTIMONIALS = [
-  { quote: "Bizak gave us one place for finance, inventory and sales. We replaced six disconnected tools in our first month.", name: "David Richardson", role: "CEO, Apex Manufacturing", initials: "DR" },
-  { quote: "Month-end close dropped from 9 days to 2. Our finance team finally has time to actually look at the numbers.", name: "Sara Okafor", role: "CFO, Helio Distribution", initials: "SO" },
+  { quote: "Bizak gave us one place for finance, inventory and sales. We replaced a stack of disconnected tools in our first month.", name: "David Richardson", role: "CEO, Apex Manufacturing", initials: "DR" },
+  { quote: "Month-end close went from dragging on for over a week to wrapping up in days. Our finance team finally has time to actually look at the numbers.", name: "Sara Okafor", role: "CFO, Helio Distribution", initials: "SO" },
   { quote: "Multi-entity, multi-currency just works. Consolidation that used to need a separate tool is now built in.", name: "Anestis Goudas", role: "Group Controller, Northwind Retail", initials: "AG" },
 ];
 
 const TESTI_STATS = [
-  { value: "50,000+", desc: "Companies powered by Bizak." },
-  { value: "60%",     desc: "Faster month-end close." },
-  { value: "99.8%",   desc: "Consolidation accuracy." },
+  { value: "One ledger",  desc: "Finance, inventory and sales on a single connected system." },
+  { value: "Real-time",   desc: "Live books, with no close-the-books marathon." },
+  { value: "Audit-ready", desc: "Every figure traces back to its source transaction." },
 ];
 
 const FAQS = [
   { q: "How long does Bizak take to deploy?",                a: "Most teams go live in one business day. Pick the modules you need (finance, inventory, sales, manufacturing, projects), invite your team, and start running. No 9-month implementation." },
   { q: "Can we adopt module by module?",                     a: "Yes. Start with one (e.g. finance) and add inventory, sales or manufacturing later. Existing tools can stay connected via 200+ integrations during the transition." },
-  { q: "Is Bizak built for multi-entity, multi-currency?",   a: "Yes, from day one. Multi-currency FX translation, intercompany elimination, branch-level P&L without a separate consolidation tool. 99.8% consolidation accuracy." },
+  { q: "Is Bizak built for multi-entity, multi-currency?",   a: "Yes, from day one. Multi-currency FX translation, intercompany elimination, branch-level P&L without a separate consolidation tool. Consolidation you can trust, every period." },
   { q: "Is Bizak secure and audit-ready?",                   a: "Yes. SOC-2 Type II, GDPR-ready, full audit trail on every change, role-based access, SSO. Every figure in a report resolves to its source transaction." },
 ];
 
@@ -109,7 +119,7 @@ function HeroSection() {
     <Section tone="b" pad="hero">
       <Container>
         <div className="flex flex-col items-center text-center">
-          <BadgeGreen style={{ marginBottom: 28 }}>Now Live, Globally 🎉</BadgeGreen>
+          <BadgeGreen style={{ marginBottom: 28 }}>Now Live in South Asia 🎉</BadgeGreen>
           <Heading level={2} style={{ marginBottom: 36 }}>
             The operating system for modern business,{" "}
             <Heading.Muted>finance and ops in one place.</Heading.Muted>
@@ -247,14 +257,14 @@ function LogoStrip() {
   return (
     <div className="mb-2 mt-14">
       <p className="mb-[22px] text-center text-[12.5px] text-bz-text-muted">
-        Trusted by thousands of teams &amp; organisations
+        Trusted by teams across South Asia
       </p>
       <Marquee speed="36s">
-        {LOGOS.map((slug) => (
+        {LOGOS.map(({ name, file }) => (
           <img
-            key={slug}
-            src={`${LOGOS_BASE}/${slug}.svg`}
-            alt={slug}
+            key={file}
+            src={`/logos/${file}`}
+            alt={name}
             className="bz-marquee-logo"
           />
         ))}
@@ -307,7 +317,7 @@ function HowItWorksSection() {
             title="From one branch to global"
             bullets={[
               "Multi-entity, multi-currency, branch-level P&L from day one.",
-              "99.8% consolidation accuracy no separate close tool.",
+              "Consolidation you can trust, with no separate close tool.",
             ]}
             cta={{ variant: "dark", withArrow: true, href: "/MulticompanyAndBranches", children: "Learn more" }}
             visual={<StepVisualScale />}
@@ -316,7 +326,7 @@ function HowItWorksSection() {
 
         <div className="mt-10">
           <FlagsRow
-            prefix="Available in 120+ countries"
+            prefix="Available across South Asia"
             flags={FLAGS}
             suffix="with localised tax and compliance"
           />
@@ -374,10 +384,10 @@ function StepVisualConnect() {
 
 function StepVisualScale() {
   const entities = [
-    { entity: "Bizak US", flag: "🇺🇸", amount: "$1.24M" },
-    { entity: "Bizak EU", flag: "🇪🇺", amount: "€880k" },
-    { entity: "Bizak UK", flag: "🇬🇧", amount: "£420k" },
-    { entity: "Bizak JP", flag: "🇯🇵", amount: "¥28M" },
+    { entity: "Bizak NP", flag: "🇳🇵", amount: "Rs 1.2M" },
+    { entity: "Bizak IN", flag: "🇮🇳", amount: "₹2.6M" },
+    { entity: "Bizak BD", flag: "🇧🇩", amount: "Tk 1.8M" },
+    { entity: "Bizak LK", flag: "🇱🇰", amount: "Rs 0.9M" },
   ];
   return (
     <div className="w-full max-w-[380px] rounded-bz-xl border border-bz-line-soft bg-bz-paper p-4 shadow-[0_10px_28px_rgba(15,20,17,0.06)]">
@@ -388,8 +398,8 @@ function StepVisualScale() {
         ))}
       </div>
       <div className="mt-2.5 flex items-center justify-between border-t border-bz-line-soft pt-2.5">
-        <span className="text-[11px] text-bz-text-muted">Group total (USD)</span>
-        <span className="bz-stat-num" style={{ fontSize: 18 }}>$3.18M</span>
+        <span className="text-[11px] text-bz-text-muted">Group total (NPR)</span>
+        <span className="bz-stat-num" style={{ fontSize: 18 }}>Rs 6.5M</span>
       </div>
     </div>
   );
@@ -528,7 +538,7 @@ function ExclusiveSection() {
           <Bento tone="dark" hover minHeight={280}>
             <h3 className="bz-bento-title">Auto-posted journals</h3>
             <Bento.Desc className="mb-[22px]">
-              247 entries auto-coded yesterday finance teams stop coding transactions.
+              Every entry is auto-coded the moment it posts, so finance teams stop coding transactions.
             </Bento.Desc>
             <Bento.Footer tone="dark" className="flex flex-col justify-center gap-1.5">
               <DataRow tone="dark" label="Shipment → COGS / Inventory" value="auto" />
@@ -552,7 +562,7 @@ function ExclusiveSection() {
           <Bento tone="leaf" hover minHeight={280}>
             <h3 className="bz-bento-title">AI bank reconciliation</h3>
             <Bento.Desc className="mb-[22px]" style={{ color: "#1F3422", opacity: 0.78 }}>
-              AI-driven matching that learns your transactions 40% fewer manual fixes.
+              AI-driven matching that learns your transactions far fewer manual fixes.
             </Bento.Desc>
             <Bento.Footer className="bg-[rgba(31,52,34,0.08)] flex flex-col justify-center gap-2">
               <div className="flex items-center gap-2">
@@ -575,7 +585,7 @@ function ExclusiveSection() {
               bullets: [
                 "FX translation, applied automatically",
                 "Intercompany elimination with audit trail",
-                "99.8% consolidation accuracy",
+                "Consolidation you can trust, every period",
               ],
               cta: {
                 variant: "accent",
@@ -613,7 +623,7 @@ function MultiEntityVisual() {
         <div className="text-[11.5px] text-bz-text-muted">Group total · Q1</div>
         <PiggyBank size={16} color="#1F3422" />
       </div>
-      <div className="bz-stat-num" style={{ fontSize: 28 }}>$4.82M</div>
+      <div className="bz-stat-num" style={{ fontSize: 28 }}>Rs 9.4M</div>
 
       <div className="mt-4 flex flex-col gap-2.5">
         {MULTI_ENTITY_ROWS.map((c) => (

@@ -180,7 +180,7 @@ function RightSidebar() {
                 className="bsp-cta-sub-link"
                 onClick={() => { if (email) setSubbed(true); }}
               >
-                Join 5k+ readers →
+                Join our readers →
               </button>
             </>
           )}
@@ -361,7 +361,7 @@ function NewsletterSection() {
       <div className="bsp-newsletter-grid" />
       <h2 className="bsp-newsletter-title">Scale faster with better insights</h2>
       <p className="bsp-newsletter-sub">
-        Join thousands of operations leaders receiving our bi-weekly breakdown of ERP innovations.
+        Join operations leaders receiving our bi-weekly breakdown of ERP innovations.
       </p>
       {submitted ? (
         <p style={{ color: "#C7FF35", fontWeight: 700, fontSize: 16, position: "relative", zIndex: 1 }}>

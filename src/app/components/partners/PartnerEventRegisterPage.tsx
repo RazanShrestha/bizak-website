@@ -50,7 +50,7 @@ const ROLES = [
   "Other",
 ];
 
-const REGIONS = ["Asia Pacific", "EMEA", "North America", "Latin America"];
+const REGIONS = ["Nepal", "India", "Bangladesh", "Sri Lanka", "Pakistan"];
 
 type FormState = {
   fullName: string;
@@ -69,7 +69,7 @@ const INITIAL: FormState = {
   email:    "",
   org:      "",
   role:     "Partner Sales / Channel",
-  region:   "Asia Pacific",
+  region:   "Nepal",
   guests:   "Just me",
   question: "",
   reminders: true,

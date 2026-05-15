@@ -18,66 +18,66 @@ import { Settings } from "lucide-react";
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
 const HERO_ENTITIES = [
-  { flag: "🇺🇸", curr: "USD", rev: "$18.4M",   trend: "+8.2%"  },
-  { flag: "🇬🇧", curr: "GBP", rev: "£9.6M",    trend: "+4.1%"  },
-  { flag: "🇩🇪", curr: "EUR", rev: "€7.8M",    trend: "+6.3%"  },
-  { flag: "🇸🇬", curr: "SGD", rev: "S$11.2M",  trend: "+11.8%" },
-  { flag: "🇦🇪", curr: "AED", rev: "AED 6.8M", trend: "+3.2%"  },
+  { flag: "🇳🇵", curr: "NPR", rev: "Rs 18.4M",  trend: "+8.2%"  },
+  { flag: "🇮🇳", curr: "INR", rev: "₹9.6M",     trend: "+4.1%"  },
+  { flag: "🇧🇩", curr: "BDT", rev: "৳7.8M",     trend: "+6.3%"  },
+  { flag: "🇱🇰", curr: "LKR", rev: "Rs 11.2M",  trend: "+11.8%" },
+  { flag: "🇵🇰", curr: "PKR", rev: "₨6.8M",     trend: "+3.2%"  },
 ];
 
 const HERO_CLOSE_STEPS = [
-  { step: "FX Translation",    note: "5 currencies → USD" },
-  { step: "IC Eliminations",   note: "$4.1M eliminated"   },
-  { step: "Minority Interest", note: "12.5% DE, 20% SG"   },
-  { step: "Group P&L",         note: "$48.2M QTD"         },
+  { step: "FX Translation",    note: "5 currencies → NPR" },
+  { step: "IC Eliminations",   note: "Rs 4.1M eliminated" },
+  { step: "Minority Interest", note: "12.5% BD, 20% LK"   },
+  { step: "Group P&L",         note: "Rs 48.2M QTD"       },
 ];
 
 const TREE_NODES = [
-  { label: "Bizak Holdings",  scope: "Group",     indent: 0 },
-  { label: "Americas",        scope: "Region",    indent: 1 },
-  { label: "Bizak US Inc.",   scope: "Entity",    indent: 2 },
-  { label: "↳ Boston Branch", scope: "Branch",    indent: 3 },
-  { label: "EMEA",            scope: "Region",    indent: 1 },
-  { label: "Bizak GmbH",      scope: "Entity",    indent: 2 },
-  { label: "↳ Berlin WH",     scope: "Warehouse", indent: 3 },
+  { label: "Bizak Holdings",     scope: "Group",     indent: 0 },
+  { label: "Nepal",              scope: "Region",    indent: 1 },
+  { label: "Bizak Nepal Pvt.",   scope: "Entity",    indent: 2 },
+  { label: "↳ Pokhara Branch",   scope: "Branch",    indent: 3 },
+  { label: "India",              scope: "Region",    indent: 1 },
+  { label: "Bizak India Pvt.",   scope: "Entity",    indent: 2 },
+  { label: "↳ Mumbai WH",        scope: "Warehouse", indent: 3 },
 ];
 
 const ENTITY_STREAM = [
-  { entity: "Bizak US",  ref: "IC-2412", event: "IC invoice auto-posted both sides",  stat: "$24,800",   live: true  },
-  { entity: "Bizak DE",  ref: "FX-0841", event: "FX translation updated · EUR/USD",   stat: "€22,840",   live: true  },
-  { entity: "Bizak UK",  ref: "EC-0199", event: "Entity close triggered · Q3",        stat: "£9.6M",     live: false },
-  { entity: "Bizak SG",  ref: "EL-0042", event: "Elimination tag auto-set · IC",      stat: "S$11.2M",   live: false },
-  { entity: "Bizak AE",  ref: "TX-0392", event: "UAE VAT 5% posted · period",         stat: "AED 6.8M",  live: false },
-  { entity: "Bizak AU",  ref: "FX-0842", event: "AUD/USD daily rate applied",         stat: "A$2.8M",    live: false },
+  { entity: "Bizak Nepal", ref: "IC-2412", event: "IC invoice auto-posted both sides",  stat: "Rs 24,800",  live: true  },
+  { entity: "Bizak India", ref: "FX-0841", event: "FX translation updated · INR/NPR",   stat: "₹22,840",    live: true  },
+  { entity: "Bizak Lanka", ref: "EC-0199", event: "Entity close triggered · Q3",        stat: "Rs 9.6M",    live: false },
+  { entity: "Bizak BD",    ref: "EL-0042", event: "Elimination tag auto-set · IC",      stat: "৳11.2M",     live: false },
+  { entity: "Bizak PK",    ref: "TX-0392", event: "VAT 13% posted · period",            stat: "₨6.8M",      live: false },
+  { entity: "Bizak Bhutan",ref: "FX-0842", event: "BTN/NPR daily rate applied",         stat: "Nu 2.8M",    live: false },
 ];
 
 const ENTITY_PROFILES = [
   {
-    flag: "🇺🇸",
-    name: "Americas",
-    tagline: "Bizak US Inc. · USD",
-    config: ["Multi-location P&L", "US Sales Tax", "GAAP Chart of Accounts"],
+    flag: "🇳🇵",
+    name: "Nepal",
+    tagline: "Bizak Nepal Pvt. · NPR",
+    config: ["Multi-location P&L", "Nepal VAT 13%", "Local Chart of Accounts"],
     active: true,
   },
   {
-    flag: "🇪🇺",
-    name: "EMEA",
-    tagline: "Bizak GmbH · EUR",
-    config: ["EU VAT · OSS/IOSS", "E-invoicing", "EMEA Standard CoA"],
+    flag: "🇮🇳",
+    name: "India",
+    tagline: "Bizak India Pvt. · INR",
+    config: ["GST · IGST/CGST/SGST", "E-invoicing", "India Standard CoA"],
     active: false,
   },
   {
-    flag: "🇸🇬",
-    name: "APAC",
-    tagline: "Bizak APAC Pte. · SGD",
-    config: ["GST 9%", "Multi-branch", "APAC CoA"],
+    flag: "🇱🇰",
+    name: "Sri Lanka",
+    tagline: "Bizak Lanka Pvt. · LKR",
+    config: ["VAT 18%", "Multi-branch", "Sri Lanka CoA"],
     active: false,
   },
   {
-    flag: "🇦🇪",
-    name: "MEA",
-    tagline: "Bizak MEA FZ-LLC · AED",
-    config: ["UAE VAT 5%", "Free Zone Rules", "AED/USD FX"],
+    flag: "🇧🇩",
+    name: "Bangladesh",
+    tagline: "Bizak BD Ltd. · BDT",
+    config: ["VAT 15%", "Local tax rules", "BDT/NPR FX"],
     active: false,
   },
 ];
@@ -86,7 +86,7 @@ const FAQS = [
   { q: "How long does a group close take?",              a: "Under 90 seconds. FX translation, intercompany eliminations, minority interest and the group P&L all run on demand, so consolidation is a button rather than a month-end project." },
   { q: "How are intercompany transactions handled?",     a: "Automatically. When one entity sells to another, a single invoice posts the AR and AP on both sides, in both currencies, at the transaction-date FX rate, with elimination tags pre-applied for close." },
   { q: "Can each entity keep its own books?",            a: "Yes. Every subsidiary, branch or cost centre gets its own chart of accounts, tax engine, fiscal calendar and reporting currency, while still rolling up to one group ledger." },
-  { q: "Does Bizak handle local tax rules?",             a: "38 tax engines ship pre-configured, covering VAT, GST, US sales tax, withholding, e-invoicing and OSS/IOSS, assigned per entity. A new subsidiary is online and compliant in one afternoon." },
+  { q: "Does Bizak handle local tax rules?",             a: "Tax engines ship pre-configured for South Asian regimes, covering VAT, GST, withholding tax and e-invoicing, assigned per entity. A new subsidiary is online and compliant in one afternoon." },
 ];
 
 // ─── HERO MOCK ─────────────────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ function HeroGroupBoard() {
           </div>
           <div className="hidden sm:flex items-center gap-2">
             <span className="text-[10px] text-white/40 font-medium">Group Revenue</span>
-            <span className="text-[13px] font-bold text-bz-text-on-dark">$48.2M</span>
+            <span className="text-[13px] font-bold text-bz-text-on-dark">Rs 48.2M</span>
             <span className="text-[9px] font-bold text-bz-fire bg-bz-fire/[0.12] px-1.5 py-0.5 rounded-bz-pill">
               +12.4%
             </span>
@@ -143,7 +143,7 @@ function HeroGroupBoard() {
               IC Elim.
             </div>
             <p className="text-[16px] md:text-[20px] font-bold text-bz-fire leading-none mb-2">
-              $4.1M
+              Rs 4.1M
             </p>
             <span className="text-[8px] font-bold text-bz-fire bg-bz-fire/[0.12] px-1.5 py-0.5 rounded-bz-pill">
               Auto
@@ -170,11 +170,11 @@ function HeroICAutoPost() {
           <p className="text-[9px] font-bold tracking-[0.10em] uppercase text-bz-text-muted mb-2"></p>
           <div className="flex justify-between text-[11.5px] mb-1.5">
             <span className="text-bz-text-muted">AR Intercompany</span>
-            <span className="font-bold text-bz-text">DR $24,800</span>
+            <span className="font-bold text-bz-text">DR Rs 24,800</span>
           </div>
           <div className="flex justify-between text-[11.5px]">
             <span className="text-bz-text-muted">Revenue IC Sales</span>
-            <span className="text-bz-text-soft">CR $24,800</span>
+            <span className="text-bz-text-soft">CR Rs 24,800</span>
           </div>
         </div>
 
@@ -192,11 +192,11 @@ function HeroICAutoPost() {
           <p className="text-[9px] font-bold tracking-[0.10em] uppercase text-bz-text-muted mb-2"></p>
           <div className="flex justify-between text-[11.5px] mb-1.5">
             <span className="text-bz-text-muted">Expense IC Purchases</span>
-            <span className="text-bz-text-soft">DR €22,840</span>
+            <span className="text-bz-text-soft">DR ₹22,840</span>
           </div>
           <div className="flex justify-between text-[11.5px]">
             <span className="text-bz-text-muted">AP Intercompany</span>
-            <span className="font-bold text-bz-text">CR €22,840</span>
+            <span className="font-bold text-bz-text">CR ₹22,840</span>
           </div>
         </div>
       </div>
@@ -279,16 +279,16 @@ function AutoICVisual() {
     <div className="flex flex-col gap-2.5">
       <div className="rounded-bz-md bg-white/[0.08] border border-white/[0.12] p-3">
         <div className="text-[9px] font-bold tracking-[0.1em] uppercase text-white/50 mb-2">
-          Seller · Bizak US Inc.
+          Seller · Bizak Nepal Pvt.
         </div>
         <div className="flex flex-col gap-1.5">
           <div className="flex justify-between text-[11.5px]">
             <span className="text-white/55">AR Intercompany</span>
-            <span className="font-bold text-bz-fire">DR $24,800</span>
+            <span className="font-bold text-bz-fire">DR Rs 24,800</span>
           </div>
           <div className="flex justify-between text-[11.5px]">
             <span className="text-white/55">Revenue IC Sales</span>
-            <span className="text-white/75">CR $24,800</span>
+            <span className="text-white/75">CR Rs 24,800</span>
           </div>
         </div>
       </div>
@@ -303,16 +303,16 @@ function AutoICVisual() {
 
       <div className="rounded-bz-md bg-white/[0.08] border border-white/[0.12] p-3">
         <div className="text-[9px] font-bold tracking-[0.1em] uppercase text-white/50 mb-2">
-          Buyer · Bizak GmbH (DE)
+          Buyer · Bizak India Pvt.
         </div>
         <div className="flex flex-col gap-1.5">
           <div className="flex justify-between text-[11.5px]">
             <span className="text-white/55">Expense IC Purchases</span>
-            <span className="text-white/75">DR €22,840</span>
+            <span className="text-white/75">DR ₹22,840</span>
           </div>
           <div className="flex justify-between text-[11.5px]">
             <span className="text-white/55">AP Intercompany</span>
-            <span className="font-bold text-bz-fire">CR €22,840</span>
+            <span className="font-bold text-bz-fire">CR ₹22,840</span>
           </div>
         </div>
       </div>
@@ -556,7 +556,7 @@ function EntityProfilesSection() {
               </p>
             </div>
             <div className="flex items-baseline gap-1.5 sm:shrink-0">
-              <span className="text-[32px] font-bold text-bz-text-on-dark leading-none">38</span>
+              <span className="text-[18px] font-bold text-bz-text-on-dark leading-none">Regional</span>
               <span className="text-[11px] text-white/50">tax engines</span>
             </div>
           </div>
@@ -612,7 +612,7 @@ function AutoICSection() {
               <Heading.Muted>Both sides auto-posted.</Heading.Muted>
             </>
           }
-          description="When Bizak US sells to Bizak GmbH, a single transaction creates the AR and AP in both currencies."
+          description="When Bizak Nepal sells to Bizak India, a single transaction creates the AR and AP in both currencies."
         />
         <BigCard
           text={{

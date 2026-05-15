@@ -42,7 +42,7 @@ const LIVE_EVENTS = [
   { module: "Expenses",    ref: "EXP-882",  event: "Escalated to CFO",           stat: "$450",    live: true  },
   { module: "Purchases",   ref: "PO-9188",  event: "Approved by Dept. Head",     stat: "$2,800",  live: false },
   { module: "Invoices",    ref: "INV-2210", event: "Forwarded to AP Team",       stat: "$7,500",  live: false },
-  { module: "Work Orders", ref: "WO-441",   event: "Signed off by Operations",   stat: "—",       live: false },
+  { module: "Work Orders", ref: "WO-441",   event: "Signed off by Operations",   stat: "Done",    live: false },
   { module: "Payroll",     ref: "PR-119",   event: "Final approval triggered",   stat: "$84,000", live: false },
 ];
 

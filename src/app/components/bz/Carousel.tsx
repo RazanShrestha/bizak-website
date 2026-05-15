@@ -11,6 +11,9 @@ import { cn } from "../ui/utils";
 //     autoAdvance={6000}
 //     render={(t) => <TestimonialQuote {...t} />}
 //   />
+//
+// `tone` follows the surface convention: tone="dark" recolours the
+// counter + prev/next controls for use on a dark (olive) surface.
 
 export type CarouselProps<T> = {
   items: T[];
@@ -21,6 +24,8 @@ export type CarouselProps<T> = {
   showControls?: boolean;
   /** Pause auto-advance on hover. Default true. */
   pauseOnHover?: boolean;
+  /** The SURFACE the carousel sits on dictates the control colours. Default "light". */
+  tone?: "light" | "dark";
   className?: string;
 };
 
@@ -30,6 +35,7 @@ export function Carousel<T>({
   autoAdvance = 6000,
   showControls = true,
   pauseOnHover = true,
+  tone = "light",
   className,
 }: CarouselProps<T>) {
   const [i, setI] = React.useState(0);
@@ -77,7 +83,10 @@ export function Carousel<T>({
       {showControls && len > 1 && (
         <div className="mt-4 flex items-center justify-between gap-3">
           <span
-            className="text-[12.5px] text-bz-text-muted"
+            className={cn(
+              "text-[12.5px]",
+              tone === "dark" ? "text-white/55" : "text-bz-text-muted",
+            )}
             aria-label={`Slide ${i + 1} of ${len}`}
           >
             {i + 1} / {len}
@@ -87,7 +96,12 @@ export function Carousel<T>({
               type="button"
               onClick={prev}
               aria-label="Previous slide"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-bz-pill border border-bz-line-soft bg-bz-surface text-bz-text hover:bg-bz-section-b"
+              className={cn(
+                "inline-flex h-9 w-9 items-center justify-center rounded-bz-pill border",
+                tone === "dark"
+                  ? "border-white/[0.16] bg-white/[0.06] text-bz-text-on-dark hover:bg-white/[0.12]"
+                  : "border-bz-line-soft bg-bz-surface text-bz-text hover:bg-bz-section-b",
+              )}
             >
               <ChevronLeft size={15} />
             </button>
@@ -95,7 +109,12 @@ export function Carousel<T>({
               type="button"
               onClick={next}
               aria-label="Next slide"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-bz-pill border border-bz-line-soft bg-bz-surface text-bz-text hover:bg-bz-section-b"
+              className={cn(
+                "inline-flex h-9 w-9 items-center justify-center rounded-bz-pill border",
+                tone === "dark"
+                  ? "border-white/[0.16] bg-white/[0.06] text-bz-text-on-dark hover:bg-white/[0.12]"
+                  : "border-bz-line-soft bg-bz-surface text-bz-text hover:bg-bz-section-b",
+              )}
             >
               <ChevronRight size={15} />
             </button>

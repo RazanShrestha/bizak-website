@@ -31,9 +31,9 @@ import {
 // ════════════════════════════════════════════════════════════════════════════
 
 const ORDERS_IN_FLIGHT = [
-  { id: "DO-8841", dest: "Dubai, UAE",   stage: "Shipped",    pct: 94 },
-  { id: "DO-8842", dest: "London, UK",   stage: "Picking",    pct: 61 },
-  { id: "DO-8843", dest: "Mumbai, IN",   stage: "Processing", pct: 27 },
+  { id: "DO-8841", dest: "Kathmandu, NP", stage: "Shipped",    pct: 94 },
+  { id: "DO-8842", dest: "Delhi, IN",     stage: "Picking",    pct: 61 },
+  { id: "DO-8843", dest: "Mumbai, IN",    stage: "Processing", pct: 27 },
 ];
 
 const DISPATCH_SUMMARY = [
@@ -43,13 +43,13 @@ const DISPATCH_SUMMARY = [
 ];
 
 const ROUTES = [
-  { id: "RTE-41", badge: "A", name: "Gulf Run", status: "In Transit", pct: 94 },
-  { id: "RTE-42", badge: "B", name: "UK Run",   status: "Dispatched",  pct: 61 },
+  { id: "RTE-41", badge: "A", name: "Nepal Run", status: "In Transit", pct: 94 },
+  { id: "RTE-42", badge: "B", name: "India Run", status: "Dispatched",  pct: 61 },
 ];
 
 const DISPATCH_EVENTS = [
-  { id: "DO-8841", what: "Delivery order · Dubai",  flow: "COGS posted · $5,760",  t: "2m" },
-  { id: "DO-8842", what: "Pick scan · London run",  flow: "Progress 45% → 61%",    t: "4m" },
+  { id: "DO-8841", what: "Delivery order · Kathmandu",  flow: "COGS posted · $5,760",  t: "2m" },
+  { id: "DO-8842", what: "Pick scan · Delhi run",       flow: "Progress 45% → 61%",    t: "4m" },
 ];
 
 const CAPABILITIES = [
@@ -145,7 +145,7 @@ function HeroSection() {
       <Container>
         <div className="flex flex-col items-center text-center">
           <BadgeGreen style={{ marginBottom: 28 }}>
-            96.2% on-time delivery, Live
+            On-time delivery, Live
           </BadgeGreen>
           <Heading level={2} style={{ marginBottom: 36 }}>
             Every order. Every warehouse. Every route.{" "}{<br className="hidden md:block"/>}
@@ -320,7 +320,7 @@ function PickListVisual() {
   return (
     <div className="w-full max-w-[380px] rounded-bz-xl border border-bz-line-soft bg-bz-paper p-4 shadow-[0_10px_28px_rgba(15,20,17,0.06)]">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <span className="text-[11px] text-bz-text-muted">PL-2044 · DO-8841 · Dubai</span>
+        <span className="text-[11px] text-bz-text-muted">PL-2044 · DO-8841 · Kathmandu</span>
         <StatusChip variant="live">Picking</StatusChip>
       </div>
       <div className="mb-3 rounded-bz-md bg-bz-paper-warm px-3 py-2.5">
@@ -340,7 +340,7 @@ function PickListVisual() {
         <div className="flex items-center gap-2">
           <span className="w-10 shrink-0 text-[10px] font-semibold text-bz-text">Line 3</span>
           <div className="flex-1"><StripeBar pct={0} /></div>
-          <span className="w-7 text-right text-[10.5px] font-semibold tabular-nums text-bz-text-muted">—</span>
+          <span className="w-7 text-right text-[10.5px] font-semibold tabular-nums text-bz-text-muted">·</span>
         </div>
       </div>
       <div className="mt-3">

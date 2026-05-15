@@ -232,10 +232,10 @@ const INCIDENTS: Incident[] = [
     date: "2026-04-23",
     duration: "32 min",
     severity: "major",
-    title: "Webhook deliveries delayed in EU region",
+    title: "Webhook deliveries delayed",
     affected: "Webhooks · REST API (v2)",
     summary:
-      "A queue-broker failover in the EU cluster caused webhook delivery to fall behind by up to ~30 minutes. All queued events were drained and delivered once the secondary broker took over.",
+      "A queue-broker failover caused webhook delivery to fall behind by up to ~30 minutes. All queued events were drained and delivered once the secondary broker took over.",
     timeline: [
       {
         time: "14:42 UTC",
@@ -250,12 +250,12 @@ const INCIDENTS: Incident[] = [
       {
         time: "14:11 UTC",
         label: "Identified",
-        body: "Root cause identified as exhausted broker memory pool in eu-west-1.",
+        body: "Root cause identified as exhausted broker memory pool.",
       },
       {
         time: "14:00 UTC",
         label: "Investigating",
-        body: "We are investigating elevated webhook delivery latency in the EU cluster.",
+        body: "We are investigating elevated webhook delivery latency.",
       },
     ],
   },
@@ -268,7 +268,7 @@ const INCIDENTS: Incident[] = [
     summary:
       "A subset of mobile clients saw response times above 1.2s while a CDN edge re-warmed cache after a config rollout. No data was lost.",
     timeline: [
-      { time: "08:39 UTC", label: "Resolved", body: "Latency recovered globally." },
+      { time: "08:39 UTC", label: "Resolved", body: "Latency recovered across all regions." },
       { time: "08:31 UTC", label: "Monitoring", body: "Cache warmed; recovery in progress." },
       { time: "08:28 UTC", label: "Investigating", body: "Investigating elevated mobile API latency." },
     ],
@@ -294,7 +294,7 @@ const INCIDENTS: Incident[] = [
     title: "Third-party banking connector outage",
     affected: "Third-party Integrations",
     summary:
-      "An upstream banking provider experienced a regional outage affecting US-east transactions. Bizak retried failed syncs automatically once the provider recovered.",
+      "An upstream banking provider experienced a regional outage affecting a subset of transactions. Bizak retried failed syncs automatically once the provider recovered.",
     timeline: [
       {
         time: "16:48 UTC",
@@ -328,7 +328,7 @@ const MAINTENANCE: Maintenance[] = [
   {
     date: "2026-05-18",
     window: "02:00 – 03:30 UTC",
-    region: "EU (eu-west-1)",
+    region: "South Asia (ap-south-1)",
     title: "Scheduled database failover drill",
     summary:
       "Routine quarterly failover exercise. No customer-visible downtime expected; failover targets <30s and is fully automated.",
@@ -337,7 +337,7 @@ const MAINTENANCE: Maintenance[] = [
   {
     date: "2026-05-26",
     window: "21:00 – 22:00 UTC",
-    region: "Global",
+    region: "All regions",
     title: "Notifications subsystem upgrade",
     summary:
       "Rolling upgrade of the notifications worker fleet. In-app delivery may be deferred by up to ~2 minutes during the window.",
@@ -346,12 +346,12 @@ const MAINTENANCE: Maintenance[] = [
 ];
 
 const REGIONS: { name: string; code: string; status: Status; latency: string }[] = [
-  { name: "Americas", code: "us-east-1", status: "operational", latency: "118 ms" },
-  { name: "Americas", code: "us-west-2", status: "operational", latency: "126 ms" },
-  { name: "Europe", code: "eu-west-1", status: "operational", latency: "138 ms" },
-  { name: "Europe", code: "eu-central-1", status: "operational", latency: "144 ms" },
-  { name: "APAC", code: "ap-south-1", status: "operational", latency: "162 ms" },
-  { name: "APAC", code: "ap-southeast-1", status: "operational", latency: "171 ms" },
+  { name: "South Asia", code: "ap-south-1", status: "operational", latency: "118 ms" },
+  { name: "South Asia", code: "ap-south-2", status: "operational", latency: "126 ms" },
+  { name: "South Asia", code: "ap-south-edge-ktm", status: "operational", latency: "138 ms" },
+  { name: "South Asia", code: "ap-south-edge-del", status: "operational", latency: "144 ms" },
+  { name: "South Asia", code: "ap-south-edge-dac", status: "operational", latency: "162 ms" },
+  { name: "South Asia", code: "ap-south-edge-cmb", status: "operational", latency: "171 ms" },
 ];
 
 const LAST_UPDATED = "May 6, 2026 · 10:42 UTC";
@@ -645,12 +645,12 @@ function RegionsSection() {
       <Container>
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[360px_1fr] lg:gap-16">
           <div className="lg:sticky lg:top-[100px] lg:self-start">
-            <Eyebrow>Global footprint</Eyebrow>
+            <Eyebrow>Regional footprint</Eyebrow>
             <h2 className="mt-3 text-[34px] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text md:text-[40px]">
               Six regions. One status.
             </h2>
             <p className="mt-5 text-[15.5px] leading-[1.7] text-bz-text-muted">
-              Bizak runs active-active across three continents. Latency is
+              Bizak runs active-active across South Asia. Latency is
               measured from synthetic monitors in each region; status is
               derived from the worst component in that region.
             </p>
