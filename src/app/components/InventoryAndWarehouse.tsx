@@ -58,7 +58,7 @@ const CYCLE_COUNT_ROWS = [
 ];
 
 const HERO_TREE = [
-  { id: "wh",  depth: 0, label: "Dubai Distribution Hub", tag: "Warehouse"                  },
+  { id: "wh",  depth: 0, label: "Kathmandu Distribution Hub", tag: "Warehouse"               },
   { id: "b1",  depth: 1, label: "Bay A-1",                tag: "Bay"                        },
   { id: "bn3", depth: 2, label: "Bin B-3",                tag: "Bin"                        },
   { id: "r14", depth: 3, label: "Rack 14",                tag: "Rack",      selected: true  },

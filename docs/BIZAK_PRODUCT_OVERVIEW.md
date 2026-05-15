@@ -22,6 +22,10 @@ SMEs accumulate.
 - Logged-in product: `system.bizakerp.com`
 - Self-register: `system.bizakerp.com/account/self-register`
 
+Bizak is an **early-stage company focused on South Asia.** That shapes the
+copy: no vanity metrics, no global-scale claims see §5.4 (the numbers
+rule) and §5.5 (regional framing). Both are hard rules, not suggestions.
+
 If a page is selling Bizak, it is selling **the operating system**, not a
 point-tool. Even module pages (Finance, Inventory, etc.) are pieces of a
 unified whole never frame a module as if it lived alone.
@@ -158,8 +162,8 @@ this when copy needs a foil.
 ## 5. Brand voice & copy patterns
 
 ### 5.1 Voice
-- **Confident, terse, technical-but-accessible.** Short sentences. Specific numbers. No marketing hedge ("could", "may help to", "potentially").
-- **Outcomes over features.** "60% faster month-end" beats "powerful close engine." Numbers are concrete: `87.4% OEE`, `$1.24M cash position`, `247 entries auto-posted today`.
+- **Confident, terse, technical-but-accessible.** Short sentences. No marketing hedge ("could", "may help to", "potentially").
+- **Outcomes over features, stated qualitatively.** "Close month-end in hours, not weeks" beats "powerful close engine." Describe the outcome concretely, but **without quantified claims about Bizak** no "60% faster", no customer/country counts (see §5.4). Sample data *inside a product mockup* may show concrete figures; headline copy may not.
 - **No AI-magic clichés.** Bizak does have AI-driven reconciliation/anomaly detection refer to it concretely (e.g., "AI-driven bank statement matching") never as a vague "AI-powered platform" wash.
 - **Show, don't tell.** A live-streaming journal panel says "real-time" louder than the word "real-time" does. Prefer mockups + data over adjectives.
 
@@ -177,21 +181,43 @@ this when copy needs a foil.
 - Numbers without context. `99%` of *what*? Always anchor.
 - Copy that could equally describe Salesforce, NetSuite, Odoo and HubSpot if the sentence works for a competitor, rewrite it.
 
-### 5.4 The canonical statistics
+### 5.4 No vanity metrics the numbers rule
 
-These numbers recur across the site. When you need a stat, prefer one of
-these (or a near-cousin) over inventing new ones:
+Bizak is an **early-stage company with a small, growing customer base.**
+The marketing site must **not** make quantified claims about Bizak's own
+scale, traction, track record, or age. Forbidden on every page:
 
-| Number | What it claims |
+- **Customer / user counts** "50,000+ companies", "thousands of teams", "tens of thousands of users".
+- **Country counts** "120+ countries", "48 countries", any "N countries" figure (see §5.5 for the regional framing that replaces them).
+- **Track-record percentages** "60% faster month-end", "40% fewer errors", "99.8% consolidation accuracy", "87.4% OEE" presented as a *proven Bizak result*.
+- **Company-age claims** no founding timeline spanning years, no "five years ago", no "120+ years of combined experience".
+- **Awards / partner-count vanity metrics** "640+ vetted firms", "23 go-lives", "NPS 78".
+
+Express the same value **qualitatively** instead:
+
+| Instead of | Write |
 |---|---|
-| **50,000+** | Companies powered by Bizak |
-| **60%** | Faster month-end close |
-| **40%** | Reduction in manual data-entry errors |
-| **100%** | Audit compliance (every txn has a digital trail) |
-| **87.4%** | Average OEE on the manufacturing page |
-| **96.2%** | On-time delivery |
-| **99.8%** | Consolidation accuracy |
-| **247** | Journal entries auto-posted in a day (live demo) |
+| "50,000+ companies run on Bizak" | "Growing businesses run on Bizak" / "the teams we work with" |
+| "60% faster month-end close" | "Close month-end in hours, not weeks" |
+| "40% fewer manual errors" | "Manual data entry, eliminated" |
+| "99.8% consolidation accuracy" | "Consolidation you can trust, audit-ready every time" |
+| "120+ countries" | "across South Asia" (see §5.5) |
+| "Trusted by thousands" | "Trusted by ambitious operators" |
+
+**Still allowed:** *sample data inside product-mock UIs* a mock dashboard
+tile showing a sample revenue figure, a sample journal amount, a sample
+chart trend. These illustrate how the **product** works; they are not
+claims about Bizak's size. Keep them (localised per §5.5), but never let
+a sample figure double as a headline traction claim.
+
+### 5.5 Regional framing South Asia
+
+Bizak's market is **South Asia**. The site is not a global-enterprise
+play copy, examples, flags and currency reflect the region.
+
+- **Country framing.** Replace every "120+ countries" / "global" / "worldwide" with "South Asia" / "across South Asia" / "the region".
+- **Flags.** Canonical flag set, led by Nepal and India: `["🇳🇵","🇮🇳","🇧🇩","🇱🇰","🇵🇰","🇧🇹","🇲🇻"]` (Nepal, India, Bangladesh, Sri Lanka, Pakistan, Bhutan, Maldives).
+- **Multi-entity / multi-currency demos.** Use South Asian entities and currencies: Bizak Nepal (NPR / Rs), Bizak India (INR / ₹), Bizak Bangladesh (BDT), Bizak Sri Lanka (LKR), Bizak Pakistan (PKR). Drop USD / EUR / GBP / JPY entity examples.
 
 ---
 

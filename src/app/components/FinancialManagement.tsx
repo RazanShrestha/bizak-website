@@ -62,7 +62,7 @@ const FEATURES = [
   {
     icon: Building2,
     title: "Multi-Entity Sync",
-    desc: "Effortlessly manage global subsidiaries with automated intercompany eliminations and consolidations.",
+    desc: "Effortlessly manage subsidiaries across South Asia with automated intercompany eliminations and consolidations.",
   },
   {
     icon: Package,
@@ -78,18 +78,18 @@ const FEATURES = [
 
 const METRICS = [
   {
-    value: "60%",
+    value: "Hours, not weeks",
     label: "Faster month-end",
-    desc: "Automated reconciliation and intercompany elimination cut close times in half.",
+    desc: "Automated reconciliation and intercompany elimination cut close times dramatically.",
   },
   {
-    value: "40%",
-    label: "Fewer errors",
+    value: "Far fewer errors",
+    label: "Cleaner books",
     desc: "Direct bank feeds and auto-posted journals replace manual data entry.",
   },
   {
-    value: "100%",
-    label: "Audit coverage",
+    value: "Audit-ready",
+    label: "Full coverage",
     desc: "A complete digital paper trail behind every figure, ready for regulatory review.",
   },
 ] as const;
@@ -343,9 +343,9 @@ function TechnicalShowcaseSection() {
 
 function MultiEntityBento() {
   const rows = [
-    { ccy: "USD", flag: "🇺🇸", amount: "$2.14M" },
-    { ccy: "EUR", flag: "🇪🇺", amount: "€1.28M" },
-    { ccy: "GBP", flag: "🇬🇧", amount: "£820k" },
+    { ccy: "NPR", flag: "🇳🇵", amount: "Rs 2.14M" },
+    { ccy: "INR", flag: "🇮🇳", amount: "₹1.28M" },
+    { ccy: "BDT", flag: "🇧🇩", amount: "৳820k" },
   ];
   return (
     <Bento tone="paper" hover minHeight={360}>
@@ -899,7 +899,7 @@ function MetricsSection() {
         <BentoGrid cols={3}>
           {METRICS.map((m) => (
             <Bento key={m.label} tone="paper" hover minHeight={220}>
-              <div className="bz-stat-num" style={{ fontSize: 48, marginBottom: 12 }}>
+              <div className="bz-stat-num" style={{ fontSize: 28, marginBottom: 12 }}>
                 {m.value}
               </div>
               <div className="mb-3 text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">

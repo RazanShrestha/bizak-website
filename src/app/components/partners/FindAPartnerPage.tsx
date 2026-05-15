@@ -38,7 +38,7 @@ type Partner = {
   consultants: number;
 };
 
-const REGIONS = ["All", "Asia Pacific", "EMEA", "North America", "Latin America"];
+const REGIONS = ["All", "Nepal", "India", "Bangladesh", "Sri Lanka", "Pakistan"];
 const INDUSTRIES = [
   { Icon: Factory,   name: "Manufacturing" },
   { Icon: Truck,     name: "Distribution" },
@@ -50,51 +50,51 @@ const TIERS: Tier[] = ["Authorized", "Silver", "Gold", "Platinum"];
 
 const PARTNERS: Partner[] = [
   {
-    name: "Lattice Solutions",  region: "Asia Pacific", city: "Singapore",
+    name: "Lattice Solutions",  region: "India", city: "Bengaluru",
     tier: "Platinum", industries: ["Manufacturing", "Distribution"],
     bio: "Mid-market manufacturing implementations with end-to-end shop-floor integration. 14 industries covered.",
     founded: 2011, consultants: 38,
   },
   {
-    name: "Northbeam Consulting", region: "North America", city: "Toronto",
+    name: "Northbeam Consulting", region: "Nepal", city: "Kathmandu",
     tier: "Gold", industries: ["Services", "Multi-entity"],
     bio: "Professional services and multi-entity finance specialists. Heavy on FP&A and consolidations.",
     founded: 2014, consultants: 22,
   },
   {
-    name: "Verdant Ops", region: "EMEA", city: "Amsterdam",
+    name: "Verdant Ops", region: "Sri Lanka", city: "Colombo",
     tier: "Gold", industries: ["Distribution", "Retail"],
     bio: "Omnichannel retail and distribution practice. Shopify, POS, and 3PL integrations.",
     founded: 2013, consultants: 18,
   },
   {
-    name: "Atlas SI", region: "Asia Pacific", city: "Bengaluru",
+    name: "Atlas SI", region: "India", city: "Mumbai",
     tier: "Platinum", industries: ["Manufacturing", "Multi-entity"],
-    bio: "Large-scale manufacturing rollouts across APAC. Specialists in process and discrete manufacturing.",
+    bio: "Large-scale manufacturing rollouts across the region. Specialists in process and discrete manufacturing.",
     founded: 2008, consultants: 64,
   },
   {
-    name: "Meridian Advisory", region: "EMEA", city: "London",
+    name: "Meridian Advisory", region: "Bangladesh", city: "Dhaka",
     tier: "Silver", industries: ["Services", "Multi-entity"],
     bio: "Boutique advisory firm focused on group reporting and audit-ready close cycles.",
     founded: 2017, consultants: 12,
   },
   {
-    name: "Polaris Bridge", region: "Latin America", city: "Mexico City",
+    name: "Polaris Bridge", region: "Pakistan", city: "Karachi",
     tier: "Silver", industries: ["Distribution", "Manufacturing"],
-    bio: "Bilingual implementation team covering Mexico, Colombia, and Brazil. Tax and customs specialists.",
+    bio: "Bilingual implementation team covering Pakistan and the wider region. Tax and customs specialists.",
     founded: 2018, consultants: 9,
   },
   {
-    name: "Riverstone Partners", region: "North America", city: "Austin",
+    name: "Riverstone Partners", region: "Nepal", city: "Pokhara",
     tier: "Authorized", industries: ["Retail", "Services"],
     bio: "DTC and small-to-mid retailers. Quick-win deployments with prebuilt configuration kits.",
     founded: 2021, consultants: 6,
   },
   {
-    name: "Aurora Cloud Group", region: "Asia Pacific", city: "Sydney",
+    name: "Aurora Cloud Group", region: "India", city: "Hyderabad",
     tier: "Gold", industries: ["Multi-entity", "Services"],
-    bio: "Group consolidations across ANZ. Strong with private-equity portfolio companies.",
+    bio: "Group consolidations across the region. Strong with private-equity portfolio companies.",
     founded: 2015, consultants: 24,
   },
 ];
@@ -117,11 +117,11 @@ function HeroSection() {
             <span className="text-bz-sage">partner near you.</span>
           </h1>
           <p className="mt-6 text-[17px] leading-[1.7] text-bz-text-muted">
-            640+ vetted firms across 48 countries. Filter by region, industry, and tier every partner listed is exam-certified and renewed annually.
+            Vetted partner firms across South Asia. Filter by region, industry, and tier every partner listed is exam-certified and renewed annually.
           </p>
 
           <div className="mt-10 flex flex-wrap justify-center gap-x-10 gap-y-3 text-[13px] text-bz-text-muted">
-            <div className="flex items-center gap-2"><Globe className="size-4 text-bz-sage" /> 48 countries</div>
+            <div className="flex items-center gap-2"><Globe className="size-4 text-bz-sage" /> Across South Asia</div>
             <div className="flex items-center gap-2"><Sparkles className="size-4 text-bz-sage" /> Vetted &amp; renewed annually</div>
             <div className="flex items-center gap-2"><Award className="size-4 text-bz-sage" /> 4-tier program</div>
           </div>

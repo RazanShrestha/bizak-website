@@ -1,283 +1,312 @@
 import "../../styles/style.css";
 import {
-  ArrowRight,
-  ArrowUpRight,
-  Briefcase,
-  Compass,
   Eye,
-  Gauge,
-  Globe2,
-  Handshake,
-  HeartHandshake,
-  Lightbulb,
-  MessageCircle,
-  Quote,
-  Rocket,
-  Send,
-  Share2,
+  SlidersHorizontal,
   ShieldCheck,
-  Sparkles,
-  Star,
-  Target,
-  Users,
-  type LucideIcon,
+  LifeBuoy,
+  Lock,
+  Route,
+  Handshake,
 } from "lucide-react";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
 import {
-  Button,
-  Card,
-  Container,
-  Eyebrow,
-  HeroBadge,
-  IconBadge,
-  PillBadge,
   Section,
-  SectionHeading,
-  Stat,
-} from "./marketing";
+  Container,
+  SectionHead,
+  Heading,
+  Eyebrow,
+  Pill,
+  PillGroup,
+  BadgeGreen,
+  Bento,
+  BentoGrid,
+  Tick,
+  DotGrid,
+} from "./bz";
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// CONTENT DATA all page copy + structured data lives at the top.
+// Sections below are composition of bz/ primitives + this data.
+// ════════════════════════════════════════════════════════════════════════════
 
-const HERO_STATS: { value: string; label: string }[] = [
-  { value: "50,000+", label: "Businesses empowered" },
-  { value: "32", label: "Countries reached" },
-  { value: "1.2M", label: "Hours saved each month" },
-  { value: "97%", label: "Customer renewal rate" },
+// Hero "mission charter" mock what the company stands for.
+const CHARTER_STATS = [
+  { value: "One ledger", label: "Across your whole business" },
+  { value: "South Asia", label: "Localised for the region" },
+  { value: "Days, not weeks", label: "Faster month-end close" },
 ];
 
-const PILLARS: {
-  icon: LucideIcon;
-  eyebrow: string;
-  title: string;
-  description: string;
-  bullets: string[];
-}[] = [
+// §01 the contrast: the same business, blind vs. clear.
+const STATUS_QUO = [
+  { label: "Revenue",       where: "Sales spreadsheet" },
+  { label: "Cash position", where: "Accounting tool" },
+  { label: "Stock on hand", where: "A separate app" },
+];
+
+const ON_BIZAK = [
+  { label: "Revenue",       value: "$4.82M" },
+  { label: "Cash position", value: "$1.24M" },
+  { label: "Stock on hand", value: "847 SKUs" },
+];
+
+// §02 the mission, in three parts. Each pillar maps to a product narrative.
+const PILLARS = [
   {
     icon: Eye,
-    eyebrow: "Pillar 01",
-    title: "Clarity",
-    description:
-      "Operators should never need to guess. Every number, every workflow, every decision deserves a clean line of sight from cause to outcome.",
+    name: "Clarity",
+    desc: "Operators should never have to guess. Every number and every workflow earns a clean line of sight from cause to outcome.",
     bullets: [
       "One source of truth across the business",
-      "Real-time dashboards, not month-end reports",
+      "Live dashboards, not month-end reports",
       "Plain-language reporting any team can read",
     ],
   },
   {
-    icon: Gauge,
-    eyebrow: "Pillar 02",
-    title: "Control",
-    description:
-      "Growth shouldn't mean losing the plot. We build the controls approvals, audit trails, governance that let leaders move fast without breaking things.",
+    icon: SlidersHorizontal,
+    name: "Control",
+    desc: "Growth should never mean losing the thread. The right controls let leaders move fast without breaking what works.",
     bullets: [
-      "Granular roles, permissions, and audit logs",
+      "Granular roles, permissions and audit logs",
       "Workflows that enforce policy, not block work",
       "Multi-entity, multi-currency from day one",
     ],
   },
   {
     icon: ShieldCheck,
-    eyebrow: "Pillar 03",
-    title: "Confidence",
-    description:
-      "When the system is trustworthy, the team is decisive. Our job is to make every operator feel confident in the data, the process, and the next move.",
+    name: "Confidence",
+    desc: "When the system is trustworthy, the team is decisive. Every operator should feel sure of the data, the process and the next move.",
     bullets: [
       "Enterprise-grade security on every plan",
       "Reliable cloud, predictable updates",
-      "A partner, not just a vendor, after go-live",
+      "A partner after go-live, not just a vendor",
     ],
   },
 ];
 
-const BELIEFS: { icon: LucideIcon; title: string; description: string }[] = [
+// §03 the principles we fall back on when the work gets ambiguous.
+const PRINCIPLES = [
   {
-    icon: Lightbulb,
-    title: "Simplicity is hard work",
-    description:
-      "We earn the right to a clean interface by absorbing the complexity behind it. The product should feel obvious, even when the problem isn't.",
+    n: "01",
+    title: "Simplicity is earned.",
+    body: "We absorb the complexity behind the product so the work in front of you can feel obvious.",
   },
   {
-    icon: HeartHandshake,
-    title: "Customers are partners",
-    description:
-      "We win when our customers win. Every roadmap conversation starts with the operators using the product, not the people selling it.",
+    n: "02",
+    title: "Customers are partners.",
+    body: "Every roadmap conversation starts with the operators using Bizak, not the people selling it.",
   },
   {
-    icon: Compass,
-    title: "Opinions are tools",
-    description:
-      "We have a point of view about how a business should run and we ship it. Configurable where it matters, opinionated everywhere else.",
+    n: "03",
+    title: "We ship a point of view.",
+    body: "Bizak is opinionated about how a business should run. Configurable where it matters, decided everywhere else.",
   },
   {
-    icon: Globe2,
-    title: "Local, then global",
-    description:
-      "We start where our customers operate taxes, compliance, languages, currencies then make the platform work the same way everywhere.",
+    n: "04",
+    title: "Local first, then regional.",
+    body: "We start with real taxes, compliance, currencies and languages, then make the platform work the same way across South Asia.",
   },
   {
-    icon: Sparkles,
-    title: "Craft over checkboxes",
-    description:
-      "Feature lists don't run businesses, products do. We'd rather ship one workflow that delights than ten that merely exist.",
-  },
-  {
-    icon: Rocket,
-    title: "Pace is a feature",
-    description:
-      "ERPs are legendary for being slow to roll out, to update, to evolve. We treat speed as a non-negotiable, not an afterthought.",
+    n: "05",
+    title: "Pace is a feature.",
+    body: "ERPs are infamous for being slow to roll out and slower to evolve. We treat speed as non-negotiable.",
   },
 ];
 
-const IMPACT_STATS: { value: string; label: string }[] = [
-  { value: "50,000+", label: "Operators rely on Bizak every day" },
-  { value: "32", label: "Countries on the platform" },
-  { value: "1.2M", label: "Hours of manual work saved monthly" },
-  { value: "8 wks", label: "Median time to first go-live" },
-];
-
-const WAYS_TO_HELP: {
-  icon: LucideIcon;
-  tag: string;
-  title: string;
-  description: string;
-  cta: string;
-  href: string;
-  highlight?: boolean;
-}[] = [
+// §04 the promises every Bizak customer is owed.
+const COMMITMENTS = [
   {
-    icon: Rocket,
-    tag: "Run on Bizak",
-    title: "Become a customer",
-    description:
-      "The most direct way to fuel the mission is to run your business on Bizak. Every team that joins sharpens the platform for the next.",
-    cta: "Start a free trial",
-    href: "https://system.bizakerp.com/account/self-register",
-    highlight: true,
+    icon: LifeBuoy,
+    title: "We answer the ticket.",
+    desc: "Real specialists, the same day, on every plan. No deflection bots, no fourteen-step routing.",
   },
   {
-    icon: Share2,
-    tag: "Refer & advocate",
-    title: "Refer a business",
-    description:
-      "Know an operator drowning in spreadsheets? Send them our way. Referrals from operators are how the right teams find Bizak.",
-    cta: "Refer a business",
-    href: "/contact",
+    icon: Lock,
+    title: "Your data stays yours.",
+    desc: "Exportable, portable, and never held hostage by a contract term.",
+  },
+  {
+    icon: Route,
+    title: "We ship the roadmap.",
+    desc: "What we promise in a quarter is what we deliver. When we miss, we say so publicly.",
   },
   {
     icon: Handshake,
-    tag: "Build with us",
-    title: "Become a partner",
-    description:
-      "Implementation, accounting, technology, reseller partners help bring Bizak to industries and regions we couldn't reach alone.",
-    cta: "Apply to partner",
-    href: "/partners",
-  },
-  {
-    icon: Briefcase,
-    tag: "Join the team",
-    title: "Build the product",
-    description:
-      "Engineers, designers, implementation leads, customer success the mission moves at the speed of the people behind it.",
-    cta: "See open roles",
-    href: "/careers",
-  },
-  {
-    icon: MessageCircle,
-    tag: "Shape the roadmap",
-    title: "Share feedback",
-    description:
-      "Every release note has a customer behind it. Tell us what's missing, what's broken, what's brilliant we read all of it.",
-    cta: "Send feedback",
-    href: "/contact",
-  },
-  {
-    icon: Send,
-    tag: "Spread the word",
-    title: "Tell your network",
-    description:
-      "A post, a recommendation, a case study, a quiet word with a peer operator-to-operator endorsements move our mission farther than any ad.",
-    cta: "Get media assets",
-    href: "/contact",
+    title: "We pay partners fairly.",
+    desc: "Implementers, referrers and affiliates: the economics work for them, or they don't work for us.",
   },
 ];
 
-const COMMITMENTS: { title: string; description: string }[] = [
-  {
-    title: "We answer the support ticket",
-    description:
-      "No deflection bots, no 14-step routing. Real specialists, the same day, on every plan.",
-  },
-  {
-    title: "We honour the data",
-    description:
-      "Your data is yours exportable, portable, and never held hostage by contract terms.",
-  },
-  {
-    title: "We ship the roadmap",
-    description:
-      "What we promise in a quarter is what we deliver. If we miss, we explain why publicly.",
-  },
-  {
-    title: "We pay our partners fairly",
-    description:
-      "Implementation partners, referrers, affiliates the economics work for them, or they don't work for us.",
-  },
-];
-
-// ─── Hero ─────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// HERO mission declaration + a "Mission Charter" document mock
+// ════════════════════════════════════════════════════════════════════════════
 
 function HeroSection() {
   return (
-    <Section pad="hero" tone="light" className="biz-mesh overflow-hidden">
-      <Container width="narrow" className="relative">
+    <Section tone="b" pad="hero">
+      <Container>
         <div className="flex flex-col items-center text-center">
-          <HeroBadge>Our Mission</HeroBadge>
-          <h1 className="mt-4 max-w-[860px] text-[clamp(40px,5.5vw,68px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
-            Empower every business to run with{" "}
-            <span className="relative inline-block">
-              clarity and control
-              <span className="absolute inset-x-0 bottom-1 -z-0 h-[10px] rounded-full bg-bz-accent/55" />
-            </span>
-            .
-          </h1>
-          <p className="mt-5 max-w-[660px] text-[17px] leading-[1.7] text-bz-text-muted">
-            Bizak exists to replace the chaos of disconnected tools, late-night
-            spreadsheets, and gut-feel decisions with a calm, connected
-            operating system that works for every team in the business and
-            grows with them.
-          </p>
+          <BadgeGreen style={{ marginBottom: 28 }}>Our Mission</BadgeGreen>
+          <Heading level={2} className="max-w-[880px]" style={{ marginBottom: 36 }}>
+            Give every business one system to run on,{" "}
+            <Heading.Muted>and the clarity to run it well.</Heading.Muted>
+          </Heading>
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
+              Get Started
+            </Pill>
+            <Pill variant="light" withArrow href="/contact">
+              Request Demo
+            </Pill>
+          </PillGroup>
+        </div>
 
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <Button
-              variant="primary"
-              size="lg"
-              href="https://system.bizakerp.com/account/self-register"
-              withArrow
+        <div className="bz-hero-visual mx-auto w-full max-w-[1120px]">
+          <MissionCharter />
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+function MissionCharter() {
+  return (
+    <div className="overflow-hidden rounded-bz-2xl border border-bz-line bg-bz-surface">
+      {/* Olive header strip */}
+      <div className="flex items-center justify-between gap-4 bg-bz-olive px-5 py-4 md:px-7">
+        <div className="flex items-center gap-2.5">
+          <span className="text-[15px] font-medium tracking-tight text-bz-text-on-dark">
+            Bizak<sup className="ml-0.5 text-[8px] opacity-60">®</sup>
+          </span>
+          <span className="h-3 w-px bg-white/20" />
+          <span className="text-[12.5px] text-white/[0.62]">Mission Charter</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="size-1.5 animate-pulse rounded-bz-pill bg-bz-fire" />
+          <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-white/[0.55]">
+            Live now
+          </span>
+        </div>
+      </div>
+
+      {/* Statement body */}
+      <div className="p-6 md:p-10">
+        <Eyebrow>Our purpose</Eyebrow>
+        <p className="mt-5 max-w-[820px] text-[clamp(20px,2.7vw,31px)] font-medium leading-[1.32] tracking-[-0.015em] text-bz-text">
+          Replace the spreadsheet stack with one operating system every
+          business can trust.
+        </p>
+        <p className="mt-3.5 max-w-[640px] text-[clamp(14.5px,1.7vw,17px)] leading-[1.6] text-bz-text-muted">
+          Finance, sales, inventory and operations, live on a single source of
+          truth.
+        </p>
+        <div className="mt-7 flex flex-wrap gap-2">
+          {["Clarity", "Control", "Confidence"].map((t) => (
+            <span
+              key={t}
+              className="rounded-bz-sm border border-bz-line-soft bg-bz-paper-warm px-2.5 py-1 text-[11.5px] font-medium text-bz-text"
             >
-              Start a free trial
-            </Button>
-            <Button variant="outline" size="lg" href="#help">
-              Help our mission
-            </Button>
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Proof footer hairline grid */}
+      <div className="grid grid-cols-3 gap-px border-t border-bz-line-soft bg-bz-line-soft">
+        {CHARTER_STATS.map((s) => (
+          <div key={s.label} className="bg-bz-surface px-4 py-5 md:px-7 md:py-6">
+            <div className="bz-stat-num" style={{ fontSize: "clamp(20px,3.4vw,28px)" }}>
+              {s.value}
+            </div>
+            <p className="mt-1.5 text-[11.5px] leading-[1.4] text-bz-text-muted">
+              {s.label}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [01] WHY WE EXIST a before/after contrast: the business blind vs. clear
+// ════════════════════════════════════════════════════════════════════════════
+
+function WhyWeExistSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="01"
+          label="Why we exist"
+          title={
+            <>
+              Most companies don't run blind by choice.{" "}
+              <Heading.Muted>Their tools just never agreed.</Heading.Muted>
+            </>
+          }
+          description="The numbers that should run a business get scattered across spreadsheets and disconnected apps. By the time they're reconciled, the moment to act has passed. That's the problem Bizak exists to end."
+          titleMaxWidth={720}
+        />
+
+        <div className="grid grid-cols-1 overflow-hidden rounded-bz-2xl border border-bz-line md:grid-cols-2">
+          {/* Status quo running blind */}
+          <div className="flex flex-col bg-bz-section-b p-6 md:p-9 lg:p-10">
+            <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-bz-text-soft">
+              The status quo
+            </div>
+            <h3 className="mt-1.5 text-[18px] font-medium tracking-[-0.01em] text-bz-text">
+              Running blind
+            </h3>
+            <div className="mt-6 flex flex-col gap-2.5">
+              {STATUS_QUO.map((r) => (
+                <div
+                  key={r.label}
+                  className="flex items-center justify-between gap-3 rounded-bz-md border border-bz-line-soft bg-bz-surface px-4 py-3"
+                >
+                  <span className="text-[13.5px] font-medium text-bz-text">
+                    {r.label}
+                  </span>
+                  <span className="text-[12px] text-bz-text-soft">{r.where}</span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-auto pt-6 text-[13px] leading-[1.6] text-bz-text-muted">
+              Reconciled monthly, at best. Every number lives somewhere else, and
+              none of them quite agree.
+            </p>
           </div>
 
-          {/* Hero stats strip */}
-          <div className="mt-14 grid w-full grid-cols-2 gap-x-6 gap-y-8 border-t border-bz-border pt-10 md:grid-cols-4">
-            {HERO_STATS.map((s) => (
-              <div
-                key={s.label}
-                className="flex flex-col items-center text-center md:items-start md:text-left"
-              >
-                <span className="text-[28px] font-bold tracking-[-0.02em] text-bz-text md:text-[32px]">
-                  {s.value}
-                </span>
-                <span className="mt-1 text-[12px] uppercase tracking-[0.1em] text-bz-text-soft">
-                  {s.label}
-                </span>
-              </div>
-            ))}
+          {/* On Bizak running clear */}
+          <div className="flex flex-col bg-bz-olive p-6 md:p-9 lg:p-10">
+            <div className="flex items-center gap-2">
+              <span className="size-1.5 animate-pulse rounded-bz-pill bg-bz-fire" />
+              <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-bz-leaf">
+                On Bizak
+              </span>
+            </div>
+            <h3 className="mt-1.5 text-[18px] font-medium tracking-[-0.01em] text-bz-text-on-dark">
+              Running clear
+            </h3>
+            <div className="mt-6 flex flex-col gap-2.5">
+              {ON_BIZAK.map((r) => (
+                <div
+                  key={r.label}
+                  className="flex items-center justify-between gap-3 rounded-bz-md bg-white/[0.05] px-4 py-3"
+                >
+                  <span className="flex items-center gap-2 text-[13.5px] font-medium text-bz-text-on-dark">
+                    <span className="size-1.5 rounded-bz-pill bg-bz-fire" />
+                    {r.label}
+                  </span>
+                  <span className="text-[13px] font-medium tabular-nums text-bz-leaf">
+                    {r.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-auto pt-6 text-[13px] leading-[1.6] text-white/[0.6]">
+              One ledger. Every number current, sourced and agreed, the moment a
+              transaction happens.
+            </p>
           </div>
         </div>
       </Container>
@@ -285,392 +314,171 @@ function HeroSection() {
   );
 }
 
-// ─── Pillars ──────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// [02] THE MISSION clarity, control, confidence the three pillars
+// ════════════════════════════════════════════════════════════════════════════
 
 function PillarsSection() {
   return (
-    <Section tone="white" pad="default">
+    <Section tone="b">
       <Container>
-        <SectionHeading
-          eyebrow="What we're building"
-          title="Three pillars hold up the mission."
-          description="Bizak is engineered around three commitments to every operator who runs their business on it. Everything we ship has to serve at least one and never compromise the others."
-          maxWidth={760}
-          className="mb-14"
+        <SectionHead
+          index="02"
+          label="The mission"
+          title={
+            <>
+              One mission,{" "}
+              <Heading.Muted>standing on three pillars.</Heading.Muted>
+            </>
+          }
+          description="Clarity, then control, then confidence. Every feature Bizak ships has to serve one of the three, and weaken none of them."
+          titleMaxWidth={620}
         />
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          {PILLARS.map(({ icon: PillarIcon, ...p }, i) => (
-            <Card
-              key={p.title}
-              tone="light"
-              pad="lg"
-              hover="lift"
-              className={i === 1 ? "border-bz-sage-mid" : ""}
-            >
-              <div className="flex items-start justify-between">
-                <IconBadge size="lg" tone={i === 1 ? "accent" : "sage"}>
-                  <PillarIcon className="size-5" strokeWidth={1.8} />
-                </IconBadge>
-                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-                  {p.eyebrow}
-                </span>
-              </div>
-
-              <h3 className="mt-7 text-[24px] font-bold tracking-[-0.01em] text-bz-text">
-                {p.title}
-              </h3>
-              <p className="mt-3 text-[14.5px] leading-[1.7] text-bz-text-muted">
-                {p.description}
-              </p>
-
-              <ul className="mt-7 flex flex-col gap-2.5 border-t border-bz-border pt-6">
-                {p.bullets.map((b) => (
-                  <li
-                    key={b}
-                    className="flex items-start gap-2.5 text-[13.5px] leading-[1.55] text-bz-text"
-                  >
-                    <span
-                      aria-hidden
-                      className="mt-[7px] size-[6px] shrink-0 rounded-full bg-bz-sage"
-                    />
-                    {b}
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── Beliefs ──────────────────────────────────────────────────────────────────
-
-function BeliefsSection() {
-  return (
-    <Section tone="light" pad="default">
-      <Container>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[360px_1fr] lg:gap-16">
-          {/* Left intro */}
-          <div className="lg:sticky lg:top-[100px] lg:self-start">
-            <Eyebrow>What we believe</Eyebrow>
-            <h2 className="mt-3 text-[34px] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text md:text-[40px]">
-              The principles behind every decision we make.
-            </h2>
-            <p className="mt-5 text-[15.5px] leading-[1.7] text-bz-text-muted">
-              When the work gets ambiguous, these are the beliefs we fall back
-              on in product trade-offs, in how we hire, in how we treat
-              customers, and in how we measure whether we're winning.
-            </p>
-            <a
-              href="/about"
-              className="mt-7 inline-flex items-center gap-1.5 text-[13.5px] font-bold text-bz-sage transition-colors hover:text-bz-sage-hover"
-            >
-              Read our company story
-              <ArrowUpRight className="size-[14px]" strokeWidth={2} />
-            </a>
-          </div>
-
-          {/* Beliefs grid */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {BELIEFS.map(({ icon: BeliefIcon, ...b }, i) => (
-              <div
-                key={b.title}
-                className="group flex flex-col rounded-bz-xl border border-bz-border bg-bz-surface p-7 transition-all duration-200 hover:-translate-y-[2px] hover:border-bz-sage-mid hover:shadow-[0_16px_40px_rgba(15,17,14,0.06)]"
-              >
+        <BentoGrid cols={3}>
+          {PILLARS.map((p, i) => {
+            const Icon = p.icon;
+            return (
+              <Bento key={p.name} tone="paper" hover>
                 <div className="flex items-center justify-between">
-                  <IconBadge size="md" tone="sage">
-                    <BeliefIcon className="size-[18px]" strokeWidth={1.8} />
-                  </IconBadge>
-                  <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-                    {String(i + 1).padStart(2, "0")}
+                  <span className="flex size-11 items-center justify-center rounded-bz-lg bg-bz-paper-warm">
+                    <Icon size={20} strokeWidth={1.7} className="text-bz-text" />
+                  </span>
+                  <span className="text-[12px] font-medium tracking-[0.12em] text-bz-text-soft">
+                    0{i + 1}
                   </span>
                 </div>
-                <h3 className="mt-6 text-[17px] font-bold tracking-[-0.01em] text-bz-text">
-                  {b.title}
+                <h3 className="mt-6 text-[21px] font-medium tracking-[-0.01em] text-bz-text">
+                  {p.name}
                 </h3>
-                <p className="mt-2.5 text-[14px] leading-[1.7] text-bz-text-muted">
-                  {b.description}
+                <p className="mt-2.5 text-[14px] leading-[1.65] text-bz-text-muted">
+                  {p.desc}
+                </p>
+                <ul className="mt-6 mb-0 flex list-none flex-col gap-2.5 border-t border-bz-line-soft pt-5 pl-0">
+                  {p.bullets.map((b) => (
+                    <li
+                      key={b}
+                      className="flex items-start gap-2.5 text-[13.5px] leading-[1.5] text-bz-text"
+                    >
+                      <Tick size="sm" className="mt-[3px]" />
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Bento>
+            );
+          })}
+        </BentoGrid>
+      </Container>
+    </Section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [03] WHAT GUIDES US the principles, as a manifesto on the olive slab
+// ════════════════════════════════════════════════════════════════════════════
+
+function ManifestoSection() {
+  return (
+    <Section tone="dark" className="overflow-hidden">
+      <DotGrid tone="dark" />
+      <Container className="relative">
+        <SectionHead
+          index="03"
+          label="What guides us"
+          tone="dark"
+          title={
+            <>
+              The principles behind{" "}
+              <Heading.Muted>every decision we make.</Heading.Muted>
+            </>
+          }
+          description="When the work gets ambiguous, these are the beliefs we fall back on, in product trade-offs, in how we hire, and in how we treat the people who run on Bizak."
+          titleMaxWidth={640}
+        />
+
+        <div className="border-b border-white/[0.1]">
+          {PRINCIPLES.map((p) => (
+            <div
+              key={p.n}
+              className="grid gap-2 border-t border-white/[0.1] py-7 md:grid-cols-[88px_minmax(0,1.05fr)_minmax(0,1.5fr)] md:gap-10 md:py-9"
+            >
+              <span className="text-[12.5px] font-semibold tracking-[0.12em] text-bz-fire">
+                {p.n}
+              </span>
+              <h3 className="text-[18px] font-medium leading-[1.3] tracking-[-0.01em] text-bz-text-on-dark md:text-[20px]">
+                {p.title}
+              </h3>
+              <p className="text-[14px] leading-[1.7] text-white/[0.6]">
+                {p.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [04] OUR PROMISE the commitments behind the mission
+// ════════════════════════════════════════════════════════════════════════════
+
+function PromiseSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="04"
+          label="Our promise"
+          title={
+            <>
+              A mission is only as good{" "}
+              <Heading.Muted>as the promises behind it.</Heading.Muted>
+            </>
+          }
+          description="Four commitments every Bizak customer is owed, from day one and for as long as you run on the platform."
+          titleMaxWidth={640}
+        />
+
+        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-bz-2xl border border-bz-line bg-bz-line-soft sm:grid-cols-2 lg:grid-cols-4">
+          {COMMITMENTS.map((c) => {
+            const Icon = c.icon;
+            return (
+              <div
+                key={c.title}
+                className="flex flex-col bg-bz-surface p-6 md:p-7"
+              >
+                <span className="flex size-10 items-center justify-center rounded-bz-md bg-bz-paper-warm">
+                  <Icon size={18} strokeWidth={1.7} className="text-bz-text" />
+                </span>
+                <h3 className="mt-5 text-[15.5px] font-medium tracking-[-0.01em] text-bz-text">
+                  {c.title}
+                </h3>
+                <p className="mt-2 text-[13px] leading-[1.6] text-bz-text-muted">
+                  {c.desc}
                 </p>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </Container>
     </Section>
   );
 }
 
-// ─── Impact (dark) ────────────────────────────────────────────────────────────
-
-function ImpactSection() {
-  return (
-    <Section tone="dark" pad="default">
-      <Container>
-        <SectionHeading
-          eyebrow="The mission, in numbers"
-          eyebrowTone="accent"
-          title="A quiet kind of momentum."
-          description="No marketing flourish just the operators, the hours saved, and the businesses running better than they were last year. The numbers are the report card."
-          tone="light"
-          maxWidth={720}
-          className="mb-14"
-        />
-
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-          {IMPACT_STATS.map((s) => (
-            <div
-              key={s.label}
-              className="rounded-bz-xl border border-white/10 bg-white/[0.04] p-7"
-            >
-              <Stat value={s.value} label={s.label} tone="light" size="lg" />
-            </div>
-          ))}
-        </div>
-
-        {/* Customer quote */}
-        <div className="mt-12 rounded-bz-2xl border border-white/10 bg-white/[0.04] p-10 md:p-14">
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_auto] md:items-center">
-            <div className="max-w-[760px]">
-              <Quote
-                className="size-8 text-bz-accent"
-                strokeWidth={1.6}
-                aria-hidden
-              />
-              <p className="mt-6 text-[clamp(20px,2.2vw,28px)] font-medium leading-[1.45] tracking-[-0.01em] text-white">
-                "We replaced four disconnected tools and a wall of spreadsheets
-                with one platform. Month-end closes that took two weeks now
-                wrap in three days and our finance team finally has the
-                evenings back."
-              </p>
-              <div className="mt-7 flex items-center gap-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-bz-accent/20 text-[15px] font-bold text-bz-accent">
-                  AR
-                </div>
-                <div>
-                  <div className="text-[14px] font-semibold text-white">
-                    Anita R.
-                  </div>
-                  <div className="text-[12.5px] text-white/60">
-                    CFO · mid-market manufacturer, 320 staff
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 md:items-end">
-              <div className="flex items-center gap-1 text-bz-accent">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className="size-[18px] fill-bz-accent"
-                    strokeWidth={0}
-                  />
-                ))}
-              </div>
-              <span className="text-[12px] uppercase tracking-[0.12em] text-white/60">
-                4.9 / 5 Across 1,200+ reviews
-              </span>
-              <Button
-                variant="ghostDark"
-                size="md"
-                href="/case-studies"
-                withArrow
-              >
-                Read customer stories
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── Help our mission ─────────────────────────────────────────────────────────
-
-function HelpSection() {
-  return (
-    <Section tone="white" pad="default" id="help">
-      <Container>
-        <SectionHeading
-          eyebrow="Help our mission"
-          title="Six ways to walk this with us."
-          description="Bizak's mission isn't a one-team project. Customers, partners, advocates, and teammates all push it forward pick the one that fits where you are right now."
-          maxWidth={760}
-          className="mb-14"
-        />
-
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {WAYS_TO_HELP.map(({ icon: WayIcon, ...w }) => (
-            <Card
-              key={w.title}
-              tone="light"
-              pad="lg"
-              hover="lift"
-              className={w.highlight ? "border-bz-sage-mid" : ""}
-            >
-              <div className="flex items-start justify-between">
-                <IconBadge size="lg" tone={w.highlight ? "accent" : "sage"}>
-                  <WayIcon className="size-5" strokeWidth={1.8} />
-                </IconBadge>
-                <PillBadge tone={w.highlight ? "accent" : "neutral"} dot={w.highlight}>
-                  {w.tag}
-                </PillBadge>
-              </div>
-
-              <h3 className="mt-7 text-[20px] font-bold tracking-[-0.01em] text-bz-text">
-                {w.title}
-              </h3>
-              <p className="mt-3 text-[14.5px] leading-[1.7] text-bz-text-muted">
-                {w.description}
-              </p>
-
-              <a
-                href={w.href}
-                className="mt-7 inline-flex items-center gap-1.5 text-[13.5px] font-bold text-bz-sage transition-colors hover:text-bz-sage-hover"
-              >
-                {w.cta}
-                <ArrowRight className="size-[14px]" />
-              </a>
-            </Card>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── Commitments (light) ──────────────────────────────────────────────────────
-
-function CommitmentsSection() {
-  return (
-    <Section tone="light" pad="default">
-      <Container width="narrow">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20 lg:items-center">
-          <div>
-            <Eyebrow>Our promise</Eyebrow>
-            <h2 className="mt-3 text-[clamp(28px,3.5vw,44px)] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text">
-              Four commitments we won't compromise on.
-            </h2>
-            <p className="mt-5 text-[15.5px] leading-[1.7] text-bz-text-muted">
-              A mission isn't worth much without a contract behind it. These
-              are the operating commitments every Bizak customer is owed
-              starting day one, lasting as long as you run on the platform.
-            </p>
-            <div className="mt-7">
-              <Button variant="primary" size="md" href="/contact" withArrow>
-                Talk to our team
-              </Button>
-            </div>
-          </div>
-
-          <ul className="flex flex-col">
-            {COMMITMENTS.map((c, i) => (
-              <li
-                key={c.title}
-                className="grid grid-cols-[auto_1fr] gap-5 border-b border-bz-border py-6 first:pt-0 last:border-b-0 last:pb-0"
-              >
-                <span className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-bz-md bg-bz-sage-soft text-[12.5px] font-bold tabular-nums text-bz-sage">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div>
-                  <h3 className="text-[16.5px] font-bold tracking-[-0.01em] text-bz-text">
-                    {c.title}
-                  </h3>
-                  <p className="mt-1.5 text-[14px] leading-[1.7] text-bz-text-muted">
-                    {c.description}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── Bottom CTA ───────────────────────────────────────────────────────────────
-
-function BottomCta() {
-  return (
-    <Section tone="light" pad="default">
-      <Container width="narrow">
-        <div className="relative overflow-hidden rounded-bz-2xl border border-bz-border bg-bz-surface p-10 md:p-16">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-bz-accent/10 blur-3xl"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -bottom-24 -left-24 h-[320px] w-[320px] rounded-full bg-bz-sage/10 blur-3xl"
-          />
-
-          <div className="relative grid grid-cols-1 items-center gap-10 md:grid-cols-[1fr_auto]">
-            <div>
-              <PillBadge tone="sage" dot>
-                Help our mission
-              </PillBadge>
-              <h2 className="mt-5 text-[clamp(28px,3.5vw,44px)] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text">
-                Help us rewrite how modern business runs.
-              </h2>
-              <p className="mt-4 max-w-[560px] text-[16px] leading-[1.7] text-bz-text-muted">
-                Whether you run a five-person team or a five-thousand-person
-                enterprise, we'd love to hear what's on your operating wishlist
-                and find the smallest, fastest way to help.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 md:items-end">
-              <Button variant="primary" size="lg" href="/contact" withArrow>
-                Contact our team
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                href="https://system.bizakerp.com/account/self-register"
-              >
-                Start a free trial
-              </Button>
-            </div>
-          </div>
-
-          <div className="relative mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-bz-border pt-7 text-[13px] text-bz-text-muted">
-            {[
-              { icon: Target, label: "Free implementation guidance" },
-              { icon: Users, label: "Dedicated success partner" },
-              { icon: ShieldCheck, label: "No credit card required" },
-            ].map(({ icon: Tick, label }) => (
-              <span key={label} className="inline-flex items-center gap-2">
-                <Tick className="size-4 text-bz-sage" strokeWidth={1.8} />
-                {label}
-              </span>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// PAGE Header + Footer are owned by the route layout in routes.tsx
+// ════════════════════════════════════════════════════════════════════════════
 
 export function OurMissionPage() {
   return (
-    <div>
-      <Header />
-      <main>
-        <HeroSection />
-        <PillarsSection />
-        <BeliefsSection />
-        <ImpactSection />
-        <HelpSection />
-        <CommitmentsSection />
-        <BottomCta />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <HeroSection />
+      <WhyWeExistSection />
+      <PillarsSection />
+      <ManifestoSection />
+      <PromiseSection />
+    </main>
   );
 }

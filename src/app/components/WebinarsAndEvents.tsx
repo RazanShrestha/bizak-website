@@ -133,9 +133,9 @@ const FEATURED = {
 
 const HERO_STATS: { value: string; label: string }[] = [
   { value: "12+",   label: "Sessions every month"     },
-  { value: "4,200", label: "Operators last quarter"   },
-  { value: "9",     label: "Languages, 18 time zones" },
-  { value: "4.7★",  label: "Average attendee rating"  },
+  { value: "Live",  label: "Demos, not slideware"     },
+  { value: "Q&A",   label: "In every session"         },
+  { value: "Free",  label: "Always recorded"          },
 ];
 
 // ─── Upcoming events ─────────────────────────────────────────────────────────
@@ -154,12 +154,12 @@ export const EVENTS: Event[] = [
     timeLabel: "11:00 SGT · 09:30 IST",
     duration: "60 min",
     location: "Live webinar",
-    region: "Global",
+    region: "South Asia",
     speakers: [
       { name: "Renée Yamamoto", role: "VP, Customer Engineering", initials: "RY" },
       { name: "Marcus Brand",   role: "Director, Finance Practice", initials: "MB" },
     ],
-    capacity: "Open · 1,200 registered",
+    capacity: "Open registration",
     popular: true,
   },
   {
@@ -167,7 +167,7 @@ export const EVENTS: Event[] = [
     format: "Webinar",
     track: "manufacturing",
     trackLabel: "Manufacturing",
-    title: "From paper travelers to a live OEE dashboard in 14 days",
+    title: "From paper travelers to a live OEE dashboard, fast",
     description:
       "A walkthrough of wiring shop-floor signals into Bizak work orders, downtime codes, and the OEE board ops review every morning.",
     date: "2026-05-21",
@@ -175,7 +175,7 @@ export const EVENTS: Event[] = [
     timeLabel: "10:00 GMT · 15:30 IST",
     duration: "55 min",
     location: "Live webinar",
-    region: "EMEA · APAC",
+    region: "South Asia",
     speakers: [
       { name: "Devansh Gupta", role: "Solutions Lead, Manufacturing", initials: "DG" },
     ],
@@ -190,10 +190,10 @@ export const EVENTS: Event[] = [
       "A 90-minute hands-on workshop. Configure a multi-zone warehouse, simulate a peak day, and tune the replenishment rules in your sandbox.",
     date: "2026-05-28",
     dateLabel: "Thu · 28 May 2026",
-    timeLabel: "13:00 EST · 10:00 PST",
+    timeLabel: "13:00 IST · 13:15 NPT",
     duration: "90 min",
     location: "Online · sandbox included",
-    region: "Americas",
+    region: "South Asia",
     speakers: [
       { name: "Lara Okwuosa", role: "Principal Consultant",    initials: "LO" },
       { name: "Iván Reyes",   role: "Senior Solutions Engineer", initials: "IR" },
@@ -210,10 +210,10 @@ export const EVENTS: Event[] = [
       "Three project leads from recently-live Bizak rollouts compare cutover plans, war-room setups, and the calls they'd make differently.",
     date: "2026-06-04",
     dateLabel: "Thu · 04 Jun 2026",
-    timeLabel: "16:00 CET · 19:30 IST",
+    timeLabel: "16:00 IST · 16:15 NPT",
     duration: "75 min",
     location: "Invite-only · ≤30 seats",
-    region: "EMEA",
+    region: "South Asia",
     speakers: [
       { name: "Anya Petrova", role: "Implementation Director", initials: "AP" },
     ],
@@ -224,15 +224,15 @@ export const EVENTS: Event[] = [
     format: "In-person",
     track: "leadership",
     trackLabel: "Leadership",
-    title: "Bizak Forum London: the CFO's operating system",
+    title: "Bizak Forum Kathmandu: the CFO's operating system",
     description:
       "An evening with mid-market CFOs on consolidation, the close cadence, and how a live ledger reshapes the finance function.",
     date: "2026-06-12",
     dateLabel: "Fri · 12 Jun 2026",
-    timeLabel: "18:00 BST",
+    timeLabel: "18:00 NPT",
     duration: "Half-day · dinner",
-    location: "The Ned · London",
-    region: "EMEA",
+    location: "Kathmandu",
+    region: "South Asia",
     speakers: [
       { name: "Suraj Khanna",     role: "Chief Customer Officer",    initials: "SK" },
       { name: "Helen O'Connor",   role: "Partner, Field Finance",    initials: "HO" },
@@ -249,10 +249,10 @@ export const EVENTS: Event[] = [
       "How Bizak rolls up branch-level P&Ls, runs intercompany eliminations, and translates FX without a separate consolidation tool.",
     date: "2026-06-18",
     dateLabel: "Thu · 18 Jun 2026",
-    timeLabel: "09:00 SGT · 11:00 AEST",
+    timeLabel: "09:00 IST · 09:15 NPT",
     duration: "60 min",
     location: "Live webinar",
-    region: "APAC",
+    region: "South Asia",
     speakers: [
       { name: "Priya Anand",   role: "Senior Product Manager", initials: "PA" },
     ],
@@ -294,7 +294,7 @@ const REPLAYS: Replay[] = [
     slug: "oee-87-percent",
     track: "manufacturing",
     trackLabel: "Manufacturing",
-    title: "Inside an 87.4% OEE shop floor what the dashboard actually shows",
+    title: "Inside a high-OEE shop floor what the dashboard actually shows",
     description:
       "A live tour of the Bizak floor view: availability, performance, quality broken down by line, with downtime codes and root-cause flow.",
     recorded: "March 2026",
@@ -308,9 +308,9 @@ const REPLAYS: Replay[] = [
     slug: "warehouse-throughput",
     track: "distribution",
     trackLabel: "Distribution",
-    title: "Pick paths, replenishment, and a 96.2% on-time delivery rate",
+    title: "Pick paths, replenishment, and a strong on-time delivery rate",
     description:
-      "How distribution teams use Bizak's wave planning and multi-channel inventory to keep on-time at 96%+ during seasonal peaks.",
+      "How distribution teams use Bizak's wave planning and multi-channel inventory to keep on-time high during seasonal peaks.",
     recorded: "February 2026",
     runtime: "41 min",
     views: "5.2K",
@@ -953,7 +953,7 @@ function OnDemandSection() {
           <PillBadge tone="neutral">
             <span className="inline-flex items-center gap-1.5">
               <PlayCircle className="size-[12px]" strokeWidth={2} />
-              {REPLAYS.length} replays · captions in 9 languages
+              {REPLAYS.length} replays · captioned
             </span>
           </PillBadge>
         </div>
@@ -1094,7 +1094,7 @@ function ReplayCard({ replay }: { replay: Replay }) {
           </span>
           <span className="inline-flex items-center gap-1.5">
             <Star className="size-[12px] text-bz-accent" strokeWidth={2} />
-            {replay.rating} · {replay.views} views
+            {replay.rating}
           </span>
         </div>
       </div>
@@ -1301,7 +1301,7 @@ function ClosingCta() {
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-white/10 pt-8 text-[13px] text-white/55">
           {[
-            { icon: Users,    label: "50,000+ businesses powered by Bizak" },
+            { icon: Users,    label: "Businesses across South Asia run on Bizak" },
             { icon: Radio,    label: "12+ live sessions every month" },
             { icon: Sparkles, label: "Always free · always recorded" },
           ].map(({ icon: Tick, label }) => (

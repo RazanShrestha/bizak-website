@@ -1,9 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
-// import "./blog-page.css";
-import "../../styles/style.css"
+import { useState } from "react";
+import "../../styles/style.css";
+import { ArrowRight, Search } from "lucide-react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { cn } from "./ui/utils";
+import {
+  Section,
+  Container,
+  Heading,
+  Eyebrow,
+  BentoGrid,
+  Carousel,
+  StatusChip,
+  DotGrid,
+} from "./bz";
 
 // ─── Images ───────────────────────────────────────────────────────────────────
 const IMG = {
@@ -23,15 +34,14 @@ const IMG = {
   card6:        "https://images.unsplash.com/photo-1764690690771-b4522d66b433?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbnRlcnByaXNlJTIwYnVzaW5lc3MlMjBvcGVyYXRpb25zJTIwdGVhbSUyMG1lZXRpbmd8ZW58MXx8fHwxNzcyMDg4NTU3fDA&ixlib=rb-4.1.0&q=80&w=800",
 };
 
-// ─── Carousel slides data ─────────────────────────────────────────────────────
+// ─── HERO carousel slides ─────────────────────────────────────────────────────
 const HERO_SLIDES = [
   {
     bgImg: IMG.featuredBg,
-    bgTint: "#E6E8EA",
     stats: [
-      { num: "200k", label: "Transactions Reviewed" },
-      { num: "5x",   label: "Faster Close"          },
-      { num: "40+",  label: "Hrs Saved / Week"      },
+      { num: "One",      label: "Source of Truth"  },
+      { num: "Faster",   label: "Monthly Close"    },
+      { num: "Less",     label: "Manual Entry"     },
     ],
     tag: "Article",
     readTime: "5 min read",
@@ -42,11 +52,10 @@ const HERO_SLIDES = [
   },
   {
     bgImg: IMG.supplyBg,
-    bgTint: "#1e2620",
     stats: [
-      { num: "98%",  label: "On-time Delivery"    },
-      { num: "3x",   label: "Inventory Turnover"  },
-      { num: "60+",  label: "Carrier Integrations"},
+      { num: "On-time",   label: "Delivery Tracking" },
+      { num: "Live",      label: "Stock Visibility"  },
+      { num: "Connected", label: "Carrier Workflow"  },
     ],
     tag: "Supply Chain",
     readTime: "7 min read",
@@ -57,11 +66,10 @@ const HERO_SLIDES = [
   },
   {
     bgImg: IMG.financeBg,
-    bgTint: "#1c1e2a",
     stats: [
-      { num: "$32B", label: "Transactions Processed" },
-      { num: "12%",  label: "Cost Reduction"         },
-      { num: "150+", label: "Finance Teams"           },
+      { num: "Real-time", label: "Cash Visibility"    },
+      { num: "Lower",     label: "Cost to Close"      },
+      { num: "Unified",   label: "Finance Workspace"  },
     ],
     tag: "Financial Management",
     readTime: "6 min read",
@@ -72,168 +80,112 @@ const HERO_SLIDES = [
   },
 ];
 
-// ─── Arrow icon ───────────────────────────────────────────────────────────────
-function ArrowRight({ size = 16 }: { size?: number }) {
+type HeroSlide = (typeof HERO_SLIDES)[number];
+
+// ─── Featured slide the carousel's per-item visual ──────────────────────────
+function FeaturedSlide({ slide }: { slide: HeroSlide }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg width={18} height={18} viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
-
-// ─── HERO SECTION (Carousel) ──────────────────────────────────────────────────
-function HeroSection() {
-  const [current, setCurrent] = useState(0);
-  const total = HERO_SLIDES.length;
-
-  const goTo = useCallback((idx: number) => {
-    setCurrent((idx + total) % total);
-  }, [total]);
-
-  // Auto-advance every 5 s, pause on hover
-  const [paused, setPaused] = useState(false);
-  useEffect(() => {
-    if (paused) return;
-    const id = setInterval(() => goTo(current + 1), 5000);
-    return () => clearInterval(id);
-  }, [current, paused, goTo]);
-
-  return (
-    <section className="blog-hero">
-      <div className="blog-container">
-        {/* Title + search */}
-        <div className="blog-hero-top">
-          <h1 className="blog-hero-title">The Bizak Blog</h1>
-          <div className="blog-search-wrap">
-            <span className="blog-search-icon"><SearchIcon /></span>
-            <input className="blog-search-input" type="text" placeholder="Search articles…" />
-          </div>
-        </div>
-
-        {/* Carousel */}
-        <div
-          className="blog-carousel-wrap"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
-          {/* Track */}
-          <div
-            className="blog-carousel-track"
-            style={{ transform: `translateX(-${current * 100}%)` }}
-          >
-            {HERO_SLIDES.map((slide, i) => (
-              <div className="blog-carousel-slide" key={i}>
-                {/* Left: stats panel */}
-                <div className="blog-featured-left" style={{ background: slide.bgTint }}>
-                  <ImageWithFallback
-                    src={slide.bgImg}
-                    alt="Slide background"
-                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.12 }}
-                  />
-                  <div className="blog-featured-stats">
-                    <div>
-                      <div className="blog-stat-num" style={{ color: slide.bgTint === "#E6E8EA" ? "#1A1D19" : "#fff" }}>
-                        {slide.stats[0].num}
-                      </div>
-                      <div className="blog-stat-label" style={{ color: slide.bgTint === "#E6E8EA" ? "#666" : "rgba(255,255,255,0.55)" }}>
-                        {slide.stats[0].label}
-                      </div>
-                    </div>
-                    <div
-                      className="blog-stat-divider"
-                      style={{ borderColor: slide.bgTint === "#E6E8EA" ? "rgba(26,29,25,0.12)" : "rgba(255,255,255,0.12)" }}
-                    >
-                      <div className="blog-stat-num" style={{ color: slide.bgTint === "#E6E8EA" ? "#1A1D19" : "#fff" }}>
-                        {slide.stats[1].num}
-                      </div>
-                      <div className="blog-stat-label" style={{ color: slide.bgTint === "#E6E8EA" ? "#666" : "rgba(255,255,255,0.55)" }}>
-                        {slide.stats[1].label}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="blog-stat-num" style={{ color: slide.bgTint === "#E6E8EA" ? "#1A1D19" : "#fff" }}>
-                        {slide.stats[2].num}
-                      </div>
-                      <div className="blog-stat-label" style={{ color: slide.bgTint === "#E6E8EA" ? "#666" : "rgba(255,255,255,0.55)" }}>
-                        {slide.stats[2].label}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right: article info */}
-                <div className="blog-featured-right">
-                  <div className="blog-featured-meta">
-                    <span>{slide.tag}</span>
-                    <span style={{ width: 4, height: 4, borderRadius: "50%", background: "rgba(255,255,255,0.28)", display: "inline-block" }} />
-                    <span>{slide.readTime}</span>
-                  </div>
-                  <h2 className="blog-featured-title">{slide.title}</h2>
-                  <div className="blog-featured-footer">
-                    <div className="blog-author-row">
-                      <div className="blog-author-avatar">
-                        <ImageWithFallback src={slide.authorImg} alt={slide.authorName} />
-                      </div>
-                      <div>
-                        <div className="blog-author-name">{slide.authorName}</div>
-                        <div className="blog-author-role">{slide.authorRole}</div>
-                      </div>
-                    </div>
-                    <a href="#" className="blog-read-link">
-                      Read Article <span className="blog-arrow"><ArrowRight size={14} /></span>
-                    </a>
-                  </div>
-                </div>
+    <div className="flex flex-col overflow-hidden rounded-bz-2xl border border-white/[0.08] bg-bz-olive-soft lg:flex-row">
+      {/* Stats panel */}
+      <div className="relative flex min-h-[220px] flex-1 items-center justify-center overflow-hidden bg-bz-olive-dark p-10 md:p-12">
+        <ImageWithFallback
+          src={slide.bgImg}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover opacity-[0.14]"
+        />
+        <div className="relative grid w-full grid-cols-3 text-center">
+          {slide.stats.map((stat, idx) => (
+            <div
+              key={stat.label}
+              className={idx === 1 ? "border-x border-white/[0.1] px-3" : "px-2"}
+            >
+              <div className="text-[clamp(2rem,5vw,3.25rem)] font-semibold leading-none tracking-[-0.04em] text-bz-text-on-dark">
+                {stat.num}
               </div>
-            ))}
-          </div>
-
-          {/* Prev / Next arrows */}
-          <button
-            className="blog-carousel-arrow prev"
-            onClick={() => goTo(current - 1)}
-            aria-label="Previous slide"
-          >
-            <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-          <button
-            className="blog-carousel-arrow next"
-            onClick={() => goTo(current + 1)}
-            aria-label="Next slide"
-          >
-            <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Dot indicators */}
-        <div className="blog-carousel-dots">
-          {HERO_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              className={`blog-carousel-dot${i === current ? " active" : ""}`}
-              onClick={() => goTo(i)}
-              aria-label={`Go to slide ${i + 1}`}
-            />
+              <div className="mt-2 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/55">
+                {stat.label}
+              </div>
+            </div>
           ))}
         </div>
       </div>
-    </section>
+
+      {/* Article info */}
+      <div className="flex flex-1 flex-col justify-center gap-5 p-8 md:p-12">
+        <div className="flex items-center gap-3">
+          <StatusChip variant="neutral">{slide.tag}</StatusChip>
+          <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-white/45">
+            {slide.readTime}
+          </span>
+        </div>
+        <Heading level={3} tone="dark">
+          {slide.title}
+        </Heading>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="size-11 shrink-0 overflow-hidden rounded-bz-pill bg-white/10">
+              <ImageWithFallback
+                src={slide.authorImg}
+                alt={slide.authorName}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div>
+              <div className="text-[13px] font-semibold text-bz-text-on-dark">
+                {slide.authorName}
+              </div>
+              <div className="mt-0.5 text-[11px] text-white/45">{slide.authorRole}</div>
+            </div>
+          </div>
+          <a
+            href="#"
+            className="group inline-flex items-center gap-1.5 text-[13px] font-semibold text-bz-fire"
+          >
+            Read Article
+            <ArrowRight
+              size={14}
+              strokeWidth={2.5}
+              className="transition-transform group-hover:translate-x-1"
+            />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── HERO ─────────────────────────────────────────────────────────────────────
+function HeroSection() {
+  return (
+    <Section tone="dark" pad="hero">
+      <Container>
+        <div className="flex flex-col gap-7 sm:flex-row sm:items-end sm:justify-between">
+          <Heading level={1} tone="dark">
+            The Bizak Blog
+          </Heading>
+          <div className="relative w-full shrink-0 sm:w-[320px]">
+            <Search
+              size={18}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/35"
+            />
+            <input
+              type="text"
+              placeholder="Search articles…"
+              className="w-full rounded-bz-md border border-white/10 bg-white/[0.06] py-3 pl-11 pr-4 text-[14px] text-bz-text-on-dark outline-none transition-colors placeholder:text-white/30 focus:border-bz-fire"
+            />
+          </div>
+        </div>
+
+        <div className="mt-12 md:mt-14">
+          <Carousel
+            tone="dark"
+            items={HERO_SLIDES}
+            autoAdvance={5000}
+            render={(slide) => <FeaturedSlide slide={slide} />}
+          />
+        </div>
+      </Container>
+    </Section>
   );
 }
 
@@ -248,58 +200,73 @@ const SIDE_PICKS = [
   {
     img: IMG.thumb2,
     cat: "Article",
-    title: "Bizak at $32 billion: Money talks. Now it thinks.",
-    desc: "Our CEO on the Age of \"Thinking Money\" and why getting big no longer means getting slow.",
+    title: "Money talks. Now it thinks.",
+    desc: "Our CEO on the Age of \"Thinking Money\" and why getting bigger no longer means getting slower.",
   },
   {
     img: IMG.thumb3,
     cat: "Customer Story",
-    title: "How Poshmark exceeded their free cash flow goals",
-    desc: "Learn how Poshmark achieved its free cash flow goals in seven months instead of 12.",
+    title: "How a growing distributor hit its free cash flow goals",
+    desc: "Learn how one Bizak customer reached its free cash flow goals in seven months instead of 12.",
   },
 ];
 
 function EditorPicksSection() {
   return (
-    <section className="blog-picks-section">
-      <div className="blog-container">
-        <h2 className="blog-section-title">Editor's Picks</h2>
-        <div className="blog-picks-grid">
+    <Section tone="a">
+      <Container>
+        <Heading level={2}>Editor's Picks</Heading>
+
+        <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr] lg:gap-12">
           {/* Main large article */}
-          <div className="blog-picks-main" style={{ cursor: "pointer" }}>
-            <div className="blog-picks-main-img">
-              <ImageWithFallback src={IMG.editorMain} alt="The end of manual accounting" />
+          <a href="#" className="group block">
+            <div className="mb-6 aspect-[21/9] overflow-hidden rounded-bz-lg bg-bz-section-b">
+              <ImageWithFallback
+                src={IMG.editorMain}
+                alt="The end of manual accounting"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
             </div>
-            <div className="blog-picks-cat">Article</div>
-            <h3 className="blog-picks-main-title">The end of manual accounting</h3>
-            <p className="blog-picks-main-desc">
+            <Eyebrow>Article</Eyebrow>
+            <h3 className="mt-3 text-[clamp(1.4rem,2.4vw,1.8rem)] font-semibold leading-[1.2] tracking-[-0.02em] text-bz-text">
+              The end of manual accounting
+            </h3>
+            <p className="mt-3 max-w-[560px] text-[16px] leading-[1.7] text-bz-text-muted">
               Starting today, the race to close is no longer a chase. Meet Bizak's Accounting
               Agent built to code and review every dollar of spend.
             </p>
-          </div>
+          </a>
 
           {/* Side list */}
-          <div className="blog-picks-side">
+          <div className="flex flex-col gap-8">
             {SIDE_PICKS.map((p) => (
-              <a href="#" key={p.title} className="blog-side-item">
-                <div className="blog-side-thumb">
-                  <ImageWithFallback src={p.img} alt={p.title} />
+              <a href="#" key={p.title} className="group flex gap-4">
+                <div className="size-[120px] shrink-0 overflow-hidden rounded-bz-md bg-bz-section-b">
+                  <ImageWithFallback
+                    src={p.img}
+                    alt={p.title}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
                 </div>
                 <div>
-                  <div className="blog-side-cat">{p.cat}</div>
-                  <div className="blog-side-title">{p.title}</div>
-                  <div className="blog-side-desc">{p.desc}</div>
+                  <Eyebrow>{p.cat}</Eyebrow>
+                  <div className="mt-1.5 text-[14px] font-semibold leading-[1.4] text-bz-text transition-colors group-hover:text-bz-text-muted">
+                    {p.title}
+                  </div>
+                  <p className="mt-1 line-clamp-2 text-[12px] leading-[1.5] text-bz-text-muted">
+                    {p.desc}
+                  </p>
                 </div>
               </a>
             ))}
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
-// ─── FILTER TABS ──────────────────────────────────────────────────────────────
+// ─── INSIGHTS filter tabs + article grid ────────────────────────────────────
 const TABS = [
   "All Insights",
   "ERP Fundamentals",
@@ -309,25 +276,6 @@ const TABS = [
   "Compliance",
 ];
 
-function FilterTabs({ active, onSelect }: { active: string; onSelect: (t: string) => void }) {
-  return (
-    <div className="blog-tabs-section">
-      <div className="blog-tabs">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            className={`blog-tab${active === t ? " active" : ""}`}
-            onClick={() => onSelect(t)}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── ARTICLE GRID ─────────────────────────────────────────────────────────────
 const ARTICLES = [
   {
     img: IMG.card1,
@@ -349,8 +297,8 @@ const ARTICLES = [
     img: IMG.card3,
     cat: "Finance",
     readTime: "4 min read",
-    title: "Streamlining Global E-Billing Compliance",
-    desc: "Navigating the complexities of international tax laws with automated localized invoicing systems.",
+    title: "Streamlining E-Billing Compliance",
+    desc: "Navigating the complexities of regional tax laws with automated localized invoicing systems.",
     tab: "Financial Management",
   },
   {
@@ -374,65 +322,115 @@ const ARTICLES = [
     cat: "Scaling",
     readTime: "5 min read",
     title: "The Future of Unified Business Units",
-    desc: "Moving away from siloed departments toward a single source of truth for global operations.",
+    desc: "Moving away from siloed departments toward a single source of truth for multi-branch operations.",
     tab: "ERP Fundamentals",
   },
 ];
 
-function ArticleGrid({ activeTab }: { activeTab: string }) {
-  const filtered = activeTab === "All Insights"
-    ? ARTICLES
-    : ARTICLES.filter((a) => a.tab === activeTab);
+type Article = (typeof ARTICLES)[number];
+
+function ArticleCard({ article }: { article: Article }) {
+  return (
+    <article className="bz-hover-card group flex flex-col overflow-hidden rounded-bz-xl border border-bz-line-soft bg-bz-surface">
+      <div className="h-[200px] overflow-hidden bg-bz-section-b">
+        <ImageWithFallback
+          src={article.img}
+          alt={article.title}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      </div>
+      <div className="flex flex-1 flex-col p-6 md:p-7">
+        <div className="mb-3 flex items-center gap-2.5">
+          <StatusChip variant="posted">{article.cat}</StatusChip>
+          <span className="text-[12px] text-bz-text-muted">{article.readTime}</span>
+        </div>
+        <h3 className="text-[17px] font-semibold leading-[1.35] tracking-[-0.02em] text-bz-text">
+          {article.title}
+        </h3>
+        <p className="mb-6 mt-3 flex-1 text-[13.5px] leading-[1.65] text-bz-text-muted">
+          {article.desc}
+        </p>
+        <a
+          href="#"
+          className="group/link inline-flex items-center gap-1.5 text-[13px] font-semibold text-bz-text"
+        >
+          Read Story
+          <ArrowRight
+            size={14}
+            strokeWidth={2.5}
+            className="transition-transform group-hover/link:translate-x-1"
+          />
+        </a>
+      </div>
+    </article>
+  );
+}
+
+function InsightsSection() {
+  const [activeTab, setActiveTab] = useState("All Insights");
+  const filtered =
+    activeTab === "All Insights"
+      ? ARTICLES
+      : ARTICLES.filter((a) => a.tab === activeTab);
 
   return (
-    <div className="blog-grid-section">
-      <div className="blog-grid">
-        {filtered.map((article) => (
-          <div className="blog-card" key={article.title}>
-            <div className="blog-card-img">
-              <ImageWithFallback src={article.img} alt={article.title} />
-              <div className="blog-card-img-overlay" />
-              <div className="blog-card-img-label">
-                <span className="blog-card-cat-badge">{article.cat}</span>
-                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 9 }}>•</span>
-                <span className="blog-card-read-time">{article.readTime}</span>
-              </div>
-            </div>
-            <div className="blog-card-body">
-              <h3 className="blog-card-title">{article.title}</h3>
-              <p className="blog-card-desc">{article.desc}</p>
-              <a href="#" className="blog-card-link">
-                Read Story <ArrowRight size={14} />
-              </a>
-            </div>
-          </div>
-        ))}
-        {filtered.length === 0 && (
-          <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "60px 0", color: "#666", fontSize: 15 }}>
+    <Section tone="b">
+      <Container>
+        {/* Filter tabs */}
+        <div className="flex flex-wrap items-center justify-center border-b border-bz-line-soft">
+          {TABS.map((t) => (
+            <button
+              key={t}
+              onClick={() => setActiveTab(t)}
+              className={cn(
+                "-mb-px whitespace-nowrap border-b-2 px-6 py-4 text-[13px] transition-colors",
+                activeTab === t
+                  ? "border-bz-fire font-semibold text-bz-text"
+                  : "border-transparent font-medium text-bz-text-muted hover:text-bz-text",
+              )}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+
+        {/* Article grid */}
+        {filtered.length > 0 ? (
+          <BentoGrid cols={3} gap={28} className="mt-12">
+            {filtered.map((article) => (
+              <ArticleCard key={article.title} article={article} />
+            ))}
+          </BentoGrid>
+        ) : (
+          <p className="py-16 text-center text-[15px] text-bz-text-muted">
             No articles in this category yet. Check back soon.
-          </div>
+          </p>
         )}
-      </div>
-    </div>
+      </Container>
+    </Section>
   );
 }
 
 // ─── PHILOSOPHY ───────────────────────────────────────────────────────────────
 function PhilosophySection() {
   return (
-    <section className="blog-philosophy">
-      <div style={{ maxWidth: 800, margin: "0 auto" }}>
-        <span className="blog-philosophy-label">Our Philosophy</span>
-        <h2 className="blog-philosophy-title">Stronger Operational Foundations</h2>
-        <p className="blog-philosophy-quote">
-          "We believe that information is only as valuable as the action it enables. Our
-          insights are designed to bridge the gap between abstract strategy and concrete
-          execution, providing leaders with the technical clarity required to build
-          resilient, high-growth organizations."
-        </p>
-        <div className="blog-philosophy-divider" />
-      </div>
-    </section>
+    <Section tone="a">
+      <Container width="narrow">
+        <div className="mx-auto max-w-[800px] text-center">
+          <Eyebrow>Our Philosophy</Eyebrow>
+          <Heading level={2} className="mt-4">
+            Stronger Operational Foundations
+          </Heading>
+          <p className="mx-auto mt-7 max-w-[760px] text-[clamp(1rem,1.5vw,1.2rem)] italic leading-[1.8] text-bz-text-muted">
+            "We believe that information is only as valuable as the action it enables. Our
+            insights are designed to bridge the gap between abstract strategy and concrete
+            execution, providing leaders with the technical clarity required to build
+            resilient, high-growth organizations."
+          </p>
+          <div className="mx-auto mt-10 h-1 w-14 rounded-bz-pill bg-bz-fire" />
+        </div>
+      </Container>
+    </Section>
   );
 }
 
@@ -447,75 +445,71 @@ function NewsletterSection() {
   };
 
   return (
-    <section className="blog-newsletter">
-      <div className="blog-newsletter-grid-bg" />
-      <div className="blog-newsletter-glow" />
-      <div style={{ position: "relative", zIndex: 10 }}>
-        <h2 className="blog-newsletter-title">Get ERP insights delivered to your inbox</h2>
-        <p className="blog-newsletter-sub">
-          Join 5,000+ operations leaders receiving our bi-weekly breakdown of scaling
+    <Section tone="dark" pad="tight">
+      <DotGrid tone="dark" />
+      <Container className="relative text-center">
+        <Heading
+          level={2}
+          tone="dark"
+          className="max-w-[640px]"
+          style={{ marginInline: "auto" }}
+        >
+          Get ERP insights{" "}
+          <Heading.Muted>
+            delivered to your inbox
+          </Heading.Muted>
+        </Heading>
+        <p className="mx-auto mt-4 max-w-[480px] text-[15px] leading-[1.7] text-white/55">
+          Join operations leaders receiving our bi-weekly breakdown of scaling
           strategies and technical innovations.
         </p>
+
         {submitted ? (
-          <div style={{ color: "#C7FF35", fontWeight: 700, fontSize: 16, letterSpacing: "0.02em" }}>
+          <p className="mt-9 text-[16px] font-semibold tracking-[0.02em] text-bz-fire">
             ✓ You're subscribed thanks for joining!
-          </div>
+          </p>
         ) : (
-          <form className="blog-newsletter-form" onSubmit={handleSubmit}>
+          <form
+            onSubmit={handleSubmit}
+            className="mx-auto mt-9 flex max-w-[480px] flex-col gap-3 sm:flex-row"
+          >
             <input
-              className="blog-newsletter-input"
               type="email"
-              placeholder="Enter your work email"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
+              placeholder="Enter your work email"
+              className="w-full flex-1 rounded-bz-md border border-white/10 bg-white/[0.06] px-5 py-3.5 text-[14px] text-bz-text-on-dark outline-none transition-colors placeholder:text-white/30 focus:border-bz-fire"
             />
-            <button type="submit" className="blog-newsletter-btn">Subscribe</button>
+            <button
+              type="submit"
+              className="shrink-0 rounded-bz-md bg-bz-fire px-7 py-3.5 text-[14px] font-semibold text-bz-deep transition-opacity hover:opacity-90"
+            >
+              Subscribe
+            </button>
           </form>
         )}
-        <p className="blog-newsletter-fine">Zero spam. Pure intelligence. Unsubscribe anytime.</p>
-      </div>
-    </section>
+
+        <p className="mt-5 text-[9px] font-semibold uppercase tracking-[0.1em] text-white/20">
+          Zero spam. Pure intelligence. Unsubscribe anytime.
+        </p>
+      </Container>
+    </Section>
   );
 }
 
-// ─── BOTTOM CTA ───────────────────────────────────────────────────────────────
-
-function BottomCTASection() {
-  return (
-    <section className="blog-bottom-cta">
-      <div className="blog-bottom-cta-inner">
-        <h2 className="blog-bottom-cta-title">
-          Build your business on a stronger operational system.
-        </h2>
-        <div className="blog-cta-btns">
-          <button className="blog-cta-btn-primary">Start Free Trial</button>
-          <button className="blog-cta-btn-ghost">Book a Demo</button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-
-
-// ─── PAGE ───────────────────────────���─────────────────────────────────────────
+// ─── PAGE ─────────────────────────────────────────────────────────────────────
 export function BlogPage() {
-  const [activeTab, setActiveTab] = useState("All Insights");
-
   return (
-    <div className="blog-page">
+    <div className="bz-page">
       <Header />
-      <main style={{ paddingTop: 76 }}>
+      <main>
         <HeroSection />
         <EditorPicksSection />
-        <FilterTabs active={activeTab} onSelect={setActiveTab} />
-        <ArticleGrid activeTab={activeTab} />
-        <PhilosophySection />
+        <InsightsSection />
         <NewsletterSection />
-    
       </main>
-      <Footer />
+      <Footer hideCta />
     </div>
   );
 }

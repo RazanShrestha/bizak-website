@@ -61,7 +61,7 @@ const INITIAL_FORM: FormState = {
   company: "",
   role: "Finance lead",
   teamSize: "25 – 100",
-  region: "Asia Pacific",
+  region: "Nepal",
   question: "",
   reminders: true,
   consent: false,
@@ -87,10 +87,12 @@ const TEAM_SIZES = [
 ];
 
 const REGIONS = [
-  "Asia Pacific",
-  "EMEA",
-  "Americas",
-  "Middle East & Africa",
+  "Nepal",
+  "India",
+  "Bangladesh",
+  "Sri Lanka",
+  "Pakistan",
+  "Other",
 ];
 
 // ─── What you'll get strip ──────────────────────────────────────────────────

@@ -74,8 +74,8 @@ function FlagshipPanel() {
         <div className="grid grid-cols-3 gap-3 mb-7">
           {[
             { Icon: CalendarDays, l: "3 days · Hybrid" },
-            { Icon: MapPin,       l: "Singapore + Live" },
-            { Icon: Users,        l: "1,200+ attendees" },
+            { Icon: MapPin,       l: "In-person + Live" },
+            { Icon: Users,        l: "Partner network" },
           ].map(({ Icon, l }) => (
             <div key={l} className="rounded-bz-md border border-white/10 bg-white/[0.03] p-3 flex items-center gap-2.5">
               <Icon className="size-3.5 text-bz-accent shrink-0" />
@@ -121,8 +121,8 @@ function HeroSection() {
             </div>
             <div className="mt-12 pt-8 border-t border-bz-border flex flex-wrap gap-x-10 gap-y-5">
               {[
-                { v: "40+", l: "Events / year" },
-                { v: "12",  l: "Cities" },
+                { v: "Regular", l: "Events calendar" },
+                { v: "In-person", l: "+ virtual" },
                 { v: "Free", l: "For partners" },
               ].map((s) => (
                 <div key={s.l}>
@@ -295,10 +295,10 @@ function ReplaysSection() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              { Icon: Video,        v: "120+",  l: "Replays" },
-              { Icon: GraduationCap, v: "9",     l: "Cert tracks" },
+              { Icon: Video,        v: "Full",   l: "Replay library" },
+              { Icon: GraduationCap, v: "9",      l: "Cert tracks" },
               { Icon: CalendarDays,  v: "Weekly", l: "New uploads" },
-              { Icon: Users,         v: "640+",  l: "Active partners" },
+              { Icon: Users,         v: "Growing", l: "Partner network" },
             ].map(({ Icon, v, l }) => (
               <Card key={l} tone="soft" pad="md" hover="lift">
                 <IconBadge tone="sage" size="md" className="mb-4">

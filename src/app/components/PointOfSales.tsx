@@ -20,8 +20,8 @@ const FEATURES = [
 ];
 
 const METRICS = [
-  { value: "< 3s",  label: "Average Checkout",   desc: "Faster transactions mean shorter queues, higher throughput, and more revenue per hour." },
-  { value: "99.9%", label: "Uptime Guaranteed",  desc: "Built-in offline mode and redundant sync ensure you never lose a sale due to connectivity." },
+  { value: "Fast",  label: "Quick Checkout",     desc: "Faster transactions mean shorter queues, higher throughput, and more revenue per hour." },
+  { value: "Always on", label: "Offline Ready",  desc: "Built-in offline mode and redundant sync ensure you never lose a sale due to connectivity." },
   { value: "Zero",  label: "Sync Errors",        desc: "Atomic inventory deductions and idempotent posting eliminate stock discrepancies permanently." },
 ];
 
@@ -454,7 +454,7 @@ export function PointOfSalesPage() {
         <Container width="narrow">
           <SectionHeading
             title={<>Start selling smarter<br /><span className="text-bz-accent">from your first transaction</span></>}
-            description="Join thousands of retailers on Bizak POS. Get up and running in minutes no hardware lock-in."
+            description="Join the retailers on Bizak POS. Get up and running in minutes no hardware lock-in."
             tone="light"
             align="center"
             maxWidth={520}

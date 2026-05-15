@@ -76,18 +76,18 @@ const CAPABILITIES = [
 
 const METRICS = [
   {
-    value: "40%",
+    value: "Faster cycles",
     label: "Faster procurement",
     desc: "Automated RFQs and approval routing cut manual cycle times across the buying team.",
   },
   {
-    value: "12%",
-    label: "Lower unit cost",
+    value: "Lower cost",
+    label: "Better unit pricing",
     desc: "Data-driven negotiation insights and vendor scoring lower the average cost per unit.",
   },
   {
-    value: "100%",
-    label: "Audit coverage",
+    value: "Audit-ready",
+    label: "Full coverage",
     desc: "Every PO, GRN and invoice posts straight to the ledger with a full digital trail.",
   },
 ] as const;
@@ -203,7 +203,7 @@ function HeroPurchaseOrderCard() {
         {/* Vendor / Order no. pair */}
         <div className="grid grid-cols-2 gap-3">
           {[
-            { label: "Vendor",    value: "Axis Mfg · USD" },
+            { label: "Vendor",    value: "Axis Mfg · NPR" },
             { label: "Order no.", value: "PO-8821" },
           ].map((p) => (
             <div
@@ -932,7 +932,7 @@ function MetricsSection() {
         <BentoGrid cols={3}>
           {METRICS.map((m) => (
             <Bento key={m.label} tone="paper" hover minHeight={220}>
-              <div className="bz-stat-num" style={{ fontSize: 48, marginBottom: 12 }}>
+              <div className="bz-stat-num" style={{ fontSize: 28, marginBottom: 12 }}>
                 {m.value}
               </div>
               <div className="mb-3 text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">

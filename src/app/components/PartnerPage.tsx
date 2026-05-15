@@ -57,10 +57,11 @@ const FOCUS = [
 ] as const;
 
 const REGIONS = [
-  "Asia Pacific",
-  "Europe, Middle East & Africa",
-  "North America",
-  "Latin America",
+  "Nepal",
+  "India",
+  "Bangladesh",
+  "Sri Lanka",
+  "Pakistan",
 ] as const;
 
 const FAQS = [
@@ -83,7 +84,7 @@ const inputClass =
 function HeroSection() {
   return (
     <Section tone="dark" pad="hero" className="overflow-hidden">
-      <DotGrid tone="dark" />
+      {/* <DotGrid tone="dark" /> */}
       <div
         aria-hidden
         className="pointer-events-none absolute -right-28 -top-32 size-[440px] rounded-bz-pill bg-bz-olive-soft/40"
@@ -96,7 +97,7 @@ function HeroSection() {
       <Container width="narrow" className="relative z-[1]">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <HeroCopy />
-          <PartnerPortal />
+          {/* <PartnerPortal /> */}
         </div>
       </Container>
     </Section>
@@ -131,9 +132,9 @@ function HeroCopy() {
           </span>
         </div>
         <p className="text-[13px] leading-[1.5] text-white/[0.6]">
-          Join{" "}
-          <span className="font-medium text-bz-text-on-dark">640+ firms</span>{" "}
-          partnering with Bizak across 48 countries.
+          Join the{" "}
+          <span className="font-medium text-bz-text-on-dark">firms</span>{" "}
+          partnering with Bizak across South Asia.
         </p>
       </div>
     </div>
@@ -166,7 +167,7 @@ function PartnerPortal() {
               Northwind Advisory
             </p>
             <p className="mt-0.5 text-[12px] text-white/55">
-              Partner since 2024 · Asia Pacific
+              Bizak partner · South Asia
             </p>
           </div>
           <span className="shrink-0 rounded-bz-sm border border-bz-fire/30 bg-bz-fire/10 px-2 py-1 text-[9.5px] font-semibold uppercase tracking-[0.07em] text-bz-fire">

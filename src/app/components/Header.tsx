@@ -229,7 +229,7 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Connect",
         items: [
           { icon: <Briefcase size={16} />, title: "Careers", description: "Build the future of ERP", badge: "Hiring", href: "/careers" },
-          { icon: <FileText size={16} />, title: "Press & Media", description: "News and brand kit", href: "/PressAndMedia" },
+          // { icon: <FileText size={16} />, title: "Press & Media", description: "News and brand kit", href: "/PressAndMedia" },
         ],
       },
       {
@@ -577,9 +577,9 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
             href="/contact"
             onClick={onClose}
             className="justify-center"
-            withArrow
+            
           >
-            Request Demo
+            Get Started
           </Pill>
         </div>
       </div>
@@ -687,8 +687,8 @@ export function Header({ dark = false }: { dark?: boolean } = {}) {
               >
                 Sign in
               </a>
-              <Pill variant={dark ? "accent" : "dark"} href="/contact" withArrow>
-                Request Demo
+              <Pill variant={dark ? "accent" : "dark"} href="/contact" >
+                Get Started
               </Pill>
             </div>
 

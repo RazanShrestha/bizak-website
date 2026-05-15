@@ -20,9 +20,9 @@ const CAPABILITIES = [
 ];
 
 const METRICS = [
-  { value: "50%", label: "Better Visibility",      desc: "Transparent tracking across every territory eliminates blind spots in execution." },
-  { value: "30%", label: "Increased Productivity", desc: "Optimized beats and automated logs let reps focus on selling, not paperwork." },
-  { value: "20%", label: "Higher Conversion",      desc: "On-spot order booking shortens the cycle and raises order accuracy." },
+  { value: "Clearer", label: "Better Visibility",      desc: "Transparent tracking across every territory eliminates blind spots in execution." },
+  { value: "Higher",  label: "Increased Productivity", desc: "Optimized beats and automated logs let reps focus on selling, not paperwork." },
+  { value: "Faster",  label: "Higher Conversion",      desc: "On-spot order booking shortens the cycle and raises order accuracy." },
 ];
 
 const FLOW_STEPS = [
@@ -476,7 +476,7 @@ export function SalesForceManagementPage() {
         <Container width="narrow">
           <SectionHeading
             title={<>Take full control of your<br /><span className="text-bz-accent">sales force management</span></>}
-            description="Join 50,000+ companies running their field operations on Bizak. From beat plan to ledger entry all in one system."
+            description="Join the companies running their field operations on Bizak. From beat plan to ledger entry all in one system."
             tone="light"
             align="center"
             maxWidth={580}

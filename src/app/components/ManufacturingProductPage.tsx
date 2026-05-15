@@ -77,19 +77,19 @@ const FEATURES = [
 
 const METRICS = [
   {
-    value: "87.3%",
-    label: "World-class OEE",
+    value: "OEE",
+    label: "Live efficiency",
     desc: "Availability × Performance × Quality tracked live across every machine and shift.",
   },
   {
-    value: "40%",
-    label: "Faster WO close",
+    value: "Faster",
+    label: "WO close",
     desc: "Auto-costing and direct ledger posting eliminate end-of-run data entry entirely.",
   },
   {
-    value: "0.8%",
-    label: "Scrap rate",
-    desc: "Inline QC checkpoints and real-time defect capture keep scrap to an industry-leading minimum.",
+    value: "Less scrap",
+    label: "Inline QC",
+    desc: "Inline QC checkpoints and real-time defect capture keep scrap to a minimum.",
   },
 ] as const;
 
