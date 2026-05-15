@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "../ui/utils";
 
-// Horizontal page wrapper — max-width + auto-margin + gutter.
+// Horizontal page wrapper max-width + auto-margin + gutter.
 //   <Container>...</Container>                  → 1320px max
 //   <Container width="narrow">...</Container>   → 1200px max
 //

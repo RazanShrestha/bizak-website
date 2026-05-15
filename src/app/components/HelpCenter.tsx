@@ -96,7 +96,7 @@ const CHANNELS: {
     badge: "Guided process",
     title: "Submit a request",
     description:
-      "Open a ticket and we'll route it to the right specialist — implementation, billing, integrations, or data.",
+      "Open a ticket and we'll route it to the right specialist implementation, billing, integrations, or data.",
     detailLabel: "First reply",
     detail: "Within 1 business day",
     cta: "Open the form",
@@ -121,7 +121,7 @@ const CATEGORIES: {
   {
     icon: Sparkles,
     title: "Features & Functionality",
-    description: "Accounting, inventory, sales, HR, CRM, and reporting — every core module explained.",
+    description: "Accounting, inventory, sales, HR, CRM, and reporting every core module explained.",
     count: "34 articles",
     filter: "features",
   },
@@ -226,7 +226,7 @@ const FAQ_GROUPS: FaqGroup[] = [
     faqs: [
       {
         q: "What is Bizak ERP and who is it built for?",
-        a: "Bizak ERP is a cloud-based business operating system that brings accounting, inventory, sales, purchase, HR, CRM, and reporting into one connected platform. It's designed for businesses of every size — from early-stage startups to multi-entity enterprises — that want to replace fragmented spreadsheets and disconnected tools with a single source of truth.",
+        a: "Bizak ERP is a cloud-based business operating system that brings accounting, inventory, sales, purchase, HR, CRM, and reporting into one connected platform. It's designed for businesses of every size from early-stage startups to multi-entity enterprises that want to replace fragmented spreadsheets and disconnected tools with a single source of truth.",
       },
       {
         q: "How is Bizak different from a typical ERP solution?",
@@ -238,7 +238,7 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "Which industries does Bizak support?",
-        a: "Bizak supports manufacturing, distribution, retail, professional services, and more. Industry-specific modules and configurable workflows adapt the platform to your operating model — whether you're running a factory floor, a retail chain, or a project-based services firm.",
+        a: "Bizak supports manufacturing, distribution, retail, professional services, and more. Industry-specific modules and configurable workflows adapt the platform to your operating model whether you're running a factory floor, a retail chain, or a project-based services firm.",
       },
     ],
   },
@@ -252,7 +252,7 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "How does Bizak handle inventory management?",
-        a: "Bizak provides full stock control: real-time inventory levels across warehouses, automatic reorder points, batch and serial-number tracking, barcode scanning, multi-location transfers, and live stock valuation. It works for service businesses too — just turn off the modules you don't need.",
+        a: "Bizak provides full stock control: real-time inventory levels across warehouses, automatic reorder points, batch and serial-number tracking, barcode scanning, multi-location transfers, and live stock valuation. It works for service businesses too just turn off the modules you don't need.",
       },
       {
         q: "Can Bizak automate financial workflows?",
@@ -282,11 +282,11 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "Does Bizak integrate with my existing tools?",
-        a: "Yes. Bizak offers RESTful APIs, pre-built connectors for popular SaaS tools, and middleware support for legacy systems. Custom integrations can be built when needed — we've connected payment gateways, e-commerce platforms, logistics providers, and bespoke internal apps.",
+        a: "Yes. Bizak offers RESTful APIs, pre-built connectors for popular SaaS tools, and middleware support for legacy systems. Custom integrations can be built when needed we've connected payment gateways, e-commerce platforms, logistics providers, and bespoke internal apps.",
       },
       {
         q: "Do you support us during implementation?",
-        a: "Yes. Every implementation is led by a dedicated specialist supported by configuration consultants and technical engineers. We handle the heavy lifting — you focus on the decisions only your team can make.",
+        a: "Yes. Every implementation is led by a dedicated specialist supported by configuration consultants and technical engineers. We handle the heavy lifting you focus on the decisions only your team can make.",
       },
       {
         q: "What challenges should we plan for?",
@@ -300,7 +300,7 @@ const FAQ_GROUPS: FaqGroup[] = [
     faqs: [
       {
         q: "Do you provide user training?",
-        a: "Yes. We deliver structured training programs that cover the modules your team uses day-to-day. Training is available on-site, virtual, or as recorded sessions — we'll match the format to your team's needs.",
+        a: "Yes. We deliver structured training programs that cover the modules your team uses day-to-day. Training is available on-site, virtual, or as recorded sessions we'll match the format to your team's needs.",
       },
       {
         q: "What learning resources are included?",
@@ -312,7 +312,7 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "How do I reach support after launch?",
-        a: "Through live chat, email, the in-app help portal, or — for higher tiers — a phone line and dedicated account contact. All channels are listed inside the product so the right one is always one click away.",
+        a: "Through live chat, email, the in-app help portal, or for higher tiers a phone line and dedicated account contact. All channels are listed inside the product so the right one is always one click away.",
       },
     ],
   },
@@ -334,7 +334,7 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "Can I control who sees what?",
-        a: "Yes. Permissions are granular and role-based — administrators control what each user or group can view, edit, approve, or export, down to module, record, and field level.",
+        a: "Yes. Permissions are granular and role-based administrators control what each user or group can view, edit, approve, or export, down to module, record, and field level.",
       },
     ],
   },
@@ -344,7 +344,7 @@ const FAQ_GROUPS: FaqGroup[] = [
     faqs: [
       {
         q: "How is Bizak priced?",
-        a: "Bizak uses a subscription model with monthly and annual billing options. Pricing scales with users, modules, and transaction volume. There are no hidden setup fees — implementation is included in standard plans.",
+        a: "Bizak uses a subscription model with monthly and annual billing options. Pricing scales with users, modules, and transaction volume. There are no hidden setup fees implementation is included in standard plans.",
       },
       {
         q: "Are there hidden fees?",
@@ -382,7 +382,7 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "Are there limits on users or transactions?",
-        a: "Plans define usage envelopes that fit most businesses comfortably. For high-volume operations, our enterprise plan removes most ceilings — talk to us about your specific scale.",
+        a: "Plans define usage envelopes that fit most businesses comfortably. For high-volume operations, our enterprise plan removes most ceilings talk to us about your specific scale.",
       },
       {
         q: "Can I build custom reports and dashboards?",
@@ -396,7 +396,7 @@ const FAQ_GROUPS: FaqGroup[] = [
     faqs: [
       {
         q: "What are the system requirements?",
-        a: "Bizak is fully cloud-based. Any modern browser — Chrome, Edge, Firefox, Safari — runs the product without plugins or installs.",
+        a: "Bizak is fully cloud-based. Any modern browser Chrome, Edge, Firefox, Safari runs the product without plugins or installs.",
       },
       {
         q: "Is there a mobile app?",
@@ -404,7 +404,7 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "What internet speed do I need?",
-        a: "There's no hard minimum, but a stable broadband connection delivers the best experience. Bizak is designed to handle intermittent connectivity gracefully — you won't lose work to a dropped link.",
+        a: "There's no hard minimum, but a stable broadband connection delivers the best experience. Bizak is designed to handle intermittent connectivity gracefully you won't lose work to a dropped link.",
       },
       {
         q: "Can I work from anywhere?",
@@ -418,7 +418,7 @@ const FAQ_GROUPS: FaqGroup[] = [
     faqs: [
       {
         q: "How often does Bizak release updates?",
-        a: "We ship updates regularly — small fixes ride out continuously, and larger feature releases are bundled into a clearly communicated cadence. Customers always run a recent, secure version.",
+        a: "We ship updates regularly small fixes ride out continuously, and larger feature releases are bundled into a clearly communicated cadence. Customers always run a recent, secure version.",
       },
       {
         q: "Are upgrades included in my subscription?",
@@ -462,11 +462,11 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "What happens to feedback once submitted?",
-        a: "Feedback is reviewed weekly, categorised, and weighed against impact, demand, and roadmap priorities. Items that ship are announced in release notes — and the customer who suggested them is credited.",
+        a: "Feedback is reviewed weekly, categorised, and weighed against impact, demand, and roadmap priorities. Items that ship are announced in release notes and the customer who suggested them is credited.",
       },
       {
         q: "Can I track the status of my requests?",
-        a: "Yes. The customer portal shows submitted requests with status — under review, planned, in progress, shipped — so you always know where things stand.",
+        a: "Yes. The customer portal shows submitted requests with status under review, planned, in progress, shipped so you always know where things stand.",
       },
     ],
   },
@@ -480,7 +480,7 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "Are there cancellation fees?",
-        a: "Standard plans have no termination fees. Specific contractual commitments — like multi-year enterprise agreements with negotiated pricing — may have terms attached, which are spelled out in your agreement.",
+        a: "Standard plans have no termination fees. Specific contractual commitments like multi-year enterprise agreements with negotiated pricing may have terms attached, which are spelled out in your agreement.",
       },
       {
         q: "What happens to my data if I cancel?",
@@ -505,7 +505,7 @@ const RESOURCES: { icon: LucideIcon; tag: string; title: string; description: st
     tag: "Video tutorials",
     title: "Get started in 30 minutes",
     description:
-      "A guided video walkthrough — sign up, configure your first modules, and run a full day-one workflow. No prior ERP experience required.",
+      "A guided video walkthrough sign up, configure your first modules, and run a full day-one workflow. No prior ERP experience required.",
     cta: "Watch the series",
     href: "#",
   },
@@ -765,7 +765,7 @@ function FaqSection({
             </h2>
             <p className="mt-4 text-[15.5px] leading-[1.7] text-bz-text-muted">
               The questions Bizak users ask us most often. Pick a topic to filter
-              — or use the search bar at the top of the page.
+              or use the search bar at the top of the page.
             </p>
 
             {/* Topic filter */}
@@ -934,7 +934,7 @@ function BottomCta() {
               </h2>
               <p className="mt-4 max-w-[560px] text-[16px] leading-[1.7] text-bz-text-muted">
                 Can't find what you're looking for? Talk to our team and we'll
-                get back to you within one business day — or jump straight into
+                get back to you within one business day or jump straight into
                 a free trial and explore the platform yourself.
               </p>
             </div>

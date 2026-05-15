@@ -85,12 +85,12 @@ const IMPACT_STATS = [
   {
     value: "<90s",
     label: "Group close",
-    desc: "FX translation, IC eliminations, minority interest, and group P&L — run on demand, not at month-end.",
+    desc: "FX translation, IC eliminations, minority interest, and group P&L run on demand, not at month-end.",
   },
   {
     value: "38",
     label: "Tax engines",
-    desc: "VAT, GST, US sales tax, withholding, e-invoicing, OSS/IOSS — pre-configured per entity, no add-on required.",
+    desc: "VAT, GST, US sales tax, withholding, e-invoicing, OSS/IOSS pre-configured per entity, no add-on required.",
   },
   {
     value: "100%",
@@ -148,7 +148,7 @@ function HeroGroupBoard() {
               </span>
             </div>
           ))}
-          {/* IC Eliminations tile — desktop only */}
+          {/* IC Eliminations tile desktop only */}
           <div className="hidden md:block rounded-bz-xl bg-bz-fire/[0.08] border border-bz-fire/[0.20] px-3 md:px-4 py-3">
             <div className="text-[8.5px] font-bold uppercase tracking-[0.08em] text-bz-fire/70 mb-2">
               IC Elim.
@@ -182,11 +182,11 @@ function HeroICAutoPost() {
             Seller · Bizak US Inc.
           </p>
           <div className="flex justify-between text-[11.5px] mb-1.5">
-            <span className="text-bz-text-muted">AR — Intercompany</span>
+            <span className="text-bz-text-muted">AR Intercompany</span>
             <span className="font-bold text-bz-text">DR $24,800</span>
           </div>
           <div className="flex justify-between text-[11.5px]">
-            <span className="text-bz-text-muted">Revenue — IC Sales</span>
+            <span className="text-bz-text-muted">Revenue IC Sales</span>
             <span className="text-bz-text-soft">CR $24,800</span>
           </div>
         </div>
@@ -206,11 +206,11 @@ function HeroICAutoPost() {
             Buyer · Bizak GmbH (DE)
           </p>
           <div className="flex justify-between text-[11.5px] mb-1.5">
-            <span className="text-bz-text-muted">Expense — IC Purchases</span>
+            <span className="text-bz-text-muted">Expense IC Purchases</span>
             <span className="text-bz-text-soft">DR €22,840</span>
           </div>
           <div className="flex justify-between text-[11.5px]">
-            <span className="text-bz-text-muted">AP — Intercompany</span>
+            <span className="text-bz-text-muted">AP Intercompany</span>
             <span className="font-bold text-bz-text">CR €22,840</span>
           </div>
         </div>
@@ -298,11 +298,11 @@ function AutoICVisual() {
         </div>
         <div className="flex flex-col gap-1.5">
           <div className="flex justify-between text-[11.5px]">
-            <span className="text-white/55">AR — Intercompany</span>
+            <span className="text-white/55">AR Intercompany</span>
             <span className="font-bold text-bz-fire">DR $24,800</span>
           </div>
           <div className="flex justify-between text-[11.5px]">
-            <span className="text-white/55">Revenue — IC Sales</span>
+            <span className="text-white/55">Revenue IC Sales</span>
             <span className="text-white/75">CR $24,800</span>
           </div>
         </div>
@@ -322,11 +322,11 @@ function AutoICVisual() {
         </div>
         <div className="flex flex-col gap-1.5">
           <div className="flex justify-between text-[11.5px]">
-            <span className="text-white/55">Expense — IC Purchases</span>
+            <span className="text-white/55">Expense IC Purchases</span>
             <span className="text-white/75">DR €22,840</span>
           </div>
           <div className="flex justify-between text-[11.5px]">
-            <span className="text-white/55">AP — Intercompany</span>
+            <span className="text-white/55">AP Intercompany</span>
             <span className="font-bold text-bz-fire">CR €22,840</span>
           </div>
         </div>
@@ -389,7 +389,7 @@ function HeroSection() {
   );
 }
 
-// Cross-entity activity stream — every entity posts to the group view in real-time
+// Cross-entity activity stream every entity posts to the group view in real-time
 function EntityStreamSection() {
   return (
     <Section tone="a">
@@ -479,7 +479,7 @@ function EntityStreamSection() {
   );
 }
 
-// Entity profiles — flat 4-col panel inside a dark section
+// Entity profiles flat 4-col panel inside a dark section
 function EntityProfilesSection() {
   return (
     <Section tone="dark">
@@ -494,7 +494,7 @@ function EntityProfilesSection() {
               <Heading.Muted>Its own books, by default.</Heading.Muted>
             </>
           }
-          description="Each subsidiary, branch, or cost centre gets its own chart of accounts, tax engine, fiscal calendar, and reporting currency — all in one tenant."
+          description="Each subsidiary, branch, or cost centre gets its own chart of accounts, tax engine, fiscal calendar, and reporting currency all in one tenant."
         />
 
         {/* Entity panel: gap-px grid creates thin dividers without per-item border logic */}
@@ -567,7 +567,7 @@ function EntityProfilesSection() {
                 New entity online in one afternoon
               </p>
               <p className="text-[12px] text-white/55 leading-relaxed">
-                Set currency, tax engine, chart of accounts, and fiscal calendar — then it's live and rolling up to the group.
+                Set currency, tax engine, chart of accounts, and fiscal calendar then it's live and rolling up to the group.
               </p>
             </div>
             <div className="flex items-baseline gap-1.5 sm:shrink-0">
@@ -581,7 +581,7 @@ function EntityProfilesSection() {
   );
 }
 
-// Group hierarchy — StepCard showing the entity tree structure
+// Group hierarchy StepCard showing the entity tree structure
 function GroupHierarchySection() {
   return (
     <Section tone="b">
@@ -595,7 +595,7 @@ function GroupHierarchySection() {
               <Heading.Muted>One tree, any depth.</Heading.Muted>
             </>
           }
-          description="Model the full group structure — holding companies, subsidiaries, branches, and cost centres — and roll up P&L at any level."
+          description="Model the full group structure holding companies, subsidiaries, branches, and cost centres and roll up P&L at any level."
           titleMaxWidth={720}
           spacing="tight"
         />
@@ -604,7 +604,7 @@ function GroupHierarchySection() {
           tag="Model → Configure → Close"
           title="Stand up a subsidiary. Roll up the group. In one afternoon."
           bullets={[
-            "Define the hierarchy: group, region, entity, branch — no depth limit.",
+            "Define the hierarchy: group, region, entity, branch no depth limit.",
           ]}
           visual={<EntityTreeVisual />}
         />
@@ -613,7 +613,7 @@ function GroupHierarchySection() {
   );
 }
 
-// Intercompany automation — SectionHead + BigCard with auto-IC journal visual
+// Intercompany automation SectionHead + BigCard with auto-IC journal visual
 function AutoICSection() {
   return (
     <Section tone="a">
@@ -627,7 +627,7 @@ function AutoICSection() {
               <Heading.Muted>Both sides auto-posted.</Heading.Muted>
             </>
           }
-          description="When Bizak US sells to Bizak GmbH, a single transaction creates the AR and AP in both currencies — with a matched IC reference and elimination tags pre-applied for close."
+          description="When Bizak US sells to Bizak GmbH, a single transaction creates the AR and AP in both currencies with a matched IC reference and elimination tags pre-applied for close."
         />
         <BigCard
           text={{
@@ -653,7 +653,7 @@ function AutoICSection() {
   );
 }
 
-// Impact — horizontal typographic stat strip, no cards
+// Impact horizontal typographic stat strip, no cards
 function ImpactSection() {
   return (
     <Section tone="b">

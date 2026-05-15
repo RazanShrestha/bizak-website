@@ -113,7 +113,7 @@ const FEATURED = {
   status: "Live next Thursday",
   title: "Close the books in 48 hours: a live month-end run on Bizak",
   description:
-    "Watch a finance team take an unreconciled mid-month state to a fully closed period — auto-posted journals, live FX, drill-to-source — in one live session.",
+    "Watch a finance team take an unreconciled mid-month state to a fully closed period auto-posted journals, live FX, drill-to-source in one live session.",
   dateLabel: "Thu, 14 May 2026",
   timeLabel: "11:00 SGT · 09:30 IST",
   duration: "60 min · live Q&A",
@@ -148,7 +148,7 @@ export const EVENTS: Event[] = [
     trackLabel: "Finance & close",
     title: "Close the books in 48 hours: a live month-end run on Bizak",
     description:
-      "Watch a finance team take an unreconciled period to a fully closed month — auto-posted journals, live FX, drill-to-source — in one session.",
+      "Watch a finance team take an unreconciled period to a fully closed month auto-posted journals, live FX, drill-to-source in one session.",
     date: "2026-05-14",
     dateLabel: "Thu · 14 May 2026",
     timeLabel: "11:00 SGT · 09:30 IST",
@@ -169,7 +169,7 @@ export const EVENTS: Event[] = [
     trackLabel: "Manufacturing",
     title: "From paper travelers to a live OEE dashboard in 14 days",
     description:
-      "A walkthrough of wiring shop-floor signals into Bizak — work orders, downtime codes, and the OEE board ops review every morning.",
+      "A walkthrough of wiring shop-floor signals into Bizak work orders, downtime codes, and the OEE board ops review every morning.",
     date: "2026-05-21",
     dateLabel: "Thu · 21 May 2026",
     timeLabel: "10:00 GMT · 15:30 IST",
@@ -268,7 +268,7 @@ const REPLAYS: Replay[] = [
     trackLabel: "Finance & close",
     title: "Spreadsheet hell to operating system: a 90-day finance reset",
     description:
-      "A finance lead walks through replacing six tools and a forest of Excel with one live ledger — and what changed by week 12.",
+      "A finance lead walks through replacing six tools and a forest of Excel with one live ledger and what changed by week 12.",
     recorded: "April 2026",
     runtime: "52 min",
     views: "8.4K",
@@ -282,7 +282,7 @@ const REPLAYS: Replay[] = [
     trackLabel: "Finance & close",
     title: "Click any number, see its source: a live P&L walkthrough",
     description:
-      "Drill from consolidated Net Income down to the originating invoice line. Every figure resolves to its source — and the audit trail follows.",
+      "Drill from consolidated Net Income down to the originating invoice line. Every figure resolves to its source and the audit trail follows.",
     recorded: "March 2026",
     runtime: "38 min",
     views: "12.1K",
@@ -294,9 +294,9 @@ const REPLAYS: Replay[] = [
     slug: "oee-87-percent",
     track: "manufacturing",
     trackLabel: "Manufacturing",
-    title: "Inside an 87.4% OEE shop floor — what the dashboard actually shows",
+    title: "Inside an 87.4% OEE shop floor what the dashboard actually shows",
     description:
-      "A live tour of the Bizak floor view: availability, performance, quality — broken down by line, with downtime codes and root-cause flow.",
+      "A live tour of the Bizak floor view: availability, performance, quality broken down by line, with downtime codes and root-cause flow.",
     recorded: "March 2026",
     runtime: "45 min",
     views: "6.7K",
@@ -370,7 +370,7 @@ const SERIES: Series[] = [
     cadence: "Weekly · Thursdays",
     title: "Mid-Market Mondays",
     description:
-      "A 60-minute live demo every week. One module, one operator, one outcome — no slideware.",
+      "A 60-minute live demo every week. One module, one operator, one outcome no slideware.",
     next: "Next: live month-end · 14 May",
     highlight: true,
   },
@@ -387,7 +387,7 @@ const SERIES: Series[] = [
     cadence: "Monthly",
     title: "Industry Deep-Dives",
     description:
-      "A 90-minute walk-through for one vertical — manufacturing, distribution, services, retail.",
+      "A 90-minute walk-through for one vertical manufacturing, distribution, services, retail.",
     next: "Next: warehouse throughput · 28 May",
   },
 ];
@@ -410,7 +410,7 @@ function HeroSection() {
     <Section pad="hero" tone="light" className="biz-mesh overflow-hidden">
       <Container className="relative">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-20">
-          {/* Left — text */}
+          {/* Left text */}
           <div className="max-w-[640px]">
             <HeroBadge>Webinars &amp; Events</HeroBadge>
             <h1 className="mt-4 text-[clamp(40px,5.2vw,60px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
@@ -423,7 +423,7 @@ function HeroSection() {
             </h1>
             <p className="mt-5 max-w-[560px] text-[17px] leading-[1.7] text-bz-text-muted">
               Watch the Bizak team and our customers run real periods, real
-              floors and real cutovers — live, on the record, with the data on
+              floors and real cutovers live, on the record, with the data on
               screen. Then replay any session in the on-demand library.
             </p>
 
@@ -448,7 +448,7 @@ function HeroSection() {
             </div>
           </div>
 
-          {/* Right — featured live card */}
+          {/* Right featured live card */}
           <a
             href={FEATURED.href}
             className="group relative mx-auto block w-full max-w-[460px] overflow-hidden rounded-bz-2xl border border-bz-border bg-bz-deep shadow-[0_24px_64px_rgba(15,17,14,0.18)] transition-transform duration-300 hover:-translate-y-1 lg:mx-0"
@@ -650,7 +650,7 @@ function UpcomingSection() {
             </h2>
             <p className="mt-3 text-[15px] leading-[1.7] text-bz-text-muted">
               Filter by team, format, or what you're shipping this quarter. New
-              live sessions are scheduled every week — every one is recorded
+              live sessions are scheduled every week every one is recorded
               and added to the on-demand library the next morning.
             </p>
           </div>
@@ -772,7 +772,7 @@ function UpcomingSection() {
               Nothing on the calendar matches those filters.
             </h3>
             <p className="mt-2 text-[14px] text-bz-text-muted">
-              Reset the filters or sign up below — we add new sessions every
+              Reset the filters or sign up below we add new sessions every
               week and email subscribers first.
             </p>
           </div>
@@ -943,7 +943,7 @@ function OnDemandSection() {
             eyebrow="On-demand library"
             title={
               <>
-                Every session, replayable —{" "}
+                Every session, replayable{" "}
                 <span className="text-bz-sage">indexed by chapter.</span>
               </>
             }
@@ -1004,7 +1004,7 @@ function OnDemandSection() {
           </div>
         </div>
 
-        {/* Replay grid — fade-in/slide-up per card, with a stagger on the
+        {/* Replay grid fade-in/slide-up per card, with a stagger on the
             cards beyond the preview window so newly-revealed replays feel
             like they're loading in. */}
         <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -1151,12 +1151,12 @@ function HostsSection() {
           <div>
             <Eyebrow>Hosted by the build team</Eyebrow>
             <h2 className="mt-3 text-[32px] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text md:text-[36px]">
-              Engineers, consultants and operators — not marketers.
+              Engineers, consultants and operators not marketers.
             </h2>
             <p className="mt-4 text-[15.5px] leading-[1.7] text-bz-text-muted">
               Every session is hosted by a Bizak engineer, a senior consultant,
               or a customer who actually runs the workflow. No slideware decks,
-              no speaker fees — just the people who built and operate the
+              no speaker fees just the people who built and operate the
               product.
             </p>
           </div>
@@ -1256,7 +1256,7 @@ function NotifySection() {
                 {submitted ? (
                   <span className="inline-flex items-center gap-1.5 text-bz-sage">
                     <CheckCircle2 className="size-[13px]" strokeWidth={2} />
-                    You're on the list — first email lands this Friday.
+                    You're on the list first email lands this Friday.
                   </span>
                 ) : (
                   <>No spam. Unsubscribe in one click.</>
@@ -1281,11 +1281,11 @@ function ClosingCta() {
           eyebrowTone="accent"
           title={
             <>
-              Or skip the calendar — book a{" "}
+              Or skip the calendar book a{" "}
               <span className="text-bz-accent">private walk-through.</span>
             </>
           }
-          description="Bring your numbers, your team, and the modules you're evaluating. We'll run a live demo against your real data — same format as the public webinars, just with your name on the agenda."
+          description="Bring your numbers, your team, and the modules you're evaluating. We'll run a live demo against your real data same format as the public webinars, just with your name on the agenda."
           tone="light"
           align="center"
           maxWidth={680}

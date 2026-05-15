@@ -32,10 +32,10 @@ import { cn } from "./ui/utils";
 
 const ACTIVITY_FEED: { Icon: LucideIcon; text: string; time: string }[] = [
   { Icon: Zap,        text: "v4.2 shipped to 50,000+ customers worldwide",      time: "just now" },
-  { Icon: BadgeCheck, text: "PR merged — automated close time reduced by 40%",  time: "12m ago"  },
-  { Icon: Layers,     text: "Design review complete — Inventory v2 approved",   time: "1h ago"   },
+  { Icon: BadgeCheck, text: "PR merged automated close time reduced by 40%",  time: "12m ago"  },
+  { Icon: Layers,     text: "Design review complete Inventory v2 approved",   time: "1h ago"   },
   { Icon: Globe,      text: "New enterprise customer onboarded in Singapore",    time: "2h ago"   },
-  { Icon: Clock,      text: "Team standup wrapped — async for the rest of day", time: "3h ago"   },
+  { Icon: Clock,      text: "Team standup wrapped async for the rest of day", time: "3h ago"   },
 ];
 
 const CULTURE_PILLARS: { Icon: LucideIcon; title: string; desc: string }[] = [
@@ -49,7 +49,7 @@ const VALUES: { num: string; title: string; body: string; Icon: LucideIcon }[] =
   {
     num: "01",
     title: "Move with conviction",
-    body: "We decide fast, commit fully, and course-correct with data — not committees. Velocity is a feature.",
+    body: "We decide fast, commit fully, and course-correct with data not committees. Velocity is a feature.",
     Icon: Zap,
   },
   {
@@ -78,7 +78,7 @@ const BENEFITS: { Icon: LucideIcon; label: string; sub: string }[] = [
   { Icon: Globe,      label: "Remote-First",          sub: "Work from anywhere, always" },
   { Icon: Clock,      label: "Flexible Hours",        sub: "Async-first, no micromanagement" },
   { Icon: Heart,      label: "Health & Wellness",     sub: "Comprehensive medical, dental, vision" },
-  { Icon: BookOpen,   label: "$2k Learning Budget",   sub: "Books, courses, conferences — your call" },
+  { Icon: BookOpen,   label: "$2k Learning Budget",   sub: "Books, courses, conferences your call" },
   { Icon: Laptop,     label: "Home Office Stipend",   sub: "$800 to set up your ideal workspace" },
   { Icon: MapPin,     label: "Team Retreats",         sub: "Annual global offsite, quarterly meetups" },
 ];
@@ -102,7 +102,7 @@ const OPEN_ROLES: Department[] = [
     dept: "Product & Design",
     color: "#B57BF5",
     jobs: [
-      { title: "Senior Product Manager — ERP Core", type: "Full-time", location: "Remote" },
+      { title: "Senior Product Manager ERP Core", type: "Full-time", location: "Remote" },
       { title: "Senior Product Designer",           type: "Full-time", location: "Remote" },
       { title: "UX Researcher",                     type: "Full-time", location: "Remote" },
     ],
@@ -111,7 +111,7 @@ const OPEN_ROLES: Department[] = [
     dept: "Go-to-Market",
     color: "#F5A623",
     jobs: [
-      { title: "Enterprise Account Executive — APAC", type: "Full-time", location: "Singapore / Remote" },
+      { title: "Enterprise Account Executive APAC", type: "Full-time", location: "Singapore / Remote" },
       { title: "Senior Solutions Engineer",           type: "Full-time", location: "Remote" },
       { title: "Head of Content & SEO",               type: "Full-time", location: "Remote" },
       { title: "Sales Development Representative",    type: "Full-time", location: "Remote" },
@@ -136,15 +136,15 @@ const OPEN_ROLES: Department[] = [
 ];
 
 const PROCESS_STEPS = [
-  { num: "01", label: "Apply",       detail: "5 min",    desc: "Submit your application. No cover letter required — we value clarity over formality." },
+  { num: "01", label: "Apply",       detail: "5 min",    desc: "Submit your application. No cover letter required we value clarity over formality." },
   { num: "02", label: "Intro Call",  detail: "30 min",   desc: "A relaxed conversation with our recruiter. We want to understand your story and goals." },
   { num: "03", label: "Assessment",  detail: "3–5 days", desc: "A focused take-home or live exercise relevant to your role. Fair, scoped, and paid." },
-  { num: "04", label: "Team Rounds", detail: "2–3 hrs",  desc: "Meet the people you'd work with. Ask hard questions — we'll do the same." },
+  { num: "04", label: "Team Rounds", detail: "2–3 hrs",  desc: "Meet the people you'd work with. Ask hard questions we'll do the same." },
   { num: "05", label: "Offer",       detail: "48 hrs",   desc: "We move fast. Expect a clear, competitive offer with full transparency on equity." },
 ];
 
 // ─── HERO MOCK ────────────────────────────────────────────────────────────────
-// "Team Pulse" — careers-specific dark panel with live headcount data,
+// "Team Pulse" careers-specific dark panel with live headcount data,
 // 2-column activity feed + culture pillars. No internal HR numbers.
 // Sits directly on the section-b surface (no HeroCanvas wrapper).
 
@@ -235,7 +235,7 @@ function HeroSection() {
             <Heading.Muted>world runs on.</Heading.Muted>
           </Heading>
           <p className="text-[16px] text-bz-text-muted leading-[1.7] max-w-[560px] mb-10">
-            Bizak powers 50,000+ businesses across 120+ countries. Join the team making enterprise software feel effortless — and building the next chapter of global commerce.
+            Bizak powers 50,000+ businesses across 120+ countries. Join the team making enterprise software feel effortless and building the next chapter of global commerce.
           </p>
           <PillGroup>
             <Pill variant="dark" withArrow href="#open-roles">View Open Roles</Pill>
@@ -261,7 +261,7 @@ function ValuesSection() {
               <Heading.Muted>how we work.</Heading.Muted>
             </>
           }
-          description="We don't just ship software — we're building a company that attracts and keeps exceptional people. These aren't posters on a wall; they're the decisions we make every day."
+          description="We don't just ship software we're building a company that attracts and keeps exceptional people. These aren't posters on a wall; they're the decisions we make every day."
         />
         <BentoGrid cols={2}>
           {VALUES.map(({ num, title, body, Icon }) => (
@@ -445,7 +445,7 @@ function HiringProcessSection() {
               <Heading.Muted>no maze.</Heading.Muted>
             </>
           }
-          description="We respect your time. Here's exactly what to expect — from first click to signed offer."
+          description="We respect your time. Here's exactly what to expect from first click to signed offer."
         />
 
         <div className="relative grid grid-cols-1 md:grid-cols-5 gap-y-10">
@@ -492,7 +492,7 @@ function HiringProcessSection() {
               Our commitment to every candidate
             </div>
             <div className="text-[14px] text-bz-text-muted leading-[1.6]">
-              You'll always hear back from us — even if it's a no. We share detailed feedback after every technical stage and won't leave you waiting more than 5 business days.
+              You'll always hear back from us even if it's a no. We share detailed feedback after every technical stage and won't leave you waiting more than 5 business days.
             </div>
           </div>
           <div className="flex gap-6 shrink-0">

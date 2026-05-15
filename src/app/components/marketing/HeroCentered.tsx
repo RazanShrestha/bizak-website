@@ -16,7 +16,7 @@ export interface HeroCenteredProps {
 }
 
 /**
- * Option 1 — Centered hero (HomePage pattern).
+ * Option 1 Centered hero (HomePage pattern).
  *
  * Centered text stack (badge → h1 → description → actions) with an optional
  * full-width `visual` slot rendered below the copy. Use this when the hero's

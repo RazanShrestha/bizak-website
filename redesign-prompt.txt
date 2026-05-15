@@ -1,8 +1,8 @@
 Redesign [TARGET_FILE] to match the design of [REFERENCE_FILE].
 
-Read both files. Identify every structural difference — section layout, component
+Read both files. Identify every structural difference section layout, component
 choices, bento patterns, hero anatomy, typography, spacing, color usage,
-responsiveness — and bring [TARGET_FILE] fully in line with [REFERENCE_FILE].
+responsiveness and bring [TARGET_FILE] fully in line with [REFERENCE_FILE].
 
 Keep the existing content (copy, stats, mock values). Change everything else that
 doesn't match.

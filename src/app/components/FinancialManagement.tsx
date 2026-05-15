@@ -120,7 +120,7 @@ function HeroSection() {
           </PillGroup>
         </div>
 
-        {/* Page-specific mock — editorial dark panel + invoice card ─── */}
+        {/* Page-specific mock editorial dark panel + invoice card ─── */}
         <div className="bz-hero-visual mx-auto grid w-full max-w-[1100px] grid-cols-1 gap-3 sm:grid-cols-5">
           <HeroOlivePanel />
           <HeroStatementCard />
@@ -135,7 +135,7 @@ function HeroOlivePanel() {
     <div className="relative overflow-hidden rounded-bz-2xl bg-bz-olive p-5 sm:col-span-2 sm:min-h-[460px]">
       <DotGrid tone="dark" />
 
-      {/* Editorial flat accent block — no gradient, just an offset shape */}
+      {/* Editorial flat accent block no gradient, just an offset shape */}
       <div
         aria-hidden
         className="pointer-events-none absolute -right-12 -top-12 size-44 rounded-bz-pill bg-bz-olive-soft/40"
@@ -167,7 +167,7 @@ function HeroOlivePanel() {
             </span>
           </div>
 
-          {/* Primary action — pill-dark button */}
+          {/* Primary action pill-dark button */}
           <button
             type="button"
             className="flex items-center justify-center gap-2 rounded-bz-lg bg-bz-deep py-3.5 text-[13.5px] font-medium text-bz-text-on-dark transition-colors hover:bg-bz-olive-dark"
@@ -262,7 +262,7 @@ function HeroStatementCard() {
           ))}
         </div>
 
-        {/* Net income — emphasized total row */}
+        {/* Net income emphasized total row */}
         <div className="mt-1 flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-4 py-3.5">
           <span className="text-[13px] text-bz-text-muted">Net income</span>
           <span className="text-[22px] font-medium tabular-nums text-bz-text">
@@ -477,7 +477,7 @@ function AuditIntegrationBento() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [03] REPORTING — "Click any number, see its source."
+// [03] REPORTING "Click any number, see its source."
 // ════════════════════════════════════════════════════════════════════════════
 
 function ReportingSection() {
@@ -493,7 +493,7 @@ function ReportingSection() {
               <Heading.Muted>see its source.</Heading.Muted>
             </>
           }
-          description="From the income statement down to the originating journal entry — every figure is live, traceable and audit-ready."
+          description="From the income statement down to the originating journal entry every figure is live, traceable and audit-ready."
           titleMaxWidth={780}
         />
 
@@ -698,7 +698,7 @@ function ExportVisual() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [04] CONNECTIVITY — "One ledger. Every module."
+// [04] CONNECTIVITY "One ledger. Every module."
 // ════════════════════════════════════════════════════════════════════════════
 
 const SOURCES_TOP = [

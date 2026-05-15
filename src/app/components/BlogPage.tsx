@@ -274,7 +274,7 @@ function EditorPicksSection() {
             <h3 className="blog-picks-main-title">The end of manual accounting</h3>
             <p className="blog-picks-main-desc">
               Starting today, the race to close is no longer a chase. Meet Bizak's Accounting
-              Agent — built to code and review every dollar of spend.
+              Agent built to code and review every dollar of spend.
             </p>
           </div>
 
@@ -458,7 +458,7 @@ function NewsletterSection() {
         </p>
         {submitted ? (
           <div style={{ color: "#C7FF35", fontWeight: 700, fontSize: 16, letterSpacing: "0.02em" }}>
-            ✓ You're subscribed — thanks for joining!
+            ✓ You're subscribed thanks for joining!
           </div>
         ) : (
           <form className="blog-newsletter-form" onSubmit={handleSubmit}>

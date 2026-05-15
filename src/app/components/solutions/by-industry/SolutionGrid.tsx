@@ -16,7 +16,7 @@ interface SolutionGridProps {
 /**
  * The "solutions" section: white surface, centered headline, 6–7 icon items
  * arranged in a responsive grid. Identical structure across all four "By
- * Industry" pages — the only thing that varied was the data, so this is
+ * Industry" pages the only thing that varied was the data, so this is
  * data-only now.
  */
 export function SolutionGrid({ eyebrow, title, items }: SolutionGridProps) {

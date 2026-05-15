@@ -611,7 +611,7 @@ const moduleTabs = [
      /* icon: svgPaths.p5df3d80,*/
     iconSize: [24, 12],
     title: "Sales & CRM",
-    desc: "Manage your entire revenue cycle from lead to cash — quotes, orders, invoicing, and customer relationships in one place.",
+    desc: "Manage your entire revenue cycle from lead to cash quotes, orders, invoicing, and customer relationships in one place.",
     features: [
       "Lead & Opportunity Management",
       "Quote & Proposal Builder",

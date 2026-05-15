@@ -117,7 +117,7 @@ const PHASES: Phase[] = [
     duration: "Week 2 – 4",
     icon: Workflow,
     summary:
-      "Stand up Bizak to mirror how your business actually runs — chart of accounts, item master, approval flows, branding.",
+      "Stand up Bizak to mirror how your business actually runs chart of accounts, item master, approval flows, branding.",
     tasks: [
       "Multi-entity, multi-branch, and multi-currency setup",
       "Approval matrices, document templates, role permissions",
@@ -131,7 +131,7 @@ const PHASES: Phase[] = [
     duration: "Week 3 – 5",
     icon: Database,
     summary:
-      "Move master data and opening balances using validated templates — every record reconciled against your source system.",
+      "Move master data and opening balances using validated templates every record reconciled against your source system.",
     tasks: [
       "Cleanse master data with our pre-built validation rules",
       "Map and load customers, items, vendors, COA, balances",
@@ -145,7 +145,7 @@ const PHASES: Phase[] = [
     duration: "Week 5 – 7",
     icon: Users,
     summary:
-      "Role-based enablement so each team learns the workflows they'll actually run — measured by certification, not by attendance.",
+      "Role-based enablement so each team learns the workflows they'll actually run measured by certification, not by attendance.",
     tasks: [
       "Curricula tailored to finance, ops, sales, and managers",
       "In-product tasks that double as certification checks",
@@ -258,7 +258,7 @@ const TEMPLATES: Template[] = [
     format: "XLSX · 184 KB",
     title: "Master-data migration workbook",
     description:
-      "Pre-formatted sheets for customers, items, vendors, COA, and opening balances — with validation built in.",
+      "Pre-formatted sheets for customers, items, vendors, COA, and opening balances with validation built in.",
     href: "#",
   },
   {
@@ -282,7 +282,7 @@ const TEMPLATES: Template[] = [
     format: "PDF · 2.4 MB",
     title: "Operator field guide",
     description:
-      "Role-based quick-reference cards for finance, sales, ops, and inventory — print, fold, and hand to new joiners.",
+      "Role-based quick-reference cards for finance, sales, ops, and inventory print, fold, and hand to new joiners.",
     href: "#",
   },
 ];
@@ -294,7 +294,7 @@ function HeroSection() {
     <Section pad="hero" tone="light" className="biz-mesh overflow-hidden">
       <Container className="relative">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-20">
-          {/* Left — text */}
+          {/* Left text */}
           <div className="max-w-[640px]">
             <HeroBadge>Guides &amp; Playbooks</HeroBadge>
             <h1 className="mt-4 text-[clamp(40px,5.2vw,60px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
@@ -308,7 +308,7 @@ function HeroSection() {
             <p className="mt-5 max-w-[560px] text-[17px] leading-[1.7] text-bz-text-muted">
               Implementation runbooks, role-based playbooks, configuration
               templates, and the operator videos our customers use to roll Bizak
-              out — written by the team that ships the product.
+              out written by the team that ships the product.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -332,7 +332,7 @@ function HeroSection() {
             </div>
           </div>
 
-          {/* Right — featured cover */}
+          {/* Right featured cover */}
           <a
             href={FEATURED.href}
             className="group relative mx-auto block w-full max-w-[460px] overflow-hidden rounded-bz-2xl border border-bz-border bg-bz-deep shadow-[0_24px_64px_rgba(15,17,14,0.18)] transition-transform duration-300 hover:-translate-y-1 lg:mx-0"
@@ -402,7 +402,7 @@ function ImplementationSection() {
             eyebrow="The 60-day implementation"
             title={
               <>
-                From kickoff to go-live —{" "}
+                From kickoff to go-live{" "}
                 <span className="text-bz-sage">six phases, one timeline.</span>
               </>
             }
@@ -417,7 +417,7 @@ function ImplementationSection() {
 
         {/* Timeline grid */}
         <div className="relative mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {/* Decorative connector — only on md+ */}
+          {/* Decorative connector only on md+ */}
           <div
             aria-hidden
             className="pointer-events-none absolute inset-x-0 top-[44px] hidden h-px bg-gradient-to-r from-transparent via-bz-border to-transparent lg:block"
@@ -542,7 +542,7 @@ function LibrarySection() {
           <div className="max-w-[620px]">
             <Eyebrow>The library</Eyebrow>
             <h2 className="mt-3 text-[clamp(28px,3.4vw,40px)] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text">
-              Every playbook, guide and template — in one place.
+              Every playbook, guide and template in one place.
             </h2>
             <p className="mt-3 text-[15px] leading-[1.7] text-bz-text-muted">
               Filter by team, format, or what you're trying to ship this
@@ -667,7 +667,7 @@ function LibrarySection() {
               No resources match those filters yet.
             </h3>
             <p className="mt-2 text-[14px] text-bz-text-muted">
-              Reset the filters or tell us what's missing — we publish new
+              Reset the filters or tell us what's missing we publish new
               playbooks every month.
             </p>
           </div>
@@ -750,7 +750,7 @@ function RolePlaybooksSection() {
         <SectionHeading
           eyebrow="Pick your starting point"
           title="Role-based playbooks for the people running Bizak"
-          description="Three deep-dives, each written for a specific operator. Lift the templates, follow the runbook, and ship the outcome in weeks — not quarters."
+          description="Three deep-dives, each written for a specific operator. Lift the templates, follow the runbook, and ship the outcome in weeks not quarters."
           maxWidth={760}
           className="mb-12"
         />

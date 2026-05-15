@@ -50,17 +50,17 @@ const FEATURES = [
   {
     icon: FileText,
     title: "Quote & Proposal",
-    desc: "Generate multi-line quotes and convert them to sales orders in one click — price lists, discounts and approval routing built in.",
+    desc: "Generate multi-line quotes and convert them to sales orders in one click price lists, discounts and approval routing built in.",
   },
   {
     icon: Users,
     title: "Contact 360",
-    desc: "Full customer history — calls, emails, orders and invoices — visible on a single screen without switching tabs.",
+    desc: "Full customer history calls, emails, orders and invoices visible on a single screen without switching tabs.",
   },
   {
     icon: Zap,
     title: "Sales Automation",
-    desc: "Auto-assign leads, schedule follow-up tasks and escalate stale deals on configurable timers — zero manual chasing.",
+    desc: "Auto-assign leads, schedule follow-up tasks and escalate stale deals on configurable timers zero manual chasing.",
   },
   {
     icon: LineChart,
@@ -70,7 +70,7 @@ const FEATURES = [
   {
     icon: TrendingUp,
     title: "Revenue Forecasting",
-    desc: "Probability-weighted pipeline forecasts updated every time a deal moves — committed, best-case and worst-case in one view.",
+    desc: "Probability-weighted pipeline forecasts updated every time a deal moves committed, best-case and worst-case in one view.",
   },
 ] as const;
 
@@ -119,7 +119,7 @@ function HeroSection() {
           </PillGroup>
         </div>
 
-        {/* Page-specific mock — editorial dark panel + pipeline card ─── */}
+        {/* Page-specific mock editorial dark panel + pipeline card ─── */}
         <div className="bz-hero-visual mx-auto grid w-full max-w-[1100px] grid-cols-1 gap-3 sm:grid-cols-5">
           <HeroOlivePanel />
           <HeroPipelineCard />
@@ -260,7 +260,7 @@ function HeroPipelineCard() {
           ))}
         </div>
 
-        {/* Total pipeline — emphasized total row */}
+        {/* Total pipeline emphasized total row */}
         <div className="mt-1 flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-4 py-3.5">
           <span className="text-[13px] text-bz-text-muted">Total pipeline</span>
           <span className="text-[22px] font-medium tabular-nums text-bz-text">
@@ -422,7 +422,7 @@ function QuoteToCashBento() {
         icon={<FileText size={26} strokeWidth={1.4} color="#1F3422" />}
       />
       <Bento.Desc style={{ color: "#1F3422", opacity: 0.78 }}>
-        Quote, order, invoice and revenue posting — all in one unbroken flow.
+        Quote, order, invoice and revenue posting all in one unbroken flow.
       </Bento.Desc>
       <Bento.Footer className="bg-[rgba(31,52,34,0.08)] flex flex-col gap-2.5">
         {bars.map((b) => (
@@ -474,7 +474,7 @@ function CrmIntegrationBento() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [03] REPORTING — "Click any deal, see its full history."
+// [03] REPORTING "Click any deal, see its full history."
 // ════════════════════════════════════════════════════════════════════════════
 
 function ReportingSection() {
@@ -490,7 +490,7 @@ function ReportingSection() {
               <Heading.Muted>see its full history.</Heading.Muted>
             </>
           }
-          description="From the pipeline total down to every email, quote and journal entry — every figure is live, traceable and audit-ready."
+          description="From the pipeline total down to every email, quote and journal entry every figure is live, traceable and audit-ready."
           titleMaxWidth={780}
         />
 
@@ -512,7 +512,7 @@ function ReportingSection() {
           />
           <ReportingCell
             title="Export the way sales ops wants it"
-            body="Pipeline, forecast and activity reports in PDF, Excel or CSV — ready for board packs."
+            body="Pipeline, forecast and activity reports in PDF, Excel or CSV ready for board packs."
             visual={<ExportVisual />}
           />
         </BentoGrid>
@@ -695,7 +695,7 @@ function ExportVisual() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [04] CONNECTIVITY — "One CRM. Every module."
+// [04] CONNECTIVITY "One CRM. Every module."
 // ════════════════════════════════════════════════════════════════════════════
 
 const SOURCES_TOP = [
@@ -732,7 +732,7 @@ function ConnectivitySection() {
               <Heading.Muted>Every module.</Heading.Muted>
             </>
           }
-          description="Every deal in Bizak flows to the General Ledger in real time — no re-keying, no blind spots."
+          description="Every deal in Bizak flows to the General Ledger in real time no re-keying, no blind spots."
           titleMaxWidth={760}
         />
         <div className="pb-8"></div>

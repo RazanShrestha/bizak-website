@@ -347,7 +347,7 @@ function BottomCTA() {
 //         </p>
 //         {submitted ? (
 //           <div style={{ color: "#C7FF35", fontWeight: 700, fontSize: 16, letterSpacing: "0.02em" }}>
-//             ✓ You're subscribed — thanks for joining!
+//             ✓ You're subscribed thanks for joining!
 //           </div>
 //         ) : (
 //           <form className="blog-newsletter-form" onSubmit={handleSubmit}>

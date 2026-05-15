@@ -100,7 +100,7 @@ const VALUE_PROPS: { icon: typeof Radio; title: string; body: string }[] = [
     icon: Radio,
     title: "A live walk-through",
     body:
-      "Real product, real numbers — we run the workflow on screen, not slideware.",
+      "Real product, real numbers we run the workflow on screen, not slideware.",
   },
   {
     icon: Mic,
@@ -112,7 +112,7 @@ const VALUE_PROPS: { icon: typeof Radio; title: string; body: string }[] = [
     icon: PlayCircle,
     title: "Replay the next morning",
     body:
-      "Captioned, chapter-marked, sent to your inbox — even if you can't make it live.",
+      "Captioned, chapter-marked, sent to your inbox even if you can't make it live.",
   },
 ];
 
@@ -181,7 +181,7 @@ function HeroSection({ event }: { event: Event }) {
         </nav>
 
         <div className="mt-8 grid grid-cols-1 items-start gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
-          {/* Left — title block */}
+          {/* Left title block */}
           <div className="max-w-[680px]">
             <div className="flex flex-wrap items-center gap-2">
               <PillBadge tone={isInPerson ? "accent" : "live"} dot>
@@ -197,12 +197,12 @@ function HeroSection({ event }: { event: Event }) {
             <h1 className="mt-6 text-[clamp(34px,4.6vw,52px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
               {isInPerson ? (
                 <>
-                  Request your invite —{" "}
+                  Request your invite{" "}
                   <span className="text-bz-sage">{event.title}</span>.
                 </>
               ) : (
                 <>
-                  Save your seat —{" "}
+                  Save your seat{" "}
                   <span className="text-bz-sage">{event.title}</span>.
                 </>
               )}
@@ -254,7 +254,7 @@ function HeroSection({ event }: { event: Event }) {
             </div>
           </div>
 
-          {/* Right — date / speakers card */}
+          {/* Right date / speakers card */}
           <aside className="relative mx-auto w-full max-w-[460px] overflow-hidden rounded-bz-2xl border border-bz-border bg-bz-deep shadow-[0_24px_64px_rgba(15,17,14,0.18)] lg:mx-0">
             <div className="relative p-7 md:p-8">
               <div className="flex items-center justify-between gap-3">
@@ -457,7 +457,7 @@ function RegistrationSection({ event }: { event: Event }) {
                   id="question"
                   value={form.question}
                   onChange={(e) => update("question", e.target.value)}
-                  placeholder="e.g. We close in 9 days — what would your team do first?"
+                  placeholder="e.g. We close in 9 days what would your team do first?"
                   rows={4}
                   className="rounded-bz-md border border-bz-border bg-bz-surface px-3.5 py-3 text-[14px] text-bz-text placeholder:text-bz-text-soft focus:border-bz-sage-mid focus:outline-none focus:ring-2 focus:ring-bz-sage/20"
                 />
@@ -479,7 +479,7 @@ function RegistrationSection({ event }: { event: Event }) {
                   Send me a reminder
                 </span>{" "}
                 <span className="text-bz-text-muted">
-                  — one nudge 24 hours before, one 15 minutes before.
+                  one nudge 24 hours before, one 15 minutes before.
                 </span>
               </CheckboxRow>
               <CheckboxRow
@@ -492,7 +492,7 @@ function RegistrationSection({ event }: { event: Event }) {
                   I agree to receive event communications
                 </span>{" "}
                 <span className="text-bz-text-muted">
-                  — calendar invite, join link, and the replay. Unsubscribe in one click.
+                  calendar invite, join link, and the replay. Unsubscribe in one click.
                 </span>
               </CheckboxRow>
             </div>
@@ -588,7 +588,7 @@ function ConfirmationSection({
               />
               <NextStepCard
                 icon={PlayCircle}
-                title="While you wait — replays"
+                title="While you wait replays"
                 body="Browse the on-demand library for related sessions on the same track."
                 cta="Browse on-demand"
                 href="/WebinarsAndEvents#on-demand"

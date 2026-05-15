@@ -13,7 +13,7 @@ import { StatusChip } from "./StatusChip";
 //     eyebrow="Cash position"
 //     value="$1,242,180"
 //   >
-//     {/* optional bottom panel — DataRow, MiniBars, etc. */}
+//     {/* optional bottom panel DataRow, MiniBars, etc. */}
 //   </HeroCard>
 //
 // Paint: .bz-hero-card in style.css.
@@ -23,13 +23,13 @@ export type HeroCardProps = {
   title: React.ReactNode;
   /** Badge string shown in the top-right (e.g. "Live", "Posted"). */
   badge?: string;
-  /** Badge variant — defaults to "live" (pistachio). */
+  /** Badge variant defaults to "live" (pistachio). */
   badgeVariant?: "live" | "posted" | "neutral";
   /** Eyebrow label above the big value. */
   eyebrow?: React.ReactNode;
-  /** Big number — the headline KPI. */
+  /** Big number the headline KPI. */
   value: React.ReactNode;
-  /** Optional bottom panel — typically a viz / mini-stats row. */
+  /** Optional bottom panel typically a viz / mini-stats row. */
   children?: React.ReactNode;
   className?: string;
 } & Omit<React.HTMLAttributes<HTMLDivElement>, "children" | "title">;

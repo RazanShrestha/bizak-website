@@ -5,7 +5,7 @@ import { cn } from "../ui/utils";
 //   <BadgeGreen>Now Live, Globally 🎉</BadgeGreen>
 //
 // Paint: .bz-badge-green in style.css.
-// Use ONLY in the hero badge slot — non-hero contexts use <StatusChip>.
+// Use ONLY in the hero badge slot non-hero contexts use <StatusChip>.
 
 export type BadgeGreenProps = {
   className?: string;

@@ -35,7 +35,7 @@ const TRUST_FEATURES = [
   {
     icon: Lock,
     title: "Role-based access",
-    desc: "Finance reports stay with Finance. HR contracts stay with HR. Every file is scoped to the roles that need it — no over-sharing, no accidental exposure.",
+    desc: "Finance reports stay with Finance. HR contracts stay with HR. Every file is scoped to the roles that need it no over-sharing, no accidental exposure.",
   },
   {
     icon: ShieldCheck,
@@ -45,7 +45,7 @@ const TRUST_FEATURES = [
   {
     icon: Clock,
     title: "Version history",
-    desc: "Every revision of every document is retained. See who changed what and when — and roll back to any earlier version in one click.",
+    desc: "Every revision of every document is retained. See who changed what and when and roll back to any earlier version in one click.",
   },
 ];
 
@@ -238,7 +238,7 @@ function DocumentWorkflowSection() {
         <SectionHead
           index="01"
           label="How it works"
-          title={<>Upload, attach, and retrieve —{" "}<Heading.Muted>three steps to go paperless.</Heading.Muted></>}
+          title={<>Upload, attach, and retrieve{" "}<Heading.Muted>three steps to go paperless.</Heading.Muted></>}
           titleMaxWidth={640}
         />
         <div className="flex flex-col gap-5">
@@ -247,7 +247,7 @@ function DocumentWorkflowSection() {
             tag="Upload"
             title="Drop any file type into Bizak"
             bullets={[
-              "PDFs, spreadsheets, images, videos, archives — all supported.",
+              "PDFs, spreadsheets, images, videos, archives all supported.",
               "Drag and drop from your desktop, or upload from any device.",
             ]}
             visual={<UploadVisual />}
@@ -268,7 +268,7 @@ function DocumentWorkflowSection() {
             title="Find any file in seconds, from anywhere"
             bullets={[
               "Search by file name, type, linked record, or uploader.",
-              "Open any record and every attachment is right there — no folder hunting.",
+              "Open any record and every attachment is right there no folder hunting.",
             ]}
             visual={<RetrieveVisual />}
           />
@@ -308,9 +308,9 @@ function RecordContextSection() {
         <BigCard
           text={{
             title: "Files that follow every record.",
-            body: "Every module in Bizak carries its own document panel. Open a purchase order, a customer profile, an employee record, or a fixed asset — and every related file is right there, in context.",
+            body: "Every module in Bizak carries its own document panel. Open a purchase order, a customer profile, an employee record, or a fixed asset and every related file is right there, in context.",
             bullets: [
-              "Attach files during record creation — no separate upload step",
+              "Attach files during record creation no separate upload step",
               "Files travel with the record through every status change",
               "Every attachment auto-links to the originating transaction",
             ],

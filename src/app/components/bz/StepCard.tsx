@@ -18,9 +18,9 @@ import { Pill, type PillProps } from "./Pill";
 // Paint: .bz-step-card + .bz-step-pad + .bz-step-visual in style.css.
 
 export type StepCardProps = {
-  /** Bracketed step number — e.g. "01". */
+  /** Bracketed step number e.g. "01". */
   number: string;
-  /** Short tag — e.g. "Set up", "Connect", "Scale". */
+  /** Short tag e.g. "Set up", "Connect", "Scale". */
   tag: string;
   title: React.ReactNode;
   bullets?: string[];

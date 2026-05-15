@@ -79,7 +79,7 @@ const FEATURED = {
   date: "Apr 18, 2026",
   tag: "Cover Story",
   title:
-    "Bizak is rewriting the playbook for mid-market ERP — and operators are noticing.",
+    "Bizak is rewriting the playbook for mid-market ERP and operators are noticing.",
   href: "#",
   image:
     "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80",
@@ -97,7 +97,7 @@ const MEDIA: MediaItem[] = [
     title:
       "Bizak crosses 50,000 customers, signals next push into manufacturing AI.",
     excerpt:
-      "The Singapore-headquartered ERP platform is doubling down on what it calls 'operator intelligence' — and the numbers say it's working.",
+      "The Singapore-headquartered ERP platform is doubling down on what it calls 'operator intelligence' and the numbers say it's working.",
     tag: "Product",
     image:
       "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80",
@@ -110,7 +110,7 @@ const MEDIA: MediaItem[] = [
     title:
       "How a quiet ERP challenger is winning the back-office war one factory at a time.",
     excerpt:
-      "An on-the-ground look at three mid-market manufacturers who replaced legacy ERPs in under 90 days — and what changed for their operators.",
+      "An on-the-ground look at three mid-market manufacturers who replaced legacy ERPs in under 90 days and what changed for their operators.",
     tag: "Business",
   },
   {
@@ -132,7 +132,7 @@ const MEDIA: MediaItem[] = [
     title:
       "Mid-market manufacturers are quietly migrating off legacy ERPs.",
     excerpt:
-      "Where they're going — and why the transition is happening faster than most analysts predicted.",
+      "Where they're going and why the transition is happening faster than most analysts predicted.",
     tag: "Industry",
   },
 
@@ -144,7 +144,7 @@ const MEDIA: MediaItem[] = [
     title:
       "Bizak introduces unified Production Intelligence across the manufacturing suite",
     excerpt:
-      "Real-time OEE, downtime root-cause, and yield forecasts now ship as a default capability for every manufacturing customer — at no additional cost.",
+      "Real-time OEE, downtime root-cause, and yield forecasts now ship as a default capability for every manufacturing customer at no additional cost.",
     tag: "Product",
   },
   {
@@ -177,7 +177,7 @@ const MEDIA: MediaItem[] = [
     author: "Maya Hernandez",
     handle: "@mayaresearch",
     quote:
-      "Bizak is the rare ERP that mid-market operators describe with the language usually reserved for consumer software — clear, fast, almost suspiciously easy to learn.",
+      "Bizak is the rare ERP that mid-market operators describe with the language usually reserved for consumer software clear, fast, almost suspiciously easy to learn.",
     hearts: "12.4K",
     reposts: "3.1K",
     verified: true,
@@ -190,7 +190,7 @@ const MEDIA: MediaItem[] = [
     author: "David Richardson",
     handle: "Founder & CEO at Bizak",
     quote:
-      "Five years ago we said the back office deserved better than spreadsheets stitched to legacy ERPs. 50,000 customers later, we're just getting started — thank you to every operator who took a chance on us.",
+      "Five years ago we said the back office deserved better than spreadsheets stitched to legacy ERPs. 50,000 customers later, we're just getting started thank you to every operator who took a chance on us.",
     hearts: "28.6K",
     reposts: "1.9K",
     verified: true,
@@ -203,7 +203,7 @@ const MEDIA: MediaItem[] = [
     author: "Riverside Foods",
     handle: "@riversidefoods",
     quote:
-      "We just closed our books in 36 hours. For context: this used to take 11 days. Whatever @bizakerp is doing — keep doing it.",
+      "We just closed our books in 36 hours. For context: this used to take 11 days. Whatever @bizakerp is doing keep doing it.",
     hearts: "8.2K",
     reposts: "1.7K",
   },
@@ -215,7 +215,7 @@ const MEDIA: MediaItem[] = [
     href: "#",
     outlet: "Bloomberg TV",
     title:
-      "How Bizak is rewiring the back office for the AI era — a conversation with the founders.",
+      "How Bizak is rewiring the back office for the AI era a conversation with the founders.",
     duration: "24:18",
     thumbnail:
       "https://images.unsplash.com/photo-1573164574572-cb89e39749b4?auto=format&fit=crop&w=900&q=80",
@@ -226,7 +226,7 @@ const MEDIA: MediaItem[] = [
     href: "#",
     outlet: "The a16z Podcast",
     title:
-      "The unsexy software powering modern manufacturers — with David Richardson.",
+      "The unsexy software powering modern manufacturers with David Richardson.",
     duration: "48:04",
     thumbnail:
       "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=900&q=80",
@@ -290,7 +290,7 @@ function FeaturedCover() {
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
 
-        {/* Top overlay — outlet + tag */}
+        {/* Top overlay outlet + tag */}
         <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5">
           <span className="rounded-bz-pill bg-white/95 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-bz-text">
             {FEATURED.outlet}
@@ -338,7 +338,7 @@ function HeroSection() {
           .
         </>
       }
-      description="Press coverage, official announcements, and the moments people are sharing about Bizak — curated in one feed for journalists, analysts, and partners."
+      description="Press coverage, official announcements, and the moments people are sharing about Bizak curated in one feed for journalists, analysts, and partners."
       actions={
         <>
           <Button variant="primary" size="md" href="#feed" withArrow>
@@ -591,7 +591,7 @@ function FeedSection() {
           <SectionHeading
             eyebrow="The newsroom"
             title="What people are saying about Bizak."
-            description="Press coverage, official releases, viral moments, and on-camera conversations — all in one chronological wall."
+            description="Press coverage, official releases, viral moments, and on-camera conversations all in one chronological wall."
             maxWidth={560}
           />
 
@@ -659,7 +659,7 @@ function PressContactSection() {
         <SectionHeading
           eyebrow="Press contact"
           title="Working on a story? We'll help."
-          description="Editorial inquiries, fact-checks, and analyst briefings — answered within one business day. Mark deadlines urgent and we'll move accordingly."
+          description="Editorial inquiries, fact-checks, and analyst briefings answered within one business day. Mark deadlines urgent and we'll move accordingly."
           tone="light"
           align="center"
           maxWidth={520}

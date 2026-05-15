@@ -42,7 +42,7 @@ const TOOLS = [
   {
     Icon: Banknote,
     title: "Commission ledger",
-    body: "Real-time view of accruals, holds, paid, and pending — by deal, by quarter, by tier.",
+    body: "Real-time view of accruals, holds, paid, and pending by deal, by quarter, by tier.",
   },
   {
     Icon: FileBadge2,
@@ -132,7 +132,7 @@ function HeroSection() {
           <span className="text-bz-accent">from one console.</span>
         </>
       }
-      description="Training, sales tools, deal registration, MDF requests, and live commission ledger — every program tool in one console. Your team, your pipeline, your earnings, in real time."
+      description="Training, sales tools, deal registration, MDF requests, and live commission ledger every program tool in one console. Your team, your pipeline, your earnings, in real time."
       actions={
         <>
           <Button variant="accent" size="lg" href="https://portal.bizakerp.com" withArrow>
@@ -160,7 +160,7 @@ function ToolsSection() {
         <SectionHeading
           eyebrow="What's inside"
           title="Six tools that move the needle."
-          description="The portal is the one place we send our regional teams to look up partner state, approve deals, and run enablement. It's the tool we use ourselves — that's why every screen has a job."
+          description="The portal is the one place we send our regional teams to look up partner state, approve deals, and run enablement. It's the tool we use ourselves that's why every screen has a job."
           maxWidth={680}
           className="mb-14"
         />
@@ -189,15 +189,15 @@ function SecuritySection() {
           <SectionHeading
             eyebrow="Identity & access"
             title={<>Your team. Your access. <span className="text-bz-sage">Audited end-to-end.</span></>}
-            description="The portal supports SSO, scoped roles, and per-deal access controls. Every action — registration, MDF claim, certification — is timestamped and audit-tracked, the same as inside Bizak ERP."
+            description="The portal supports SSO, scoped roles, and per-deal access controls. Every action registration, MDF claim, certification is timestamped and audit-tracked, the same as inside Bizak ERP."
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               { Icon: ShieldCheck, t: "SAML / OIDC SSO",        d: "Okta · Azure AD · Google Workspace · Generic SAML" },
-              { Icon: KeyRound,    t: "Role-based access",      d: "Sales · Architects · Finance · Admins — separate permissions" },
+              { Icon: KeyRound,    t: "Role-based access",      d: "Sales · Architects · Finance · Admins separate permissions" },
               { Icon: ListChecks,  t: "Per-deal sharing",       d: "Invite a teammate to one deal without giving full access" },
-              { Icon: CalendarClock, t: "Session & device log", d: "Every login, every device, every export — visible to admins" },
+              { Icon: CalendarClock, t: "Session & device log", d: "Every login, every device, every export visible to admins" },
             ].map(({ Icon, t, d }, i) => (
               <Card key={t} tone={i % 2 === 0 ? "soft" : "light"} pad="md" hover="lift">
                 <IconBadge tone="sage" size="sm" className="mb-4">

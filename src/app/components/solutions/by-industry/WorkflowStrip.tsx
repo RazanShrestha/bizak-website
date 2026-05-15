@@ -14,7 +14,7 @@ interface WorkflowStripProps {
 
 /**
  * The dashed-line + step-circles workflow ribbon. Identical structure
- * across all four "By Industry" pages — only the steps differ.
+ * across all four "By Industry" pages only the steps differ.
  */
 export function WorkflowStrip({ eyebrow, title, steps }: WorkflowStripProps) {
   return (

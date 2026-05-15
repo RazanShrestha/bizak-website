@@ -11,10 +11,10 @@ import {
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
 const CAPABILITIES = [
-  { Icon: MapPin,     title: "Field Visit Tracking",  desc: "GPS-stamped visits and meeting logs flow straight into the customer record — no end-of-day report writing." },
+  { Icon: MapPin,     title: "Field Visit Tracking",  desc: "GPS-stamped visits and meeting logs flow straight into the customer record no end-of-day report writing." },
   { Icon: Route,      title: "Beat & Route Planning", desc: "Daily beat plans optimized for travel time so reps spend the day selling, not driving." },
   { Icon: ShoppingBag,title: "On-Spot Order Booking", desc: "Capture orders at the counter and reserve inventory the moment they're booked." },
-  { Icon: UserCheck,  title: "Geofenced Attendance",  desc: "Check-ins verified against the actual outlet location — proxy attendance is structurally impossible." },
+  { Icon: UserCheck,  title: "Geofenced Attendance",  desc: "Check-ins verified against the actual outlet location proxy attendance is structurally impossible." },
   { Icon: Map,        title: "Territory Management",  desc: "Visual territory mapping balances workload across reps and exposes coverage gaps before they cost you." },
   { Icon: Smartphone, title: "Offline-First Mobile",  desc: "Reps keep working through dead zones; the app delta-syncs the moment a signal returns." },
 ];
@@ -44,8 +44,8 @@ function HeroDashboard() {
 
   const feed = [
     { tag: "ORDER",   text: "₹84,200 booked at Plaza Hub",   time: "2m" },
-    { tag: "VISIT",   text: "Check-in — Sector 14 Outlet",   time: "5m" },
-    { tag: "ROUTE",   text: "Re-route applied — traffic",    time: "9m" },
+    { tag: "VISIT",   text: "Check-in Sector 14 Outlet",   time: "5m" },
+    { tag: "ROUTE",   text: "Re-route applied traffic",    time: "9m" },
     { tag: "VISIT",   text: "Meeting closed at Greenfield",  time: "12m" },
   ];
 
@@ -133,7 +133,7 @@ function FlowStripSection() {
       <Container>
         <SectionHeading
           eyebrow="Field-to-Ledger Flow"
-          title="From beat plan to general ledger — one continuous thread"
+          title="From beat plan to general ledger one continuous thread"
           description="Every field action posts to the same database the rest of your business runs on. No CSVs, no nightly batch, no reconciliation."
           align="center"
           maxWidth={680}
@@ -215,7 +215,7 @@ function TechShowcaseSection() {
               <Workflow className="size-5 text-bz-accent mb-6" />
               <h3 className="text-[22px] font-bold text-white mb-3">Route Optimization</h3>
               <p className="text-[13px] text-white/40 leading-[1.65] mb-8">
-                Dynamic re-routing reacts to live traffic and urgent client requests — the rep just gets the next stop.
+                Dynamic re-routing reacts to live traffic and urgent client requests the rep just gets the next stop.
               </p>
             </div>
             <div className="flex flex-col gap-2.5">
@@ -270,7 +270,7 @@ function TechShowcaseSection() {
             </div>
             <h3 className="text-[22px] font-bold text-white mb-3">Offline-first Mobile Sync</h3>
             <p className="text-[13px] text-white/40 leading-[1.65] mb-8">
-              Encrypted local storage with delta-sync the moment connectivity returns — nothing captured in the field is ever lost.
+              Encrypted local storage with delta-sync the moment connectivity returns nothing captured in the field is ever lost.
             </p>
             <div>
               <div className="flex justify-between pb-2 border-b border-white/[0.05] text-[9px] font-bold text-white/40 uppercase">
@@ -374,7 +374,7 @@ function ConnectivitySection() {
             </div>
             <h4 className="text-[20px] font-bold text-white mb-3">Sales CRM</h4>
             <p className="text-[13px] text-white/50 leading-[1.65] mb-7">
-              Every visit, order and check-in updates the CRM in real time — no manual sync, no lost touches.
+              Every visit, order and check-in updates the CRM in real time no manual sync, no lost touches.
             </p>
             <div className="flex justify-between items-center px-4 py-2 bg-black/30 rounded-bz-lg border border-white/[0.05]">
               <span className="text-[9px] font-bold text-white/50 uppercase">CRM SYNC</span>
@@ -420,7 +420,7 @@ export function SalesForceManagementPage() {
       <HeroCentered
         badge={<HeroBadge>Field Execution Platform</HeroBadge>}
         title={<>Empower your field sales team<br />to perform at scale</>}
-        description="Track field activity, plan beats, capture orders and post to the ledger in real time — one system from rep's pocket to GL."
+        description="Track field activity, plan beats, capture orders and post to the ledger in real time one system from rep's pocket to GL."
         actions={
           <>
             <Button variant="accent" size="lg" href="/contact" withArrow>Start Free Trial</Button>
@@ -476,7 +476,7 @@ export function SalesForceManagementPage() {
         <Container width="narrow">
           <SectionHeading
             title={<>Take full control of your<br /><span className="text-bz-accent">sales force management</span></>}
-            description="Join 50,000+ companies running their field operations on Bizak. From beat plan to ledger entry — all in one system."
+            description="Join 50,000+ companies running their field operations on Bizak. From beat plan to ledger entry all in one system."
             tone="light"
             align="center"
             maxWidth={580}

@@ -46,8 +46,8 @@ const LIVE_FEED = [
 
 const CORE_FEATURES = [
   { icon: Warehouse,   title: "Multi-warehouse",       desc: "Zones, racks and bin-level addresses across every site, in one view." },
-  { icon: ScanBarcode, title: "Lot, serial & barcode", desc: "Trace every unit by lot, serial or batch — receipt to dispatch." },
-  { icon: RefreshCw,   title: "Smart replenishment",   desc: "Reorder points with auto-PO routing — stockouts caught before they hit." },
+  { icon: ScanBarcode, title: "Lot, serial & barcode", desc: "Trace every unit by lot, serial or batch receipt to dispatch." },
+  { icon: RefreshCw,   title: "Smart replenishment",   desc: "Reorder points with auto-PO routing stockouts caught before they hit." },
 ];
 
 const VALUATION_METHODS = ["FIFO", "LIFO", "Weighted average"];
@@ -112,10 +112,10 @@ function WarehouseFlowPanel() {
         <p className="text-[13px] font-semibold tabular-nums text-bz-text">6,358 units on-hand</p>
       </div>
 
-      {/* Body — stacks on mobile, side-by-side on sm+ */}
+      {/* Body stacks on mobile, side-by-side on sm+ */}
       <div className="grid flex-1 grid-cols-1 divide-y divide-bz-line-soft sm:grid-cols-[3fr_2fr] sm:divide-x sm:divide-y-0">
 
-        {/* Left — location hierarchy tree */}
+        {/* Left location hierarchy tree */}
         <div className="p-5">
           <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
             Location hierarchy
@@ -165,7 +165,7 @@ function WarehouseFlowPanel() {
           </div>
         </div>
 
-        {/* Right — selected location detail */}
+        {/* Right selected location detail */}
         <div className="p-5">
           <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">
             Selected location
@@ -194,7 +194,7 @@ function WarehouseFlowPanel() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [01] LIVE FLOOR — the bespoke "where every unit is" panel
+// [01] LIVE FLOOR the bespoke "where every unit is" panel
 // ════════════════════════════════════════════════════════════════════════════
 
 function LiveFloorSection() {
@@ -340,7 +340,7 @@ function FlowSection() {
             tag="Store"
             title="Live bin map, smart put-away"
             bullets={[
-              "Zone, rack and bin addresses — system suggests the best slot.",
+              "Zone, rack and bin addresses system suggests the best slot.",
             ]}
             visual={<StoreVisual />}
           />
@@ -349,7 +349,7 @@ function FlowSection() {
             tag="Ship"
             title="Pick, pack and post COGS automatically"
             bullets={[
-              "Allocate against the open sales order — FIFO, LIFO or weighted average.",
+              "Allocate against the open sales order FIFO, LIFO or weighted average.",
             ]}
             visual={<ShipVisual />}
           />
@@ -379,7 +379,7 @@ function ReceiveVisual() {
 }
 
 function StoreVisual() {
-  // Compact bin grid — one suggested slot (fire), occupied (olive), free (paper).
+  // Compact bin grid one suggested slot (fire), occupied (olive), free (paper).
   const tiles: ("occupied" | "suggested" | "free")[] = [
     "occupied", "occupied", "free",      "occupied", "free",       "free",
     "free",     "occupied", "suggested", "free",     "occupied",   "free",
@@ -455,7 +455,7 @@ function CountsSection() {
         <BigCard
           text={{
             title: "One cycle-count log. Every unit, every method.",
-            // body: "Blind, visible or location-cycle counts feed straight into the ledger — with valuation in FIFO, LIFO or weighted average, picked per warehouse.",
+            // body: "Blind, visible or location-cycle counts feed straight into the ledger with valuation in FIFO, LIFO or weighted average, picked per warehouse.",
             bullets: [
               "Lot, serial and batch trace, end to end",
               "Variance reconciliation, fully audited",

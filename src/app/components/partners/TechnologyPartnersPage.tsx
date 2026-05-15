@@ -37,7 +37,7 @@ const INTEGRATION_PATHS = [
   {
     tag: "Native app",
     title: "Build in our marketplace",
-    body: "Ship as a native Bizak app — installed inside the customer's tenant, billed through Bizak, listed in the marketplace.",
+    body: "Ship as a native Bizak app installed inside the customer's tenant, billed through Bizak, listed in the marketplace.",
     pillTone: "accent" as const,
   },
   {
@@ -118,7 +118,7 @@ function HeroSection() {
           <span className="text-bz-sage">Bizak APIs.</span>
         </>
       }
-      description="An open, REST-first ERP platform. Native marketplace apps, embedded integrations, headless data access — all on the same OAuth 2 surface, semver-stable SDKs, and audit-by-default writes."
+      description="An open, REST-first ERP platform. Native marketplace apps, embedded integrations, headless data access all on the same OAuth 2 surface, semver-stable SDKs, and audit-by-default writes."
       actions={
         <>
           <Button variant="primary" size="lg" href="/documentation" withArrow>
@@ -147,7 +147,7 @@ function ApiSurfaceSection() {
         <SectionHeading
           eyebrow="Developer surface"
           title="Modern primitives, all the way down."
-          description="Every page, button, and form in Bizak is built on the same API your integration calls. There is no 'partner edition' or rate-throttled sandbox — you're on the production surface from day one."
+          description="Every page, button, and form in Bizak is built on the same API your integration calls. There is no 'partner edition' or rate-throttled sandbox you're on the production surface from day one."
           maxWidth={680}
           className="mb-14"
         />
@@ -206,7 +206,7 @@ function MarketplaceSection() {
               eyebrow="Marketplace"
               eyebrowTone="accent"
               title="Distribution built into the platform."
-              description="When you ship in our marketplace, every Bizak customer can install your app from inside their tenant. We handle billing, OAuth scopes, and lifecycle — you focus on the product."
+              description="When you ship in our marketplace, every Bizak customer can install your app from inside their tenant. We handle billing, OAuth scopes, and lifecycle you focus on the product."
               tone="light"
               maxWidth={500}
             />

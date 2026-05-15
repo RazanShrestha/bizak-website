@@ -33,7 +33,7 @@ const SUPPORT_PILLARS = [
   {
     Icon: MapIcon,
     title: "Protected territories",
-    body: "Defined geographic and segment scope. Lead routing favors the local reseller — co-sell on the rest.",
+    body: "Defined geographic and segment scope. Lead routing favors the local reseller co-sell on the rest.",
   },
   {
     Icon: Megaphone,
@@ -43,7 +43,7 @@ const SUPPORT_PILLARS = [
   {
     Icon: Wallet,
     title: "Recurring commissions",
-    body: "Earn on the initial booking and every renewal. Margin compounds — your year-3 book is materially larger than year 1.",
+    body: "Earn on the initial booking and every renewal. Margin compounds your year-3 book is materially larger than year 1.",
   },
   {
     Icon: ShieldCheck,
@@ -152,7 +152,7 @@ function FitSection() {
           <SectionHeading
             eyebrow="Who this is for"
             title={<>The reseller program is built for firms that already <span className="text-bz-sage">own a market.</span></>}
-            description="If you're carrying a portfolio today, we slot in alongside it — Bizak is the modern platform you offer customers who've outgrown spreadsheets or are shopping for an upgrade."
+            description="If you're carrying a portfolio today, we slot in alongside it Bizak is the modern platform you offer customers who've outgrown spreadsheets or are shopping for an upgrade."
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -180,7 +180,7 @@ function SupportSection() {
         <SectionHeading
           eyebrow="What you get"
           title="A channel program with the engine running."
-          description="Not a slide deck and a discount code — the operating system for running a real channel practice."
+          description="Not a slide deck and a discount code the operating system for running a real channel practice."
           maxWidth={680}
           className="mb-14"
         />

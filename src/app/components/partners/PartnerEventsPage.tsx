@@ -109,7 +109,7 @@ function HeroSection() {
               <span className="text-bz-sage">and field-days.</span>
             </h1>
             <p className="mt-7 text-[17px] leading-[1.7] text-bz-text-muted max-w-[560px]">
-              The full calendar of in-person and virtual events — certifications, regional architect days, customer-facing webinars you can co-host, and BizakConnect, our flagship summit.
+              The full calendar of in-person and virtual events certifications, regional architect days, customer-facing webinars you can co-host, and BizakConnect, our flagship summit.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Button variant="primary" size="lg" href="#calendar" withArrow>
@@ -236,7 +236,7 @@ function CalendarSection() {
           {filtered.length === 0 && (
             <div className="rounded-bz-xl border border-dashed border-bz-border p-10 text-center">
               <p className="text-[14px] text-bz-text-muted">
-                No events match those filters yet — try widening, or check the
+                No events match those filters yet try widening, or check the
                 <a className="text-bz-sage font-bold underline ml-1" href="/partners/portal">replay archive</a>.
               </p>
             </div>
@@ -323,7 +323,7 @@ function ClosingCta() {
       <Container width="narrow">
         <SectionHeading
           title={<>See you at BizakConnect.</>}
-          description="Three days, one room, the whole network. Save the date — registration opens in May."
+          description="Three days, one room, the whole network. Save the date registration opens in May."
           tone="light"
           align="center"
           maxWidth={620}

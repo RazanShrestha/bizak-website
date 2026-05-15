@@ -17,7 +17,7 @@ export type MarqueeProps = {
   /** Stop animation on hover. Default true. */
   pauseOnHover?: boolean;
   className?: string;
-  /** The items to scroll — pass one set; they'll be duplicated. */
+  /** The items to scroll pass one set; they'll be duplicated. */
   children: React.ReactNode;
 } & Omit<React.HTMLAttributes<HTMLDivElement>, "children">;
 

@@ -7,27 +7,27 @@ description: Migrate a legacy Bizak marketing page to the new design system (pap
 
 This skill is the canonical workflow for converting a marketing page to
 the project's current design system. Three reference docs anchor the
-work — load them before you start (or recall them if already loaded this
+work load them before you start (or recall them if already loaded this
 session):
 
 | Doc | Why you need it |
 |---|---|
-| **`docs/BIZAK_PRODUCT_OVERVIEW.md`** | **What Bizak is** — modules, audience, product narratives, brand voice, canonical statistics, section conventions. Read first so copy + structure reinforce the rest of the site. |
+| **`docs/BIZAK_PRODUCT_OVERVIEW.md`** | **What Bizak is** modules, audience, product narratives, brand voice, canonical statistics, section conventions. Read first so copy + structure reinforce the rest of the site. |
 | **`/CLAUDE.md`** | Hard rules + page-design checklist + the migration plan (always loaded). |
-| **`/docs/DESIGN_SYSTEM.md`** | Long-form design reference — tokens, primitive APIs, hero pattern, closing-CTA-via-Footer convention. |
+| **`/docs/DESIGN_SYSTEM.md`** | Long-form design reference tokens, primitive APIs, hero pattern, closing-CTA-via-Footer convention. |
 
-## Status — Phase 3 is active
+## Status Phase 3 is active
 
 Phase 0 (foundation), Phase 1 (28 primitives), and Phase 2 (HomePage
 refactor onto primitives) are **done**. **Phase 3 is the per-page
-migration loop** — one PR per page, applying the same *design language*
+migration loop** one PR per page, applying the same *design language*
 as `HomePage.tsx` while inventing each page's *section structure* fresh.
 
-- **Reference page (one valid composition, not a template)**: `src/app/components/HomePage.tsx`. Read it to see how primitives fit together — then design *this* page's sections for *this* page's story. Don't replicate HomePage's section list section-by-section.
+- **Reference page (one valid composition, not a template)**: `src/app/components/HomePage.tsx`. Read it to see how primitives fit together then design *this* page's sections for *this* page's story. Don't replicate HomePage's section list section-by-section.
 - **Primitive library**: 28 primitives in `src/app/components/bz/`. Barrel: `bz/index.ts`. Catalogue: `bz/README.md`.
-- **Never import from `marketing/` in new code** — that folder is legacy and slated for deletion in Phase 4.
+- **Never import from `marketing/` in new code** that folder is legacy and slated for deletion in Phase 4.
 
-If you're asked to redesign a page, you can proceed — every primitive
+If you're asked to redesign a page, you can proceed every primitive
 you'll need already exists. If you encounter a shape that ISN'T covered
 by an existing primitive, **add it to `bz/` first** (with paint in
 `style.css`, React wrapper in `bz/`, export in `bz/index.ts`), then use
@@ -35,18 +35,18 @@ it on the page.
 
 ### What's fixed vs what's free
 
-**Fixed across every page** (the design language — non-negotiable):
+**Fixed across every page** (the design language non-negotiable):
 - Palette, tokens, Inter type scale from `theme.css`.
 - `bz/` primitive vocabulary; composition over forks.
 - Alternating `tone="a"`/`tone="b"`; dark sections sparing.
-- Hero shell — `<Section tone="b" pad="hero">` + centered `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs, optionally with `<HeroCanvas>` below.
-- Closing CTA via `<Footer cta={…}>` — never a page-level dark section.
+- Hero shell `<Section tone="b" pad="hero">` + centered `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs, optionally with `<HeroCanvas>` below.
+- Closing CTA via `<Footer cta={…}>` never a page-level dark section.
 - Clean, minimalistic, no gradients, single lime accent per surface.
 
-**Free per page** (the design choices — invent these):
+**Free per page** (the design choices invent these):
 - Which sections, in what order, with what content.
 - What each section *is* (bento grid, step row, custom dashboard, streaming-data panel, something invented for this page).
-- The page-specific mock inside `<HeroCanvas>` and inside marquee/showcase blocks — should feel invented for this page, not copied from HomePage.
+- The page-specific mock inside `<HeroCanvas>` and inside marquee/showcase blocks should feel invented for this page, not copied from HomePage.
 - Which canonical narratives (`docs/BIZAK_PRODUCT_OVERVIEW.md` §4) and stats (§5.4) the page leans on.
 
 If two redesigned pages feel like the same page with different copy,
@@ -58,7 +58,7 @@ copying HomePage's exact section list is never required.**
 
 These rules came out of Phase 2 and are now load-bearing across every page:
 
-1. **`tone` means SURFACE, not text colour.** `tone="dark"` = "I sit on a dark surface" → renders paper text. `tone="light"` (default) = "I sit on a light surface" → renders dark text. Applies to `Section`, `Heading`, `Eyebrow`, `SectionHead`, `DataRow`, `EntityRow`, `JournalRow`, `MiniBars`, `ModuleListItem`, `StatTile`, `StripeBar`, `Marquee`. The legacy `marketing/` convention was the opposite — ignore that.
+1. **`tone` means SURFACE, not text colour.** `tone="dark"` = "I sit on a dark surface" → renders paper text. `tone="light"` (default) = "I sit on a light surface" → renders dark text. Applies to `Section`, `Heading`, `Eyebrow`, `SectionHead`, `DataRow`, `EntityRow`, `JournalRow`, `MiniBars`, `ModuleListItem`, `StatTile`, `StripeBar`, `Marquee`. The legacy `marketing/` convention was the opposite ignore that.
 
 2. **Hero spacing uses inline `style`, not Tailwind margin utilities.** This is the *only* place inline `style` for static spacing is sanctioned. The canonical hero rhythm:
 
@@ -71,23 +71,23 @@ These rules came out of Phase 2 and are now load-bearing across every page:
    </PillGroup>
    ```
 
-   Why: `.bz-h1`/`.bz-h2` paint classes set `margin: 0` and their cascade priority can defeat Tailwind `mb-*` utilities in subtle ways (twMerge, layer ordering). Inline `style` always wins. Don't try to "fix" this back to Tailwind utilities — it has been tried and the rhythm broke.
+   Why: `.bz-h1`/`.bz-h2` paint classes set `margin: 0` and their cascade priority can defeat Tailwind `mb-*` utilities in subtle ways (twMerge, layer ordering). Inline `style` always wins. Don't try to "fix" this back to Tailwind utilities it has been tried and the rhythm broke.
 
 3. **`Section pad="hero"`** = flat `pt-[56px] pb-[96px]` on all viewport sizes. This matches the staged spec exactly. Don't add responsive variation.
 
 4. **Page-specific domain visuals (dashboards, mock invoices, multi-entity panels) stay as in-page sub-components**, but compose `bz/` micro-viz primitives (`DataRow`, `EntityRow`, `JournalRow`, `MiniBars`, `ModuleListItem`, `StatTile`) instead of duplicating JSX. See `HomePage.tsx`'s `PlatformDashboard`, `StepVisualConnect`, `StepVisualScale`, `MultiEntityVisual` for the pattern.
 
-5. **Page-internal styles never use `<style>{@media ...}</style>` blocks.** If a section needs responsive logic, the primitive that owns the layout owns the breakpoint. If you reach for a `<style>` block in a page, the primitive is missing a breakpoint — extend it.
+5. **Page-internal styles never use `<style>{@media ...}</style>` blocks.** If a section needs responsive logic, the primitive that owns the layout owns the breakpoint. If you reach for a `<style>` block in a page, the primitive is missing a breakpoint extend it.
 
 6. **CTAs use the 4 canonical labels.** Every `<Pill>` whose href is `system.bizakerp.com/*` or `/contact` is a conversion CTA and must use one of: **Get Started**, **Free Trial**, **Request Demo**, **Talk to Sales**. Variant + arrow are derived from the destination:
    - external (`system.bizakerp.com/*`) → `variant="dark"` (or `"accent"` on dark surfaces) + `withArrowUpRight` (↗)
    - internal (`/contact`) → `variant="light"` (or `"ghostDark"`/`"accent"` on dark surfaces) + `withArrow` (→)
 
-   **Adjacent Pill pairs always go inside `<PillGroup>`** — both in hero CTA rows and in `<SectionHead actions={…}>`. Solo pills in `<StepCard cta=…>` / `<BigCard cta=…>` / `<Bento.Cta>` are **not** wrapped. The `<Pill>` primitive only accepts `variant`, `size="sm|md"`, `href`, `withArrow`, `withArrowUpRight` — the legacy `withTick`, `iconLeft`, `iconRight`, `size="lg"` props were removed. Full canon + substitution table: `docs/BIZAK_PRODUCT_OVERVIEW.md` §7.4 and `/CLAUDE.md` §"CTA conventions".
+   **Adjacent Pill pairs always go inside `<PillGroup>`** both in hero CTA rows and in `<SectionHead actions={…}>`. Solo pills in `<StepCard cta=…>` / `<BigCard cta=…>` / `<Bento.Cta>` are **not** wrapped. The `<Pill>` primitive only accepts `variant`, `size="sm|md"`, `href`, `withArrow`, `withArrowUpRight` the legacy `withTick`, `iconLeft`, `iconRight`, `size="lg"` props were removed. Full canon + substitution table: `docs/BIZAK_PRODUCT_OVERVIEW.md` §7.4 and `/CLAUDE.md` §"CTA conventions".
 
 ## Product brief first
 
-The very first step of any redesign is **"what is this page selling, and to whom?"** — answered from `BIZAK_PRODUCT_OVERVIEW.md`:
+The very first step of any redesign is **"what is this page selling, and to whom?"** answered from `BIZAK_PRODUCT_OVERVIEW.md`:
 
 1. Which module / industry / capability does this page cover? (See §3.)
 2. Which 2–3 product narratives (§4) should the page lean on?
@@ -103,22 +103,22 @@ NetSuite or HubSpot, you skipped this step.
 Walk through every item; whatever is "no" becomes part of this redesign.
 
 1. **Scope.** Open `src/app/components/Header.tsx` and find this page inside the `megaMenus` object. Which top-level group + sub-heading?
-2. **Primitives available?** The new primitive library lives in **`src/app/components/bz/`**. Confirm `<Pill>` / `<Bento>` / `<SectionHead>` / `<Section>` / `<Container>` / `<Heading>` etc. exist there. If any are missing, Phase 1 isn't complete — flag and stop (build the primitive in `bz/` FIRST). **Never import primitives from `marketing/` in new code** — that folder is legacy and slated for deletion in Phase 4.
+2. **Primitives available?** The new primitive library lives in **`src/app/components/bz/`**. Confirm `<Pill>` / `<Bento>` / `<SectionHead>` / `<Section>` / `<Container>` / `<Heading>` etc. exist there. If any are missing, Phase 1 isn't complete flag and stop (build the primitive in `bz/` FIRST). **Never import primitives from `marketing/` in new code** that folder is legacy and slated for deletion in Phase 4.
 3. **Primitive composition.** Is the page composing the new primitives, or duplicating their JSX inline? Inline duplication = migration work.
 4. **Tokens.** No per-file `const C = {...}`. No hex literals (except dynamic style props). All colours via `var(--bz-fire)` / `var(--bz-paper)` / etc. or Tailwind utilities (`text-bz-fire`, `bg-bz-paper`).
 5. **Icons.** No per-file SVG dictionary. Use `lucide-react` directly for new code.
-6. **Fonts.** Inter only — end-to-end. References to `'Hedvig …'`, `'Manrope'`, `'Poppins'`, `font-mono`, `font-family: monospace` are bugs. Strip in the same change.
-7. **No `<style>{`@media …`}</style>` blocks inside pages.** Responsive logic lives in the primitive. If you find one, the primitive's API is missing a breakpoint — extract it.
-8. **className over inline `style`.** Static values in className. Inline `style` only for truly dynamic values. No `onMouseEnter`/`onMouseLeave` style mutations — use `hover:` utilities or `:hover` on the primitive's CSS class.
+6. **Fonts.** Inter only end-to-end. References to `'Hedvig …'`, `'Manrope'`, `'Poppins'`, `font-mono`, `font-family: monospace` are bugs. Strip in the same change.
+7. **No `<style>{`@media …`}</style>` blocks inside pages.** Responsive logic lives in the primitive. If you find one, the primitive's API is missing a breakpoint extract it.
+8. **className over inline `style`.** Static values in className. Inline `style` only for truly dynamic values. No `onMouseEnter`/`onMouseLeave` style mutations use `hover:` utilities or `:hover` on the primitive's CSS class.
 9. **Closing-CTA pattern.** Page does NOT render its own closing CTA section. CTA goes in `<Footer cta={…}>` in `routes.tsx`. See `FinancialManagementPageLayout` for the reference.
 10. **Header offset shim.** Grep `paddingTop: 76|pt-\[76|mt-\[76` inside the page file AND its `*PageLayout` in `routes.tsx`. Both must be zero. The header is no longer fixed.
-11. **`bz-page` wrapper.** The page's `*PageLayout` outer `<div>` MUST have `className="bz-page"` (matches `HomeLayout`). That class carries `overflow-x: clip` + `text-wrap: balance` — the project's canonical mobile-overflow guard. Missing it produces a few-px horizontal scroll on 375px viewports even when every section looks correct in isolation. Grep `routes.tsx` for the `*PageLayout`: if the outer `<div>` lacks `bz-page`, add it.
+11. **`bz-page` wrapper.** The page's `*PageLayout` outer `<div>` MUST have `className="bz-page"` (matches `HomeLayout`). That class carries `overflow-x: clip` + `text-wrap: balance` the project's canonical mobile-overflow guard. Missing it produces a few-px horizontal scroll on 375px viewports even when every section looks correct in isolation. Grep `routes.tsx` for the `*PageLayout`: if the outer `<div>` lacks `bz-page`, add it.
 12. **Section alternation.** Consecutive content sections alternate `tone="a"` / `tone="b"`. Dark sections sparing and intentional.
-13. **CTAs.** Every `<Pill>` uses one of the 4 canonical labels (**Get Started** / **Free Trial** / **Request Demo** / **Talk to Sales** — see `docs/BIZAK_PRODUCT_OVERVIEW.md` §7.4); has exactly one arrow (`withArrowUpRight` for external, `withArrow` for internal); has no `withTick` / `iconLeft` / `iconRight` / `size="lg"` props (they were removed). Adjacent Pill pairs are wrapped in `<PillGroup>`. Solo pills in `cta=…` slots are bare. Footer's `cta` prop in `routes.tsx` uses the same canonical labels.
+13. **CTAs.** Every `<Pill>` uses one of the 4 canonical labels (**Get Started** / **Free Trial** / **Request Demo** / **Talk to Sales** see `docs/BIZAK_PRODUCT_OVERVIEW.md` §7.4); has exactly one arrow (`withArrowUpRight` for external, `withArrow` for internal); has no `withTick` / `iconLeft` / `iconRight` / `size="lg"` props (they were removed). Adjacent Pill pairs are wrapped in `<PillGroup>`. Solo pills in `cta=…` slots are bare. Footer's `cta` prop in `routes.tsx` uses the same canonical labels.
 14. **Hero mock gap.** The wrapper `<div>` immediately below `</PillGroup>` inside the hero `<Section pad="hero">` must be one of:
-    - `<HeroCanvas>` (olive panel — already applies `var(--bz-hero-gap)` via `.bz-hero-canvas`), OR
+    - `<HeroCanvas>` (olive panel already applies `var(--bz-hero-gap)` via `.bz-hero-canvas`), OR
     - `<div className="bz-hero-visual">…</div>` (paper-surface page-specific mock).
-    Both classes read `--bz-hero-gap` / `--bz-hero-gap-mobile` from `theme.css` (78px / 48px). Grep the hero for any `mt-(10|12|14|16|\[\d+px\])` on the mock wrapper — substitute `bz-hero-visual` in the same change. **Pages with no mock below the buttons are fine** and need no class.
+    Both classes read `--bz-hero-gap` / `--bz-hero-gap-mobile` from `theme.css` (78px / 48px). Grep the hero for any `mt-(10|12|14|16|\[\d+px\])` on the mock wrapper substitute `bz-hero-visual` in the same change. **Pages with no mock below the buttons are fine** and need no class.
 15. **Mobile responsiveness.** Every grid, flex row, fixed width, hero visual works at 375px without horizontal scroll. See the mobile cheatsheet below.
 
 If any item fails, the redesign is the work to bring it into compliance.
@@ -132,25 +132,25 @@ If any item fails, the redesign is the work to bring it into compliance.
   - `onMouseEnter` / `onMouseLeave` mutating `e.currentTarget.style`
   - `'Manrope'` / `'Poppins'` / `'Hedvig …'` / any non-Inter font
   - `font-mono` / `font-family: monospace`
-  - `linear-gradient(...)` / `radial-gradient(...)` — no exceptions, the `.biz-mesh` carve-out has been retired
+  - `linear-gradient(...)` / `radial-gradient(...)` no exceptions, the `.biz-mesh` carve-out has been retired
   - a per-file `function Icon({ name }) { … }` SVG dictionary
   - `<span className="material-symbols-outlined">`
   - a local `function FooButton(...)` / `function FooCard(...)` / `function FooBadge(...)` mirroring a primitive's shape
-  - `paddingTop: 76` / `pt-[76px]` / `mt-[76px]` anywhere — the header is no longer fixed
-  - a `<Section tone="dark">` block above `<Footer>` posing as a closing CTA — moved into Footer
-  - `<HeroCentered>`, `<HeroSplit>`, or `<HeroPanel>` imported from `../marketing` — those are pre-rebrand legacy primitives; new pages use `<Section tone="b">` + `<BadgeGreen>` + `<HeroCanvas>` from `../bz` instead
-  - any other import from `../marketing/*` or `../marketing` in a page file — new pages must import from `../bz`
-  - `.biz-mesh` or `<HeroBadge>` (legacy) — replaced by `<BadgeGreen>` on a flat surface
-  - any reference to `--bz-sage*` tokens (deprecated) — use `--bz-fire` / `--bz-paper` / etc.
-  - `<Pill>` with `withTick`, `iconLeft`, `iconRight`, or `size="lg"` — those props were removed; legacy code that still uses them is migration debt
-  - `<Pill>` with no arrow prop — every Pill must carry exactly one of `withArrow` (→ internal) or `withArrowUpRight` (↗ external)
-  - Pill labels outside the 4 canonical (**Get Started** / **Free Trial** / **Request Demo** / **Talk to Sales**) on a conversion CTA — e.g. "Book a Demo", "Start free trial", "See it live", "Talk to operations", "Browse connectors", "Visit help center", "View features"
-  - Adjacent `<Pill>` pairs wrapped in `<div className="flex flex-wrap gap-[10px]">` or in a `<>…</>` React fragment inside `SectionHead actions` — both patterns are replaced by `<PillGroup>`
-  - Any `mt-10` / `mt-12` / `mt-14` / `mt-16` / `mt-[48px] md:mt-[78px]` (or similar) on the wrapper `<div>` directly below `</PillGroup>` inside a hero `<Section pad="hero">` — the canonical pattern is `<HeroCanvas>` or `<div className="bz-hero-visual">`, both of which encode `var(--bz-hero-gap)` from `theme.css`
+  - `paddingTop: 76` / `pt-[76px]` / `mt-[76px]` anywhere the header is no longer fixed
+  - a `<Section tone="dark">` block above `<Footer>` posing as a closing CTA moved into Footer
+  - `<HeroCentered>`, `<HeroSplit>`, or `<HeroPanel>` imported from `../marketing` those are pre-rebrand legacy primitives; new pages use `<Section tone="b">` + `<BadgeGreen>` + `<HeroCanvas>` from `../bz` instead
+  - any other import from `../marketing/*` or `../marketing` in a page file new pages must import from `../bz`
+  - `.biz-mesh` or `<HeroBadge>` (legacy) replaced by `<BadgeGreen>` on a flat surface
+  - any reference to `--bz-sage*` tokens (deprecated) use `--bz-fire` / `--bz-paper` / etc.
+  - `<Pill>` with `withTick`, `iconLeft`, `iconRight`, or `size="lg"` those props were removed; legacy code that still uses them is migration debt
+  - `<Pill>` with no arrow prop every Pill must carry exactly one of `withArrow` (→ internal) or `withArrowUpRight` (↗ external)
+  - Pill labels outside the 4 canonical (**Get Started** / **Free Trial** / **Request Demo** / **Talk to Sales**) on a conversion CTA e.g. "Book a Demo", "Start free trial", "See it live", "Talk to operations", "Browse connectors", "Visit help center", "View features"
+  - Adjacent `<Pill>` pairs wrapped in `<div className="flex flex-wrap gap-[10px]">` or in a `<>…</>` React fragment inside `SectionHead actions` both patterns are replaced by `<PillGroup>`
+  - Any `mt-10` / `mt-12` / `mt-14` / `mt-16` / `mt-[48px] md:mt-[78px]` (or similar) on the wrapper `<div>` directly below `</PillGroup>` inside a hero `<Section pad="hero">` the canonical pattern is `<HeroCanvas>` or `<div className="bz-hero-visual">`, both of which encode `var(--bz-hero-gap)` from `theme.css`
 
 ## The migration
 
-### ⛔ The cloning trap — read this before anything else
+### ⛔ The cloning trap read this before anything else
 
 The single most common failure mode of this skill is **copying the
 section structure of the most-recently-redesigned page into the new
@@ -158,96 +158,96 @@ page**. Concrete example from this codebase:
 
 > `src/app/components/FinancialManagement.tsx` and
 > `src/app/components/SalesCrm.tsx` ended up with **the same six
-> section function names in the same order** — `HeroSection`,
+> section function names in the same order** `HeroSection`,
 > `FoundationsSection`, `TechnicalShowcaseSection`, `ReportingSection`,
-> `ConnectivitySection`, `MetricsSection` — with content swapped
+> `ConnectivitySection`, `MetricsSection` with content swapped
 > (multi-entity → pipeline-intelligence, financial-control →
 > smart-followups, etc.). Two different products, one identical page.
 > **This is the failure we are fixing.**
 
 Hard rules to avoid this:
 
-1. **Do not read another page file (`HomePage.tsx`, `FinancialManagement.tsx`, `SalesCrm.tsx`, etc.) as a *structural* reference.** Read them only to see *how primitives compose at the JSX level* — never to decide what sections this page should have. The moment you find yourself thinking "I'll do a `FoundationsSection` like FM has", stop.
+1. **Do not read another page file (`HomePage.tsx`, `FinancialManagement.tsx`, `SalesCrm.tsx`, etc.) as a *structural* reference.** Read them only to see *how primitives compose at the JSX level* never to decide what sections this page should have. The moment you find yourself thinking "I'll do a `FoundationsSection` like FM has", stop.
 2. **Forbidden: identical section function names across pages.** If you're about to write `function FoundationsSection()` because FM has one, rename it to something that describes *this page's* job (e.g. `PipelineOverviewSection`, `QuotingFlowSection`) AND redesign what's inside. Same name + different content = still a clone.
-3. **Forbidden: identical hero mocks across pages — see the dedicated "Hero mock" section below.** This is the second-most-common failure (after the section-list clone) and gets its own callout because the `<HeroCard>` primitive's prop shape is a magnet for label-swap cloning.
+3. **Forbidden: identical hero mocks across pages see the dedicated "Hero mock" section below.** This is the second-most-common failure (after the section-list clone) and gets its own callout because the `<HeroCard>` primitive's prop shape is a magnet for label-swap cloning.
 4. **Forbidden: cloning the dense 4-bento "TechnicalShowcase" + dense "Reporting" + "Connectivity hub" + "Metrics" arc.** That's FM's arc. If it shows up in another page, the redesign hasn't earned its sections.
 5. **Read the existing page first** (Step 1). The legacy content tells you what this page is actually selling. The redesign's section list should be driven by *that*, not by what FM happens to do.
 
-### ⛔ Hero mock — the most-copied component on the site
+### ⛔ Hero mock the most-copied component on the site
 
 The hero *shell* (`<Section tone="b" pad="hero">` + centered
 `<BadgeGreen>` + `<Heading>` + two `<Pill>` CTAs) is **fixed**.
 
-The hero *mock* — the visual below the CTAs — is **per-page-invented**.
+The hero *mock* the visual below the CTAs is **per-page-invented**.
 The LLM keeps cloning it. Concrete evidence:
 
 > `src/app/components/SalesCrm.tsx`'s hero is a literal label-swap of
 > the *original* HomePage hero: `<HeroCanvas>` wrapping **two
 > `<HeroCard>`s** sharing identical prop shapes (`icon` + `title` +
 > `badge` + `badgeVariant` + `eyebrow` + `value` + a `<DataRow>` +
-> `<MiniBars>` footer). The only differences are the strings —
+> `<MiniBars>` footer). The only differences are the strings
 > "Live ledger" → "Live pipeline", "Invoice INV-2046" → "Sales Order
 > SO-1041". Two different products, one identical hero card pair.
 > This is the *next* clone failure to fix.
 
-**Mocks already in use — taken, do not re-use:**
+**Mocks already in use taken, do not re-use:**
 
 | Page | Hero mock |
 |---|---|
 | `HomePage.tsx` (current) | `<HeroCanvas>` with a 12-col split: live auto-posting journal stream (col-7) + stacked cash-position + dual-stats panel (col-5). |
 | `FinancialManagement.tsx` | Two-card editorial split on a paper section (no `<HeroCanvas>`): dark olive panel with "Reconciliation ✓ Complete" chip + "Close the period" CTA, paired with a Bizak-branded paper income-statement card. |
-| `SalesCrm.tsx` (current — TO BE REPLACED on its next redesign) | `<HeroCanvas>` + two `<HeroCard>`s (the original HomePage pattern). |
+| `SalesCrm.tsx` (current TO BE REPLACED on its next redesign) | `<HeroCanvas>` + two `<HeroCard>`s (the original HomePage pattern). |
 
 If you would write a hero mock that fits one of those three rows
 above, **stop**. Pick a different composition.
 
-**Valid hero mock alternatives** (pick one, or invent your own — the
+**Valid hero mock alternatives** (pick one, or invent your own the
 list is illustrative, not exhaustive):
 
-- A **single full-width feature panel** — one big mock that owns the canvas, e.g. a sprawling Gantt chart, a multi-warehouse stock map, a manufacturing OEE gauge cluster.
-- A **3-card horizontal row** with distinct shapes (not three uniform `<HeroCard>`s) — e.g. a tall stat tile + a wide chart panel + a small status feed.
-- A **vertical timeline / streaming feed** filling the canvas — e.g. a "today's activity" timeline for an ops page.
-- A **before/after split** — left half "spreadsheet hell" mock, right half Bizak's unified view. Strong for pages leaning on narrative §4.6.
-- A **dashboard sidebar + main panel** mock — like `PlatformDashboard` but as the hero, used to show breadth.
-- A **horizontal marquee/carousel** of mini KPI tiles flowing through the canvas — when the page sells "many things in one place."
-- A **headline statistic** owning the centre — one huge number with a small live-data row beneath it (good for pages with one canonical stat like 87.4% OEE).
-- A **process-flow diagram** — boxes + connectors showing the page's workflow (good for `/workflow`, `/Integrations`, `/MulticompanyAndBranches`).
-- A **map / geographic mock** — for pages touching multi-branch, distribution, global subsidiaries.
-- A **document mock** — a single styled invoice, BoM, quote, work-order, lease — when the page sells a specific artefact.
-- A **no-mock hero** — just badge + heading + pills + a tasteful divider or short feature row. Sometimes the strongest hero is restraint. Valid for narrative pages (`/why-bizak`, `/about`).
+- A **single full-width feature panel** one big mock that owns the canvas, e.g. a sprawling Gantt chart, a multi-warehouse stock map, a manufacturing OEE gauge cluster.
+- A **3-card horizontal row** with distinct shapes (not three uniform `<HeroCard>`s) e.g. a tall stat tile + a wide chart panel + a small status feed.
+- A **vertical timeline / streaming feed** filling the canvas e.g. a "today's activity" timeline for an ops page.
+- A **before/after split** left half "spreadsheet hell" mock, right half Bizak's unified view. Strong for pages leaning on narrative §4.6.
+- A **dashboard sidebar + main panel** mock like `PlatformDashboard` but as the hero, used to show breadth.
+- A **horizontal marquee/carousel** of mini KPI tiles flowing through the canvas when the page sells "many things in one place."
+- A **headline statistic** owning the centre one huge number with a small live-data row beneath it (good for pages with one canonical stat like 87.4% OEE).
+- A **process-flow diagram** boxes + connectors showing the page's workflow (good for `/workflow`, `/Integrations`, `/MulticompanyAndBranches`).
+- A **map / geographic mock** for pages touching multi-branch, distribution, global subsidiaries.
+- A **document mock** a single styled invoice, BoM, quote, work-order, lease when the page sells a specific artefact.
+- A **no-mock hero** just badge + heading + pills + a tasteful divider or short feature row. Sometimes the strongest hero is restraint. Valid for narrative pages (`/why-bizak`, `/about`).
 
 **Rules for picking:**
 
 1. **The mock must visualise THIS page's core narrative.** A Manufacturing page's hero should make floor-ops feel tactile. A Distribution page's hero should make routing/throughput feel kinetic. A Projects page's hero should make project-P&L feel legible. If the mock could equally appear on any other module page, it's wrong.
-2. **The `<HeroCard>` primitive is one option, not the default.** Reach for it only when its specific shape (small floating card with icon-title-badge-eyebrow-value-footer) is the BEST fit for this page's story. If you're using it because HomePage/SalesCrm used it, that's the trap — use a different shape.
-3. **`<HeroCanvas>` itself is also optional.** A page can have a hero mock directly on the `bz-section-b` surface (as `FinancialManagement.tsx` does) — no dark canvas required. Match the canvas/no-canvas choice to whether the mock benefits from a dark backdrop.
+2. **The `<HeroCard>` primitive is one option, not the default.** Reach for it only when its specific shape (small floating card with icon-title-badge-eyebrow-value-footer) is the BEST fit for this page's story. If you're using it because HomePage/SalesCrm used it, that's the trap use a different shape.
+3. **`<HeroCanvas>` itself is also optional.** A page can have a hero mock directly on the `bz-section-b` surface (as `FinancialManagement.tsx` does) no dark canvas required. Match the canvas/no-canvas choice to whether the mock benefits from a dark backdrop.
 4. **Card count is not magical.** 2 cards is not the canon. The mock might be 1 panel, or 3, or 5, or a single composite. Let the story decide.
 5. **The hero mock must fill the full `<Container>` width.** Do NOT put `max-w-xl`, `max-w-2xl`, `max-w-3xl`, or any `mx-auto max-w-*` on the mock's outer wrapper `<div>`. The mock takes the default block width of its container. Constraining it makes the hero feel cramped and wastes the canvas. Only internal sub-elements (e.g. individual columns) may have explicit widths.
 
-Hero mocks belong in the Step 2 design brief (next) — write the mock's
+Hero mocks belong in the Step 2 design brief (next) write the mock's
 shape and *why it serves this page specifically* before opening any
 primitive file.
 
-### Step 1 — Read the page AND understand what it sells
+### Step 1 Read the page AND understand what it sells
 
 Read the entire legacy file end-to-end. Note sections, content data,
 icons, bespoke visuals.
 
 Then, before touching primitives, answer (out loud, in your reply):
 
-- **What is this page selling, in one sentence?** (Pull from `docs/BIZAK_PRODUCT_OVERVIEW.md` §3 — module / capability / industry.)
+- **What is this page selling, in one sentence?** (Pull from `docs/BIZAK_PRODUCT_OVERVIEW.md` §3 module / capability / industry.)
 - **Which 2–3 narratives from §4 does it lean hardest on?** (e.g. `/SalesCrm` leans on §4.2 single-source-of-truth and §4.6 spreadsheet-replacement; `/InventoryAndWarehouse` leans on §4.1 real-time; `/manufacturing` leans on operational-control / OEE.)
 - **What's the user emotional payoff?** (For FM it's "close in hours, not weeks." For SalesCrm it would be "every deal in one place, every follow-up automatic." For Manufacturing it's "command the floor.")
 - **What does THIS page need to show that no other Bizak page needs to show?** This is the section that should make the page feel unmistakably *this* page.
 
-### Step 2 — Section design brief (write this BEFORE picking primitives)
+### Step 2 Section design brief (write this BEFORE picking primitives)
 
 For *each* section you plan to include, fill in this three-line brief
 out loud in your reply:
 
-- **Section purpose** — one sentence: what story does it tell on *this* page?
-- **Why this design** — one sentence: what visual / layout / data-mock makes that story land? (Bento grid? A custom dashboard mock? A live streaming feed? A side-by-side compare? A timeline?)
-- **Why this is NOT a copy of another page's section** — one sentence: how does this section differ from the same-position section on HomePage, FinancialManagement, SalesCrm, etc.?
+- **Section purpose** one sentence: what story does it tell on *this* page?
+- **Why this design** one sentence: what visual / layout / data-mock makes that story land? (Bento grid? A custom dashboard mock? A live streaming feed? A side-by-side compare? A timeline?)
+- **Why this is NOT a copy of another page's section** one sentence: how does this section differ from the same-position section on HomePage, FinancialManagement, SalesCrm, etc.?
 
 If the third line is hard to write, you're cloning. Stop and invent
 something else.
@@ -257,40 +257,40 @@ something else.
 Because the hero mock is the most-cloned component on the site, the
 hero's brief is **four** lines, not three:
 
-- **Section purpose** — what does the hero need to communicate in 3 seconds?
-- **Hero mock shape** — describe the visual composition you're planning *before* picking primitives. Example shapes: "a single 600px-wide BoM document mock", "a 3-stop horizontal timeline", "a Gantt chart filling the canvas", "a before/after split (spreadsheet vs. Bizak view)", "a multi-warehouse stock map." Reach for one of the alternatives listed in the "Hero mock" section above, OR invent a new shape that fits this page's story.
-- **Why this serves THIS page** — one sentence: what about this page's narrative makes this mock the right choice (and not, say, a `<HeroCanvas>` with two `<HeroCard>`s)?
-- **Why this is NOT a copy** — one sentence: how does it differ from HomePage's live ledger stream + cash position, FinancialManagement's olive panel + invoice card, SalesCrm's two-`<HeroCard>` pair, and any other page's hero mock?
+- **Section purpose** what does the hero need to communicate in 3 seconds?
+- **Hero mock shape** describe the visual composition you're planning *before* picking primitives. Example shapes: "a single 600px-wide BoM document mock", "a 3-stop horizontal timeline", "a Gantt chart filling the canvas", "a before/after split (spreadsheet vs. Bizak view)", "a multi-warehouse stock map." Reach for one of the alternatives listed in the "Hero mock" section above, OR invent a new shape that fits this page's story.
+- **Why this serves THIS page** one sentence: what about this page's narrative makes this mock the right choice (and not, say, a `<HeroCanvas>` with two `<HeroCard>`s)?
+- **Why this is NOT a copy** one sentence: how does it differ from HomePage's live ledger stream + cash position, FinancialManagement's olive panel + invoice card, SalesCrm's two-`<HeroCard>` pair, and any other page's hero mock?
 
 If you cannot write the 4th line without it being "different labels on
 the same shape," the mock is still a clone. Pick another shape.
 
 Only after the brief is written, reach for the primitive toolkit below.
 
-### Step 3 — Compose the sections using the primitive toolkit
+### Step 3 Compose the sections using the primitive toolkit
 
-The primitives are the design language's *vocabulary* — the section
+The primitives are the design language's *vocabulary* the section
 brief above is the *sentence*. Pick from this toolkit; do not let the
 toolkit decide which sections you have:
 
-- **Wrapper** — `<Section tone="a|b|dark">`.
-- **Width** — `<Container width="default|narrow">`.
-- **Heading block** — `<SectionHead index? label title titleMuted? actions?>`. Pair-CTA `actions` use `<PillGroup>` (not a fragment).
-- **CTAs** — `<Pill variant="..." withArrow|withArrowUpRight href>`. Adjacent pairs go inside `<PillGroup>`. Labels: one of the 4 canonical (**Get Started** / **Free Trial** / **Request Demo** / **Talk to Sales**) — see §7.4 of the product overview for the canon and substitution table.
-- **Cards / grids** — `<BentoGrid cols={N}>` + `<Bento tone=... hover>` (compound: `<Bento.Header>`, `<Bento.Desc>`, `<Bento.Cta>`, `<Bento.Footer>`).
-- **Marquee feature** — `<BigCard>` for a 2-col text+visual marquee block.
-- **Stepped narrative** — `<StepCard>` rows for "how it works" stories.
-- **Stats** — `<DataRow>` / `<EntityRow>` / `<JournalRow>` / `<MiniBars>` / `<StatTile>` inside footers or as standalone tiles.
-- **Eyebrow / pills** — `<Eyebrow index="..." label="...">`.
-- **Hero shell** (always this shape) — `<Section tone="b" pad="hero"><Container><BadgeGreen>…</BadgeGreen><Heading level={1}>…</Heading><PillGroup><Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill><Pill variant="light" withArrow href="/contact">Request Demo</Pill></PillGroup>{page-specific mock}</Container></Section>`. The mock below the copy — either inside `<HeroCanvas>` (olive panel, encodes the gap via `.bz-hero-canvas`) **or** wrapped in `<div className="bz-hero-visual">…</div>` (paper-surface mock, encodes the same `var(--bz-hero-gap)`) — should be **invented for this page**, not copied from HomePage's ledger+invoice pair or FinancialManagement's olive+invoice pair. The CTA pair labels are **fixed**: Get Started + Request Demo (or Free Trial + Request Demo if the page leads with the trial story). **Never** write a fresh `mt-*` on the mock wrapper — that's what the two classes are for.
-- **Closing CTA** — passed via `<Footer cta={…}>` in `routes.tsx`; never as a page-level section.
+- **Wrapper** `<Section tone="a|b|dark">`.
+- **Width** `<Container width="default|narrow">`.
+- **Heading block** `<SectionHead index? label title titleMuted? actions?>`. Pair-CTA `actions` use `<PillGroup>` (not a fragment).
+- **CTAs** `<Pill variant="..." withArrow|withArrowUpRight href>`. Adjacent pairs go inside `<PillGroup>`. Labels: one of the 4 canonical (**Get Started** / **Free Trial** / **Request Demo** / **Talk to Sales**) see §7.4 of the product overview for the canon and substitution table.
+- **Cards / grids** `<BentoGrid cols={N}>` + `<Bento tone=... hover>` (compound: `<Bento.Header>`, `<Bento.Desc>`, `<Bento.Cta>`, `<Bento.Footer>`).
+- **Marquee feature** `<BigCard>` for a 2-col text+visual marquee block.
+- **Stepped narrative** `<StepCard>` rows for "how it works" stories.
+- **Stats** `<DataRow>` / `<EntityRow>` / `<JournalRow>` / `<MiniBars>` / `<StatTile>` inside footers or as standalone tiles.
+- **Eyebrow / pills** `<Eyebrow index="..." label="...">`.
+- **Hero shell** (always this shape) `<Section tone="b" pad="hero"><Container><BadgeGreen>…</BadgeGreen><Heading level={1}>…</Heading><PillGroup><Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill><Pill variant="light" withArrow href="/contact">Request Demo</Pill></PillGroup>{page-specific mock}</Container></Section>`. The mock below the copy either inside `<HeroCanvas>` (olive panel, encodes the gap via `.bz-hero-canvas`) **or** wrapped in `<div className="bz-hero-visual">…</div>` (paper-surface mock, encodes the same `var(--bz-hero-gap)`) should be **invented for this page**, not copied from HomePage's ledger+invoice pair or FinancialManagement's olive+invoice pair. The CTA pair labels are **fixed**: Get Started + Request Demo (or Free Trial + Request Demo if the page leads with the trial story). **Never** write a fresh `mt-*` on the mock wrapper that's what the two classes are for.
+- **Closing CTA** passed via `<Footer cta={…}>` in `routes.tsx`; never as a page-level section.
 
 A section that doesn't fit any of these patterns is fine if it composes
 the same primitives, palette and tokens and reads clean and minimal.
-The toolkit is the *vocabulary*; the section is the *sentence* — write
+The toolkit is the *vocabulary*; the section is the *sentence* write
 it for this page, don't paste it from another.
 
-### Step 4 — Replace, don't rewrite from scratch
+### Step 4 Replace, don't rewrite from scratch
 
 - Lift inline content into `const ARRAY = [...]` data structures.
 - Convert each inline `style={...}` into a token reference or className.
@@ -315,17 +315,17 @@ it for this page, don't paste it from another.
 - Replace gradients with flat colours, shadows, or `<DotGrid>` overlays. No exceptions.
 - Replace `<svg>` icons with lucide equivalents (or `<Icon name>` for data-driven arrays).
 
-### Step 5 — Remove dead code
+### Step 5 Remove dead code
 
 - Delete `const C = { ... }` objects.
 - Delete unused imports.
 - Delete `onMouseEnter`/`onMouseLeave` handlers that only mutated style.
 - Delete `<style>{@media …}</style>` blocks once the primitive owns the breakpoint.
 - Delete `paddingTop: 76` shims in the page AND in `routes.tsx`'s `*PageLayout`.
-- Delete `<Section tone="dark">` closing CTAs — move copy into `<Footer cta={…}>`.
+- Delete `<Section tone="dark">` closing CTAs move copy into `<Footer cta={…}>`.
 - Do **not** leave `// removed` comments.
 
-### Step 6 — Verify
+### Step 6 Verify
 
 1. Read the migrated file end-to-end. Sanity-check that no `'#hex'` literals remain (except dynamic).
 2. Grep for forbidden patterns:
@@ -347,18 +347,18 @@ it for this page, don't paste it from another.
    ```
    mt-(10|12|14|16|20|\[\d+px\])
    ```
-   Any hit on the hero mock wrapper means migration debt — swap for `bz-hero-visual`. (Internal `mt-*` inside the mock body is fine; only the outer wrapper directly under the CTA row matters.)
+   Any hit on the hero mock wrapper means migration debt swap for `bz-hero-visual`. (Internal `mt-*` inside the mock body is fine; only the outer wrapper directly under the CTA row matters.)
 6. If non-trivial, run `npm run build` + `npm run dev`.
 
-### Step 7 — Update the route layout
+### Step 7 Update the route layout
 
 Open `src/app/routes.tsx`. Find the page's `*PageLayout`. Confirm:
-- The outermost wrapper `<div>` has **`className="bz-page"`** (matches `HomeLayout`). **This is not optional** — `.bz-page` in `style.css` carries `overflow-x: clip` + `text-wrap: balance`, the project's canonical mobile-overflow guard. Without it, long `.bz-h1` / `.bz-h2` titles and any wide nested viz will trigger horizontal scroll at 375px. Symptom: page scrolls sideways a few px on mobile even though every individual section looks fine. Fix: add `className="bz-page"` to the layout's outer `<div>`. (The legacy inline `style={{fontFamily: "'Inter', sans-serif"}}` can stay or be removed — `.bz-page` already sets the body font.)
-- It renders `<Header />`, the page, `<Footer cta={…}>` — in that order.
+- The outermost wrapper `<div>` has **`className="bz-page"`** (matches `HomeLayout`). **This is not optional** `.bz-page` in `style.css` carries `overflow-x: clip` + `text-wrap: balance`, the project's canonical mobile-overflow guard. Without it, long `.bz-h1` / `.bz-h2` titles and any wide nested viz will trigger horizontal scroll at 375px. Symptom: page scrolls sideways a few px on mobile even though every individual section looks fine. Fix: add `className="bz-page"` to the layout's outer `<div>`. (The legacy inline `style={{fontFamily: "'Inter', sans-serif"}}` can stay or be removed `.bz-page` already sets the body font.)
+- It renders `<Header />`, the page, `<Footer cta={…}>` in that order.
 - It does NOT have a `<div style={{paddingTop: 76}}>` wrapper.
 - The `cta` prop on `<Footer>` reflects this page's specific closing copy (or is omitted to use the generic default).
 
-### Step 8 — Report
+### Step 8 Report
 
 End with a short summary: what sections were migrated, what bespoke
 pieces remained (if any), what primitives were added/extended as a side
@@ -367,7 +367,7 @@ effect (if any).
 ## Out of scope
 
 - Don't rewrite content copy unless the user asked. The goal is *design* migration.
-- Don't change routes, props, or exported component names — pages are imported by `routes.tsx`.
+- Don't change routes, props, or exported component names pages are imported by `routes.tsx`.
 - Don't touch `src/styles/style.css`'s `.bz-*` CSS classes unless adding paint for a new primitive variant.
 - Don't migrate >1 page per session unless explicitly asked.
 
@@ -375,17 +375,17 @@ effect (if any).
 
 There are **two bars** for "mobile-ready," both mandatory:
 
-1. **Structural correctness** — no horizontal scroll, no broken grids, no fixed heights crushing content. Covered by the patterns + structural checklist below.
-2. **Mobile design quality** — the page looks *intentionally designed* at 375px, not just "the desktop layout, smaller." Covered by the design-quality cheatsheet further down.
+1. **Structural correctness** no horizontal scroll, no broken grids, no fixed heights crushing content. Covered by the patterns + structural checklist below.
+2. **Mobile design quality** the page looks *intentionally designed* at 375px, not just "the desktop layout, smaller." Covered by the design-quality cheatsheet further down.
 
-A page that passes (1) but fails (2) — fits the viewport but feels cramped, busy, or bulky on a phone — is a **failed redesign**, not a passing one.
+A page that passes (1) but fails (2) fits the viewport but feels cramped, busy, or bulky on a phone is a **failed redesign**, not a passing one.
 
 ### Structural patterns (the layout cheatsheet)
 
 Every section must look correct from 375px through desktop without horizontal scroll. Patterns:
 
 ```tsx
-// Bento grid — `BentoGrid cols={N}` owns its breakpoints; don't re-encode
+// Bento grid `BentoGrid cols={N}` owns its breakpoints; don't re-encode
 <BentoGrid cols={3} />          // collapses to 1-col on mobile, 2-col on tablet automatically
 
 // If you write a raw grid for one-off layouts
@@ -399,10 +399,10 @@ Every section must look correct from 375px through desktop without horizontal sc
   <div className="col-span-full md:col-span-7 ...">
   <div className="col-span-full md:col-span-5 ...">
 
-// Hero dashboard decorative sidebars — desktop only
+// Hero dashboard decorative sidebars desktop only
 <div className="hidden md:flex w-[200px] shrink-0 ...">
 
-// Fixed-height hero panels — never
+// Fixed-height hero panels never
 <div className="... h-auto">                          // not h-[480px]
 
 // Connectivity / hub rows
@@ -412,7 +412,7 @@ Every section must look correct from 375px through desktop without horizontal sc
 // Fixed-width sidepanels
 <div className="w-full lg:w-[360px] lg:flex-shrink-0">
 
-// Dense tables — wrap and set min-w on inner rows
+// Dense tables wrap and set min-w on inner rows
 <div className="rounded-bz-lg border border-bz-line-soft overflow-hidden overflow-x-auto">
   <div className="hidden md:grid grid-cols-[68px_92px_1fr_120px_72px] ... min-w-[560px]">
 
@@ -422,14 +422,14 @@ Every section must look correct from 375px through desktop without horizontal sc
 
 ### Mobile design-quality cheatsheet
 
-Same content, same brand — but the mobile view earns its own design pass. The principles:
+Same content, same brand but the mobile view earns its own design pass. The principles:
 
 #### 1. Density drops on mobile
 
-A card that sits side-by-side with three siblings on desktop becomes a single full-width card on mobile. **Don't just shrink the desktop card — re-tune it for the wider single column.** Bigger inner padding, more line-height on body, more space between stacked items.
+A card that sits side-by-side with three siblings on desktop becomes a single full-width card on mobile. **Don't just shrink the desktop card re-tune it for the wider single column.** Bigger inner padding, more line-height on body, more space between stacked items.
 
 ```tsx
-// ❌ Same card, just stacked — feels cramped
+// ❌ Same card, just stacked feels cramped
 <Bento className="p-3">
 
 // ✅ Looser internals on mobile, tighter on desktop
@@ -444,7 +444,7 @@ The most common mobile mistake is keeping desktop padding everywhere. Outer wrap
 // Section / container outer
 <Container className="px-4 md:px-6 lg:px-8">
 
-// Card inside — keep generous (or even bump up on mobile)
+// Card inside keep generous (or even bump up on mobile)
 <Bento className="p-5 md:p-6">
 ```
 
@@ -488,7 +488,7 @@ A complex chart, multi-row dashboard, or 12-cell bento mock that fills the hero 
 </div>
 ```
 
-#### 5. Type scale is already responsive — don't fight it
+#### 5. Type scale is already responsive don't fight it
 
 `--bz-text-h1` and `--bz-text-h2` are `clamp()`s in `theme.css`. They scale automatically. Only override on mobile if the existing scale genuinely breaks the layout (it usually doesn't).
 
@@ -502,19 +502,19 @@ When you finish a page, mentally walk a 375px viewport top-to-bottom. For each s
 
 - **Does it feel cramped?** (Padding too tight, items too close.)
 - **Does it feel bulky?** (Card too tall, mock too dense, padding too generous in the wrong direction.)
-- **Does it feel busy?** (Too many elements competing — drop the decorative ones for mobile.)
+- **Does it feel busy?** (Too many elements competing drop the decorative ones for mobile.)
 - **Does it feel intentional?** (Or does it look like the desktop layout, smaller?)
 
-If any answer is uncomfortable, fix it before reporting done — even if `npm run build` passes and there's no horizontal scroll.
+If any answer is uncomfortable, fix it before reporting done even if `npm run build` passes and there's no horizontal scroll.
 
-### Combined mobile checklist (run before Step 6 — Verify)
+### Combined mobile checklist (run before Step 6 Verify)
 
 **Structural:**
 
-- [ ] **The `*PageLayout` wrapper in `routes.tsx` has `className="bz-page"`.** This is the #1 cause of "small horizontal scroll on mobile" complaints — `.bz-page` carries `overflow-x: clip` + `text-wrap: balance` and is mandatory. Without it, even a perfectly responsive page scrolls sideways a few px on 375px viewports because long headings or nested viz nudge past the viewport.
+- [ ] **The `*PageLayout` wrapper in `routes.tsx` has `className="bz-page"`.** This is the #1 cause of "small horizontal scroll on mobile" complaints `.bz-page` carries `overflow-x: clip` + `text-wrap: balance` and is mandatory. Without it, even a perfectly responsive page scrolls sideways a few px on 375px viewports because long headings or nested viz nudge past the viewport.
 - [ ] All `grid-cols-N` (N ≥ 2) have a `grid-cols-1` mobile prefix.
 - [ ] No inline `display: grid` / `display: flex` layout styles.
-- [ ] No fixed `h-[Npx]` on hero panels — use `h-auto`.
+- [ ] No fixed `h-[Npx]` on hero panels use `h-auto`.
 - [ ] Decorative sidebars `hidden md:flex`.
 - [ ] Connectivity sections stack on mobile; connectors `hidden md:block`.
 - [ ] Dense tables wrapped in `overflow-x-auto` + `min-w-[…]` on rows.
@@ -527,25 +527,25 @@ If any answer is uncomfortable, fix it before reporting done — even if `npm ru
 - [ ] No section feels bulky/busy at 375px (decorative extras hidden via `hidden md:block`).
 - [ ] Card inner padding is comfortable on stacked single-column views (often bumped UP on mobile).
 - [ ] Hero mocks simplify on mobile (4-tile → 2-tile, complex chart → simple summary, sidebar dashboard → main panel only).
-- [ ] No "desktop-shrunk-to-thumbnail" mocks — anything that would render at < 280px wide either gets a mobile-specific composition or is hidden.
+- [ ] No "desktop-shrunk-to-thumbnail" mocks anything that would render at < 280px wide either gets a mobile-specific composition or is hidden.
 - [ ] Empty horizontal space in single-column layouts is intentional, not filled with extras.
 
 ## Common mistakes to avoid
 
-- **Constraining the hero mock width.** The mock's outer wrapper must take the full `<Container>` width — never put `max-w-xl`, `max-w-2xl`, `max-w-3xl`, or `mx-auto max-w-*` on it. Only internal sub-elements may carry width constraints.
-- **Hardcoding the hero mock top-margin.** The gap between the CTA pill row and the visual/mock below it is a TOKEN, not a per-page magic number. Use `<HeroCanvas>` (encodes `.bz-hero-canvas { margin-top: var(--bz-hero-gap) }`) for olive-canvas heroes, or wrap the mock in `<div className="bz-hero-visual">…</div>` for paper-surface mocks. **Never** write `mt-10`, `mt-14`, `mt-16`, `mt-[48px] md:mt-[78px]`, or any other ad-hoc top-margin on the wrapper. Tweak the gap site-wide by editing `--bz-hero-gap` / `--bz-hero-gap-mobile` in `theme.css` — never per page.
+- **Constraining the hero mock width.** The mock's outer wrapper must take the full `<Container>` width never put `max-w-xl`, `max-w-2xl`, `max-w-3xl`, or `mx-auto max-w-*` on it. Only internal sub-elements may carry width constraints.
+- **Hardcoding the hero mock top-margin.** The gap between the CTA pill row and the visual/mock below it is a TOKEN, not a per-page magic number. Use `<HeroCanvas>` (encodes `.bz-hero-canvas { margin-top: var(--bz-hero-gap) }`) for olive-canvas heroes, or wrap the mock in `<div className="bz-hero-visual">…</div>` for paper-surface mocks. **Never** write `mt-10`, `mt-14`, `mt-16`, `mt-[48px] md:mt-[78px]`, or any other ad-hoc top-margin on the wrapper. Tweak the gap site-wide by editing `--bz-hero-gap` / `--bz-hero-gap-mobile` in `theme.css` never per page.
 - **Adding a primitive that already exists.** Check `src/app/components/bz/index.ts` first.
 - **Adding new tokens without updating `docs/DESIGN_SYSTEM.md` and `/CLAUDE.md`.**
 - **Using `rounded-md` / `rounded-lg`.** Use `rounded-bz-md` / `rounded-bz-lg`.
 - **Wrapping `<Section>` in another wrapper for padding.** `<Section>` already provides padding; `<Container>` provides horizontal gutter.
 - **Writing a `<Section tone="dark">` closing CTA above `<Footer>`.** The CTA lives inside `<Footer cta={…}>`.
 - **Adding `paddingTop: 76`** anywhere. Header is no longer fixed.
-- **Forgetting `className="bz-page"`** on the new `*PageLayout` wrapper in `routes.tsx`. `.bz-page` carries `overflow-x: clip` + `text-wrap: balance` — the project's mobile-overflow guard. Forgetting it produces "a tiny horizontal scroll on mobile" even when the page itself is perfectly responsive. The class is set on the outermost `<div>` of the layout, alongside the `Inter` font-family inline style.
+- **Forgetting `className="bz-page"`** on the new `*PageLayout` wrapper in `routes.tsx`. `.bz-page` carries `overflow-x: clip` + `text-wrap: balance` the project's mobile-overflow guard. Forgetting it produces "a tiny horizontal scroll on mobile" even when the page itself is perfectly responsive. The class is set on the outermost `<div>` of the layout, alongside the `Inter` font-family inline style.
 - **Reaching for the legacy `marketing/` heroes** (`HeroCentered`, `HeroSplit`, `HeroPanel`). They're pre-rebrand. New heroes use `<Section tone="b">` + `<BadgeGreen>` + `<HeroCanvas>`.
 - **Adding `.biz-mesh`** or `<HeroBadge>`. Both retired.
-- **Per-page `<style>{@media …}</style>` blocks.** Means a primitive's breakpoint is missing — fix the primitive.
+- **Per-page `<style>{@media …}</style>` blocks.** Means a primitive's breakpoint is missing fix the primitive.
 - **Writing desktop-only layouts.** Run the mobile checklist before declaring done.
-- **Inventing new CTA labels.** Every conversion CTA must use one of the 4 canonical labels (`Get Started`, `Free Trial`, `Request Demo`, `Talk to Sales`). Labels like "Book a Demo", "Start free trial", "Talk to operations", "See it in action", "View features", "Browse connectors", "Visit help center" are all bugs — substitute per `BIZAK_PRODUCT_OVERVIEW.md` §7.4.
-- **Pills with no arrow, or two arrows.** Every Pill needs exactly one: `withArrow` (→ internal) or `withArrowUpRight` (↗ external). The legacy `withTick`/`iconLeft`/`iconRight` props were removed — passing them is a TypeScript error.
-- **Wrapping two pills in a `<div className="flex flex-wrap gap-[10px]">` or a `<>…</>` fragment.** Use `<PillGroup>` — it gives both pills equal width and the canonical 440px desktop / 100% mobile layout.
+- **Inventing new CTA labels.** Every conversion CTA must use one of the 4 canonical labels (`Get Started`, `Free Trial`, `Request Demo`, `Talk to Sales`). Labels like "Book a Demo", "Start free trial", "Talk to operations", "See it in action", "View features", "Browse connectors", "Visit help center" are all bugs substitute per `BIZAK_PRODUCT_OVERVIEW.md` §7.4.
+- **Pills with no arrow, or two arrows.** Every Pill needs exactly one: `withArrow` (→ internal) or `withArrowUpRight` (↗ external). The legacy `withTick`/`iconLeft`/`iconRight` props were removed passing them is a TypeScript error.
+- **Wrapping two pills in a `<div className="flex flex-wrap gap-[10px]">` or a `<>…</>` fragment.** Use `<PillGroup>` it gives both pills equal width and the canonical 440px desktop / 100% mobile layout.
 - **Wrapping a solo pill in `<PillGroup>`.** PillGroup is for pairs only. A single `<Pill>` inside a `<StepCard cta=…>` / `<BigCard cta=…>` / `<Bento.Cta>` slot stays bare.

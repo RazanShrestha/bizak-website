@@ -11,7 +11,7 @@ import { DotGrid } from "./DotGrid";
 //     />
 //     <Bento.Desc>Every transaction posts the right journals automatically.</Bento.Desc>
 //     <Bento.Cta href="/x" variant="leaf">Learn more</Bento.Cta>
-//     <Bento.Footer>{/* mini-viz slot — DataRow / MiniBars / etc. */}</Bento.Footer>
+//     <Bento.Footer>{/* mini-viz slot DataRow / MiniBars / etc. */}</Bento.Footer>
 //   </Bento>
 //
 // Paint: .bz-bento + .bz-bento-<tone> classes in style.css. The `span` prop
@@ -108,7 +108,7 @@ function BentoDesc({
   );
 }
 
-// ── CTA slot — typically a <Pill>. Delegates to <Pill> by default. ───────────
+// ── CTA slot typically a <Pill>. Delegates to <Pill> by default. ───────────
 function BentoCta(props: PillProps) {
   return (
     <div className="mt-5" style={{ alignSelf: "flex-start" }}>
@@ -117,7 +117,7 @@ function BentoCta(props: PillProps) {
   );
 }
 
-// ── Footer slot — for mini-viz (DataRow / MiniBars / etc.) ───────────────────
+// ── Footer slot for mini-viz (DataRow / MiniBars / etc.) ───────────────────
 function BentoFooter({
   className,
   children,

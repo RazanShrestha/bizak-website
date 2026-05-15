@@ -193,7 +193,7 @@ function HeroSection({ resource }: { resource: Resource }) {
         </nav>
 
         <div className="mt-10 grid grid-cols-1 items-start gap-12 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-16">
-          {/* Left — title block */}
+          {/* Left title block */}
           <div className="max-w-[760px]">
             <div className="flex flex-wrap items-center gap-2">
               <PillBadge tone={formatTone(resource.format)} dot={resource.format === "Playbook"}>
@@ -265,7 +265,7 @@ function HeroSection({ resource }: { resource: Resource }) {
             </div>
           </div>
 
-          {/* Right — fact card */}
+          {/* Right fact card */}
           <aside className="lg:sticky lg:top-[100px]">
             <Card tone="light" pad="lg" className="border-bz-border">
               <div className="flex items-center justify-between">
@@ -344,7 +344,7 @@ function BodySection({ resource }: { resource: Resource }) {
                         &ldquo;{resource.pullQuote.quote}&rdquo;
                       </p>
                       <div className="mt-4 text-[12.5px] font-semibold text-bz-text-soft">
-                        — {resource.pullQuote.attribution}
+                        {resource.pullQuote.attribution}
                       </div>
                     </div>
                   </div>
@@ -535,7 +535,7 @@ function RelatedSection({ resource }: { resource: Resource }) {
         <SectionHeading
           eyebrow="Keep reading"
           title="Related playbooks"
-          description="More resources in the same area — pulled live from the library."
+          description="More resources in the same area pulled live from the library."
           maxWidth={680}
           className="mb-12"
         />
@@ -707,7 +707,7 @@ export function ResourceDetailPage() {
         <RelatedSection resource={resource} />
         <ClosingCta />
 
-        {/* Floating "next" chip on larger screens — links to downloads if present */}
+        {/* Floating "next" chip on larger screens links to downloads if present */}
         {resource.downloads && resource.downloads.length > 0 && (
           <div className="pointer-events-none fixed inset-x-0 bottom-6 z-30 hidden justify-center md:flex">
             <a

@@ -2,13 +2,13 @@ import { type ReactNode } from "react";
 import { Icon } from "../../marketing/Icon";
 
 interface HeroVisualProps {
-  /** Center glass panel — typically `<HeroMainCard>...</HeroMainCard>`. */
+  /** Center glass panel typically `<HeroMainCard>...</HeroMainCard>`. */
   main: ReactNode;
-  /** Top-right dark card — typically `<HeroInventoryCard ... />`. */
+  /** Top-right dark card typically `<HeroInventoryCard ... />`. */
   inventory: ReactNode;
-  /** Bottom-left light card — typically `<HeroGlobeCard ... />`. */
+  /** Bottom-left light card typically `<HeroGlobeCard ... />`. */
   globe: ReactNode;
-  /** Small circular gauge bottom-right — typically `<HeroCircleCard ... />`. */
+  /** Small circular gauge bottom-right typically `<HeroCircleCard ... />`. */
   circle: ReactNode;
 }
 

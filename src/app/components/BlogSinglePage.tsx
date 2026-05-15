@@ -200,7 +200,7 @@ function ArticleContent() {
         <p className="bsp-article-intro">
           For decades, the humble spreadsheet has been the backbone of business operations.
           It's flexible, familiar, and accessible. However, as organizations scale, what was once
-          an asset quickly transforms into a liability — a phenomenon we call "the spreadsheet ceiling."
+          an asset quickly transforms into a liability a phenomenon we call "the spreadsheet ceiling."
         </p>
       </div>
 
@@ -274,7 +274,7 @@ function ArticleContent() {
           and Supply Chain in real-time.
         </p>
         <p>
-          Modern ERP platforms like Bizak go further — embedding AI-driven automation that reduces
+          Modern ERP platforms like Bizak go further embedding AI-driven automation that reduces
           manual labor, surfaces anomalies instantly, and generates compliance-ready reports
           without human intervention.
         </p>
@@ -365,7 +365,7 @@ function NewsletterSection() {
       </p>
       {submitted ? (
         <p style={{ color: "#C7FF35", fontWeight: 700, fontSize: 16, position: "relative", zIndex: 1 }}>
-          ✓ You're subscribed — thanks!
+          ✓ You're subscribed thanks!
         </p>
       ) : (
         <form

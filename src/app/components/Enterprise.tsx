@@ -7,7 +7,7 @@ import { Check, Star } from "lucide-react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
-// ─── Hero Panel — Global Command Center ──────────────────────────────────────
+// ─── Hero Panel Global Command Center ──────────────────────────────────────
 function GlobalCommandPanel() {
   const regions = [
     { id: "AMER",   x: 72,  y: 90,  label: "AMER", users: "3.2K", entities: 14 },
@@ -36,7 +36,7 @@ function GlobalCommandPanel() {
         </div>
       </div>
 
-      {/* Main dashboard card + revenue chip — inner relative so chip overlays the card */}
+      {/* Main dashboard card + revenue chip inner relative so chip overlays the card */}
       <div className="relative">
       <div className="biz-glass-dark biz-float rounded-[20px] overflow-hidden relative z-10" style={{ boxShadow: "0 32px 64px -16px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08)" }}>
         {/* Browser titlebar */}
@@ -126,7 +126,7 @@ function GlobalCommandPanel() {
         </div>
       </div>
 
-      {/* Floating revenue chip — positioned relative to the card above */}
+      {/* Floating revenue chip positioned relative to the card above */}
       <div className="biz-glass-dark biz-float-s absolute z-20 rounded-[14px]" style={{ bottom: 12, left: -20, padding: "14px 18px", boxShadow: "0 16px 40px rgba(0,0,0,0.4)", minWidth: 160 }}>
         <div className="text-[8px] font-bold uppercase tracking-[0.12em] mb-1.5" style={{ color: "rgba(199,255,53,0.65)" }}>Consolidated Revenue</div>
         <div className="text-[22px] font-extrabold text-white leading-none">$1.2B</div>
@@ -154,7 +154,7 @@ function HeroSection() {
           <span className="text-bz-accent">Operations.</span>
         </>
       }
-      description="One platform. 10,000+ users. 67 legal entities. 150+ countries. Bizak Enterprise delivers governance at SAP depth with cloud-native deployment speed — live in 20 weeks, not 3 years."
+      description="One platform. 10,000+ users. 67 legal entities. 150+ countries. Bizak Enterprise delivers governance at SAP depth with cloud-native deployment speed live in 20 weeks, not 3 years."
       actions={
         <>
           <Button variant="accent" size="lg" href="/Contact">Request Enterprise Demo</Button>
@@ -178,7 +178,7 @@ const FINDINGS = [
     id: "F-02",
     icon: "award",
     title: "Global Compliance Complexity",
-    desc: "Operating in 30 countries means 30 sets of tax laws, data residency rules, and audit requirements — all managed manually.",
+    desc: "Operating in 30 countries means 30 sets of tax laws, data residency rules, and audit requirements all managed manually.",
     alerts: [
       { label: "GDPR (EU)",           status: "GAP",    color: "#f87171" },
       { label: "VAT Filing (15 co.)", status: "MANUAL", color: "#fbbf24" },
@@ -211,7 +211,7 @@ const FINDINGS = [
     id: "F-05",
     icon: "plug",
     title: "Legacy Integration Debt",
-    desc: "Hundreds of brittle point-to-point integrations — every upgrade risks breaking a dozen others.",
+    desc: "Hundreds of brittle point-to-point integrations every upgrade risks breaking a dozen others.",
     bars: [
       { sku: "Salesforce → SAP",  level: 92 },
       { sku: "Oracle → Workday",  level: 78 },
@@ -344,7 +344,7 @@ const PILLARS = [
     icon: "shield",
     badgeTone: "sage" as const,
     title: "Enterprise Security & RBAC",
-    desc: "SSO, SAML 2.0, SCIM provisioning, and field-level access control. Every user sees exactly what their role permits — from CEO to regional AR clerk.",
+    desc: "SSO, SAML 2.0, SCIM provisioning, and field-level access control. Every user sees exactly what their role permits from CEO to regional AR clerk.",
     metrics: [
       { val: "SAML", lbl: "SSO Ready"      },
       { val: "SCIM", lbl: "Auto-Provision" },
@@ -375,7 +375,7 @@ function SolutionSection() {
         <SectionHeading
           eyebrow="The Solution"
           title="Enterprise-grade from day one. Not bolted on later."
-          description="Every critical enterprise capability — compliance, multi-entity, security — is built into the platform core, not added as a module."
+          description="Every critical enterprise capability compliance, multi-entity, security is built into the platform core, not added as a module."
           align="center"
           maxWidth={520}
           className="mb-16"
@@ -451,7 +451,7 @@ function CapabilitiesSection() {
             <div className="flex-1" style={{ minWidth: 280 }}>
               <h3 className="text-[20px] font-bold text-white mb-2.5">Global Consolidated View</h3>
               <p className="text-[14px] text-white/45 leading-[1.65] mb-6">
-                Revenue, EBITDA, headcount, and compliance status across every entity — live, in a single board-ready view. No Excel. No waiting for regional packs.
+                Revenue, EBITDA, headcount, and compliance status across every entity live, in a single board-ready view. No Excel. No waiting for regional packs.
               </p>
               <table className="w-full border-collapse">
                 <thead>
@@ -599,10 +599,10 @@ const CERTIFICATIONS = [
 const SECURITY_CONTROLS = [
   "End-to-end encryption at rest and in transit",
   "Field-level data masking for PII/PHI",
-  "Immutable audit log — zero tampering possible",
+  "Immutable audit log zero tampering possible",
   "Automated DSAR response tooling (GDPR Art. 17)",
   "Data residency enforcement per entity",
-  "Penetration testing — bi-annual external audit",
+  "Penetration testing bi-annual external audit",
 ];
 
 function ComplianceSection() {
@@ -633,7 +633,7 @@ function ComplianceSection() {
               Enterprise security that passes every audit.
             </h2>
             <p className="text-[15px] text-white/45 leading-[1.7] mb-7">
-              Security is not a feature at Bizak Enterprise — it's the foundation. Every module is built to meet the requirements of the world's most regulated industries.
+              Security is not a feature at Bizak Enterprise it's the foundation. Every module is built to meet the requirements of the world's most regulated industries.
             </p>
             <div className="flex gap-8 flex-wrap">
               {[
@@ -707,13 +707,13 @@ function InsightsSection() {
               The global view your board actually needs.
             </h2>
             <p className="text-[17px] text-bz-text-muted leading-[1.7]">
-              Stop assembling board packs from regional spreadsheets. Bizak Enterprise consolidates every entity, currency, and jurisdiction into a single live view — from P&L to cash position to headcount, in real time.
+              Stop assembling board packs from regional spreadsheets. Bizak Enterprise consolidates every entity, currency, and jurisdiction into a single live view from P&L to cash position to headcount, in real time.
             </p>
             <ul className="biz-check-list mt-6">
               {[
-                { bold: "Live Consolidation Engine",     rest: " — Multi-entity P&L, balance sheet, and cash with auto intercompany eliminations and FX revaluation." },
-                { bold: "Board-Ready Reports on Demand", rest: " — Export IFRS or GAAP-compliant investor-grade packs directly from live data. No Excel required."   },
-                { bold: "Predictive Cashflow AI",        rest: " — 13-week rolling forecast with AI-powered variance analysis across every entity."                   },
+                { bold: "Live Consolidation Engine",     rest: " Multi-entity P&L, balance sheet, and cash with auto intercompany eliminations and FX revaluation." },
+                { bold: "Board-Ready Reports on Demand", rest: " Export IFRS or GAAP-compliant investor-grade packs directly from live data. No Excel required."   },
+                { bold: "Predictive Cashflow AI",        rest: " 13-week rolling forecast with AI-powered variance analysis across every entity."                   },
               ].map((item) => (
                 <li key={item.bold} className="biz-check-item">
                   <span className="biz-check-icon"><Icon name="check-circle" size={20} /></span>
@@ -805,7 +805,7 @@ function ImplementationSection() {
         <SectionHeading
           eyebrow="Implementation"
           title="A proven path from contract to global go-live."
-          description="Our dedicated enterprise team follows a structured 20-week playbook. SLA-backed delivery milestones — no surprises, no overruns."
+          description="Our dedicated enterprise team follows a structured 20-week playbook. SLA-backed delivery milestones no surprises, no overruns."
           align="center"
           maxWidth={560}
           className="mb-16"
@@ -881,7 +881,7 @@ function ImplementationSection() {
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 const TESTIMONIALS = [
   {
-    quote: "We replaced SAP R/3 across 14 subsidiaries in 18 months — half the time our previous integrator quoted. The consolidation engine alone saves our finance team 3 weeks every quarter.",
+    quote: "We replaced SAP R/3 across 14 subsidiaries in 18 months half the time our previous integrator quoted. The consolidation engine alone saves our finance team 3 weeks every quarter.",
     name: "Fiona Lebedev",
     role: "Group CFO, Meridian Global Holdings",
     metric: "18-month global rollout",
@@ -895,7 +895,7 @@ const TESTIMONIALS = [
     featured: false,
   },
   {
-    quote: "Our first external audit after deploying Bizak — zero findings. The audit trail and segregation of duties are exactly what the Big 4 need to see.",
+    quote: "Our first external audit after deploying Bizak zero findings. The audit trail and segregation of duties are exactly what the Big 4 need to see.",
     name: "Priya Nair",
     role: "Head of Internal Audit, TerraGroup",
     metric: "Zero audit findings",
@@ -977,7 +977,7 @@ function CTASection() {
       <Container width="narrow">
         <SectionHeading
           title={<>Enterprise ERP decisions are made once.<br />Make this one count.</>}
-          description="Join global enterprises replacing SAP and Oracle with Bizak. Multi-entity. SOC 2 certified. Live in 20 weeks — with your name on the SLA."
+          description="Join global enterprises replacing SAP and Oracle with Bizak. Multi-entity. SOC 2 certified. Live in 20 weeks with your name on the SLA."
           tone="light"
           align="center"
           maxWidth={640}

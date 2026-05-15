@@ -63,7 +63,7 @@ export type Resource = {
   difficulty: Difficulty;
   updated: string;
   version?: string;
-  // Optional flag — surfaces in the library grid as a featured card.
+  // Optional flag surfaces in the library grid as a featured card.
   featured?: boolean;
   // Detail-page content
   longSummary: string;
@@ -116,7 +116,7 @@ export const RESOURCES: Resource[] = [
     format: "Playbook",
     title: "From kickoff to go-live: the 60-day Bizak implementation playbook",
     summary:
-      "A week-by-week field guide for the operations lead running a Bizak rollout — every milestone, owner, and decision gate.",
+      "A week-by-week field guide for the operations lead running a Bizak rollout every milestone, owner, and decision gate.",
     readTime: "60 min",
     steps: 12,
     difficulty: "Intermediate",
@@ -124,10 +124,10 @@ export const RESOURCES: Resource[] = [
     version: "v2026.1",
     featured: true,
     longSummary:
-      "Every Bizak rollout — whether a 25-person distributor or a multi-entity manufacturer — follows the same six-phase arc. The phases are sequential, but the artefacts overlap: discovery feeds configuration, configuration informs migration, migration shapes training. This playbook walks each phase, names the owner, lists the gate criteria, and links to the templates we use on every customer rollout.",
+      "Every Bizak rollout whether a 25-person distributor or a multi-entity manufacturer follows the same six-phase arc. The phases are sequential, but the artefacts overlap: discovery feeds configuration, configuration informs migration, migration shapes training. This playbook walks each phase, names the owner, lists the gate criteria, and links to the templates we use on every customer rollout.",
     pullQuote: {
       quote:
-        "We compressed an estimated 18-week rollout into 9. The decision gates were the difference — they kept us honest and forced the conversations finance and ops would otherwise have postponed.",
+        "We compressed an estimated 18-week rollout into 9. The decision gates were the difference they kept us honest and forced the conversations finance and ops would otherwise have postponed.",
       attribution: "Priya Bansal, CFO, Northwood Logistics",
     },
     prerequisites: [
@@ -136,7 +136,7 @@ export const RESOURCES: Resource[] = [
         body: "Not a sign-off-and-disappear sponsor. Someone who attends weekly steerco, breaks ties, and owns the budget.",
       },
       {
-        title: "A named project lead — full-time",
+        title: "A named project lead full-time",
         body: "60% allocation is not enough. Implementations are decision factories; you need someone whose only job is to keep them flowing.",
       },
       {
@@ -149,7 +149,7 @@ export const RESOURCES: Resource[] = [
         id: "discover",
         title: "Phase 1 · Discover (Week 1 – 2)",
         intro:
-          "Map the operating model, agree on the modules in scope, and name owners for every workstream — before a single record moves.",
+          "Map the operating model, agree on the modules in scope, and name owners for every workstream before a single record moves.",
         tasks: [
           {
             title: "Run the two-day discovery workshop",
@@ -177,7 +177,7 @@ export const RESOURCES: Resource[] = [
         id: "configure",
         title: "Phase 2 · Configure (Week 2 – 4)",
         intro:
-          "Stand up Bizak to mirror how your business actually runs — chart of accounts, item master, approval flows, branding.",
+          "Stand up Bizak to mirror how your business actually runs chart of accounts, item master, approval flows, branding.",
         tasks: [
           {
             title: "Build the chart of accounts",
@@ -187,7 +187,7 @@ export const RESOURCES: Resource[] = [
           {
             title: "Configure approval matrices",
             detail:
-              "Decide thresholds for POs, expenses, discounts, and credit limits. Bizak Workflow Automation handles the rest — no code, full audit trail.",
+              "Decide thresholds for POs, expenses, discounts, and credit limits. Bizak Workflow Automation handles the rest no code, full audit trail.",
           },
           {
             title: "Set up roles and permissions",
@@ -197,7 +197,7 @@ export const RESOURCES: Resource[] = [
         ],
         callout: {
           title: "Decision gate",
-          body: "Sandbox tenant ready, COA approved by finance, role library reviewed by IT — and a screenshot pack signed off by each module owner.",
+          body: "Sandbox tenant ready, COA approved by finance, role library reviewed by IT and a screenshot pack signed off by each module owner.",
         },
         outputs: ["Configured tenant", "Role library", "Doc templates"],
       },
@@ -205,7 +205,7 @@ export const RESOURCES: Resource[] = [
         id: "migrate",
         title: "Phase 3 · Migrate (Week 3 – 5)",
         intro:
-          "Move master data and opening balances using validated templates — every record reconciled against your source system.",
+          "Move master data and opening balances using validated templates every record reconciled against your source system.",
         tasks: [
           {
             title: "Cleanse master data",
@@ -215,7 +215,7 @@ export const RESOURCES: Resource[] = [
           {
             title: "Load customers, items, vendors, COA, balances",
             detail:
-              "Use the migration import templates in the order documented — dependencies matter. Validate row counts after every load.",
+              "Use the migration import templates in the order documented dependencies matter. Validate row counts after every load.",
           },
           {
             title: "Run a full mock cutover",
@@ -225,7 +225,7 @@ export const RESOURCES: Resource[] = [
         ],
         callout: {
           title: "Decision gate",
-          body: "Mock-cutover reconciliation signed off — opening balances tie out to the source system, parallel-run results pass three consecutive days.",
+          body: "Mock-cutover reconciliation signed off opening balances tie out to the source system, parallel-run results pass three consecutive days.",
         },
         outputs: ["Reconciled balances", "Migration audit log", "Mock-cut sign-off"],
       },
@@ -233,7 +233,7 @@ export const RESOURCES: Resource[] = [
         id: "train",
         title: "Phase 4 · Train (Week 5 – 7)",
         intro:
-          "Role-based enablement so each team learns the workflows they'll actually run — measured by certification, not by attendance.",
+          "Role-based enablement so each team learns the workflows they'll actually run measured by certification, not by attendance.",
         tasks: [
           {
             title: "Build role-based curricula",
@@ -243,7 +243,7 @@ export const RESOURCES: Resource[] = [
           {
             title: "Use in-product certifications",
             detail:
-              "Each curriculum ends in a real task in the sandbox. Pass the task, get certified — no PowerPoint exam.",
+              "Each curriculum ends in a real task in the sandbox. Pass the task, get certified no PowerPoint exam.",
           },
           {
             title: "Recruit a champions network",
@@ -316,7 +316,7 @@ export const RESOURCES: Resource[] = [
         format: "XLSX · 184 KB",
         title: "Master-data migration workbook",
         description:
-          "Pre-formatted sheets for customers, items, vendors, COA, opening balances — with validation built in.",
+          "Pre-formatted sheets for customers, items, vendors, COA, opening balances with validation built in.",
         href: "#",
       },
       {
@@ -337,7 +337,7 @@ export const RESOURCES: Resource[] = [
     faqs: [
       {
         q: "Can the rollout actually happen in 60 days?",
-        a: "The 60-day arc fits a clean mid-market scope — single entity, standard modules, a project lead with executive air-cover. Multi-entity, complex integrations, or contested data ownership push it to 12 weeks or more. The phases stay the same; the durations stretch.",
+        a: "The 60-day arc fits a clean mid-market scope single entity, standard modules, a project lead with executive air-cover. Multi-entity, complex integrations, or contested data ownership push it to 12 weeks or more. The phases stay the same; the durations stretch.",
       },
       {
         q: "Who needs to be on the project team?",
@@ -345,7 +345,7 @@ export const RESOURCES: Resource[] = [
       },
       {
         q: "What's the most common reason rollouts slip?",
-        a: "Data quality. Teams underestimate how dirty their existing master data is and discover it during phase 3. Build slack into the migration phase and start the cleanse in week 2 — not week 5.",
+        a: "Data quality. Teams underestimate how dirty their existing master data is and discover it during phase 3. Build slack into the migration phase and start the cleanse in week 2 not week 5.",
       },
     ],
   },
@@ -359,13 +359,13 @@ export const RESOURCES: Resource[] = [
     format: "Playbook",
     title: "Running a clean Bizak discovery workshop",
     summary:
-      "The two-day structured discovery our consultants run with new customers — agenda, worksheets, and the outputs your build team needs.",
+      "The two-day structured discovery our consultants run with new customers agenda, worksheets, and the outputs your build team needs.",
     readTime: "22 min",
     steps: 9,
     difficulty: "Foundational",
     updated: "Apr 2026",
     longSummary:
-      "Discovery is where bad rollouts are made. Skip it and you'll find your gaps in week six, when fixing them is ten times harder. This playbook gives you the agenda, the worksheets, and the artefacts to leave the workshop with — so the build team starts day one knowing exactly what to ship.",
+      "Discovery is where bad rollouts are made. Skip it and you'll find your gaps in week six, when fixing them is ten times harder. This playbook gives you the agenda, the worksheets, and the artefacts to leave the workshop with so the build team starts day one knowing exactly what to ship.",
     chapters: [
       {
         id: "agenda",
@@ -373,9 +373,9 @@ export const RESOURCES: Resource[] = [
         intro:
           "Day one belongs to process. Day two belongs to data. Keep the rooms separate, keep the right people in each, and don't try to compress them into one.",
         tasks: [
-          { title: "Day one — process walks", detail: "End-to-end transaction walks for finance, sales, inventory, and any module in scope. One scribe per session." },
-          { title: "Day two — data and integrations", detail: "Source systems, master-data owners, integration list, and the reporting requirements that drive the schema." },
-          { title: "Wrap-up — gaps and risks", detail: "30 minutes at the end: every open question, every risk, every dependency captured in one register." },
+          { title: "Day one process walks", detail: "End-to-end transaction walks for finance, sales, inventory, and any module in scope. One scribe per session." },
+          { title: "Day two data and integrations", detail: "Source systems, master-data owners, integration list, and the reporting requirements that drive the schema." },
+          { title: "Wrap-up gaps and risks", detail: "30 minutes at the end: every open question, every risk, every dependency captured in one register." },
         ],
         outputs: ["Process maps", "Data inventory", "Risk register"],
       },
@@ -410,7 +410,7 @@ export const RESOURCES: Resource[] = [
     faqs: [
       {
         q: "Can we run discovery remotely?",
-        a: "Yes — and many customers do. The agenda still works; just shorten sessions to 60 minutes and add more breaks. Have a single shared whiteboard tool and one facilitator.",
+        a: "Yes and many customers do. The agenda still works; just shorten sessions to 60 minutes and add more breaks. Have a single shared whiteboard tool and one facilitator.",
       },
       {
         q: "Who absolutely must be in the room?",
@@ -424,17 +424,17 @@ export const RESOURCES: Resource[] = [
     format: "Guide",
     title: "Cutover weekend: the hour-by-hour runbook",
     summary:
-      "Sequence opening balances, freeze legacy data, verify reconciliations, and switch users — without a single missed transaction.",
+      "Sequence opening balances, freeze legacy data, verify reconciliations, and switch users without a single missed transaction.",
     readTime: "18 min",
     steps: 14,
     difficulty: "Advanced",
     updated: "May 2026",
     longSummary:
-      "The cutover weekend is when months of preparation either land or fall apart. There's no improvisation in a good cutover — every step is scripted, owned, and gated. This is the runbook our consultants use on every Bizak go-live.",
+      "The cutover weekend is when months of preparation either land or fall apart. There's no improvisation in a good cutover every step is scripted, owned, and gated. This is the runbook our consultants use on every Bizak go-live.",
     chapters: [
       {
         id: "friday",
-        title: "Friday evening — freeze",
+        title: "Friday evening freeze",
         intro:
           "By 5pm Friday, the legacy system is read-only and every in-flight transaction is closed or carried forward. The cutover team is on a shared bridge and the war-room is open.",
         tasks: [
@@ -446,9 +446,9 @@ export const RESOURCES: Resource[] = [
       },
       {
         id: "saturday",
-        title: "Saturday — load and reconcile",
+        title: "Saturday load and reconcile",
         intro:
-          "Load opening balances, then master data, then transactions in dependency order. Reconcile after every batch — never let a discrepancy compound.",
+          "Load opening balances, then master data, then transactions in dependency order. Reconcile after every batch never let a discrepancy compound.",
         tasks: [
           { title: "Load opening balances", detail: "Per-entity, per-currency, with reconciliation against the trial balance after each post." },
           { title: "Run the reconciliation script", detail: "Bizak balances → legacy trial balance. Investigate anything that doesn't tie before moving on." },
@@ -461,7 +461,7 @@ export const RESOURCES: Resource[] = [
       },
       {
         id: "sunday",
-        title: "Sunday — verify and arm",
+        title: "Sunday verify and arm",
         intro:
           "The system is loaded. Now you prove it works for the people who'll touch it Monday morning.",
         tasks: [
@@ -495,7 +495,7 @@ export const RESOURCES: Resource[] = [
     format: "Template",
     title: "Master-data migration workbook",
     summary:
-      "Pre-formatted XLSX templates for customers, items, vendors, COA, and opening balances — with validation rules baked in.",
+      "Pre-formatted XLSX templates for customers, items, vendors, COA, and opening balances with validation rules baked in.",
     readTime: "Download",
     difficulty: "Foundational",
     updated: "Apr 2026",
@@ -515,7 +515,7 @@ export const RESOURCES: Resource[] = [
       {
         id: "how-to-use",
         title: "How to use it",
-        intro: "Use it sequentially — the workbook enforces dependencies you can't see in the data.",
+        intro: "Use it sequentially the workbook enforces dependencies you can't see in the data.",
         tasks: [
           { title: "Fill master sheets first", detail: "Items can't reference vendors that don't exist yet. The workbook stops you from getting the order wrong." },
           { title: "Run the validation tab", detail: "It highlights every error cell. Don't import until the summary count is zero." },
@@ -556,9 +556,9 @@ export const RESOURCES: Resource[] = [
     difficulty: "Intermediate",
     updated: "Apr 2026",
     longSummary:
-      "The five-day close isn't a tooling problem; it's a process problem. The tooling matters — auto-posting from sub-ledgers, scheduled bank reconciliations, real-time consolidation — but the breakthrough is treating close as a daily discipline instead of a monthly event.",
+      "The five-day close isn't a tooling problem; it's a process problem. The tooling matters auto-posting from sub-ledgers, scheduled bank reconciliations, real-time consolidation but the breakthrough is treating close as a daily discipline instead of a monthly event.",
     pullQuote: {
-      quote: "We went from 23 days to 5. The math wasn't magic — it was killing manual journals and refusing to wait for spreadsheets.",
+      quote: "We went from 23 days to 5. The math wasn't magic it was killing manual journals and refusing to wait for spreadsheets.",
       attribution: "Marcus Tan, Group Controller, Helmsmith",
     },
     chapters: [
@@ -568,7 +568,7 @@ export const RESOURCES: Resource[] = [
         intro:
           "If you only think about close at month-end, you're already two weeks late. Push the work into the days it happens.",
         tasks: [
-          { title: "Auto-post sub-ledger entries", detail: "Sales orders, shipments, invoices, payroll — the journal is posted the moment the event happens." },
+          { title: "Auto-post sub-ledger entries", detail: "Sales orders, shipments, invoices, payroll the journal is posted the moment the event happens." },
           { title: "Reconcile banks daily, not monthly", detail: "Schedule the bank-feed import nightly. Investigate breaks the next morning, not 25 days later." },
           { title: "Run continuous flux analysis", detail: "Bizak compares month-to-date against prior period as it builds. Surprises surface in week one, not week four." },
         ],
@@ -582,10 +582,10 @@ export const RESOURCES: Resource[] = [
         title: "The five-day close arc",
         intro: "Day 1: cutoff. Day 2: reconciliations. Day 3: accruals & FX. Day 4: review. Day 5: report and lock.",
         tasks: [
-          { title: "Day 1 — cutoff", detail: "Hard stop on prior-period postings. Run the cutoff scripts. Generate the working trial balance." },
-          { title: "Day 2-3 — recs and accruals", detail: "Bank, AR, AP, inventory, intercompany. Then accruals, FX revaluation, and prepaid amortisation." },
-          { title: "Day 4 — review and adjust", detail: "Controller reviews flux, signs off on adjustments, and approves the consolidation pack." },
-          { title: "Day 5 — report and lock", detail: "Distribute reports, lock the period, archive the close pack for audit." },
+          { title: "Day 1 cutoff", detail: "Hard stop on prior-period postings. Run the cutoff scripts. Generate the working trial balance." },
+          { title: "Day 2-3 recs and accruals", detail: "Bank, AR, AP, inventory, intercompany. Then accruals, FX revaluation, and prepaid amortisation." },
+          { title: "Day 4 review and adjust", detail: "Controller reviews flux, signs off on adjustments, and approves the consolidation pack." },
+          { title: "Day 5 report and lock", detail: "Distribute reports, lock the period, archive the close pack for audit." },
         ],
         outputs: ["Closed period", "Audit-ready close pack", "Flux analysis"],
       },
@@ -602,7 +602,7 @@ export const RESOURCES: Resource[] = [
         icon: FileSpreadsheet,
         format: "XLSX · 128 KB",
         title: "Reconciliation template pack",
-        description: "Bank, AR, AP, intercompany, inventory — formula-driven and Bizak-export-friendly.",
+        description: "Bank, AR, AP, intercompany, inventory formula-driven and Bizak-export-friendly.",
         href: "#",
       },
     ],
@@ -613,7 +613,7 @@ export const RESOURCES: Resource[] = [
       },
       {
         q: "What's the first thing to fix?",
-        a: "Manual journals. Audit the last three months — what categories of journal showed up every month? Each one is a candidate for automation, and each one you eliminate cuts hours from your close.",
+        a: "Manual journals. Audit the last three months what categories of journal showed up every month? Each one is a candidate for automation, and each one you eliminate cuts hours from your close.",
       },
     ],
   },
@@ -623,13 +623,13 @@ export const RESOURCES: Resource[] = [
     format: "Guide",
     title: "Multi-entity consolidation, step by step",
     summary:
-      "Configure intercompany accounts, FX revaluation, and elimination rules — then produce a consolidated P&L in one click.",
+      "Configure intercompany accounts, FX revaluation, and elimination rules then produce a consolidated P&L in one click.",
     readTime: "20 min",
     steps: 8,
     difficulty: "Advanced",
     updated: "Mar 2026",
     longSummary:
-      "Multi-entity consolidation in Bizak is a configuration exercise, not a manual process. Set the entities, the parent, the elimination rules, and the FX policy once — then close in minutes instead of days.",
+      "Multi-entity consolidation in Bizak is a configuration exercise, not a manual process. Set the entities, the parent, the elimination rules, and the FX policy once then close in minutes instead of days.",
     chapters: [
       {
         id: "structure",
@@ -660,7 +660,7 @@ export const RESOURCES: Resource[] = [
         title: "FX revaluation policy",
         intro: "Pick a policy, document it, and let Bizak run it on schedule.",
         tasks: [
-          { title: "Choose your rate sources", detail: "ECB, central bank, vendor rate — set the source per currency." },
+          { title: "Choose your rate sources", detail: "ECB, central bank, vendor rate set the source per currency." },
           { title: "Schedule the FX revaluation job", detail: "Monthly is standard. Weekly for high-volatility currencies." },
           { title: "Configure reporting currency conversion", detail: "Translate at period-end rates for balance-sheet, average rates for P&L. Bizak handles the convention." },
         ],
@@ -688,15 +688,15 @@ export const RESOURCES: Resource[] = [
     difficulty: "Foundational",
     updated: "May 2026",
     longSummary:
-      "Each template maps directly to a Bizak ledger export — drop the export in, the filing summary populates. No formula edits, no rebuild every month.",
+      "Each template maps directly to a Bizak ledger export drop the export in, the filing summary populates. No formula edits, no rebuild every month.",
     chapters: [
       {
         id: "whats-included",
         title: "What's in the pack",
         intro: "Eight templates covering the most-asked filings, plus a setup guide for tagging tax codes correctly in Bizak.",
         tasks: [
-          { title: "VAT — monthly summary", detail: "Outputs, inputs, net liability, with carry-forward logic." },
-          { title: "TDS — by section, by deductee", detail: "Section-wise summary plus deductee-level detail tab." },
+          { title: "VAT monthly summary", detail: "Outputs, inputs, net liability, with carry-forward logic." },
+          { title: "TDS by section, by deductee", detail: "Section-wise summary plus deductee-level detail tab." },
           { title: "Tagging guide", detail: "How to tag tax codes in Bizak so the templates work without rework." },
         ],
       },
@@ -734,7 +734,7 @@ export const RESOURCES: Resource[] = [
     difficulty: "Intermediate",
     updated: "Apr 2026",
     longSummary:
-      "Annual stock-takes are theatre. Real inventory accuracy comes from counting a slice every day — the right slice — and using variances as a signal, not a surprise.",
+      "Annual stock-takes are theatre. Real inventory accuracy comes from counting a slice every day the right slice and using variances as a signal, not a surprise.",
     chapters: [
       {
         id: "abc",
@@ -749,11 +749,11 @@ export const RESOURCES: Resource[] = [
       {
         id: "variances",
         title: "Make variances a signal, not a panic",
-        intro: "Every variance has a cause. Investigate the recurring ones — that's where process is broken.",
+        intro: "Every variance has a cause. Investigate the recurring ones that's where process is broken.",
         tasks: [
           { title: "Set variance thresholds", detail: "Auto-accept variances under 1% on B/C items. Investigate everything above. A items: investigate every variance." },
           { title: "Tag the root cause", detail: "Picking error, receiving error, theft, system mis-post. The tag drives the corrective action." },
-          { title: "Review monthly", detail: "Trends matter more than incidents. If picking errors spike, the process needs work — not the count." },
+          { title: "Review monthly", detail: "Trends matter more than incidents. If picking errors spike, the process needs work not the count." },
         ],
         outputs: ["Cycle-count schedule", "Variance log", "Root-cause trends"],
       },
@@ -763,7 +763,7 @@ export const RESOURCES: Resource[] = [
         icon: ShieldCheck,
         format: "PDF · 380 KB",
         title: "Cycle-count program template",
-        description: "ABC tiering rules, count frequencies, variance thresholds — edit to fit your warehouse.",
+        description: "ABC tiering rules, count frequencies, variance thresholds edit to fit your warehouse.",
         href: "#",
       },
     ],
@@ -774,7 +774,7 @@ export const RESOURCES: Resource[] = [
     format: "Guide",
     title: "Multi-warehouse setup for distribution teams",
     summary:
-      "Model bins, transfer routes, reorder rules, and 3PL handoffs in Bizak — without losing the single-source-of-truth.",
+      "Model bins, transfer routes, reorder rules, and 3PL handoffs in Bizak without losing the single-source-of-truth.",
     readTime: "19 min",
     steps: 10,
     difficulty: "Intermediate",
@@ -785,11 +785,11 @@ export const RESOURCES: Resource[] = [
       {
         id: "model",
         title: "Model the warehouse hierarchy",
-        intro: "Warehouse → zone → aisle → rack → bin. Most teams don't need all five — pick the depth that matches how you actually pick.",
+        intro: "Warehouse → zone → aisle → rack → bin. Most teams don't need all five pick the depth that matches how you actually pick.",
         tasks: [
           { title: "Pick a depth that matches operations", detail: "Two-zone warehouse? Don't model aisles. Pick-by-zone warehouse? Don't model racks." },
           { title: "Define bin types", detail: "Receiving, putaway, pick, ship, quarantine. Each has different rules." },
-          { title: "Set capacity constraints", detail: "Where it matters — high-velocity bins, refrigerated zones, hazmat areas." },
+          { title: "Set capacity constraints", detail: "Where it matters high-velocity bins, refrigerated zones, hazmat areas." },
         ],
       },
       {
@@ -828,13 +828,13 @@ export const RESOURCES: Resource[] = [
     format: "Guide",
     title: "Building a BOM your floor will actually follow",
     summary:
-      "Routings, scrap factors, alternate components, and revisions — modelled so production reflects what really happens at the line.",
+      "Routings, scrap factors, alternate components, and revisions modelled so production reflects what really happens at the line.",
     readTime: "24 min",
     steps: 9,
     difficulty: "Advanced",
     updated: "Apr 2026",
     longSummary:
-      "BOMs that don't match the line cause yield problems, costing problems, and trust problems. Get the BOM right and the rest of manufacturing — work orders, MRP, costing — falls into place.",
+      "BOMs that don't match the line cause yield problems, costing problems, and trust problems. Get the BOM right and the rest of manufacturing work orders, MRP, costing falls into place.",
     chapters: [
       {
         id: "structure",
@@ -849,7 +849,7 @@ export const RESOURCES: Resource[] = [
       {
         id: "routings",
         title: "Routings that match the floor",
-        intro: "Time-and-motion the routing — don't cut and paste from the engineering doc.",
+        intro: "Time-and-motion the routing don't cut and paste from the engineering doc.",
         tasks: [
           { title: "Define each operation", detail: "Setup time, run time per unit, work centre, required skills." },
           { title: "Capture move and queue time", detail: "Real lead time = setup + run + move + queue. Skip these and your MRP underestimates." },
@@ -861,7 +861,7 @@ export const RESOURCES: Resource[] = [
         title: "Revisions without breaking history",
         intro: "Engineering changes happen. Manage them so you can still cost, audit, and trace anything you've ever built.",
         tasks: [
-          { title: "Effective-date your changes", detail: "Bizak applies revisions based on WO start date — old WOs stay on old BOM." },
+          { title: "Effective-date your changes", detail: "Bizak applies revisions based on WO start date old WOs stay on old BOM." },
           { title: "Tag the change reason", detail: "Cost reduction, quality fix, supplier change. Searchable later when you need to explain a yield blip." },
           { title: "Review revision impact", detail: "Bizak shows MRP, open WO, and cost impact before you release the change." },
         ],
@@ -873,7 +873,7 @@ export const RESOURCES: Resource[] = [
         icon: FileSpreadsheet,
         format: "XLSX · 144 KB",
         title: "BOM import template",
-        description: "Multi-level BOM with phantoms, alternates, scrap factors — pre-validated.",
+        description: "Multi-level BOM with phantoms, alternates, scrap factors pre-validated.",
         href: "#",
       },
     ],
@@ -901,7 +901,7 @@ export const RESOURCES: Resource[] = [
         id: "scope",
         title: "Pick the smallest worthwhile scope",
         intro:
-          "Don't instrument the whole plant in week one. Pick one cell — ideally the bottleneck — and prove the model.",
+          "Don't instrument the whole plant in week one. Pick one cell ideally the bottleneck and prove the model.",
         tasks: [
           { title: "Identify the bottleneck cell", detail: "The cell whose output gates plant throughput. That's where OEE matters most." },
           { title: "Confirm signal availability", detail: "Cycle counts, downtime reasons, scrap counts. Do you have them, and how often?" },
@@ -955,13 +955,13 @@ export const RESOURCES: Resource[] = [
     format: "Playbook",
     title: "Designing a pipeline that finance trusts",
     summary:
-      "Align stages, weight forecasts, and tie quotes-to-cash so finance and sales share one number — every Monday.",
+      "Align stages, weight forecasts, and tie quotes-to-cash so finance and sales share one number every Monday.",
     readTime: "17 min",
     steps: 6,
     difficulty: "Intermediate",
     updated: "Mar 2026",
     longSummary:
-      "Sales and finance argue about the forecast because they're looking at different numbers. The fix isn't a better dashboard — it's a pipeline both teams have signed off on.",
+      "Sales and finance argue about the forecast because they're looking at different numbers. The fix isn't a better dashboard it's a pipeline both teams have signed off on.",
     chapters: [
       {
         id: "stages",
@@ -1001,7 +1001,7 @@ export const RESOURCES: Resource[] = [
     format: "Template",
     title: "Quote-to-invoice workflow templates",
     summary:
-      "Pre-built approval flows for discounts, margins, and credit limits — drop into Bizak Workflow Automation.",
+      "Pre-built approval flows for discounts, margins, and credit limits drop into Bizak Workflow Automation.",
     readTime: "Download",
     difficulty: "Foundational",
     updated: "May 2026",
@@ -1074,7 +1074,7 @@ export const RESOURCES: Resource[] = [
         icon: FileText,
         format: "PDF · 360 KB",
         title: "Role-based curriculum templates",
-        description: "Finance, Sales, Ops, Manager — pre-built modules to adapt.",
+        description: "Finance, Sales, Ops, Manager pre-built modules to adapt.",
         href: "#",
       },
     ],
@@ -1083,7 +1083,7 @@ export const RESOURCES: Resource[] = [
     slug: "guided-product-tour",
     category: "people",
     format: "Video",
-    title: "Bizak in 30 minutes — guided product tour",
+    title: "Bizak in 30 minutes guided product tour",
     summary:
       "A narrated walkthrough of the modules that matter on day one. Share it with new joiners before their first login.",
     readTime: "32 min watch",
@@ -1097,11 +1097,11 @@ export const RESOURCES: Resource[] = [
         title: "What the tour covers",
         intro: "Six chapters, played in order, each focused on a different operator's day.",
         tasks: [
-          { title: "00:00 — The Bizak shape", detail: "How modules connect, how navigation works, where to find help." },
-          { title: "05:00 — Finance basics", detail: "Invoicing, AP, recs — the daily finance workflows." },
-          { title: "12:00 — Sales basics", detail: "Leads to quotes to orders — the customer-facing arc." },
-          { title: "20:00 — Inventory & operations", detail: "Stock, transfers, work orders — the physical-world basics." },
-          { title: "27:00 — Reporting", detail: "Dashboards, drill-down, scheduled reports — the manager's view." },
+          { title: "00:00 The Bizak shape", detail: "How modules connect, how navigation works, where to find help." },
+          { title: "05:00 Finance basics", detail: "Invoicing, AP, recs the daily finance workflows." },
+          { title: "12:00 Sales basics", detail: "Leads to quotes to orders the customer-facing arc." },
+          { title: "20:00 Inventory & operations", detail: "Stock, transfers, work orders the physical-world basics." },
+          { title: "27:00 Reporting", detail: "Dashboards, drill-down, scheduled reports the manager's view." },
         ],
       },
     ],

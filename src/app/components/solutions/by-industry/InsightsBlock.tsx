@@ -11,7 +11,7 @@ interface InsightsBlockProps {
   title: ReactNode;
   description: string;
   bullets: InsightsBullet[];
-  /** The visual on the other half of the row — typically a chart frame. */
+  /** The visual on the other half of the row typically a chart frame. */
   chart: ReactNode;
   /**
    * Which side the chart sits on. Default `'right'` (text reads first).

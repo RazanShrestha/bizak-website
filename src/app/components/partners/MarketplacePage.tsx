@@ -103,7 +103,7 @@ function HeroSection() {
             <span className="text-bz-sage">built by partners.</span>
           </h1>
           <p className="mt-6 text-[17px] leading-[1.7] text-bz-text-muted">
-            Two hundred-plus native apps, integrations, and add-ons — installed inside your Bizak tenant in two clicks. Built and maintained by certified technology partners.
+            Two hundred-plus native apps, integrations, and add-ons installed inside your Bizak tenant in two clicks. Built and maintained by certified technology partners.
           </p>
 
           <div className="mt-10 max-w-[640px] mx-auto">
@@ -258,7 +258,7 @@ function ListYoursSection() {
               eyebrow="Built something? List it."
               eyebrowTone="accent"
               title={<>Reach 50,000+ Bizak customers from the install screen.</>}
-              description="Our marketplace is open to certified technology partners. Submit your listing through the Partner Portal — Bizak handles distribution, billing, OAuth scopes, and review."
+              description="Our marketplace is open to certified technology partners. Submit your listing through the Partner Portal Bizak handles distribution, billing, OAuth scopes, and review."
               tone="light"
               maxWidth={520}
             />
@@ -279,7 +279,7 @@ function ListYoursSection() {
             <div className="flex flex-col gap-4">
               {[
                 { v: "0%",    l: "Listing fee for the first year" },
-                { v: "85/15", l: "Revenue share after Yr 1 — partner-favorable" },
+                { v: "85/15", l: "Revenue share after Yr 1 partner-favorable" },
                 { v: "50k+",  l: "Bizak tenants reachable from install" },
                 { v: "5 days", l: "Avg. review turnaround" },
               ].map((s) => (

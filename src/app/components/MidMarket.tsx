@@ -111,7 +111,7 @@ function HeroSection() {
     <HeroPanel
       badge={<HeroBadge tone="dark">ERP for Mid-Market Companies</HeroBadge>}
       title={<>Unify Operations.<br /><span className="text-bz-accent">Scale</span> With Precision.</>}
-      description="Mid-market companies outgrow spreadsheets and entry-level ERPs fast. Bizak gives you multi-entity financials, advanced approval workflows, and consolidated reporting — without the enterprise price tag or 18-month rollout."
+      description="Mid-market companies outgrow spreadsheets and entry-level ERPs fast. Bizak gives you multi-entity financials, advanced approval workflows, and consolidated reporting without the enterprise price tag or 18-month rollout."
       actions={
         <>
           <Button variant="accent" size="lg" href="/contact" withArrow>Request a Demo</Button>
@@ -198,7 +198,7 @@ const CHALLENGES: ChallengeItem[] = [
   {
     icon: Puzzle,
     title: "Siloed Departments",
-    desc: "Finance doesn't see what Ops is ordering. Sales doesn't know inventory levels. Each department optimizes alone — and the business pays the cost.",
+    desc: "Finance doesn't see what Ops is ordering. Sales doesn't know inventory levels. Each department optimizes alone and the business pays the cost.",
     footer: (
       <div className="mt-auto pt-4 border-t border-bz-border">
         <div className="flex items-center justify-center mb-3">
@@ -301,12 +301,12 @@ function ChallengesSection() {
 type SolutionItem = { icon: LucideIcon; title: string; desc: string };
 
 const SOLUTIONS: SolutionItem[] = [
-  { icon: Layers,      title: "Multi-Entity Financials",     desc: "Manage multiple subsidiaries in one platform. Auto-consolidate, handle intercompany eliminations, and close books in hours — not days." },
+  { icon: Layers,      title: "Multi-Entity Financials",     desc: "Manage multiple subsidiaries in one platform. Auto-consolidate, handle intercompany eliminations, and close books in hours not days." },
   { icon: CheckSquare, title: "Advanced Approval Workflows", desc: "Build multi-level, role-based approval chains for POs, budgets, and expenses. Auto-escalate when thresholds are breached." },
   { icon: ShieldCheck, title: "Audit-Ready Controls",        desc: "Full audit trail, segregation of duties, and policy enforcement baked in. Every change is logged, every approval is documented." },
   { icon: BarChart3,   title: "Executive Dashboards",        desc: "Board-level reporting in real time. P&L by entity, consolidated cashflow, and department KPIs available on any device." },
   { icon: Plug,        title: "Deep Integrations",           desc: "Connect your bank feeds, CRM, payroll, and logistics platforms. Bizak becomes the operational backbone of your entire org." },
-  { icon: Lock,        title: "Role-Based Access Control",   desc: "Granular permissions ensure each team sees only what they need. Delegate without risk — from CFO to field rep." },
+  { icon: Lock,        title: "Role-Based Access Control",   desc: "Granular permissions ensure each team sees only what they need. Delegate without risk from CFO to field rep." },
 ];
 
 function SolutionSection() {
@@ -389,7 +389,7 @@ function CapabilitiesSection() {
                 <div className="flex-1 min-w-[240px]">
                   <h4 className="text-[18px] font-bold text-white mb-2">Consolidated Oversight</h4>
                   <p className="text-[13px] text-white/50 leading-[1.6] mb-5">
-                    Revenue, costs, headcount, and approvals across all entities — live in a single board-ready view.
+                    Revenue, costs, headcount, and approvals across all entities live in a single board-ready view.
                   </p>
                   <table className="w-full border-collapse">
                     <thead>
@@ -451,7 +451,7 @@ function CapabilitiesSection() {
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <h3 className="text-[18px] font-bold text-white mb-2">Audit & Compliance</h3>
-                  <p className="text-[13px] text-white/50 leading-[1.6]">Complete audit log, segregation of duties, and policy enforcement. Prepare for any audit in minutes — not weeks.</p>
+                  <p className="text-[13px] text-white/50 leading-[1.6]">Complete audit log, segregation of duties, and policy enforcement. Prepare for any audit in minutes not weeks.</p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-bz-accent/10 flex items-center justify-center text-bz-accent shrink-0 ml-4">
                   <ShieldCheck size={22} strokeWidth={1.8} />
@@ -485,7 +485,7 @@ function CapabilitiesSection() {
               </div>
               <PieChart size={32} className="text-bz-accent mb-5" strokeWidth={1.8} />
               <h4 className="text-[17px] font-bold text-white mb-2">Executive Reporting</h4>
-              <p className="text-[13px] text-white/50 leading-[1.6]">Board packs, management accounts, and KPI dashboards built live from your data — no Excel assembly required.</p>
+              <p className="text-[13px] text-white/50 leading-[1.6]">Board packs, management accounts, and KPI dashboards built live from your data no Excel assembly required.</p>
             </Card>
           </div>
 
@@ -494,7 +494,7 @@ function CapabilitiesSection() {
             <Card tone="dark" pad="lg" className="min-h-[240px] flex flex-col">
               <Lock size={32} className="text-bz-accent mb-5" strokeWidth={1.8} />
               <h4 className="text-[17px] font-bold text-white mb-2">Granular Access Control</h4>
-              <p className="text-[13px] text-white/50 leading-[1.6]">Entity-level, department-level, and field-level permissions. Every user sees exactly what their role allows — nothing more.</p>
+              <p className="text-[13px] text-white/50 leading-[1.6]">Entity-level, department-level, and field-level permissions. Every user sees exactly what their role allows nothing more.</p>
               <div className="mt-auto pt-4">
                 <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
                   <div className="h-full bg-bz-accent rounded-full" style={{ width: "97%" }} />
@@ -512,9 +512,9 @@ function CapabilitiesSection() {
 // ─── Insights ─────────────────────────────────────────────────────────────────
 
 const INSIGHT_BULLETS = [
-  { bold: "Real-Time Consolidation",     rest: " — P&L, balance sheet, and cashflow across all entities with intercompany eliminations handled automatically." },
-  { bold: "Department-Level Visibility", rest: " — Every team's budget vs actuals, approval queue, and KPIs in one unified view." },
-  { bold: "Board-Ready Reports",         rest: " — Export investor-grade reports directly from live data — no spreadsheet assembly needed." },
+  { bold: "Real-Time Consolidation",     rest: " P&L, balance sheet, and cashflow across all entities with intercompany eliminations handled automatically." },
+  { bold: "Department-Level Visibility", rest: " Every team's budget vs actuals, approval queue, and KPIs in one unified view." },
+  { bold: "Board-Ready Reports",         rest: " Export investor-grade reports directly from live data no spreadsheet assembly needed." },
 ];
 
 // ─── Workflow ─────────────────────────────────────────────────────────────────
@@ -537,7 +537,7 @@ function WorkflowSection() {
         <SectionHeading
           eyebrow="Implementation"
           title="Structured rollout. Zero disruption."
-          description="Our dedicated implementation team follows a proven 30-day playbook — phased go-live, data migration included, and handover training for every team."
+          description="Our dedicated implementation team follows a proven 30-day playbook phased go-live, data migration included, and handover training for every team."
           align="left"
           maxWidth={520}
           className="mb-16"

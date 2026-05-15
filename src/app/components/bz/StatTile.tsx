@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "../ui/utils";
 
-// Stat tile — big number on the left, descriptive text on the right.
+// Stat tile big number on the left, descriptive text on the right.
 //   <StatTile value="50,000+" desc="Companies powered by Bizak." />
 //   <StatTile value="60%" desc="Faster month-end close." />
 //

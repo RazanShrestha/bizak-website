@@ -70,7 +70,7 @@ const PAINS = [
   {
     icon: Plug,
     title: "Patchwork app stack",
-    desc: "Accounting in QuickBooks, CRM in HubSpot, inventory in another tool — each integration is a fragile bridge that breaks at the worst time.",
+    desc: "Accounting in QuickBooks, CRM in HubSpot, inventory in another tool each integration is a fragile bridge that breaks at the worst time.",
     tone: "paper" as const,
     footer: (
       <div>
@@ -110,7 +110,7 @@ const IMPACT_STATS = [
   {
     value: "3 Days",
     label: "Average go-live",
-    desc:  "Pre-configured modules for common SME workflows — import data, invite your team, and ship.",
+    desc:  "Pre-configured modules for common SME workflows import data, invite your team, and ship.",
   },
   {
     value: "60%",
@@ -234,7 +234,7 @@ function PainSection() {
               <Heading.Muted>don't scale with your business.</Heading.Muted>
             </>
           }
-          description="Manual processes and patched-together apps work at ten employees. At fifty, they collapse — and your team pays the price."
+          description="Manual processes and patched-together apps work at ten employees. At fifty, they collapse and your team pays the price."
           titleMaxWidth={700}
         />
         <BentoGrid cols={3}>
@@ -300,11 +300,11 @@ function PlatformSection() {
         <BigCard
           text={{
             title: "The operating system for growing businesses.",
-            body: "Replace your disconnected tools with a single system where finance, sales, and inventory work together — auto-posting every transaction to the ledger the moment it happens.",
+            body: "Replace your disconnected tools with a single system where finance, sales, and inventory work together auto-posting every transaction to the ledger the moment it happens.",
             bullets: [
-              "Finance, payables and reconciliation — auto-posted",
-              "Sales pipeline and CRM — connected to inventory",
-              "Purchasing, warehousing and reporting — one ledger",
+              "Finance, payables and reconciliation auto-posted",
+              "Sales pipeline and CRM connected to inventory",
+              "Purchasing, warehousing and reporting one ledger",
             ],
             cta: {
               variant: "accent",
@@ -422,7 +422,7 @@ function OnboardingSection() {
               <Heading.Muted>in three days.</Heading.Muted>
             </>
           }
-          description="Pre-configured modules for common SME workflows. Import your data, invite your team, and go live — no consultant needed."
+          description="Pre-configured modules for common SME workflows. Import your data, invite your team, and go live no consultant needed."
           titleMaxWidth={680}
         />
         <div className="flex flex-col gap-5">
@@ -451,7 +451,7 @@ function OnboardingSection() {
             tag="Day 3"
             title="Invite your team and go live"
             bullets={[
-              "Role-based access for every team member — no IT department required",
+              "Role-based access for every team member no IT department required",
               "Real-time dashboards activate the moment your first transaction posts",
             ]}
             visual={<StepLiveVisual />}

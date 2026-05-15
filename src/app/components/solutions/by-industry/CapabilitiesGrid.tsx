@@ -232,7 +232,7 @@ export function MethodGrid({ items }: { items: MethodGridItem[] }) {
 // ─── FeatureWithMockupCard ───────────────────────────────────────────────────
 //
 // Used by ProfessionalServicePage's "Time & Engagement Tracker" and
-// RetailAndEcommercePage's "POS Billing" — the col-6 dark card with a
+// RetailAndEcommercePage's "POS Billing" the col-6 dark card with a
 // feature list on the left and a branded device-mockup card on the right.
 
 interface FeatureItem {
@@ -262,7 +262,7 @@ interface FeatureWithMockupCardProps {
   features: FeatureItem[];
   /** Mockup header strip configuration (left title + right status label). */
   mockupHeader: MockupHeader;
-  /** Mockup body slot — page-specific content (timesheet rows, POS bill, etc.). */
+  /** Mockup body slot page-specific content (timesheet rows, POS bill, etc.). */
   mockupBody: ReactNode;
   /** Optional stat badges rendered below the mockup. */
   mockupBadges?: MockupBadge[];

@@ -33,7 +33,7 @@ const COLS_CLASS: Record<NonNullable<BentoGridProps["cols"]>, string> = {
 
 export function BentoGrid({
   cols = 3,
-  gap = 18,
+  gap = 8,
   className,
   children,
   style,

@@ -40,12 +40,12 @@ const FORMAT_ICON: Record<EventFormat, typeof Globe> = {
 };
 
 const ROLES = [
-  "Partner — Sales / Channel",
-  "Partner — Solution Architect",
-  "Partner — Implementation Lead",
-  "Partner — Marketing",
-  "Customer — Finance / Ops",
-  "Customer — IT",
+  "Partner Sales / Channel",
+  "Partner Solution Architect",
+  "Partner Implementation Lead",
+  "Partner Marketing",
+  "Customer Finance / Ops",
+  "Customer IT",
   "Bizak team",
   "Other",
 ];
@@ -68,7 +68,7 @@ const INITIAL: FormState = {
   fullName: "",
   email:    "",
   org:      "",
-  role:     "Partner — Sales / Channel",
+  role:     "Partner Sales / Channel",
   region:   "Asia Pacific",
   guests:   "Just me",
   question: "",
@@ -148,7 +148,7 @@ function HeroSection({ event }: { event: PartnerEvent }) {
             </div>
 
             <h1 className="font-bold tracking-[-0.02em] text-[clamp(34px,5vw,56px)] leading-[1.1]">
-              {isInPerson ? "Request your invite — " : "Save your seat — "}
+              {isInPerson ? "Request your invite " : "Save your seat "}
               <span className="text-bz-sage">{event.title}</span>.
             </h1>
             <p className="mt-6 text-[17px] leading-[1.7] text-bz-text-muted max-w-[620px]">
@@ -237,7 +237,7 @@ function SidebarPanel({ event }: { event: PartnerEvent }) {
             { Icon: Users,        l: "Open to partners + customers" },
             { Icon: ShieldCheck,  l: "No marketing follow-up" },
             { Icon: Video,        l: "Replay sent next morning" },
-            { Icon: Globe,        l: "Time zone — local invites" },
+            { Icon: Globe,        l: "Time zone local invites" },
           ].map(({ Icon, l }) => (
             <div key={l} className="rounded-bz-md border border-white/10 bg-white/[0.03] p-3 flex items-start gap-2.5">
               <Icon className="size-3.5 text-bz-accent shrink-0 mt-0.5" />

@@ -7,7 +7,7 @@ import { cn } from "../ui/utils";
 //   <StripeBar pct={75} tone="dark" />
 //
 // Paint: .bz-stripe-bar / .bz-stripe-bar-fill in style.css. The `pct`
-// prop is genuinely dynamic — inline style for width is the right move.
+// prop is genuinely dynamic inline style for width is the right move.
 
 export type StripeBarProps = {
   /** 0–100. Width of the filled portion. */

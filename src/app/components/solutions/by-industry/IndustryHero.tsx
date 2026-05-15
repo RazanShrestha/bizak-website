@@ -25,11 +25,11 @@ interface IndustryHeroProps {
 /**
  * The split copy/visual hero used by every "By Industry" page.
  *
- * Left column — eyebrow, headline (`title` accepts JSX so callers can wrap
+ * Left column eyebrow, headline (`title` accepts JSX so callers can wrap
  * a span in `text-bz-sage`/`text-bz-accent`), description, two CTAs, and a
  * row of two stats divided by a vertical rule.
  *
- * Right column — `visual` slot. Pages compose this with `<HeroVisual />`
+ * Right column `visual` slot. Pages compose this with `<HeroVisual />`
  * plus the four card primitives, or pass any custom JSX.
  */
 export function IndustryHero({

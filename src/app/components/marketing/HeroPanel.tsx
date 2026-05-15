@@ -19,7 +19,7 @@ export interface HeroPanelProps {
   tone?: "dark" | "light";
   mesh?: boolean;
   className?: string;
-  /** column ratio left/right — default "55/45" matches Careers. */
+  /** column ratio left/right default "55/45" matches Careers. */
   ratio?: "55/45" | "1/1" | "60/40";
   reverse?: boolean;
 }
@@ -31,7 +31,7 @@ const RATIO_CLASS: Record<NonNullable<HeroPanelProps["ratio"]>, string> = {
 };
 
 /**
- * Option 3 — Panel hero (Careers pattern).
+ * Option 3 Panel hero (Careers pattern).
  *
  * Two-column hero on a dark surface by default: copy on the left (badge →
  * h1 → description → actions → stats row separated by a top border), an
@@ -39,7 +39,7 @@ const RATIO_CLASS: Record<NonNullable<HeroPanelProps["ratio"]>, string> = {
  * KPIs, lists, mini dashboards). Collapses cleanly on mobile.
  *
  * Use this when the right-hand content is a *self-contained card* (live
- * stats, leaderboard, snapshot) rather than a free-floating illustration —
+ * stats, leaderboard, snapshot) rather than a free-floating illustration
  * it gives the panel a clear container instead of letting it bleed.
  */
 export function HeroPanel({

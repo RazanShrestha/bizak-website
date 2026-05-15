@@ -75,12 +75,12 @@ const IMPACT_STATS = [
   {
     value: "60%",
     label: "Faster month-end",
-    desc: "Automated reconciliation and instant cross-module consolidation — close without a single manual export.",
+    desc: "Automated reconciliation and instant cross-module consolidation close without a single manual export.",
   },
   {
     value: "40+",
     label: "Report templates",
-    desc: "Financial, operational and compliance reports ready on day one — customise any of them in minutes.",
+    desc: "Financial, operational and compliance reports ready on day one customise any of them in minutes.",
   },
   {
     value: "100%",
@@ -361,7 +361,7 @@ function HeroSection() {
   );
 }
 
-// Live data stream — every module posts to the dashboard in real-time
+// Live data stream every module posts to the dashboard in real-time
 function DataStreamSection() {
   return (
     <Section tone="a">
@@ -451,7 +451,7 @@ function DataStreamSection() {
   );
 }
 
-// Role-based dashboards — flat 4-col panel inside a dark section
+// Role-based dashboards flat 4-col panel inside a dark section
 function RoleIntelligenceSection() {
   return (
     <Section tone="dark">
@@ -550,7 +550,7 @@ function RoleIntelligenceSection() {
   );
 }
 
-// Drill to origin — StepCard showing the 3-click audit trail
+// Drill to origin StepCard showing the 3-click audit trail
 function DrillToOriginSection() {
   return (
     <Section tone="b">
@@ -582,7 +582,7 @@ function DrillToOriginSection() {
   );
 }
 
-// Reports & delivery — BigCard (dark 2-col) with catalog + schedule visual
+// Reports & delivery BigCard (dark 2-col) with catalog + schedule visual
 function ReportsSection() {
   return (
     <Section tone="a">
@@ -620,7 +620,7 @@ function ReportsSection() {
   );
 }
 
-// Impact — horizontal typographic stat strip, no cards
+// Impact horizontal typographic stat strip, no cards
 function ImpactSection() {
   return (
     <Section tone="b">

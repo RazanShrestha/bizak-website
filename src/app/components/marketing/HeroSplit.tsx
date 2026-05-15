@@ -22,25 +22,25 @@ export interface HeroSplitProps {
   reverse?: boolean;
   /**
    * className for the right-column wrapper around `visual`.
-   * Defaults to `biz-hero-visual` — the by-industry positioning context
+   * Defaults to `biz-hero-visual` the by-industry positioning context
    * (`position:relative; width:100%; aspect-ratio:1; perspective:2000px`,
    * hidden ≤1024px) that the by-industry `<HeroVisual>` 4-card scaffold
    * needs for its absolutely positioned slot cards.
    *
    * Override with `""` (or any other class) when the visual doesn't depend
-   * on that context — e.g., a single illustration, chart, or img.
+   * on that context e.g., a single illustration, chart, or img.
    */
   visualClassName?: string;
 }
 
 /**
- * Option 2 — Split hero (Manufacturing / by-industry pattern).
+ * Option 2 Split hero (Manufacturing / by-industry pattern).
  *
  * Two-column hero: copy on the left (eyebrow/badge → h1 → description →
  * actions → stats row separated by a top border), product visual on the
  * right. Collapses to a single stacked column on tablet/mobile (≤1024px).
  *
- * Use this when the hero's job is "explain *and* demo" — the visual is a
+ * Use this when the hero's job is "explain *and* demo" the visual is a
  * domain-specific cluster (dashboard, diagram, multi-card composition) that
  * sits beside the copy at the same vertical weight.
  */

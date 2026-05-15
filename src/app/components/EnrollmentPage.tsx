@@ -70,7 +70,7 @@ function resolveOffering(slug: string | undefined): Offering | undefined {
       slug: cohort.slug,
       title: cohort.title,
       description:
-        "A live cohort session led by a Bizak engineer or consultant. Reserve your seat — cohorts cap at 30 learners and fill quickly.",
+        "A live cohort session led by a Bizak engineer or consultant. Reserve your seat cohorts cap at 30 learners and fill quickly.",
       format: cohort.format,
       duration: cohort.format,
       level: "Mixed",
@@ -158,7 +158,7 @@ const INCLUDED: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: Sparkles,
     title: "Live sandbox environment",
-    body: "A dedicated Bizak tenant pre-loaded with realistic data — yours for 90 days.",
+    body: "A dedicated Bizak tenant pre-loaded with realistic data yours for 90 days.",
   },
   {
     icon: BadgeCheck,
@@ -175,7 +175,7 @@ const INCLUDED: { icon: LucideIcon; title: string; body: string }[] = [
 const FAQS: { q: string; a: string }[] = [
   {
     q: "When does the course start?",
-    a: "Self-paced courses unlock the moment your enrolment is confirmed. Live cohorts and workshops start on the date listed in the order summary — you'll get a calendar invite within an hour of confirmation.",
+    a: "Self-paced courses unlock the moment your enrolment is confirmed. Live cohorts and workshops start on the date listed in the order summary you'll get a calendar invite within an hour of confirmation.",
   },
   {
     q: "What's the refund policy?",
@@ -183,7 +183,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Do I need a Bizak licence to enrol?",
-    a: "No. Every learner gets a dedicated sandbox tenant for the duration of the course — no production licence required. If your company already runs Bizak, we can mirror your real configuration on request.",
+    a: "No. Every learner gets a dedicated sandbox tenant for the duration of the course no production licence required. If your company already runs Bizak, we can mirror your real configuration on request.",
   },
   {
     q: "Can my team enrol together?",
@@ -228,7 +228,7 @@ function HeroSection({ offering }: { offering: Offering }) {
           </div>
           <h1 className="mt-6 text-[clamp(34px,4.6vw,52px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
             {offering.kind === "cohort" ? (
-              <>Reserve your seat — <span className="text-bz-sage">{offering.title}</span>.</>
+              <>Reserve your seat <span className="text-bz-sage">{offering.title}</span>.</>
             ) : (
               <>Enrol in <span className="text-bz-sage">{offering.title}</span>.</>
             )}
@@ -489,7 +489,7 @@ function FormSection({ offering }: { offering: Offering }) {
           <form onSubmit={handleSubmit} className="max-w-[760px]" noValidate>
             <Stepper current={step} />
 
-            {/* Step 0 — Your details */}
+            {/* Step 0 Your details */}
             {step === 0 && (
               <div className="mt-10">
                 <Eyebrow>Step 1</Eyebrow>
@@ -498,7 +498,7 @@ function FormSection({ offering }: { offering: Offering }) {
                 </h2>
                 <p className="mt-2 text-[14.5px] leading-[1.7] text-bz-text-muted">
                   We'll use these details on the confirmation, the invoice, and
-                  the certificate. Use your work email — it's how we send
+                  the certificate. Use your work email it's how we send
                   calendar invites and access credentials.
                 </p>
 
@@ -581,7 +581,7 @@ function FormSection({ offering }: { offering: Offering }) {
               </div>
             )}
 
-            {/* Step 1 — Preferences */}
+            {/* Step 1 Preferences */}
             {step === 1 && (
               <div className="mt-10">
                 <Eyebrow>Step 2</Eyebrow>
@@ -651,7 +651,7 @@ function FormSection({ offering }: { offering: Offering }) {
               </div>
             )}
 
-            {/* Step 2 — Review & confirm */}
+            {/* Step 2 Review & confirm */}
             {step === 2 && (
               <div className="mt-10">
                 <Eyebrow>Step 3</Eyebrow>
@@ -806,7 +806,7 @@ function ConfirmationPanel({
             with calendar invites, sandbox access, and the welcome pack.{" "}
             {offering.kind === "cohort"
               ? "Your cohort kicks off on the date in the order summary."
-              : "Self-paced lessons unlock immediately — log in any time."}
+              : "Self-paced lessons unlock immediately log in any time."}
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -854,8 +854,8 @@ function IncludedSection() {
       <Container>
         <SectionHeading
           eyebrow="What's included"
-          title="Everything you need to finish — and certify."
-          description="Every Academy enrolment ships with the same base kit — videos, sandbox, exam voucher, and instructor support."
+          title="Everything you need to finish and certify."
+          description="Every Academy enrolment ships with the same base kit videos, sandbox, exam voucher, and instructor support."
           maxWidth={720}
           className="mb-12"
         />

@@ -109,7 +109,7 @@ const SERVICE_GROUPS: ServiceGroup[] = [
       {
         icon: Globe2,
         name: "Bizak Web Application",
-        description: "app.bizakerp.com — the primary operator console.",
+        description: "app.bizakerp.com the primary operator console.",
         status: "operational",
         uptime: "99.998%",
         history: { degraded: [42] },
@@ -374,7 +374,7 @@ function HeroSection() {
           </h1>
           <p className="mt-5 max-w-[660px] text-[17px] leading-[1.7] text-bz-text-muted">
             Live uptime, performance, and incident reporting for the Bizak ERP
-            platform — every service, every region, refreshed minute-by-minute.
+            platform every service, every region, refreshed minute-by-minute.
             We publish what we measure, in plain language, the moment it
             changes.
           </p>
@@ -527,7 +527,7 @@ function UptimeBar({ history }: { history: Service["history"] }) {
           <span
             key={i}
             className={`block h-7 w-[4px] rounded-[1.5px] sm:w-[5px] md:h-8 ${meta.bar}`}
-            title={`Day ${days - i} — ${meta.label}`}
+            title={`Day ${days - i} ${meta.label}`}
           />
         );
       })}
@@ -938,7 +938,7 @@ function SubscribeSection() {
                 Stay informed
               </PillBadge>
               <h2 className="mt-5 text-[clamp(28px,3.5vw,44px)] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text">
-                Be the first to know — before your team asks.
+                Be the first to know before your team asks.
               </h2>
               <p className="mt-4 max-w-[560px] text-[16px] leading-[1.7] text-bz-text-muted">
                 Get incident notifications by email, RSS, or webhook the moment
@@ -970,7 +970,7 @@ function SubscribeSection() {
                 </button>
               </form>
               <span className="text-[12px] text-bz-text-soft">
-                No marketing — incident notifications only.
+                No marketing incident notifications only.
               </span>
             </div>
           </div>

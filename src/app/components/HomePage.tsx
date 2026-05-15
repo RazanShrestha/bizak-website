@@ -37,7 +37,7 @@ import {
 } from "./bz";
 
 // ════════════════════════════════════════════════════════════════════════════
-// CONTENT DATA — all page copy + structured data lives at the top of the file.
+// CONTENT DATA all page copy + structured data lives at the top of the file.
 // Sections compose primitives + this data.
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -54,10 +54,10 @@ const BANKS = [
 const FLAGS = ["🇺🇸","🇬🇧","🇩🇪","🇫🇷","🇪🇸","🇮🇹","🇳🇱","🇨🇦","🇯🇵","🇸🇬","🇦🇺","🇧🇷","🇮🇳"];
 
 const PLATFORM_BENTOS = [
-  { tone: "dark",  icon: Layers,     title: <>One ledger,<br/>every module</>,         desc: "Every transaction posts the right journals automatically — no re-keying." },
+  { tone: "dark",  icon: Layers,     title: <>One ledger,<br/>every module</>,         desc: "Every transaction posts the right journals automatically no re-keying." },
   { tone: "fire",  icon: Activity,   title: <>Real-time,<br/>not month-end</>,         desc: "Live cash, AR, AP and inventory. No batch posting." },
   { tone: "paper", icon: TrendingUp, title: <>Click any number,<br/>see its source</>, desc: "Drill from net income to the originating invoice. 100% audit coverage." },
-  { tone: "paper", icon: Globe2,     title: <>Multi-entity,<br/>native</>,             desc: "Multi-currency, intercompany, branch-level P&L — from day one." },
+  { tone: "paper", icon: Globe2,     title: <>Multi-entity,<br/>native</>,             desc: "Multi-currency, intercompany, branch-level P&L from day one." },
 ] as const;
 
 const MULTI_ENTITY_ROWS = [
@@ -82,12 +82,12 @@ const TESTI_STATS = [
 const FAQS = [
   { q: "How long does Bizak take to deploy?",                a: "Most teams go live in one business day. Pick the modules you need (finance, inventory, sales, manufacturing, projects), invite your team, and start running. No 9-month implementation." },
   { q: "Can we adopt module by module?",                     a: "Yes. Start with one (e.g. finance) and add inventory, sales or manufacturing later. Existing tools can stay connected via 200+ integrations during the transition." },
-  { q: "Is Bizak built for multi-entity, multi-currency?",   a: "Yes, from day one. Multi-currency FX translation, intercompany elimination, branch-level P&L — without a separate consolidation tool. 99.8% consolidation accuracy." },
+  { q: "Is Bizak built for multi-entity, multi-currency?",   a: "Yes, from day one. Multi-currency FX translation, intercompany elimination, branch-level P&L without a separate consolidation tool. 99.8% consolidation accuracy." },
   { q: "Is Bizak secure and audit-ready?",                   a: "Yes. SOC-2 Type II, GDPR-ready, full audit trail on every change, role-based access, SSO. Every figure in a report resolves to its source transaction." },
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
-// HERO — split layout: copy left · platform live panel right
+// HERO split layout: copy left · platform live panel right
 // ════════════════════════════════════════════════════════════════════════════
 
 // ── Hero data ────────────────────────────────────────────────────────────────
@@ -209,7 +209,7 @@ function HeroOverviewCard() {
           Business overview · Q1 2024
         </p>
 
-        {/* Revenue — primary metric */}
+        {/* Revenue primary metric */}
         <div className="flex items-center justify-between rounded-bz-md border border-bz-line-soft p-3">
           <div className="flex items-center gap-2.5">
             <span className="flex size-7 items-center justify-center rounded-bz-sm bg-bz-paper-warm">
@@ -220,7 +220,7 @@ function HeroOverviewCard() {
           <span className="text-[20px] font-medium tabular-nums text-bz-text">$4.82M</span>
         </div>
 
-        {/* Operational metrics — 2 × 2 */}
+        {/* Operational metrics 2 × 2 */}
         <div className="grid grid-cols-2 gap-2.5">
           {HERO_OPS.map((o) => (
             <div key={o.label} className="rounded-bz-md border border-bz-line-soft p-3">
@@ -233,7 +233,7 @@ function HeroOverviewCard() {
           ))}
         </div>
 
-        {/* Net income — emphasized total */}
+        {/* Net income emphasized total */}
         <div className="mt-1 flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-4 py-3.5">
           <span className="text-[13px] text-bz-text-muted">Net income</span>
           <span className="text-[22px] font-medium tabular-nums text-bz-text">$812K</span>
@@ -284,7 +284,7 @@ function HowItWorksSection() {
             tag="Set up"
             title="Pick your modules and go live"
             bullets={[
-              "Finance, sales, inventory, manufacturing — pick what you need.",
+              "Finance, sales, inventory, manufacturing pick what you need.",
               "Pre-configured for your industry. Live in one business day.",
             ]}
             cta={{ variant: "dark", withArrow: true, href: "/documentation", children: "Learn more" }}
@@ -295,7 +295,7 @@ function HowItWorksSection() {
             tag="Connect"
             title="Every transaction, live on one ledger"
             bullets={[
-              "Sales, shipments, payroll — all auto-post the right journals.",
+              "Sales, shipments, payroll all auto-post the right journals.",
               "Real-time books. No close-the-books marathon.",
             ]}
             cta={{ variant: "dark", withArrow: true, href: "/FinancialManagement", children: "Learn more" }}
@@ -307,7 +307,7 @@ function HowItWorksSection() {
             title="From one branch to global"
             bullets={[
               "Multi-entity, multi-currency, branch-level P&L from day one.",
-              "99.8% consolidation accuracy — no separate close tool.",
+              "99.8% consolidation accuracy no separate close tool.",
             ]}
             cta={{ variant: "dark", withArrow: true, href: "/MulticompanyAndBranches", children: "Learn more" }}
             visual={<StepVisualScale />}
@@ -326,7 +326,7 @@ function HowItWorksSection() {
   );
 }
 
-// Step visuals — page-specific mocks. Each composes primitives.
+// Step visuals page-specific mocks. Each composes primitives.
 function StepVisualSetup() {
   const rows = [
     { label: "Financial Management", on: true },
@@ -527,7 +527,7 @@ function ExclusiveSection() {
           <Bento tone="dark" hover minHeight={280}>
             <h3 className="bz-bento-title">Auto-posted journals</h3>
             <Bento.Desc className="mb-[22px]">
-              247 entries auto-coded yesterday — finance teams stop coding transactions.
+              247 entries auto-coded yesterday finance teams stop coding transactions.
             </Bento.Desc>
             <Bento.Footer tone="dark" className="flex flex-col justify-center gap-1.5">
               <DataRow tone="dark" label="Shipment → COGS / Inventory" value="auto" />
@@ -551,7 +551,7 @@ function ExclusiveSection() {
           <Bento tone="leaf" hover minHeight={280}>
             <h3 className="bz-bento-title">AI bank reconciliation</h3>
             <Bento.Desc className="mb-[22px]" style={{ color: "#1F3422", opacity: 0.78 }}>
-              AI-driven matching that learns your transactions — 40% fewer manual fixes.
+              AI-driven matching that learns your transactions 40% fewer manual fixes.
             </Bento.Desc>
             <Bento.Footer className="bg-[rgba(31,52,34,0.08)] flex flex-col justify-center gap-2">
               <div className="flex items-center gap-2">
@@ -565,12 +565,12 @@ function ExclusiveSection() {
           </Bento>
         </BentoGrid>
 
-        {/* Big card — Multi-entity consolidation */}
+        {/* Big card Multi-entity consolidation */}
         <div className="mt-[18px]">
           <BigCard
             text={{
               title: "Multi-entity consolidation",
-              body: "Roll up branches, currencies and subsidiaries into one set of reports — no separate consolidation tool.",
+              body: "Roll up branches, currencies and subsidiaries into one set of reports no separate consolidation tool.",
               bullets: [
                 "FX translation, applied automatically",
                 "Intercompany elimination with audit trail",

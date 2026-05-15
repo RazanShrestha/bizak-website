@@ -115,7 +115,7 @@ const PATHS: Path[] = [
     audience: "For new Bizak operators",
     title: "Bizak Foundations",
     description:
-      "The shared mental model every Bizak user needs — modules, navigation, and the daily workflows behind a clean operating week.",
+      "The shared mental model every Bizak user needs modules, navigation, and the daily workflows behind a clean operating week.",
     duration: "5 hours",
     modules: "8 modules",
     outcome: "Confident day-one users across finance, sales, and ops.",
@@ -130,7 +130,7 @@ const PATHS: Path[] = [
     title: "Finance Practitioner",
     badge: "Role-based",
     description:
-      "Master the close, reconciliations, and consolidated reporting in Bizak — the daily, monthly, and quarterly cadence of a modern finance team.",
+      "Master the close, reconciliations, and consolidated reporting in Bizak the daily, monthly, and quarterly cadence of a modern finance team.",
     duration: "12 hours",
     modules: "14 modules",
     outcome: "Run a five-day close on Bizak with full audit trail.",
@@ -203,7 +203,7 @@ const TIERS: Tier[] = [
     badge: Trophy,
     title: "Practitioner",
     description:
-      "Role-based mastery — Finance, Operations, Sales, or Manufacturing. Demonstrates deep workflow competence in your domain.",
+      "Role-based mastery Finance, Operations, Sales, or Manufacturing. Demonstrates deep workflow competence in your domain.",
     duration: "90-min exam · scenario-based",
     prereq: "Certified User + role track",
     outcomes: [
@@ -218,7 +218,7 @@ const TIERS: Tier[] = [
     badge: Award,
     title: "Solution Architect",
     description:
-      "The expert credential — confirms you can architect, harden, and tune a multi-entity Bizak tenant end-to-end.",
+      "The expert credential confirms you can architect, harden, and tune a multi-entity Bizak tenant end-to-end.",
     duration: "Two-part exam · 4 hours",
     prereq: "Practitioner in two tracks",
     outcomes: [
@@ -240,7 +240,7 @@ export const COURSES: Course[] = [
     format: "Self-paced",
     level: "Foundational",
     title: "The Bizak platform tour",
-    description: "Your guided thirty-minute orientation — modules, navigation, and the operator's mental model.",
+    description: "Your guided thirty-minute orientation modules, navigation, and the operator's mental model.",
     duration: "32 min",
     modules: 4,
     cert: "Counts toward Certified User",
@@ -253,7 +253,7 @@ export const COURSES: Course[] = [
     format: "Self-paced",
     level: "Foundational",
     title: "Daily workflows for new operators",
-    description: "The five workflows every Bizak user touches in their first week — invoices, orders, expenses, transfers, reports.",
+    description: "The five workflows every Bizak user touches in their first week invoices, orders, expenses, transfers, reports.",
     duration: "1 h 20 min",
     modules: 5,
     cert: "Counts toward Certified User",
@@ -264,7 +264,7 @@ export const COURSES: Course[] = [
     track: "foundations",
     format: "Self-paced",
     level: "Foundational",
-    title: "Bizak on mobile — essentials",
+    title: "Bizak on mobile essentials",
     description: "Approve, scan, and update on the go. Built for managers, sales reps, and warehouse teams who don't sit at a desk.",
     duration: "45 min",
     modules: 3,
@@ -292,7 +292,7 @@ export const COURSES: Course[] = [
     format: "Self-paced",
     level: "Intermediate",
     title: "AR & AP mastery",
-    description: "Invoice-to-cash and bill-to-pay end-to-end — including discounts, credit notes, and aging analysis.",
+    description: "Invoice-to-cash and bill-to-pay end-to-end including discounts, credit notes, and aging analysis.",
     duration: "3 h 40 min",
     modules: 8,
     cert: "Counts toward Finance Practitioner",
@@ -409,7 +409,7 @@ export const COURSES: Course[] = [
     format: "Self-paced",
     level: "Advanced",
     title: "Webhooks, events & SDKs",
-    description: "Design event-driven integrations against Bizak using the SDKs — Node, Python, Java.",
+    description: "Design event-driven integrations against Bizak using the SDKs Node, Python, Java.",
     duration: "3 h 15 min",
     modules: 7,
     cert: "Counts toward Developer Specialist",
@@ -494,7 +494,7 @@ const REASONS: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: PlayCircle,
     title: "Hands-on, not slide-only",
-    body: "Every course ends in a sandbox task. You demonstrate the skill in product — no PowerPoint exam stands between you and your badge.",
+    body: "Every course ends in a sandbox task. You demonstrate the skill in product no PowerPoint exam stands between you and your badge.",
   },
   {
     icon: Languages,
@@ -521,7 +521,7 @@ const TESTIMONIALS: { quote: string; name: string; role: string; tone: "sage" | 
   },
   {
     quote:
-      "The Solution Architect cohort changed how I run our tenant. Approvals, integrations, and the close — all tighter, all auditable.",
+      "The Solution Architect cohort changed how I run our tenant. Approvals, integrations, and the close all tighter, all auditable.",
     name: "Marcus Tan",
     role: "Group Controller, Helmsmith",
     tone: "accent",
@@ -554,7 +554,7 @@ function HeroSection() {
     <Section pad="hero" tone="light" className="biz-mesh overflow-hidden">
       <Container>
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
-          {/* Left — text */}
+          {/* Left text */}
           <div className="max-w-[640px]">
             <HeroBadge>Training &amp; Certification</HeroBadge>
             <h1 className="mt-4 text-[clamp(40px,5.2vw,60px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
@@ -566,7 +566,7 @@ function HeroSection() {
               .
             </h1>
             <p className="mt-5 max-w-[560px] text-[17px] leading-[1.7] text-bz-text-muted">
-              Hands-on courses, live cohorts, and three certification levels —
+              Hands-on courses, live cohorts, and three certification levels
               authored by the team that builds Bizak. From a thirty-minute
               platform tour to the Solution Architect ladder, the Academy meets
               your team where they are.
@@ -593,7 +593,7 @@ function HeroSection() {
             </div>
           </div>
 
-          {/* Right — certification card mock */}
+          {/* Right certification card mock */}
           <div className="relative mx-auto w-full max-w-[440px] lg:mx-0">
             <div
               aria-hidden
@@ -687,7 +687,7 @@ function PathsSection() {
         <SectionHeading
           eyebrow="Learning paths"
           title="Four journeys, one curriculum."
-          description="Each path is a sequenced curriculum — a predictable arc from first login to certified competence. Start where your team is."
+          description="Each path is a sequenced curriculum a predictable arc from first login to certified competence. Start where your team is."
           maxWidth={760}
           className="mb-12"
         />
@@ -754,7 +754,7 @@ function PathsSection() {
               <div className="mt-5 flex items-start gap-3 rounded-bz-lg border border-bz-sage-mid/40 bg-bz-sage-soft p-4">
                 <CheckCircle2 className="mt-0.5 size-[15px] shrink-0 text-bz-sage" strokeWidth={2} />
                 <div className="text-[13.5px] leading-[1.6] text-bz-text">
-                  <span className="font-bold">Outcome — </span>
+                  <span className="font-bold">Outcome </span>
                   {path.outcome}
                 </div>
               </div>
@@ -923,7 +923,7 @@ function CatalogueSection() {
           <div className="max-w-[620px]">
             <Eyebrow>Course catalogue</Eyebrow>
             <h2 className="mt-3 text-[clamp(28px,3.4vw,40px)] font-bold leading-[1.1] tracking-[-0.02em] text-bz-text">
-              Every course, every track — searchable.
+              Every course, every track searchable.
             </h2>
             <p className="mt-3 text-[15px] leading-[1.7] text-bz-text-muted">
               Filter by track or format, or search by topic. Self-paced courses
@@ -1048,7 +1048,7 @@ function CatalogueSection() {
               No courses match those filters yet.
             </h3>
             <p className="mt-2 text-[14px] text-bz-text-muted">
-              Reset the filters or tell us what's missing — we publish new
+              Reset the filters or tell us what's missing we publish new
               courses every month.
             </p>
           </div>
@@ -1133,7 +1133,7 @@ function CohortsSection() {
           <SectionHeading
             eyebrow="Upcoming cohorts"
             title="Learn live with the team that ships Bizak."
-            description="Eight-to-twelve learner cohorts, run by Bizak engineers and consultants. Cohorts fill quickly — secure your seat early."
+            description="Eight-to-twelve learner cohorts, run by Bizak engineers and consultants. Cohorts fill quickly secure your seat early."
             maxWidth={680}
           />
           <div className="flex shrink-0 flex-wrap items-center gap-3 md:justify-end">
@@ -1209,7 +1209,7 @@ function ReasonsSection() {
             </h2>
             <p className="mt-4 text-[15.5px] leading-[1.7] text-bz-text-muted">
               The Academy is the same training Bizak's customer-success team
-              runs on every paid implementation — opened up so any operator
+              runs on every paid implementation opened up so any operator
               can learn at their own pace.
             </p>
             <div className="mt-7">

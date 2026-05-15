@@ -50,7 +50,7 @@ const CAPABILITIES = [
   {
     icon: Workflow,
     title: "Custom approval chains",
-    desc: "Multi-level routing by amount, department or project — escalate automatically on the rules you set.",
+    desc: "Multi-level routing by amount, department or project escalate automatically on the rules you set.",
   },
   {
     icon: ClipboardCheck,
@@ -60,12 +60,12 @@ const CAPABILITIES = [
   {
     icon: DollarSign,
     title: "Finance integration",
-    desc: "Direct ledger posting on every approved PO — real-time AP, zero manual journals.",
+    desc: "Direct ledger posting on every approved PO real-time AP, zero manual journals.",
   },
   {
     icon: Package,
     title: "Inventory sync",
-    desc: "Stock levels update automatically on goods receipt — no re-keying between modules.",
+    desc: "Stock levels update automatically on goods receipt no re-keying between modules.",
   },
   {
     icon: BarChart3,
@@ -118,7 +118,7 @@ function HeroSection() {
           </PillGroup>
         </div>
 
-        {/* Page-specific mock — editorial dark panel + PO card ─── */}
+        {/* Page-specific mock editorial dark panel + PO card ─── */}
         <div className="bz-hero-visual mx-auto grid w-full max-w-[1100px] grid-cols-1 gap-3 sm:grid-cols-5">
           <HeroOlivePanel />
           <HeroPurchaseOrderCard />
@@ -133,7 +133,7 @@ function HeroOlivePanel() {
     <div className="relative overflow-hidden rounded-bz-2xl bg-bz-olive p-5 sm:col-span-2 sm:min-h-[460px]">
       <DotGrid tone="dark" />
 
-      {/* Editorial flat accent block — no gradient, just an offset shape */}
+      {/* Editorial flat accent block no gradient, just an offset shape */}
       <div
         aria-hidden
         className="pointer-events-none absolute -right-12 -top-12 size-44 rounded-bz-pill bg-bz-olive-soft/40"
@@ -165,7 +165,7 @@ function HeroOlivePanel() {
             </span>
           </div>
 
-          {/* Primary action — pill-dark button */}
+          {/* Primary action pill-dark button */}
           <button
             type="button"
             className="flex items-center justify-center gap-2 rounded-bz-lg bg-bz-deep py-3.5 text-[13.5px] font-medium text-bz-text-on-dark transition-colors hover:bg-bz-olive-dark"
@@ -260,7 +260,7 @@ function HeroPurchaseOrderCard() {
           ))}
         </div>
 
-        {/* PO total — emphasized total row */}
+        {/* PO total emphasized total row */}
         <div className="mt-1 flex items-center justify-between rounded-bz-lg bg-bz-paper-warm px-4 py-3.5">
           <span className="text-[13px] text-bz-text-muted">PO total</span>
           <span className="text-[22px] font-medium tabular-nums text-bz-text">
@@ -510,7 +510,7 @@ function AuditTrailBento() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [03] REPORTING — "Click any spend line, see the full procurement trail."
+// [03] REPORTING "Click any spend line, see the full procurement trail."
 // ════════════════════════════════════════════════════════════════════════════
 
 function ReportingSection() {
@@ -731,7 +731,7 @@ function PurchasingExportVisual() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [04] CONNECTIVITY — purchasing connected to inventory and finance
+// [04] CONNECTIVITY purchasing connected to inventory and finance
 // ════════════════════════════════════════════════════════════════════════════
 
 const SOURCES_TOP = [

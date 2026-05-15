@@ -70,7 +70,7 @@ const PILLARS: {
     eyebrow: "Pillar 02",
     title: "Control",
     description:
-      "Growth shouldn't mean losing the plot. We build the controls — approvals, audit trails, governance — that let leaders move fast without breaking things.",
+      "Growth shouldn't mean losing the plot. We build the controls approvals, audit trails, governance that let leaders move fast without breaking things.",
     bullets: [
       "Granular roles, permissions, and audit logs",
       "Workflows that enforce policy, not block work",
@@ -108,13 +108,13 @@ const BELIEFS: { icon: LucideIcon; title: string; description: string }[] = [
     icon: Compass,
     title: "Opinions are tools",
     description:
-      "We have a point of view about how a business should run — and we ship it. Configurable where it matters, opinionated everywhere else.",
+      "We have a point of view about how a business should run and we ship it. Configurable where it matters, opinionated everywhere else.",
   },
   {
     icon: Globe2,
     title: "Local, then global",
     description:
-      "We start where our customers operate — taxes, compliance, languages, currencies — then make the platform work the same way everywhere.",
+      "We start where our customers operate taxes, compliance, languages, currencies then make the platform work the same way everywhere.",
   },
   {
     icon: Sparkles,
@@ -126,7 +126,7 @@ const BELIEFS: { icon: LucideIcon; title: string; description: string }[] = [
     icon: Rocket,
     title: "Pace is a feature",
     description:
-      "ERPs are legendary for being slow — to roll out, to update, to evolve. We treat speed as a non-negotiable, not an afterthought.",
+      "ERPs are legendary for being slow to roll out, to update, to evolve. We treat speed as a non-negotiable, not an afterthought.",
   },
 ];
 
@@ -170,7 +170,7 @@ const WAYS_TO_HELP: {
     tag: "Build with us",
     title: "Become a partner",
     description:
-      "Implementation, accounting, technology, reseller — partners help bring Bizak to industries and regions we couldn't reach alone.",
+      "Implementation, accounting, technology, reseller partners help bring Bizak to industries and regions we couldn't reach alone.",
     cta: "Apply to partner",
     href: "/partners",
   },
@@ -179,7 +179,7 @@ const WAYS_TO_HELP: {
     tag: "Join the team",
     title: "Build the product",
     description:
-      "Engineers, designers, implementation leads, customer success — the mission moves at the speed of the people behind it.",
+      "Engineers, designers, implementation leads, customer success the mission moves at the speed of the people behind it.",
     cta: "See open roles",
     href: "/careers",
   },
@@ -188,7 +188,7 @@ const WAYS_TO_HELP: {
     tag: "Shape the roadmap",
     title: "Share feedback",
     description:
-      "Every release note has a customer behind it. Tell us what's missing, what's broken, what's brilliant — we read all of it.",
+      "Every release note has a customer behind it. Tell us what's missing, what's broken, what's brilliant we read all of it.",
     cta: "Send feedback",
     href: "/contact",
   },
@@ -197,7 +197,7 @@ const WAYS_TO_HELP: {
     tag: "Spread the word",
     title: "Tell your network",
     description:
-      "A post, a recommendation, a case study, a quiet word with a peer — operator-to-operator endorsements move our mission farther than any ad.",
+      "A post, a recommendation, a case study, a quiet word with a peer operator-to-operator endorsements move our mission farther than any ad.",
     cta: "Get media assets",
     href: "/contact",
   },
@@ -212,17 +212,17 @@ const COMMITMENTS: { title: string; description: string }[] = [
   {
     title: "We honour the data",
     description:
-      "Your data is yours — exportable, portable, and never held hostage by contract terms.",
+      "Your data is yours exportable, portable, and never held hostage by contract terms.",
   },
   {
     title: "We ship the roadmap",
     description:
-      "What we promise in a quarter is what we deliver. If we miss, we explain why — publicly.",
+      "What we promise in a quarter is what we deliver. If we miss, we explain why publicly.",
   },
   {
     title: "We pay our partners fairly",
     description:
-      "Implementation partners, referrers, affiliates — the economics work for them, or they don't work for us.",
+      "Implementation partners, referrers, affiliates the economics work for them, or they don't work for us.",
   },
 ];
 
@@ -245,7 +245,7 @@ function HeroSection() {
           <p className="mt-5 max-w-[660px] text-[17px] leading-[1.7] text-bz-text-muted">
             Bizak exists to replace the chaos of disconnected tools, late-night
             spreadsheets, and gut-feel decisions with a calm, connected
-            operating system that works for every team in the business — and
+            operating system that works for every team in the business and
             grows with them.
           </p>
 
@@ -294,7 +294,7 @@ function PillarsSection() {
         <SectionHeading
           eyebrow="What we're building"
           title="Three pillars hold up the mission."
-          description="Bizak is engineered around three commitments to every operator who runs their business on it. Everything we ship has to serve at least one — and never compromise the others."
+          description="Bizak is engineered around three commitments to every operator who runs their business on it. Everything we ship has to serve at least one and never compromise the others."
           maxWidth={760}
           className="mb-14"
         />
@@ -361,7 +361,7 @@ function BeliefsSection() {
             </h2>
             <p className="mt-5 text-[15.5px] leading-[1.7] text-bz-text-muted">
               When the work gets ambiguous, these are the beliefs we fall back
-              on — in product trade-offs, in how we hire, in how we treat
+              on in product trade-offs, in how we hire, in how we treat
               customers, and in how we measure whether we're winning.
             </p>
             <a
@@ -413,7 +413,7 @@ function ImpactSection() {
           eyebrow="The mission, in numbers"
           eyebrowTone="accent"
           title="A quiet kind of momentum."
-          description="No marketing flourish — just the operators, the hours saved, and the businesses running better than they were last year. The numbers are the report card."
+          description="No marketing flourish just the operators, the hours saved, and the businesses running better than they were last year. The numbers are the report card."
           tone="light"
           maxWidth={720}
           className="mb-14"
@@ -442,7 +442,7 @@ function ImpactSection() {
               <p className="mt-6 text-[clamp(20px,2.2vw,28px)] font-medium leading-[1.45] tracking-[-0.01em] text-white">
                 "We replaced four disconnected tools and a wall of spreadsheets
                 with one platform. Month-end closes that took two weeks now
-                wrap in three days — and our finance team finally has the
+                wrap in three days and our finance team finally has the
                 evenings back."
               </p>
               <div className="mt-7 flex items-center gap-4">
@@ -471,7 +471,7 @@ function ImpactSection() {
                 ))}
               </div>
               <span className="text-[12px] uppercase tracking-[0.12em] text-white/60">
-                4.9 / 5 — Across 1,200+ reviews
+                4.9 / 5 Across 1,200+ reviews
               </span>
               <Button
                 variant="ghostDark"
@@ -498,7 +498,7 @@ function HelpSection() {
         <SectionHeading
           eyebrow="Help our mission"
           title="Six ways to walk this with us."
-          description="Bizak's mission isn't a one-team project. Customers, partners, advocates, and teammates all push it forward — pick the one that fits where you are right now."
+          description="Bizak's mission isn't a one-team project. Customers, partners, advocates, and teammates all push it forward pick the one that fits where you are right now."
           maxWidth={760}
           className="mb-14"
         />
@@ -557,7 +557,7 @@ function CommitmentsSection() {
             </h2>
             <p className="mt-5 text-[15.5px] leading-[1.7] text-bz-text-muted">
               A mission isn't worth much without a contract behind it. These
-              are the operating commitments every Bizak customer is owed —
+              are the operating commitments every Bizak customer is owed
               starting day one, lasting as long as you run on the platform.
             </p>
             <div className="mt-7">
@@ -620,7 +620,7 @@ function BottomCta() {
               <p className="mt-4 max-w-[560px] text-[16px] leading-[1.7] text-bz-text-muted">
                 Whether you run a five-person team or a five-thousand-person
                 enterprise, we'd love to hear what's on your operating wishlist
-                — and find the smallest, fastest way to help.
+                and find the smallest, fastest way to help.
               </p>
             </div>
             <div className="flex flex-col gap-3 md:items-end">

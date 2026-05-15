@@ -267,7 +267,7 @@ function CurriculumSection({ event }: { event: PartnerEvent }) {
           <SectionHeading
             eyebrow="Curriculum"
             title="What you'll cover."
-            description="Cohort-paced — every week is graded. The capstone exam runs on the final day; an architect-tier badge is awarded on pass."
+            description="Cohort-paced every week is graded. The capstone exam runs on the final day; an architect-tier badge is awarded on pass."
             maxWidth={580}
           />
           <PillBadge tone="sage">{totalHrs} hours · live + lab</PillBadge>
@@ -301,7 +301,7 @@ function CurriculumSection({ event }: { event: PartnerEvent }) {
           <div>
             <div className="text-[14px] font-bold mb-1">Capstone exam · final day</div>
             <p className="text-[13px] text-bz-text-muted leading-[1.6]">
-              Two-hour proctored exam. Pass the bar and your architect badge appears in the Partner Portal — automatically renewable for 12 months.
+              Two-hour proctored exam. Pass the bar and your architect badge appears in the Partner Portal automatically renewable for 12 months.
             </p>
           </div>
         </div>
@@ -383,7 +383,7 @@ function EnrollmentSection({ event }: { event: PartnerEvent }) {
             <SectionHeading
               eyebrow="Enroll your team"
               title="Roster + billing context."
-              description="Submit a roster of consultants. Your first three seats per cohort are free — additional seats are invoiced after we confirm cohort capacity."
+              description="Submit a roster of consultants. Your first three seats per cohort are free additional seats are invoiced after we confirm cohort capacity."
               maxWidth={460}
             />
 
@@ -462,7 +462,7 @@ function EnrollmentSection({ event }: { event: PartnerEvent }) {
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">
-                      Roster — {totalSeats} seat{totalSeats > 1 ? "s" : ""}
+                      Roster {totalSeats} seat{totalSeats > 1 ? "s" : ""}
                     </span>
                     <button
                       type="button"

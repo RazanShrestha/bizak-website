@@ -58,7 +58,7 @@ function HeadingRoot({
 }
 
 // Inline span that renders the "second-clause" muted span inside a heading.
-// Always rendered as <span> — never breaks heading semantics.
+// Always rendered as <span> never breaks heading semantics.
 // Inherits surface tone from the parent <Heading> via context so it stays
 // legible on both light and dark surfaces.
 function HeadingMuted({

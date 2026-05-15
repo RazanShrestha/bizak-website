@@ -46,7 +46,7 @@ const FEATURES = [
   {
     icon: ClipboardList,
     title: "Work Orders",
-    desc: "Create, release and close production runs end-to-end — BOM check, routing, QC sign-off and auto-costing in one flow.",
+    desc: "Create, release and close production runs end-to-end BOM check, routing, QC sign-off and auto-costing in one flow.",
   },
   {
     icon: Layers,
@@ -71,7 +71,7 @@ const FEATURES = [
   {
     icon: TrendingUp,
     title: "Cost Tracking",
-    desc: "Material, labour and overhead roll into WIP automatically — variance journaled to finance the moment the WO closes.",
+    desc: "Material, labour and overhead roll into WIP automatically variance journaled to finance the moment the WO closes.",
   },
 ] as const;
 
@@ -79,7 +79,7 @@ const METRICS = [
   {
     value: "87.3%",
     label: "World-class OEE",
-    desc: "Availability × Performance × Quality — tracked live across every machine and shift.",
+    desc: "Availability × Performance × Quality tracked live across every machine and shift.",
   },
   {
     value: "40%",
@@ -139,7 +139,7 @@ function HeroSection() {
           </PillGroup>
         </div>
 
-        {/* Page-specific mock — editorial dark panel + production card ─── */}
+        {/* Page-specific mock editorial dark panel + production card ─── */}
         <div className="bz-hero-visual mx-auto grid w-full max-w-[1100px] grid-cols-1 gap-3 sm:grid-cols-5">
           <HeroFloorPanel />
           <HeroProductionCard />
@@ -185,7 +185,7 @@ function HeroFloorPanel() {
             </span>
           </div>
 
-          {/* Primary action — pill-dark button */}
+          {/* Primary action pill-dark button */}
           <button
             type="button"
             className="flex items-center justify-center gap-2 rounded-bz-lg bg-bz-deep py-3.5 text-[13.5px] font-medium text-bz-text-on-dark transition-colors hover:bg-bz-olive-dark"
@@ -372,7 +372,7 @@ function BomShowcaseBento() {
         icon={<Layers size={26} strokeWidth={1.4} color="#1F3422" />}
       />
       <Bento.Desc>
-        FG, sub-assembly and raw material nodes tied to the same item master — version-controlled and ECN-linked.
+        FG, sub-assembly and raw material nodes tied to the same item master version-controlled and ECN-linked.
       </Bento.Desc>
       <Bento.Footer tone="light" className="flex flex-col gap-1.5">
         {nodes.map((n) => (
@@ -467,7 +467,7 @@ function OeeBento() {
         icon={<Gauge size={26} strokeWidth={1.4} color="#1F3422" />}
       />
       <Bento.Desc style={{ color: "#1F3422", opacity: 0.78 }}>
-        Availability, performance and quality tracked live — OEE calculated and trended across every shift.
+        Availability, performance and quality tracked live OEE calculated and trended across every shift.
       </Bento.Desc>
       <Bento.Footer className="bg-[rgba(31,52,34,0.08)] flex flex-col gap-2.5">
         {factors.map((f) => (
@@ -501,7 +501,7 @@ function CostPostingBento() {
         icon={<PackageCheck size={26} strokeWidth={1.4} color="#DBE9B8" />}
       />
       <Bento.Desc>
-        WO close auto-debits COGS / WIP and credits Inventory — no manual journal, no re-keying.
+        WO close auto-debits COGS / WIP and credits Inventory no manual journal, no re-keying.
       </Bento.Desc>
       <Bento.Footer tone="dark" className="flex flex-col gap-1.5">
         {entries.map((e) => (
@@ -519,7 +519,7 @@ function CostPostingBento() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [03] REPORTING — "Click any number, see its source."
+// [03] REPORTING "Click any number, see its source."
 // ════════════════════════════════════════════════════════════════════════════
 
 function ReportingSection() {
@@ -748,7 +748,7 @@ function ComplianceExportVisual() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// [04] CONNECTIVITY — "One floor. Every system."
+// [04] CONNECTIVITY "One floor. Every system."
 // ════════════════════════════════════════════════════════════════════════════
 
 function ConnectivitySection() {

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "../ui/utils";
 
-// Small flag chip — wraps a country emoji in a circular paper-coloured chip.
+// Small flag chip wraps a country emoji in a circular paper-coloured chip.
 //   <Flag>🇺🇸</Flag>
 //
 // Paint: .bz-flag in style.css.

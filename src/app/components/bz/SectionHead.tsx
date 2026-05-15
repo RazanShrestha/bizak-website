@@ -22,7 +22,7 @@ import { Heading } from "./Heading";
 //   />
 
 export type SectionHeadProps = {
-  /** Bracketed index — e.g. "01" renders "[01]". Optional. */
+  /** Bracketed index e.g. "01" renders "[01]". Optional. */
   index?: string;
   /** The uppercase label after the index. */
   label?: React.ReactNode;

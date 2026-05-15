@@ -58,7 +58,7 @@ const FOUNDERS: Founder[] = [
     shortRole: "Founder & CEO",
     image:
       "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=80",
-    bio: "David spent fifteen years running operations inside global manufacturers before starting Bizak in 2018. He founded the company on a single conviction — that complexity should never be the cost of growth — and still spends most weeks in the room with operators figuring out how to take more friction out of their day.",
+    bio: "David spent fifteen years running operations inside global manufacturers before starting Bizak in 2018. He founded the company on a single conviction that complexity should never be the cost of growth and still spends most weeks in the room with operators figuring out how to take more friction out of their day.",
     highlights: [
       { value: "15 yrs", label: "Operating leader before founding Bizak" },
       { value: "50K+", label: "Customers onboarded under his tenure" },
@@ -88,7 +88,7 @@ const FOUNDERS: Founder[] = [
       { label: "Twitter", href: "#", icon: Twitter },
     ],
     quote:
-      "We don't ship debt — we ship infrastructure operators can trust for the next decade.",
+      "We don't ship debt we ship infrastructure operators can trust for the next decade.",
   },
 ];
 
@@ -104,7 +104,7 @@ const LEADERSHIP: Leader[] = [
   {
     name: "Marcus Chen",
     role: "Chief Operating Officer",
-    bio: "Runs the global operations function — from implementation delivery to customer success — across all four hubs.",
+    bio: "Runs the global operations function from implementation delivery to customer success across all four hubs.",
     image:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
     location: "Singapore",
@@ -136,7 +136,7 @@ const LEADERSHIP: Leader[] = [
   {
     name: "James Whitford",
     role: "Chief Customer Officer",
-    bio: "Owns the post-sale experience — implementation, support, success — and the renewal rate that follows from it.",
+    bio: "Owns the post-sale experience implementation, support, success and the renewal rate that follows from it.",
     image:
       "https://images.unsplash.com/photo-1552058544-f2b08422138a?auto=format&fit=crop&w=600&q=80",
     location: "New York",
@@ -181,7 +181,7 @@ const PRINCIPLES: Principle[] = [
     eyebrow: "Principle 01",
     title: "Operator-first thinking",
     description:
-      "Every leader at Bizak has run a function — finance, ops, support, engineering — at scale before. Decisions get made next to the work, not from a distance.",
+      "Every leader at Bizak has run a function finance, ops, support, engineering at scale before. Decisions get made next to the work, not from a distance.",
     bullets: [
       "Direct customer conversations every week",
       "Roadmap reviewed against real operator pain",
@@ -205,7 +205,7 @@ const PRINCIPLES: Principle[] = [
     eyebrow: "Principle 03",
     title: "Long-term decisions",
     description:
-      "Quarterly noise is loud. We optimise for the next decade — for the customer who'll still be on Bizak in 2035 and the engineer who'll still be proud of the codebase.",
+      "Quarterly noise is loud. We optimise for the next decade for the customer who'll still be on Bizak in 2035 and the engineer who'll still be proud of the codebase.",
     bullets: [
       "Architecture choices weighed in years, not sprints",
       "Capital allocated to compounding investments",
@@ -236,13 +236,13 @@ const ADVISORS: Advisor[] = [
   },
   {
     name: "Renée Yamamoto",
-    role: "Advisor — Product",
+    role: "Advisor Product",
     background: "Former CPO, Stripe Atlas · Built finance products used in 80+ countries",
     initials: "RY",
   },
   {
     name: "Olu Adebayo",
-    role: "Advisor — Go-to-Market",
+    role: "Advisor Go-to-Market",
     background: "Founder, Bridgepoint GTM · Scaled three category-defining B2B brands",
     initials: "OA",
   },
@@ -273,7 +273,7 @@ function HeroSection() {
           </h1>
           <p className="mt-5 max-w-[660px] text-[17px] leading-[1.7] text-bz-text-muted">
             Bizak is led by people who have run the functions our customers run
-            — finance, operations, product, support — at the size and pace of
+            finance, operations, product, support at the size and pace of
             mid-market businesses worldwide. Meet the team setting the bar for
             how modern ERP gets built.
           </p>
@@ -410,7 +410,7 @@ function ExecutiveTeamSection() {
         <SectionHeading
           eyebrow="Executive team"
           title="Operators leading every function."
-          description="Across product, engineering, go-to-market, and customer experience — eight leaders, four hubs, one shared bar for craft."
+          description="Across product, engineering, go-to-market, and customer experience eight leaders, four hubs, one shared bar for craft."
           maxWidth={760}
           className="mb-14"
         />
@@ -548,7 +548,7 @@ function SpotlightSection() {
             <p className="mt-6 text-[clamp(22px,2.6vw,34px)] font-medium leading-[1.4] tracking-[-0.01em] text-white">
               "We didn't start Bizak because we wanted to build software. We
               started it because the operators we admired most were drowning in
-              tools that should have been helping them. The job — every day —
+              tools that should have been helping them. The job every day
               is to give them back their time, their clarity, and their nerve."
             </p>
             <div className="mt-9 flex items-center gap-4">
@@ -667,7 +667,7 @@ function FootprintSection() {
                 Four hubs. One leadership team.
               </h3>
               <p className="mt-3 text-[14.5px] leading-[1.7] text-bz-text-muted">
-                Every region has a seat at the leadership table — the team
+                Every region has a seat at the leadership table the team
                 wakes up close to the customers it serves.
               </p>
             </div>
@@ -724,7 +724,7 @@ function BottomCta() {
               <p className="mt-4 max-w-[560px] text-[16px] leading-[1.7] text-bz-text-muted">
                 We're hiring engineers, designers, implementation leads, and
                 customer specialists across every hub. If you've ever wanted
-                to build the system you wished your last company had — this
+                to build the system you wished your last company had this
                 is the room.
               </p>
             </div>

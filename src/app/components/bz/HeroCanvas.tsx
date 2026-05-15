@@ -13,7 +13,7 @@ import { DotGrid } from "./DotGrid";
 //   </HeroCanvas>
 //
 // Paint: .bz-hero-canvas / .bz-hero-canvas-grid / .bz-hero-cards in style.css.
-// HeroCanvas owns its own background — don't wrap it in another bg layer.
+// HeroCanvas owns its own background don't wrap it in another bg layer.
 
 export type HeroCanvasProps = {
   className?: string;

@@ -71,7 +71,7 @@ const DOCS: Doc[] = [
     format: "PDF",
     title: "Bizak Product Overview 2026",
     description:
-      "The executive brief — what Bizak does, who it serves, and how the platform fits a modern operating model.",
+      "The executive brief what Bizak does, who it serves, and how the platform fits a modern operating model.",
     pages: 32,
     size: "4.1 MB",
     version: "v2025.4",
@@ -83,7 +83,7 @@ const DOCS: Doc[] = [
     format: "PDF",
     title: "Module Catalogue",
     description:
-      "A short-form reference for every Bizak module — accounting, inventory, sales, HR, manufacturing, and more.",
+      "A short-form reference for every Bizak module accounting, inventory, sales, HR, manufacturing, and more.",
     pages: 24,
     size: "2.8 MB",
     version: "v2025.4",
@@ -133,7 +133,7 @@ const DOCS: Doc[] = [
     format: "ZIP",
     title: "Postman Collection & OpenAPI 3.1 Spec",
     description:
-      "Pre-configured Postman collection, OpenAPI 3.1 specification, and a sandbox environment file — ready to import.",
+      "Pre-configured Postman collection, OpenAPI 3.1 specification, and a sandbox environment file ready to import.",
     size: "1.8 MB",
     version: "v2025.4",
     updated: "May 2026",
@@ -144,7 +144,7 @@ const DOCS: Doc[] = [
     format: "PDF",
     title: "SDK Reference Pack",
     description:
-      "Type-safe SDKs for Node.js, Python, PHP, Java, and .NET — installation, auth, and end-to-end examples.",
+      "Type-safe SDKs for Node.js, Python, PHP, Java, and .NET installation, auth, and end-to-end examples.",
     pages: 64,
     size: "5.2 MB",
     version: "v2025.4",
@@ -158,7 +158,7 @@ const DOCS: Doc[] = [
     format: "PDF",
     title: "IFRS Compliance Whitepaper",
     description:
-      "How Bizak's accounting engine maps to each IFRS standard — recognition, measurement, presentation, and disclosure.",
+      "How Bizak's accounting engine maps to each IFRS standard recognition, measurement, presentation, and disclosure.",
     pages: 48,
     size: "3.9 MB",
     version: "2026 ed.",
@@ -194,7 +194,7 @@ const DOCS: Doc[] = [
     format: "PDF",
     title: "Period Close Runbook",
     description:
-      "The 12-step close process — reconciliations, accruals, FX revaluation, and final consolidation across entities.",
+      "The 12-step close process reconciliations, accruals, FX revaluation, and final consolidation across entities.",
     pages: 26,
     size: "2.2 MB",
     version: "v2025.4",
@@ -208,7 +208,7 @@ const DOCS: Doc[] = [
     format: "PDF",
     title: "IRD Compliance Statement (Nepal)",
     description:
-      "Bizak's compliance posture against the Inland Revenue Department of Nepal — invoice formats, VAT, and statutory filings.",
+      "Bizak's compliance posture against the Inland Revenue Department of Nepal invoice formats, VAT, and statutory filings.",
     pages: 20,
     size: "2.0 MB",
     version: "FY 2082/83",
@@ -232,7 +232,7 @@ const DOCS: Doc[] = [
     format: "PDF",
     title: "Tax Invoice Template Specification",
     description:
-      "The IRD-compliant tax invoice format Bizak ships out of the box — fields, validations, and customisation rules.",
+      "The IRD-compliant tax invoice format Bizak ships out of the box fields, validations, and customisation rules.",
     pages: 12,
     size: "1.1 MB",
     version: "v2025.4",
@@ -282,7 +282,7 @@ const DOCS: Doc[] = [
     format: "PDF",
     title: "Shopify & WooCommerce Connector",
     description:
-      "Real-time order, inventory, and customer sync with major e-commerce platforms — including reconciliation reports.",
+      "Real-time order, inventory, and customer sync with major e-commerce platforms including reconciliation reports.",
     pages: 22,
     size: "2.1 MB",
     version: "v2025.4",
@@ -294,7 +294,7 @@ const DOCS: Doc[] = [
     format: "PDF",
     title: "Bank Feeds Catalogue",
     description:
-      "Supported banks, payment gateways, and direct-debit providers — connection details and reconciliation rules.",
+      "Supported banks, payment gateways, and direct-debit providers connection details and reconciliation rules.",
     pages: 16,
     size: "1.4 MB",
     version: "v2025.4",
@@ -332,7 +332,7 @@ const DOCS: Doc[] = [
     format: "ZIP",
     title: "Data Migration Toolkit",
     description:
-      "Templates and scripts for migrating from spreadsheets, Tally, QuickBooks, and other ERPs — with validation rules.",
+      "Templates and scripts for migrating from spreadsheets, Tally, QuickBooks, and other ERPs with validation rules.",
     size: "8.6 MB",
     version: "v2025.4",
     updated: "Apr 2026",
@@ -343,7 +343,7 @@ const DOCS: Doc[] = [
     format: "PDF",
     title: "Training & Onboarding Curriculum",
     description:
-      "Role-based learning paths for finance, ops, sales, and admin teams — with assessments and trainer notes.",
+      "Role-based learning paths for finance, ops, sales, and admin teams with assessments and trainer notes.",
     pages: 36,
     size: "3.0 MB",
     version: "v2025.4",
@@ -447,7 +447,7 @@ function HeroSection({
     <Section pad="hero" tone="light" className="biz-mesh overflow-hidden">
       <Container className="relative">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
-          {/* Left — text & search */}
+          {/* Left text & search */}
           <div className="max-w-[640px]">
             <HeroBadge>Document Library</HeroBadge>
             <h1 className="mt-4 text-[clamp(40px,5.2vw,60px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
@@ -460,7 +460,7 @@ function HeroSection({
             </h1>
             <p className="mt-5 max-w-[560px] text-[17px] leading-[1.7] text-bz-text-muted">
               Product overviews, API references, IFRS &amp; IRD compliance
-              papers, and integration guides — every document we publish, in
+              papers, and integration guides every document we publish, in
               one place.
             </p>
 
@@ -475,7 +475,7 @@ function HeroSection({
                   value={query}
                   onChange={(e) => onQuery(e.target.value)}
                   type="text"
-                  placeholder="Search documents — IFRS, Stripe, API, VAT…"
+                  placeholder="Search documents IFRS, Stripe, API, VAT…"
                   aria-label="Search the document library"
                   className="flex-1 bg-transparent text-[15px] text-bz-text placeholder:text-bz-text-soft focus:outline-none"
                 />
@@ -518,7 +518,7 @@ function HeroSection({
             </div>
           </div>
 
-          {/* Right — spotlight document */}
+          {/* Right spotlight document */}
           <div className="relative mx-auto w-full max-w-[440px] lg:mx-0">
             {/* faux paper stack behind */}
             <div
@@ -543,7 +543,7 @@ function HeroSection({
                 ].join(" ")}
               />
 
-              {/* Top — format chip + featured pill */}
+              {/* Top format chip + featured pill */}
               <div className="flex items-center justify-between p-7 pb-0">
                 <span
                   className={[
@@ -581,7 +581,7 @@ function HeroSection({
                   {FEATURED.description}
                 </p>
 
-                {/* Faux page lines — adds the "document" feel */}
+                {/* Faux page lines adds the "document" feel */}
                 <div
                   aria-hidden
                   className="mt-6 flex flex-col gap-2 opacity-60"
@@ -592,7 +592,7 @@ function HeroSection({
                 </div>
               </div>
 
-              {/* Footer — meta + download */}
+              {/* Footer meta + download */}
               <div className="flex items-center justify-between border-t border-bz-border bg-bz-bg px-7 py-4">
                 <span className="text-[12px] font-semibold text-bz-text-soft">
                   {FEATURED.size} · Updated {FEATURED.updated}

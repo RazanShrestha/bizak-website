@@ -27,7 +27,7 @@ const CATEGORIES = [
   { Icon: Crown,       title: "Partner of the Year",          desc: "Highest combined score across delivery health, growth, and CSAT." },
   { Icon: Rocket,      title: "Rising Star",                  desc: "Best performance for a partner under two years in the network." },
   { Icon: Globe,       title: "Regional Excellence",          desc: "Top partner in each of APAC, EMEA, North America, and LATAM." },
-  { Icon: TrendingUp,  title: "Growth Award",                 desc: "Largest YoY ARR growth — for partners scaling their book." },
+  { Icon: TrendingUp,  title: "Growth Award",                 desc: "Largest YoY ARR growth for partners scaling their book." },
   { Icon: Star,        title: "Customer Champion",            desc: "Highest customer NPS across delivered implementations." },
   { Icon: Heart,       title: "Industry Specialist",          desc: "Manufacturing, Distribution, Retail, and Services category leaders." },
 ];
@@ -43,10 +43,10 @@ const WINNERS_2024 = [
 
 const TIMELINE = [
   { phase: "Nominations open",   date: "May 5, 2026",  detail: "Self-nominate or be nominated by a customer or Bizak rep." },
-  { phase: "Submissions close",  date: "Jun 30, 2026", detail: "All evidence — case studies, CSAT data, growth metrics — due." },
+  { phase: "Submissions close",  date: "Jun 30, 2026", detail: "All evidence case studies, CSAT data, growth metrics due." },
   { phase: "Jury review",        date: "Jul, 2026",    detail: "Cross-regional jury of Bizak leadership and external partners." },
   { phase: "Finalists announced", date: "Aug 12, 2026", detail: "Top 3 per category published in the Partner Portal." },
-  { phase: "Awards ceremony",    date: "Sep 24, 2026", detail: "Live at BizakConnect — winners announced on the main stage." },
+  { phase: "Awards ceremony",    date: "Sep 24, 2026", detail: "Live at BizakConnect winners announced on the main stage." },
 ];
 
 function HeroSection() {
@@ -86,13 +86,13 @@ function HeroSection() {
                 <Trophy className="size-5 text-bz-accent" />
               </div>
               <div className="text-[14px] font-bold text-white/40 uppercase tracking-[0.1em] mb-3">
-                Partner of the Year — 2024
+                Partner of the Year 2024
               </div>
               <div className="text-[28px] font-bold tracking-[-0.015em] mb-2">Atlas SI</div>
               <div className="text-[13px] text-white/50 mb-6">Bengaluru · APAC · Platinum</div>
 
               <p className="text-[14px] text-white/65 leading-[1.7] mb-7">
-                "Atlas raised the bar on what enterprise manufacturing implementations can look like — 23 go-lives across APAC, an average customer NPS of 78, and a peer-led architect community now spanning four countries."
+                "Atlas raised the bar on what enterprise manufacturing implementations can look like 23 go-lives across APAC, an average customer NPS of 78, and a peer-led architect community now spanning four countries."
               </p>
 
               <div className="grid grid-cols-3 gap-3">
@@ -135,7 +135,7 @@ function CategoriesSection() {
         <SectionHeading
           eyebrow="Categories"
           title="Six awards. One ecosystem."
-          description="Every category looks at delivered outcomes — customer health, growth, and contribution to the broader partner community. Scoring is published and reviewed annually."
+          description="Every category looks at delivered outcomes customer health, growth, and contribution to the broader partner community. Scoring is published and reviewed annually."
           maxWidth={680}
           className="mb-14"
         />
@@ -208,7 +208,7 @@ function TimelineSection() {
           eyebrow="2026 Timeline"
           eyebrowTone="accent"
           title="Mark the dates."
-          description="The full nomination-to-stage cycle. Every step is owned by a named partner ops contact — no black box."
+          description="The full nomination-to-stage cycle. Every step is owned by a named partner ops contact no black box."
           tone="light"
           maxWidth={680}
           className="mb-14"
@@ -250,7 +250,7 @@ function NominateSection() {
           <SectionHeading
             eyebrow="Submit a nomination"
             title={<>Anyone can nominate. <span className="text-bz-sage">Self-nominations welcome.</span></>}
-            description="If you're a customer, a Bizak rep, or a partner peer — you can put a firm forward. Three minutes to submit, evidence due by the cycle deadline."
+            description="If you're a customer, a Bizak rep, or a partner peer you can put a firm forward. Three minutes to submit, evidence due by the cycle deadline."
           />
 
           <Card tone="soft" pad="lg" className="border-bz-sage/20">
@@ -261,7 +261,7 @@ function NominateSection() {
             <ol className="flex flex-col gap-4 mb-8">
               {[
                 "Pick the partner and the category",
-                "Tell us why — outcomes, delivery, customer impact",
+                "Tell us why outcomes, delivery, customer impact",
                 "Attach optional evidence (case study, CSAT score, etc.)",
                 "Submit. Bizak partner ops takes it from there.",
               ].map((s, i) => (

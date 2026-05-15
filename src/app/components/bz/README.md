@@ -1,4 +1,4 @@
-# bz/ — Bizak design-system primitives
+# bz/ Bizak design-system primitives
 
 This folder is the **canonical primitive library** for the Bizak marketing
 site. All new pages import from here; the legacy `marketing/` folder is
@@ -28,13 +28,13 @@ dedicated React primitive. Pages apply them via `className="…"`:
 
 | Class | Purpose |
 |---|---|
-| `.bz-page` | Outer wrapper for every `*PageLayout` in `routes.tsx`. Carries `overflow-x: clip` + `text-wrap: balance` — the project's mobile-overflow guard. |
-| `.bz-hero-visual` | Wrapper for a page-specific hero mock that is NOT a `<HeroCanvas>` (e.g. `FinancialManagement`'s olive-panel + statement card, `Workflow`'s approval-flow board). Encodes `var(--bz-hero-gap)` / `var(--bz-hero-gap-mobile)` so paper-surface mocks share the olive-canvas spacing — never hardcode `mt-*` on the mock wrapper. See `/CLAUDE.md` §"Hero spacing convention" for the canonical Options A / B. |
+| `.bz-page` | Outer wrapper for every `*PageLayout` in `routes.tsx`. Carries `overflow-x: clip` + `text-wrap: balance` the project's mobile-overflow guard. |
+| `.bz-hero-visual` | Wrapper for a page-specific hero mock that is NOT a `<HeroCanvas>` (e.g. `FinancialManagement`'s olive-panel + statement card, `Workflow`'s approval-flow board). Encodes `var(--bz-hero-gap)` / `var(--bz-hero-gap-mobile)` so paper-surface mocks share the olive-canvas spacing never hardcode `mt-*` on the mock wrapper. See `/CLAUDE.md` §"Hero spacing convention" for the canonical Options A / B. |
 
 ## Rules
 
 1. **Every visual decision** (colour, spacing, type, hover) lives in a
-   primitive — never in a page. Pages = composition + data.
+   primitive never in a page. Pages = composition + data.
 2. **Tokens** come from `src/styles/theme.css`. No hex literals, no
    `const C = {...}` colour objects, no per-file `:root` blocks.
 3. **Inter only.** No `font-mono`, no serif headings, no Hedvig.
@@ -49,7 +49,7 @@ dedicated React primitive. Pages apply them via `className="…"`:
    `withArrow` → for internal). Adjacent Pill pairs go inside
    `<PillGroup>`; solo pills do not. The Pill primitive's only props
    are `variant`, `size="sm|md"`, `href`, `withArrow`, and
-   `withArrowUpRight` — legacy `withTick`/`iconLeft`/`iconRight`/`size="lg"`
+   `withArrowUpRight` legacy `withTick`/`iconLeft`/`iconRight`/`size="lg"`
    were removed. Full canon: `/CLAUDE.md` §"CTA conventions" and
    `/docs/DESIGN_SYSTEM.md` §3.1.1.
 
@@ -66,5 +66,5 @@ dedicated React primitive. Pages apply them via `className="…"`:
 
 When every page has migrated onto these primitives, `marketing/` and the
 legacy `hp-*` / `biz-*` classes in `src/styles/style.css` will be deleted.
-Until then, the two folders coexist — legacy pages keep using `marketing/`,
+Until then, the two folders coexist legacy pages keep using `marketing/`,
 new pages use `bz/`.

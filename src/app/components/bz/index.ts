@@ -2,7 +2,7 @@
 // Bizak design-system primitives (Phase 1 rebrand)
 //
 // This barrel is the SINGLE import surface for the new design system.
-// Pages should import primitives from here — NEVER from individual files,
+// Pages should import primitives from here NEVER from individual files,
 // NEVER from the legacy `marketing/` folder.
 //
 //   import { Section, Container, Bento, Pill, Heading } from "../bz";

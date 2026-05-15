@@ -592,7 +592,7 @@ export function Header() {
           </div>
         </div>
 
-        {/* Panels anchored to <header> — left:50% centers on the full viewport width */}
+        {/* Panels anchored to <header> left:50% centers on the full viewport width */}
         {Object.entries(megaMenus).map(([key, data]) => (
           <MegaPanel key={key} data={data} visible={activeMenu === key} />
         ))}

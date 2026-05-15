@@ -148,7 +148,7 @@ const INITIAL_THREADS: Thread[] = [
     categoryLabel: "Finance",
     title: "How are you cutting month-end close from 9 days to under 48 hours on Bizak?",
     excerpt:
-      "We're stuck on a 9-day close. Looking for the runbook — auto-posting rules, bank-feed cadence, reconciliation queues. What's the right sequence?",
+      "We're stuck on a 9-day close. Looking for the runbook auto-posting rules, bank-feed cadence, reconciliation queues. What's the right sequence?",
     body:
       "We've been on Bizak for 4 cycles and our close is still 9 days. Tried automating recurring journals but bank-feed match is mostly manual, and we run reconciliations sequentially. Looking for a sequence that works at our scale (3 entities, 2 currencies, ~6k JEs/month). Specifically: (1) which auto-posting rules give the most leverage, (2) is daily bank-feed match worth the operator time, and (3) what reconciliation queues do you run in parallel without stepping on each other?",
     author: "Priya Adhikari",
@@ -168,7 +168,7 @@ const INITIAL_THREADS: Thread[] = [
         initials: "SB",
         posted: "1d ago",
         body:
-          "Three things matter, in this order: (1) auto-posting for recurring journals — depreciation, prepaid amortisation, accruals. (2) Daily bank-feed match instead of monthly; the cumulative cost of reconciling 30 days at month-end is the killer. (3) Parallel reconciliation queues by GL family, not by entity — auditors can review them concurrently. We've seen 40+ teams cut close to under 2 days with this exact pattern.",
+          "Three things matter, in this order: (1) auto-posting for recurring journals depreciation, prepaid amortisation, accruals. (2) Daily bank-feed match instead of monthly; the cumulative cost of reconciling 30 days at month-end is the killer. (3) Parallel reconciliation queues by GL family, not by entity auditors can review them concurrently. We've seen 40+ teams cut close to under 2 days with this exact pattern.",
         votes: 142,
         isSolution: true,
         isBizakTeam: true,
@@ -192,9 +192,9 @@ const INITIAL_THREADS: Thread[] = [
     categoryLabel: "Inventory",
     title: "Best practice for landed cost on multi-leg international shipments?",
     excerpt:
-      "Freight + duty + clearing across 3 currencies hitting the same PO. Allocating at receipt, at invoice, or via a periodic adjustment — which works for you?",
+      "Freight + duty + clearing across 3 currencies hitting the same PO. Allocating at receipt, at invoice, or via a periodic adjustment which works for you?",
     body:
-      "We import from 3 origins. Each shipment carries freight in one currency, customs duty in another, and a clearing fee in the local one. POs land in batches with partial receipts. Today we accrue at receipt with an estimate and reverse at invoice — but the variance is becoming material. Curious what the right pattern is. Doing it at receipt means inventory carries the wrong cost for days; doing it at invoice means COGS is wrong; periodic adjustment loses the per-PO traceability.",
+      "We import from 3 origins. Each shipment carries freight in one currency, customs duty in another, and a clearing fee in the local one. POs land in batches with partial receipts. Today we accrue at receipt with an estimate and reverse at invoice but the variance is becoming material. Curious what the right pattern is. Doing it at receipt means inventory carries the wrong cost for days; doing it at invoice means COGS is wrong; periodic adjustment loses the per-PO traceability.",
     author: "Nabin Shrestha",
     role: "Head of Supply Chain · Distribution",
     initials: "NS",
@@ -212,7 +212,7 @@ const INITIAL_THREADS: Thread[] = [
         initials: "DL",
         posted: "3h ago",
         body:
-          "We accrue at receipt with a freight estimate locked from the shipping doc, then post the variance against COGS at invoice — never against inventory. Keeps the per-PO trail and avoids the COGS dance. The trick is to make the estimate routine, not heroic.",
+          "We accrue at receipt with a freight estimate locked from the shipping doc, then post the variance against COGS at invoice never against inventory. Keeps the per-PO trail and avoids the COGS dance. The trick is to make the estimate routine, not heroic.",
         votes: 38,
       },
     ],
@@ -222,11 +222,11 @@ const INITIAL_THREADS: Thread[] = [
     status: "solved",
     category: "manufacturing",
     categoryLabel: "Manufacturing",
-    title: "OEE dropped 4 points after adding a second shift — how we found the cause",
+    title: "OEE dropped 4 points after adding a second shift how we found the cause",
     excerpt:
       "Walked back through work-order timestamps in the audit trail. Turned out we were starving the second shift on a single bottleneck SKU. Posting the fix and the SQL.",
     body:
-      "Quick share for anyone running into the same. We added a second shift, expected OEE to climb, instead it dropped 4 points. Root cause was a single SKU on the bottleneck work-centre that wasn't being prepped during the handover — second shift started cold for ~25 minutes. Found it by joining work-order timestamps with the operator-attendance log. Fix: a 5-minute pre-shift kit walk added to the supervisor checklist. OEE is now +6 vs. baseline.",
+      "Quick share for anyone running into the same. We added a second shift, expected OEE to climb, instead it dropped 4 points. Root cause was a single SKU on the bottleneck work-centre that wasn't being prepped during the handover second shift started cold for ~25 minutes. Found it by joining work-order timestamps with the operator-attendance log. Fix: a 5-minute pre-shift kit walk added to the supervisor checklist. OEE is now +6 vs. baseline.",
     author: "Anita Karki",
     role: "Plant Manager · Auto-parts",
     initials: "AK",
@@ -254,9 +254,9 @@ const INITIAL_THREADS: Thread[] = [
     status: "open",
     category: "workflow",
     categoryLabel: "Workflow",
-    title: "Approval chain pattern for capex POs above ₹10L — without becoming a bottleneck",
+    title: "Approval chain pattern for capex POs above ₹10L without becoming a bottleneck",
     excerpt:
-      "Looking for a routing pattern that escalates only when committed spend trips a threshold against the open budget — not on every line item.",
+      "Looking for a routing pattern that escalates only when committed spend trips a threshold against the open budget not on every line item.",
     body:
       "Right now every capex line above ₹1L hits the CFO. The CFO inbox is the bottleneck. I want a smarter pattern that only escalates when the running committed total against an annual budget bucket trips 80%, OR when the line itself is above ₹10L. Anyone built this on Bizak's workflow engine? Looking for the rule shape, not just the idea.",
     author: "Suresh Maharjan",
@@ -286,7 +286,7 @@ const INITIAL_THREADS: Thread[] = [
     status: "trending",
     category: "integrations",
     categoryLabel: "API & integrations",
-    title: "Webhook fan-out: Bizak → Shopify, Razorpay, and our 3PL — clean pattern?",
+    title: "Webhook fan-out: Bizak → Shopify, Razorpay, and our 3PL clean pattern?",
     excerpt:
       "Sales order in Bizak should fire 3 downstream actions. Today we're polling. Anyone running the webhook + idempotency-key approach in production yet?",
     body:
@@ -308,7 +308,7 @@ const INITIAL_THREADS: Thread[] = [
         initials: "SB",
         posted: "5h ago",
         body:
-          "The pattern that scales: SO id as the idempotency key for every downstream call, store {key, downstream, status, attempts} in your own table, and replay against missing/failed rows on a 5-minute cron. Bizak webhook signs the payload — verify before dispatch. Happy to share a reference repo if you want.",
+          "The pattern that scales: SO id as the idempotency key for every downstream call, store {key, downstream, status, attempts} in your own table, and replay against missing/failed rows on a 5-minute cron. Bizak webhook signs the payload verify before dispatch. Happy to share a reference repo if you want.",
         votes: 31,
       },
     ],
@@ -340,7 +340,7 @@ const INITIAL_THREADS: Thread[] = [
         initials: "AK",
         posted: "1d ago",
         body:
-          "Step 5 is the one that always gets us. We had a 0.4% AR mismatch between the legacy ledger and detail — 6 months later it was a 4% discrepancy nobody could trace. Reconcile before extract, every time.",
+          "Step 5 is the one that always gets us. We had a 0.4% AR mismatch between the legacy ledger and detail 6 months later it was a 4% discrepancy nobody could trace. Reconcile before extract, every time.",
         votes: 41,
       },
     ],
@@ -350,11 +350,11 @@ const INITIAL_THREADS: Thread[] = [
     status: "open",
     category: "sales",
     categoryLabel: "Sales & CRM",
-    title: "Tracking quote-to-order conversion across 4 sales reps — what to actually measure?",
+    title: "Tracking quote-to-order conversion across 4 sales reps what to actually measure?",
     excerpt:
       "Beyond a simple win-rate, what KPIs actually correlate with sales coaching outcomes on Bizak? Trying to redesign our weekly pipeline review.",
     body:
-      "Win-rate alone doesn't help with coaching — too lagging, too aggregate. Want metrics that point at where in the funnel a rep is leaking. Specifically: time-from-quote-to-first-touch, average revisions per quote before accept, and quote-decay-by-stage. Anyone built these on top of Bizak's CRM data?",
+      "Win-rate alone doesn't help with coaching too lagging, too aggregate. Want metrics that point at where in the funnel a rep is leaking. Specifically: time-from-quote-to-first-touch, average revisions per quote before accept, and quote-decay-by-stage. Anyone built these on top of Bizak's CRM data?",
     author: "Kushal Rai",
     role: "Sales Director · B2B services",
     initials: "KR",
@@ -372,7 +372,7 @@ const INITIAL_THREADS: Thread[] = [
         initials: "PA",
         posted: "6h ago",
         body:
-          "We added 'quote revisions before accept' to our weekly review and it changed the conversation overnight. Reps with 3+ revisions on average were almost always pricing-anxious — completely different coaching from the low-touch reps.",
+          "We added 'quote revisions before accept' to our weekly review and it changed the conversation overnight. Reps with 3+ revisions on average were almost always pricing-anxious completely different coaching from the low-touch reps.",
         votes: 12,
       },
     ],
@@ -382,7 +382,7 @@ const INITIAL_THREADS: Thread[] = [
     status: "open",
     category: "finance",
     categoryLabel: "Finance",
-    title: "Multi-entity consolidation with intercompany eliminations — Bizak vs. spreadsheet?",
+    title: "Multi-entity consolidation with intercompany eliminations Bizak vs. spreadsheet?",
     excerpt:
       "Currently doing eliminations in Excel post-export. Curious whether the in-product consolidation is robust enough for our 7 entities + 3 currencies.",
     body:
@@ -404,7 +404,7 @@ const INITIAL_THREADS: Thread[] = [
         initials: "DL",
         posted: "10h ago",
         body:
-          "Yes, did this for an 8-entity group last year. The thing to plan for is the intercompany matching rules — set them up by counterparty + GL pair before you migrate, not after. Otherwise eliminations look right but the trial balance isn't.",
+          "Yes, did this for an 8-entity group last year. The thing to plan for is the intercompany matching rules set them up by counterparty + GL pair before you migrate, not after. Otherwise eliminations look right but the trial balance isn't.",
         votes: 19,
       },
     ],
@@ -414,11 +414,11 @@ const INITIAL_THREADS: Thread[] = [
     status: "solved",
     category: "industry",
     categoryLabel: "Industry talk",
-    title: "Distribution operators — how are you forecasting demand around Tihar / Diwali peak?",
+    title: "Distribution operators how are you forecasting demand around Tihar / Diwali peak?",
     excerpt:
-      "Three years on Bizak. Sharing the seasonality model that finally beat our gut feel — including the SKU groupings and the holiday calendar overlay.",
+      "Three years on Bizak. Sharing the seasonality model that finally beat our gut feel including the SKU groupings and the holiday calendar overlay.",
     body:
-      "Sharing what works for us. Group SKUs into 4 demand-pattern clusters (steady, festive, weather, fad), apply a 3-year seasonality index per cluster, then overlay the religious holiday calendar (Tihar, Diwali, Dashain) as discrete uplift events. We're now within 6% of actual on the 4-week pre-festive window — used to be 22% off.",
+      "Sharing what works for us. Group SKUs into 4 demand-pattern clusters (steady, festive, weather, fad), apply a 3-year seasonality index per cluster, then overlay the religious holiday calendar (Tihar, Diwali, Dashain) as discrete uplift events. We're now within 6% of actual on the 4-week pre-festive window used to be 22% off.",
     author: "Sandesh Khadka",
     role: "Ops Director · FMCG distribution",
     initials: "SK",
@@ -436,7 +436,7 @@ const INITIAL_THREADS: Thread[] = [
         initials: "NS",
         posted: "2d ago",
         body:
-          "Stealing this. The 4-cluster grouping is what we're missing — we treat everything as one pattern and it's killing the festive forecast. Going to retry this quarter.",
+          "Stealing this. The 4-cluster grouping is what we're missing we treat everything as one pattern and it's killing the festive forecast. Going to retry this quarter.",
         votes: 18,
       },
     ],
@@ -701,7 +701,7 @@ function LoginDialog({
           </div>
 
           <p className="mt-1 text-center text-[11px] leading-[1.5] text-bz-text-soft">
-            Demo experience — any details work. No data leaves your browser.
+            Demo experience any details work. No data leaves your browser.
           </p>
         </form>
       </DialogContent>
@@ -797,7 +797,7 @@ function ComposeDialog({
       return;
     }
     if (!bodyOk) {
-      setError("Add a bit more context — at least 20 characters.");
+      setError("Add a bit more context at least 20 characters.");
       return;
     }
     setSubmitting(true);
@@ -822,7 +822,7 @@ function ComposeDialog({
           Post a new question to the Bizak community forum.
         </DialogDescription>
 
-        {/* Hero header — fixed top */}
+        {/* Hero header fixed top */}
         <div className="relative shrink-0 overflow-hidden bg-bz-deep px-7 pb-7 pt-9 text-white">
           <div
             aria-hidden
@@ -876,13 +876,13 @@ function ComposeDialog({
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value.slice(0, 120))}
-                placeholder="Be specific — what are you trying to do?"
+                placeholder="Be specific what are you trying to do?"
                 autoFocus
                 className="h-[50px] rounded-bz-md border border-bz-border bg-bz-bg px-4 text-[15px] font-semibold text-bz-text transition-all placeholder:font-normal placeholder:text-bz-text-soft focus:border-bz-sage-mid focus:bg-bz-surface focus:shadow-[0_0_0_3px_rgba(122,130,109,0.12)] focus:outline-none"
               />
             </div>
 
-            {/* Category picker — visual grid */}
+            {/* Category picker visual grid */}
             <div className="flex flex-col gap-3">
               <FieldLabel
                 icon={Tag}
@@ -961,7 +961,7 @@ function ComposeDialog({
             </div>
           </div>
 
-          {/* Footer band — sticky bottom */}
+          {/* Footer band sticky bottom */}
           <div className="shrink-0 border-t border-bz-border bg-bz-bg/60 px-7 py-4">
             {error && (
               <div className="mb-3 flex items-start gap-2 rounded-bz-md border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-[12.5px] font-medium text-rose-700">
@@ -979,7 +979,7 @@ function ComposeDialog({
                 strokeWidth={2}
                 fill="currentColor"
               />
-              Share what you've tried — boring details get the best answers.
+              Share what you've tried boring details get the best answers.
             </span>
             <div className="ml-auto flex items-center gap-2">
               <button
@@ -1065,7 +1065,7 @@ function HeroSection({
     <Section pad="hero" tone="light" className="biz-mesh overflow-hidden">
       <Container className="relative">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-20">
-          {/* Left — text */}
+          {/* Left text */}
           <div className="max-w-[640px]">
             <HeroBadge>Bizak Community</HeroBadge>
             <h1 className="mt-4 text-[clamp(40px,5.2vw,60px)] font-bold leading-[1.05] tracking-[-0.03em] text-bz-text">
@@ -1077,7 +1077,7 @@ function HeroSection({
               .
             </h1>
             <p className="mt-5 max-w-[560px] text-[17px] leading-[1.7] text-bz-text-muted">
-              A simple forum for Bizak operators — finance, ops, manufacturing,
+              A simple forum for Bizak operators finance, ops, manufacturing,
               and developers asking how-to questions and trading the runbooks
               that actually moved the number.
             </p>
@@ -1137,7 +1137,7 @@ function HeroSection({
             </div>
           </div>
 
-          {/* Right — live thread preview */}
+          {/* Right live thread preview */}
           <div className="relative mx-auto w-full max-w-[460px] lg:mx-0">
             <div
               aria-hidden
@@ -1174,7 +1174,7 @@ function HeroSection({
                 How are you cutting month-end close from 9 days to under 48 hours?
               </h3>
               <p className="mt-2 text-[13.5px] leading-[1.65] text-bz-text-muted">
-                Looking for the runbook — auto-posting rules, bank-feed cadence,
+                Looking for the runbook auto-posting rules, bank-feed cadence,
                 and the reconciliation queues you run in parallel.
               </p>
 
@@ -1442,7 +1442,7 @@ function ForumSection({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               type="text"
-              placeholder="Search threads — close, OEE, webhook, landed cost…"
+              placeholder="Search threads close, OEE, webhook, landed cost…"
               aria-label="Search the forum"
               className="flex-1 bg-transparent text-[15px] text-bz-text placeholder:text-bz-text-soft focus:outline-none"
             />
@@ -1824,7 +1824,7 @@ function ThreadDetailView({
           {thread.replyList.length === 0 && (
             <div className="rounded-bz-2xl border border-dashed border-bz-border bg-bz-bg px-6 py-12 text-center">
               <p className="text-[14px] text-bz-text-muted">
-                No replies yet — be the first to weigh in.
+                No replies yet be the first to weigh in.
               </p>
             </div>
           )}
@@ -1899,7 +1899,7 @@ function ThreadDetailView({
                   </h3>
                   <p className="mt-1 max-w-[420px] text-[13px] leading-[1.6] text-bz-text-muted">
                     The community is free to read. To answer or post, you'll
-                    need a Bizak Community account — takes 30 seconds.
+                    need a Bizak Community account takes 30 seconds.
                   </p>
                 </div>
               </div>
@@ -1953,8 +1953,8 @@ function BottomStrip({
               </h2>
               <p className="mt-3 max-w-[480px] text-[14.5px] leading-[1.7] text-white/65">
                 {user
-                  ? "You're signed in. Open a thread to reply, or ask your own question — median first answer comes back inside 6 hours."
-                  : "Free to read, free to post. Median first reply under six hours — and the answers come from operators running real businesses on Bizak, not a support script."}
+                  ? "You're signed in. Open a thread to reply, or ask your own question median first answer comes back inside 6 hours."
+                  : "Free to read, free to post. Median first reply under six hours and the answers come from operators running real businesses on Bizak, not a support script."}
               </p>
             </div>
 

@@ -41,7 +41,7 @@ const VALUE_PROPS = [
   {
     Icon: TrendingUp,
     title: "Recurring revenue, not one-off fees",
-    body: "Earn margin on every renewal — not just the initial deal. Our commission stack is tiered to reward long-term customer health, not just signature.",
+    body: "Earn margin on every renewal not just the initial deal. Our commission stack is tiered to reward long-term customer health, not just signature.",
     tag: "Up to 35% margin",
   },
   {
@@ -59,7 +59,7 @@ const VALUE_PROPS = [
   {
     Icon: ShieldCheck,
     title: "An ERP that's modern enough to recommend",
-    body: "Open APIs, audit-by-default, multi-entity from day one. You're selling a platform that holds up technically — not legacy software wrapped in a new UI.",
+    body: "Open APIs, audit-by-default, multi-entity from day one. You're selling a platform that holds up technically not legacy software wrapped in a new UI.",
     tag: "API-first",
   },
 ];
@@ -75,7 +75,7 @@ const JOURNEY = [
     phase: "02",
     title: "Discovery call",
     detail: "30 min",
-    desc: "A working session with our partnerships team — fit, territory, GTM motion, and target tier.",
+    desc: "A working session with our partnerships team fit, territory, GTM motion, and target tier.",
   },
   {
     phase: "03",
@@ -169,7 +169,7 @@ function HeroSection() {
           <span className="text-bz-accent">operating system</span> of modern business.
         </>
       }
-      description="Join the firms reselling, implementing, and extending Bizak ERP across 48 countries. We protect your deals, certify your team, and pay you on every renewal — not just the signature."
+      description="Join the firms reselling, implementing, and extending Bizak ERP across 48 countries. We protect your deals, certify your team, and pay you on every renewal not just the signature."
       actions={
         <>
           <Button variant="accent" size="lg" href="#apply" withArrow>
@@ -197,7 +197,7 @@ function ValueSection() {
         <SectionHeading
           eyebrow="Why partner with Bizak"
           title="A program designed around practice economics."
-          description="We built this for firms that take long-term ownership of their customers — not for resellers chasing one-off bookings. Everything in the program is shaped around year 2 and year 3."
+          description="We built this for firms that take long-term ownership of their customers not for resellers chasing one-off bookings. Everything in the program is shaped around year 2 and year 3."
           maxWidth={680}
           className="mb-14"
         />
@@ -302,7 +302,7 @@ function ApplicationSection() {
 
             <div className="mt-10 flex flex-col gap-4">
               {[
-                "Free to apply — no upfront fees",
+                "Free to apply no upfront fees",
                 "First 3 certifications on us",
                 "Named regional partner manager",
                 "Deal protection from week 1",
@@ -397,7 +397,7 @@ function ApplicationSection() {
                 </Button>
                 <p className="text-[12px] text-bz-text-muted leading-[1.6]">
                   By submitting you agree to our partner program terms. We won't
-                  contact you for marketing — only program-related responses.
+                  contact you for marketing only program-related responses.
                 </p>
               </form>
             )}

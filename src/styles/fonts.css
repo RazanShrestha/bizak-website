@@ -1,4 +1,4 @@
-/* Inter is the ONLY font family for the marketing site — used for body,
+/* Inter is the ONLY font family for the marketing site used for body,
    headings, buttons, code-like identifiers, everything. Do not add a
    second family without updating CLAUDE.md's hard rule on fonts. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');

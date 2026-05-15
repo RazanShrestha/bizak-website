@@ -3,7 +3,7 @@ import { cn } from "../ui/utils";
 
 // 1px grid overlay used inside dark surfaces (HeroCanvas, dark Bento,
 // FAQ intro panel, PlatformDashboard mock). Replaces the retired
-// `.biz-mesh` radial gradient — the new direction is flat surface +
+// `.biz-mesh` radial gradient the new direction is flat surface +
 // dot/grid overlay for texture, never gradients.
 //
 //   <div className="relative">

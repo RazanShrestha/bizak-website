@@ -12,11 +12,11 @@ import {
 
 const FEATURES = [
   { Icon: Zap,        title: "Lightning Checkout",      desc: "Sub-3-second transaction processing keeps queues short and customers happy at peak hours." },
-  { Icon: CreditCard, title: "Multi-Payment Support",   desc: "Accept cash, card, QR, mobile wallets, and split payments — all from a single interface." },
+  { Icon: CreditCard, title: "Multi-Payment Support",   desc: "Accept cash, card, QR, mobile wallets, and split payments all from a single interface." },
   { Icon: ReceiptText,title: "Smart Receipts",           desc: "Print or email branded receipts instantly. Customize layouts, add promotions, and embed QR codes." },
   { Icon: Clock,      title: "Shift Management",         desc: "Open and close cash drawers with automated float counting, cashier-level reports, and variance alerts." },
   { Icon: WifiOff,    title: "Full Offline Mode",        desc: "Keep selling when the internet drops. Transactions sync automatically once connectivity is restored." },
-  { Icon: RefreshCw,  title: "Instant Inventory Sync",   desc: "Every item sold deducts from stock in real time — no manual reconciliation, no overselling." },
+  { Icon: RefreshCw,  title: "Instant Inventory Sync",   desc: "Every item sold deducts from stock in real time no manual reconciliation, no overselling." },
 ];
 
 const METRICS = [
@@ -47,7 +47,7 @@ function HeroDashboard() {
         <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
         <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
         <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
-        <span className="ml-3 text-[11px] text-white/30 tracking-tight font-semibold">Register #1 — Morning Shift</span>
+        <span className="ml-3 text-[11px] text-white/30 tracking-tight font-semibold">Register #1 Morning Shift</span>
       </div>
       <div className="px-6 py-5">
         <div className="flex justify-between mb-2.5 pb-2 border-b border-white/[0.06]">
@@ -128,7 +128,7 @@ function TransactionEngineSection() {
             </IconBadge>
             <h3 className="text-[18px] font-bold text-white mb-3">Universal Payments</h3>
             <p className="text-[13px] text-white/40 leading-[1.65] mb-8">
-              Accept every tender type your customers carry — no integrations to bolt on later.
+              Accept every tender type your customers carry no integrations to bolt on later.
             </p>
             <div className="grid grid-cols-3 gap-2.5">
               {[
@@ -147,7 +147,7 @@ function TransactionEngineSection() {
             </div>
             <div className="mt-6 flex items-center gap-2.5">
               <div className="w-2 h-2 rounded-full bg-green-500 biz-pulse-glow" />
-              <span className="text-[11px] text-white/40">All methods active — 0 gateway errors today</span>
+              <span className="text-[11px] text-white/40">All methods active 0 gateway errors today</span>
             </div>
           </div>
 
@@ -288,7 +288,7 @@ function SalesIntelligenceSection() {
           <div className="bg-bz-surface rounded-bz-2xl border border-bz-border p-8 shadow-sm">
             <div className="flex justify-between items-start mb-9">
               <div>
-                <h3 className="font-bold text-bz-text text-[15px]">Hourly Revenue — Today</h3>
+                <h3 className="font-bold text-bz-text text-[15px]">Hourly Revenue Today</h3>
                 <p className="text-[12px] text-bz-text-muted mt-1">Register #1, Morning to Close</p>
               </div>
               <PillBadge tone="accent" dot>LIVE</PillBadge>
@@ -454,7 +454,7 @@ export function PointOfSalesPage() {
         <Container width="narrow">
           <SectionHeading
             title={<>Start selling smarter<br /><span className="text-bz-accent">from your first transaction</span></>}
-            description="Join thousands of retailers on Bizak POS. Get up and running in minutes — no hardware lock-in."
+            description="Join thousands of retailers on Bizak POS. Get up and running in minutes no hardware lock-in."
             tone="light"
             align="center"
             maxWidth={520}

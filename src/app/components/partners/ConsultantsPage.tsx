@@ -152,7 +152,7 @@ function FitSection() {
           <SectionHeading
             eyebrow="Who this is for"
             title={<>Designed for firms that take <span className="text-bz-sage">ownership</span> of outcomes.</>}
-            description="If your model is project-based revenue with named consultants, we built this around how your practice already works — not around a software vendor's quota."
+            description="If your model is project-based revenue with named consultants, we built this around how your practice already works not around a software vendor's quota."
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -178,7 +178,7 @@ function PracticeSection() {
         <SectionHeading
           eyebrow="Practice operations"
           title="The toolkit for shipping faster implementations."
-          description="Every part of the implementation lifecycle has dedicated tooling. We don't ship binders — we ship working artifacts your consultants pick up and use."
+          description="Every part of the implementation lifecycle has dedicated tooling. We don't ship binders we ship working artifacts your consultants pick up and use."
           maxWidth={680}
           className="mb-14"
         />
@@ -264,7 +264,7 @@ function CommunitySection() {
               Architect Office Hours
             </div>
             <p className="text-[15px] text-bz-text-muted leading-[1.7] mb-6">
-              Live weekly sessions with Bizak Solution Architects. Bring real implementation challenges — get answers, working code, and peer review from senior consultants across the network.
+              Live weekly sessions with Bizak Solution Architects. Bring real implementation challenges get answers, working code, and peer review from senior consultants across the network.
             </p>
             <div className="flex flex-wrap gap-2">
               {["Slack workspace", "Quarterly summit", "Internal forum", "Beta access"].map((b) => (
@@ -277,7 +277,7 @@ function CommunitySection() {
             <SectionHeading
               eyebrow="Beyond training"
               title="A community that lifts the whole practice."
-              description="Certification gets you started. The community is where your senior consultants stay sharp — sharing migration patterns, integration hacks, industry templates, and reference architectures."
+              description="Certification gets you started. The community is where your senior consultants stay sharp sharing migration patterns, integration hacks, industry templates, and reference architectures."
               maxWidth={500}
             />
 

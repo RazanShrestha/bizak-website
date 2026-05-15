@@ -7757,7 +7757,7 @@
   transform: translateY(-50%);
 }
 
-/* Progress fill — covers first 2 completed steps */
+/* Progress fill covers first 2 completed steps */
 .wa-timeline-progress {
   position: absolute;
   top: 50%;
@@ -7967,9 +7967,9 @@
 /* ──────────────────────────────────────────────────────────────────────────
    BIZAK .bz-* RUUL-STYLE PRIMITIVE CSS
    Paint layer for the new design system. Tokens consumed below live in
-   theme.css (single source of truth) — do NOT add a :root block here.
+   theme.css (single source of truth) do NOT add a :root block here.
    The .bz-* classes are the CSS paint behind the React primitive library
-   (see docs/DESIGN_SYSTEM.md §3). Page-level CSS should not be added —
+   (see docs/DESIGN_SYSTEM.md §3). Page-level CSS should not be added
    put new visual logic in a primitive instead.
    ────────────────────────────────────────────────────────────────────── */
 
@@ -7989,7 +7989,7 @@
   letter-spacing: -0.018em;
 }
 
-/* Consistent section padding — generous for premium feel */
+/* Consistent section padding generous for premium feel */
 .bz-section { padding: 110px 20px; }
 @media (min-width: 880px) { .bz-section { padding: 140px 40px; } }
 @media (max-width: 600px) { .bz-section { padding: 80px 20px; } }
@@ -8001,7 +8001,7 @@
 @media (min-width: 768px) { .bz-container-px { padding-left: 48px; padding-right: 48px; } }
 @media (min-width: 1024px) { .bz-container-px { padding-left: 80px; padding-right: 80px; } }
 
-/* Grid pattern — used on cards, hero containers, dividers */
+/* Grid pattern used on cards, hero containers, dividers */
 .bz-grid {
   background-color: var(--bz-paper);
   background-image:
@@ -8022,7 +8022,7 @@
   background-size: 20px 50px;
 }
 
-/* Eyebrow label — [01] HOW IT WORKS */
+/* Eyebrow label [01] HOW IT WORKS */
 .bz-eyebrow {
   display: inline-block;
   font-family: var(--bz-body-font);
@@ -8034,7 +8034,7 @@
 }
 .bz-eyebrow-light { color: rgba(252,252,247,0.55); }
 
-/* Section heading — h2 */
+/* Section heading h2 */
 /* Use :where() to give .bz-h2 / .bz-h1 ZERO CSS specificity. Without this,
    their `margin: 0` and other rules would beat Tailwind utilities (which
    sit in @layer utilities and have lower cascade priority than unlayered
@@ -8104,7 +8104,7 @@
   z-index: 1;
 }
 
-/* Buttons — rectangular with subtle corner radius (matches Ruul) */
+/* Buttons rectangular with subtle corner radius (matches Ruul) */
 .bz-pill {
   display: inline-flex;
   align-items: center;
@@ -8128,7 +8128,7 @@
   gap: 6px;
 }
 
-/* CTA pair wrapper — equal-width buttons, desktop cap, full-width on mobile */
+/* CTA pair wrapper equal-width buttons, desktop cap, full-width on mobile */
 .bz-pill-group {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -8180,7 +8180,7 @@
 .bz-pill-leaf:hover { background: #c9dba1; }
 
 
-/* Green confetti badge — matches Ruul's _w-green-badge */
+/* Green confetti badge matches Ruul's _w-green-badge */
 .bz-badge-green {
   display: inline-flex;
   align-items: center;
@@ -8296,7 +8296,7 @@
   .bz-step-visual { padding: 24px; min-height: 260px; order: 1; }
 }
 
-/* Hero visual gap — the space between the hero CTA pill row and whatever
+/* Hero visual gap the space between the hero CTA pill row and whatever
    visual/mock sits directly below it inside <Section pad="hero">.
    Both .bz-hero-canvas (olive panel) and .bz-hero-visual (generic wrapper
    for page-specific mocks that don't use HeroCanvas) consume the same
@@ -8357,7 +8357,7 @@
 .bz-bento {
   position: relative;
   border-radius: 22px;
-  padding: 32px;
+  padding: 52px 32px;
   overflow: hidden;
   min-height: 220px;
   transition: transform 0.3s ease;
@@ -8377,9 +8377,9 @@
   margin: 0 0 14px;
 }
 .bz-bento-desc { font-size: 14px; line-height: 1.55; color: var(--bz-text-muted); margin: 0; text-wrap: wrap; }
-@media (max-width: 600px) { .bz-bento { padding: 24px; border-radius: 18px; min-height: auto; } }
+@media (max-width: 600px) { .bz-bento { padding: 32px 20px; border-radius: 18px; min-height: auto; } }
 
-/* Big card (Multi-entity) — proper mobile responsive grid */
+/* Big card (Multi-entity) proper mobile responsive grid */
 .bz-big-card {
   display: grid;
   grid-template-columns: 1fr 1.05fr;
@@ -8419,7 +8419,7 @@
   transform: translateY(-4px);
 }
 
-/* Header — integrated, no pill, no heavy border */
+/* Header integrated, no pill, no heavy border */
 .bz-nav-card {
   display: flex;
   align-items: center;

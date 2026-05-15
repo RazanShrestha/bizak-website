@@ -22,9 +22,9 @@ export interface PartnerEvent {
   Icon: LucideIcon;
   /** Long-form bullets shown on the register/enroll page. */
   highlights?: string[];
-  /** Training-only — module breakdown for the enrollment page. */
+  /** Training-only module breakdown for the enrollment page. */
   curriculum?: { week: string; topic: string; hours: number }[];
-  /** Training-only — cohort meta. */
+  /** Training-only cohort meta. */
   cohort?: {
     seats: number;
     seatsTaken: number;
@@ -52,7 +52,7 @@ export const EVENTS: PartnerEvent[] = [
     highlights: [
       "Keynotes from Bizak product, engineering, and partnerships leadership",
       "30+ breakouts across industry, technical, and go-to-market tracks",
-      "Hands-on Architect Labs — early access to Bizak v2.4",
+      "Hands-on Architect Labs early access to Bizak v2.4",
       "The Partner Awards ceremony, live on the main stage",
       "Two evening networking events (in-person attendees)",
     ],
@@ -61,7 +61,7 @@ export const EVENTS: PartnerEvent[] = [
     slug: "solution-architect-cohort-12",
     type: "Training",
     format: "Virtual",
-    title: "Solution Architect Certification — Cohort 12",
+    title: "Solution Architect Certification Cohort 12",
     date: "Jun 3–28, 2026",
     duration: "4 wks · 32 hrs",
     location: "Live online",
@@ -72,7 +72,7 @@ export const EVENTS: PartnerEvent[] = [
       seats: 60,
       seatsTaken: 41,
       priceLabel: "Free for active partners",
-      feePartner: "First 3 seats per firm — on us",
+      feePartner: "First 3 seats per firm on us",
       investmentNote: "Subsequent seats: $1,200 / consultant",
     },
     curriculum: [
@@ -82,7 +82,7 @@ export const EVENTS: PartnerEvent[] = [
       { week: "Week 4", topic: "Migration playbooks + capstone exam",                 hours: 8 },
     ],
     highlights: [
-      "Live cohort-paced — 32 hours over 4 weeks",
+      "Live cohort-paced 32 hours over 4 weeks",
       "Two architect-tier mentors per cohort",
       "Sandbox tenants seeded with industry data",
       "Exam on the final day · architect-tier badge on pass",
@@ -92,7 +92,7 @@ export const EVENTS: PartnerEvent[] = [
     slug: "fast-close-co-sell-playbook",
     type: "Webinar",
     format: "Virtual",
-    title: "Closing Books in 5 Days — A Co-Sell Playbook",
+    title: "Closing Books in 5 Days A Co-Sell Playbook",
     date: "May 21, 2026",
     duration: "60 min",
     location: "Zoom",
@@ -102,7 +102,7 @@ export const EVENTS: PartnerEvent[] = [
     highlights: [
       "Live demo of the 5-day close motion",
       "Objection-handling scripts for the top 6 CFO concerns",
-      "Working artifacts — pitch deck, ROI calculator, sample SOW",
+      "Working artifacts pitch deck, ROI calculator, sample SOW",
       "Replay + chapter markers sent the next morning",
     ],
   },
@@ -110,7 +110,7 @@ export const EVENTS: PartnerEvent[] = [
     slug: "apac-architects-day-bengaluru",
     type: "Workshop",
     format: "In-person",
-    title: "APAC Architects Day — Bengaluru",
+    title: "APAC Architects Day Bengaluru",
     date: "Jun 14, 2026",
     duration: "1 day",
     location: "Bengaluru, India",
@@ -128,7 +128,7 @@ export const EVENTS: PartnerEvent[] = [
     slug: "manufacturing-live-oee-30min",
     type: "Webinar",
     format: "Virtual",
-    title: "Manufacturing Showcase — Live OEE in 30 Minutes",
+    title: "Manufacturing Showcase Live OEE in 30 Minutes",
     date: "Jun 4, 2026",
     duration: "45 min",
     location: "Zoom",
@@ -138,7 +138,7 @@ export const EVENTS: PartnerEvent[] = [
     highlights: [
       "Configure real-time OEE end-to-end on a live tenant",
       "Reference layouts: Cutting · Welding · Assembly · QA",
-      "Connect to your floor — MQTT, OPC-UA, or CSV adapter",
+      "Connect to your floor MQTT, OPC-UA, or CSV adapter",
       "Replay and config exports shared after the session",
     ],
   },
@@ -146,7 +146,7 @@ export const EVENTS: PartnerEvent[] = [
     slug: "implementation-lead-cutover-bootcamp",
     type: "Training",
     format: "Virtual",
-    title: "Implementation Lead — Cutover Bootcamp",
+    title: "Implementation Lead Cutover Bootcamp",
     date: "Jul 8–10, 2026",
     duration: "3 days · 18 hrs",
     location: "Live online",
@@ -157,7 +157,7 @@ export const EVENTS: PartnerEvent[] = [
       seats: 40,
       seatsTaken: 22,
       priceLabel: "Free for active partners",
-      feePartner: "First 3 seats per firm — on us",
+      feePartner: "First 3 seats per firm on us",
       investmentNote: "Subsequent seats: $850 / consultant",
     },
     curriculum: [
@@ -166,7 +166,7 @@ export const EVENTS: PartnerEvent[] = [
       { week: "Day 3", topic: "Change management · adoption · post-mortem capstone",  hours: 6 },
     ],
     highlights: [
-      "Real cutover replays — wins and post-mortems",
+      "Real cutover replays wins and post-mortems",
       "Runbook templates partners are using in production",
       "Live drill: handle a sev-1 escalation under 60 minutes",
       "Capstone exercise on the final day",

@@ -9,9 +9,9 @@ type HeroBadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
  * Hero pill used as the eyebrow above a hero <h1>. Elevated glass pill
  * with a subtle lime brand wash and a slow shine sweep.
  *
- * tone="light" (default) — for `.biz-mesh` light hero backgrounds (HomePage,
+ * tone="light" (default) for `.biz-mesh` light hero backgrounds (HomePage,
  *   by-industry pages, HeroCentered/HeroSplit).
- * tone="dark" — for dark hero surfaces (HeroPanel, e.g. StartupsAndSmes,
+ * tone="dark" for dark hero surfaces (HeroPanel, e.g. StartupsAndSmes,
  *   Careers).
  */
 export function HeroBadge({ tone = "light", className, children, ...props }: HeroBadgeProps) {

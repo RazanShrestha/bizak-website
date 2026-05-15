@@ -117,7 +117,7 @@ function HeroSection() {
             <span className="text-bz-sage">partner near you.</span>
           </h1>
           <p className="mt-6 text-[17px] leading-[1.7] text-bz-text-muted">
-            640+ vetted firms across 48 countries. Filter by region, industry, and tier — every partner listed is exam-certified and renewed annually.
+            640+ vetted firms across 48 countries. Filter by region, industry, and tier every partner listed is exam-certified and renewed annually.
           </p>
 
           <div className="mt-10 flex flex-wrap justify-center gap-x-10 gap-y-3 text-[13px] text-bz-text-muted">
@@ -301,7 +301,7 @@ function TierExplainerSection() {
         <SectionHeading
           eyebrow="Understanding the tiers"
           title="What the badge means."
-          description="Tiers reflect both certification depth and delivered customer health — not just sales volume. The bar to renew is the same as the bar to qualify."
+          description="Tiers reflect both certification depth and delivered customer health not just sales volume. The bar to renew is the same as the bar to qualify."
           maxWidth={680}
           className="mb-12"
         />
@@ -332,7 +332,7 @@ function ClosingCta() {
       <Container width="narrow">
         <SectionHeading
           title={<>Don't see the right fit?</>}
-          description="Our partner team can match you with a firm based on your industry, geography, and timeline — usually within 24 hours."
+          description="Our partner team can match you with a firm based on your industry, geography, and timeline usually within 24 hours."
           tone="light"
           align="center"
           maxWidth={620}

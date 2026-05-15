@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../ui/utils";
 
 // Section wrapper for marketing content blocks. Encodes:
-//  - the alternating background tones (a/b) — the new visual rhythm
+//  - the alternating background tones (a/b) the new visual rhythm
 //  - the section vertical padding from theme.css (--bz-section-y)
 //  - the dark olive variant for showcase blocks
 //

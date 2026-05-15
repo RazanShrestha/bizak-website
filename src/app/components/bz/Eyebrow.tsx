@@ -12,7 +12,7 @@ import { cn } from "../ui/utils";
 // Paint: .bz-eyebrow / .bz-eyebrow-light in style.css.
 
 export type EyebrowProps = {
-  /** Optional bracketed index prefix — e.g. "01" renders as "[01]". */
+  /** Optional bracketed index prefix e.g. "01" renders as "[01]". */
   index?: string;
   /** The SURFACE this element sits on. "light" = light bg, dark text (default). "dark" = dark bg, paper text. */
   tone?: "light" | "dark";

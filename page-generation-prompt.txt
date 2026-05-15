@@ -14,7 +14,7 @@ Your target is [TARGET_FILE].
 If the target file is empty or a stub  →  generate it from scratch.
 If the target file already has content →  redesign it so it follows the design language as the reference.
 
-In both cases the output must feel like a natural part of the same product — while
+In both cases the output must feel like a natural part of the same product while
 being different and distinctly shaped around the subject matter of [TARGET_FILE].
 
 ─── THE DESIGN LANGUAGE (non-negotiable) ────────────────────────────────────────
@@ -30,7 +30,7 @@ being different and distinctly shaped around the subject matter of [TARGET_FILE]
 
     You decide the order best suited for the page where we are working on.
     You decide which sections get more visual
-    weight.  The reference uses a particular order — you are free to change it
+    weight.  The reference uses a particular order you are free to change it
     if a different hierarchy serves [TARGET_FILE] better.
     You can get creative with the design too , it doesnot necessarily have to be the same design but better.(emphasis on be creative)
     (Be creative with layout, visual hierarchy, and how sections relate spatially. 
@@ -48,7 +48,7 @@ being different and distinctly shaped around the subject matter of [TARGET_FILE]
 
 4.  SVG ICONS
     Define a local  Icon({ name, size, style })  helper at the top of the
-    file with inline SVG paths — no external icon library.  Keep icons
+    file with inline SVG paths no external icon library.  Keep icons
     stroke-based (fill="none", stroke="currentColor", strokeWidth≈1.8).
     Choose icons that are semantically correct for the subject matter.
 
@@ -69,18 +69,18 @@ being different and distinctly shaped around the subject matter of [TARGET_FILE]
       </div>
   • Each section is its own named function component defined in the file.
   • No TypeScript errors.  Run a mental type-check before finalising.
-  • No comments explaining what the code does — only write a comment if
+  • No comments explaining what the code does only write a comment if
     a non-obvious constraint or workaround is present.
   • Do not add features or abstractions beyond what the page requires.
 
 ─── BEFORE YOU WRITE A SINGLE LINE ─────────────────────────────────────────────
 
-1.  Read  [REFERENCE_FILE]  completely — understand every section, every
+1.  Read  [REFERENCE_FILE]  completely understand every section, every
     CSS class, every animation pattern, every card composition to understand the design language.
 2.  Read  src/styles/style.css  (at minimum the biz-* sections) so you know
     exactly which class names are available and what they do visually.
 3.  Read  src/app/routes.tsx  to confirm the export name and route path.
-4.  Then design — think about the page's primary user action, the most
+4.  Then design think about the page's primary user action, the most
     compelling visual for the hero, and the section order that builds the
     strongest narrative before writing any JSX.
 
