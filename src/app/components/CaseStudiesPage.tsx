@@ -1,403 +1,277 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import "../../styles/style.css";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { Section, Container, SectionHead, Eyebrow, Heading, Pill } from "./bz";
+import { CASE_STUDY_LIST, FEATURED_STUDIES } from "./caseStudyData";
 
-// ─── IMAGES ───────────────────────────────────────────────────────────────────
-const IMG_HERO_MAIN    = "https://images.unsplash.com/photo-1759092912815-cb0ee4a8a365?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbnRlcnByaXNlJTIwYnVzaW5lc3MlMjBvcGVyYXRpb25zJTIwZ2xvYmFsJTIwaGVhZHF1YXJ0ZXJzfGVufDF8fHx8MTc3MjEwOTAyNnww&ixlib=rb-4.1.0&q=80&w=1080";
-const IMG_FINTECH      = "https://images.unsplash.com/photo-1733826544831-ad71d05c8423?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaW50ZWNoJTIwc3RhcnR1cCUyMHRlYW0lMjBvZmZpY2UlMjB0ZWNobm9sb2d5fGVufDF8fHx8MTc3MjEwOTAyNnww&ixlib=rb-4.1.0&q=80&w=1080";
-const IMG_LOGISTICS    = "https://images.unsplash.com/photo-1769752803940-0acb89683123?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnbG9iYWwlMjBzdXBwbHklMjBjaGFpbiUyMGxvZ2lzdGljcyUyMHdhcmVob3VzZXxlbnwxfHx8fDE3NzIxMDkwMjZ8MA&ixlib=rb-4.1.0&q=80&w=1080";
-const IMG_RETAIL       = "https://images.unsplash.com/photo-1629828367134-690cd8bde95c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXRhaWwlMjBjb21tZXJjZSUyMHNob3BwaW5nJTIwZWNvbW1lcmNlJTIwZmFzaGlvbnxlbnwxfHx8fDE3NzIxMDkwMjl8MA&ixlib=rb-4.1.0&q=80&w=1080";
-const IMG_MANUFACTURING = "https://images.unsplash.com/photo-1768796370672-3931e5d1ded7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYW51ZmFjdHVyaW5nJTIwcHJlY2lzaW9uJTIwZW5naW5lZXJpbmclMjBmYWN0b3J5fGVufDF8fHx8MTc3MjEwOTAyOXww&ixlib=rb-4.1.0&q=80&w=1080";
-const IMG_ANALYTICS    = "https://images.unsplash.com/photo-1551288049-bebda4e38f71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3Jwb3JhdGUlMjBmaW5hbmNlJTIwdGVhbSUyMGRhdGElMjBhbmFseXRpY3MlMjBkYXNoYm9hcmR8ZW58MXx8fHwxNzcyMTA5MDMwfDA&ixlib=rb-4.1.0&q=80&w=1080";
-
-// ─── DATA ─────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// DATA  studies come from caseStudyData; only the filter taxonomy is local.
+// ════════════════════════════════════════════════════════════════════════════
 const FILTERS = ["All Industries", "Manufacturing", "Retail & Commerce", "Professional Services", "Logistics", "Technology"];
 
-const ALL_STORIES = [
-  {
-    industry: "Fintech",
-    title: "How global procurement assets are managed for $500M+ portfolios.",
-    excerpt: "Automating the entire approval chain with custom-tailored ERP workflows built for the modern era.",
-    img: IMG_ANALYTICS,
-  },
-  {
-    industry: "Retail",
-    title: "Traceability and transparency across a complex retail supply chain.",
-    excerpt: "Providing granular visibility needed for ethical manufacturing and real-time inventory tracking.",
-    img: IMG_RETAIL,
-  },
-  {
-    industry: "Manufacturing",
-    title: "Precision inventory management for mission-critical engineering.",
-    excerpt: "Delivering real-time edge sync across distributed facilities with zero-latency processing.",
-    img: IMG_MANUFACTURING,
-  },
-  {
-    industry: "Logistics",
-    title: "Zero-downtime migration for a 3PL serving 18 global distribution centers.",
-    excerpt: "Full ERP cutover across multiple continents executed during off-peak windows with no service disruption.",
-    img: IMG_LOGISTICS,
-  },
-  {
-    industry: "Technology",
-    title: "How a SaaS scale-up unified finance, HR, and ops on a single platform.",
-    excerpt: "Eliminating 14 point solutions in favor of one ERP backbone that grew with their headcount.",
-    img: IMG_FINTECH,
-  },
-  {
-    industry: "Professional Services",
-    title: "Real-time project profitability tracking across 200+ concurrent engagements.",
-    excerpt: "Partners now close every month armed with live margin data instead of lagging reports.",
-    img: IMG_HERO_MAIN,
-  },
-];
-
 const FILTER_MAP: Record<string, string[]> = {
-  "All Industries":       ALL_STORIES.map((s) => s.industry),
-  "Manufacturing":        ["Manufacturing"],
-  "Retail & Commerce":    ["Retail"],
-  "Professional Services":["Professional Services"],
-  "Logistics":            ["Logistics"],
-  "Technology":           ["Technology", "Fintech"],
+  "All Industries":        CASE_STUDY_LIST.map((s) => s.industry),
+  "Manufacturing":         ["Manufacturing"],
+  "Retail & Commerce":     ["Retail"],
+  "Professional Services": ["Professional Services"],
+  "Logistics":             ["Logistics"],
+  "Technology":            ["Technology", "Fintech"],
 };
 
 const PAGE_SIZE = 3;
 
-// ─── HERO ─────────────────────────────────────────────────────────────────────
-function HeroSection() {
+const cs = (slug: string) => `/case-studies/${slug}`;
+
+// ════════════════════════════════════════════════════════════════════════════
+// SHARED inline arrow link (used on dark surfaces)
+// ════════════════════════════════════════════════════════════════════════════
+function ArrowLink({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <section className="cst-hero">
-      <div className="cst-inner">
-        <div className="cst-hero-grid">
-          {/* Main card */}
-          <div className="cst-hero-main">
-            <img src={IMG_HERO_MAIN} alt="Enterprise success" />
-            <div className="cst-hero-main-overlay" />
-            <div className="cst-hero-main-content">
-              <span className="cst-hero-tag">Enterprise Case Study</span>
-              <h2 className="cst-hero-main-title">
-                How Fortune 500 leaders use Bizak for hyper-scale agility.
-              </h2>
-              <p className="cst-hero-main-sub">
-                Complete digital transformation across 40 global entities in record time,
-                setting new benchmarks for operational velocity.
+    <a
+      href={href}
+      className="group/al inline-flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.14em] text-bz-text-on-dark transition-colors hover:text-bz-fire"
+    >
+      {children}
+      <ArrowRight size={15} className="transition-transform group-hover/al:translate-x-1" />
+    </a>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// HERO featured story + side column
+// ════════════════════════════════════════════════════════════════════════════
+function HeroSection() {
+  const { hero, fintech } = FEATURED_STUDIES;
+  return (
+    <Section tone="b" pad="hero">
+      <Container>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
+          {/* Main featured card */}
+          <article className="group relative flex min-h-[440px] flex-col justify-end overflow-hidden rounded-bz-3xl bg-bz-olive lg:min-h-[620px]">
+            <img
+              src={hero.image}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div aria-hidden className="absolute inset-0 bg-bz-olive/70" />
+            <div className="relative z-10 p-6 sm:p-10 lg:p-14">
+              <span className="mb-6 inline-block rounded-bz-pill bg-bz-fire px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-bz-olive">
+                Enterprise Case Study
+              </span>
+              <Heading level={2} tone="dark" className="mb-5 max-w-[600px]">
+                {hero.title}
+              </Heading>
+              <p className="mb-8 max-w-[480px] text-[15px] leading-[1.7] text-white/75">
+                {hero.summary}
               </p>
-              <button className="cst-btn-white">Read Full Story</button>
+              <Pill variant="light" withArrow href={cs(hero.slug)}>Read Full Story</Pill>
             </div>
-          </div>
+          </article>
 
           {/* Side column */}
-          <div className="cst-hero-side">
+          <div className="flex flex-col gap-6">
             {/* Fintech card */}
-            <div className="cst-hero-card-dark">
-              <img src={IMG_FINTECH} alt="Financial tech" />
-              <div className="cst-hero-card-dark-overlay" />
-              <div className="cst-hero-card-dark-content">
-                <span className="cst-hero-card-dark-label">Fintech Leadership</span>
-                <h3 className="cst-hero-card-dark-title">
-                  Accelerating seed-to-IPO financial reporting.
+            <article className="group relative flex min-h-[280px] flex-1 flex-col justify-end overflow-hidden rounded-bz-3xl bg-bz-olive p-8 text-bz-text-on-dark sm:p-10">
+              <img
+                src={fintech.image}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover opacity-40 grayscale transition-all duration-700 group-hover:opacity-60 group-hover:grayscale-0"
+              />
+              <div aria-hidden className="absolute inset-0 bg-bz-olive/70" />
+              <div className="relative z-10">
+                <Eyebrow tone="dark" className="mb-3">Fintech Leadership</Eyebrow>
+                <h3 className="mb-5 max-w-[280px] text-[1.35rem] font-medium leading-[1.25] tracking-[-0.02em]">
+                  {fintech.title}
                 </h3>
-                <a href="#" className="cst-hero-card-link">
-                  View Case Study
-                  <span className="material-symbols-outlined arrow">arrow_forward</span>
-                </a>
+                <ArrowLink href={cs(fintech.slug)}>View Case Study</ArrowLink>
               </div>
-            </div>
+            </article>
 
             {/* Testimonial card */}
-            <div className="cst-hero-card-testimonial">
+            <article className="flex min-h-[280px] flex-1 flex-col justify-between rounded-bz-3xl bg-bz-leaf p-8 sm:p-10">
               <div>
-                <div className="cst-testimonial-label">Supply Chain Testimonial</div>
-                <p className="cst-testimonial-quote">
+                <Eyebrow className="mb-5">Supply Chain Testimonial</Eyebrow>
+                <p className="text-[1.15rem] font-medium italic leading-[1.4] tracking-[-0.01em] text-bz-text">
                   "Bizak gave us a 360-degree view of our global supply chain we never
                   thought possible in this industry."
                 </p>
               </div>
-              <div className="cst-testimonial-author">
-                <div className="cst-testimonial-avatar">
-                  <span className="material-symbols-outlined" style={{ color: "#fff" }}>person</span>
+              <div className="mt-7 flex items-center gap-4">
+                <div className="flex size-12 flex-shrink-0 items-center justify-center rounded-bz-pill bg-bz-olive text-[13px] font-semibold text-bz-leaf">
+                  ER
                 </div>
                 <div>
-                  <div className="cst-testimonial-name">Elena Rodriguez</div>
-                  <div className="cst-testimonial-role">Head of Logistics, Aerovant</div>
+                  <div className="text-[14px] font-medium text-bz-text">Elena Rodriguez</div>
+                  <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-bz-text-muted">
+                    Head of Logistics, Aerovant
+                  </div>
                 </div>
               </div>
-            </div>
+            </article>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
-// ─── FEATURED SPOTLIGHT ───────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// FEATURED SPOTLIGHT
+// ════════════════════════════════════════════════════════════════════════════
 function FeaturedSpotlight() {
+  const { spotlight } = FEATURED_STUDIES;
   return (
-    <section className="cst-spotlight">
-      <div className="cst-inner">
-        <div className="cst-spotlight-label">Featured Spotlight</div>
-        <div className="cst-spotlight-card">
-          {/* Left content */}
-          <div className="cst-spotlight-content">
+    <Section tone="a" pad="tight">
+      <Container>
+        <div className="mb-8 text-center">
+          <Eyebrow>Featured Spotlight</Eyebrow>
+        </div>
+
+        <article className="grid grid-cols-1 overflow-hidden rounded-bz-3xl bg-bz-olive lg:grid-cols-2">
+          {/* Content */}
+          <div className="flex flex-col justify-between gap-12 p-8 sm:p-12 lg:p-16">
             <div>
-              <img
-                src={IMG_ANALYTICS}
-                alt="Client logo"
-                className="cst-spotlight-logo"
-              />
-              <h3 className="cst-spotlight-title">
-                Reducing monthly closing time by 14 days for a global workforce.
-              </h3>
-              <div className="cst-spotlight-stats">
-                <div className="cst-stat">
-                  <div className="cst-stat-number">82%</div>
-                  <div className="cst-stat-label">Efficiency Gain</div>
-                </div>
-                <div className="cst-stat">
-                  <div className="cst-stat-number">-$4.2M</div>
-                  <div className="cst-stat-label">Annual Savings</div>
-                </div>
+              <Eyebrow tone="dark" className="mb-8">Customer Spotlight</Eyebrow>
+              <Heading level={3} tone="dark" className="mb-10">
+                {spotlight.title}
+              </Heading>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+                {spotlight.stats.slice(0, 2).map((s) => (
+                  <div key={s.label} className="min-w-0 border-l-2 border-bz-fire pl-5 sm:pl-6">
+                    <div className="bz-stat-num bz-stat-num-light">{s.value}</div>
+                    <div className="mt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45">
+                      {s.label}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-            <a href="#" className="cst-spotlight-link">
-              Read the full case study
-              <span className="material-symbols-outlined arrow">arrow_forward</span>
-            </a>
+            <ArrowLink href={cs(spotlight.slug)}>Read the full case study</ArrowLink>
           </div>
 
-          {/* Right image */}
-          <div className="cst-spotlight-image">
-            <img src={IMG_LOGISTICS} alt="Operational excellence" />
-            <div className="cst-spotlight-image-overlay" />
+          {/* Image */}
+          <div className="relative min-h-[300px] lg:min-h-full">
+            <img src={spotlight.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <div aria-hidden className="absolute inset-0 bg-bz-olive/20" />
           </div>
-        </div>
-      </div>
-    </section>
+        </article>
+      </Container>
+    </Section>
   );
 }
 
-// ─── ALL STORIES ──────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// ALL STORIES filterable grid
+// ════════════════════════════════════════════════════════════════════════════
 function AllStories() {
   const [activeFilter, setActiveFilter] = useState("All Industries");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  const filteredStories = ALL_STORIES.filter((s) =>
-    FILTER_MAP[activeFilter]?.includes(s.industry)
-  );
+  const filtered = CASE_STUDY_LIST.filter((s) => FILTER_MAP[activeFilter]?.includes(s.industry));
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
-  const handleFilter = (f: string) => {
+  const selectFilter = (f: string) => {
     setActiveFilter(f);
     setVisibleCount(PAGE_SIZE);
   };
 
-  const visible = filteredStories.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredStories.length;
-
   return (
-    <section className="cst-stories">
-      <div className="cst-inner">
-        {/* Header */}
-        <div className="cst-stories-header">
-          <div>
-            <h2 className="cst-stories-title">All Stories</h2>
-            <p className="cst-stories-sub">
-              Browse 250+ success stories from industry leaders leveraging Bizak to redefine excellence.
-            </p>
-          </div>
+    <Section tone="b" pad="tight">
+      <Container>
+        <SectionHead
+          title="All Stories"
+          description="Browse 250+ success stories from industry leaders leveraging Bizak to redefine excellence."
+        />
+
+        {/* Filter chips rectangular, outlined when inactive, solid when active */}
+        <div className="mb-10 flex gap-2.5 overflow-x-auto border-b border-bz-line-soft pb-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {FILTERS.map((f) => {
+            const active = f === activeFilter;
+            return (
+              <button
+                key={f}
+                type="button"
+                onClick={() => selectFilter(f)}
+                className={`flex-shrink-0 whitespace-nowrap rounded-bz-sm border px-5 py-2.5 text-[11px] font-medium uppercase tracking-[0.12em] transition-colors ${
+                  active
+                    ? "border-bz-olive bg-bz-olive text-bz-text-on-dark"
+                    : "border-bz-line bg-transparent text-bz-text-muted hover:border-bz-olive hover:text-bz-text"
+                }`}
+              >
+                {f}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Filter tabs */}
-        <div className="cst-filters">
-          {FILTERS.map((f) => (
-            <button
-              key={f}
-              onClick={() => handleFilter(f)}
-              className={`cst-filter-btn ${f === activeFilter ? "active" : "inactive"}`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-
-        {/* Grid */}
-        <div className="cst-grid">
-          {visible.map((story, i) => (
-            <a href="#" className="cst-story-card" key={`${story.industry}-${i}`}>
-              <div className="cst-story-img-wrap">
-                <img src={story.img} alt={story.title} />
-                <div className="cst-story-img-overlay" />
-              </div>
-              <div className="cst-story-body">
-                <div className="cst-story-meta">
-                  <span className="cst-label">{story.industry}</span>
-                  <span className="material-symbols-outlined cst-story-arrow">arrow_outward</span>
+        {/* Story grid */}
+        {visible.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {visible.map((story) => (
+              <a
+                key={story.slug}
+                href={cs(story.slug)}
+                className="group flex flex-col overflow-hidden rounded-bz-2xl border border-bz-line-soft bg-bz-surface no-underline transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_-15px_rgba(15,20,17,0.18)]"
+              >
+                <div className="relative h-[240px] overflow-hidden">
+                  <img
+                    src={story.image}
+                    alt=""
+                    className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                  />
                 </div>
-                <h3 className="cst-story-title">{story.title}</h3>
-                <p className="cst-story-excerpt">{story.excerpt}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-
-        {/* Load more */}
-        {hasMore && (
-          <div className="cst-load-more-wrap">
-            <button
-              className="cst-btn-black"
-              onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-            >
-              Load More Stories
-            </button>
+                <div className="flex flex-1 flex-col p-6 md:p-7">
+                  <div className="mb-5 flex items-center justify-between">
+                    <Eyebrow>{story.industry}</Eyebrow>
+                    <ArrowUpRight
+                      size={18}
+                      className="text-bz-text-soft transition-colors group-hover:text-bz-text"
+                    />
+                  </div>
+                  <h3 className="mb-3 text-[1.15rem] font-medium leading-[1.3] tracking-[-0.01em] text-bz-text">
+                    {story.title}
+                  </h3>
+                  <p className="line-clamp-2 text-[14px] leading-[1.65] text-bz-text-muted">
+                    {story.excerpt}
+                  </p>
+                </div>
+              </a>
+            ))}
           </div>
-        )}
-        {!hasMore && filteredStories.length === 0 && (
-          <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(0,0,0,0.4)", fontSize: 15, fontWeight: 600 }}>
+        ) : (
+          <div className="py-16 text-center text-[15px] font-medium text-bz-text-muted">
             No stories found for this filter.
           </div>
         )}
-      </div>
-    </section>
+
+        {/* Load more */}
+        {hasMore && (
+          <div className="mt-14 flex justify-center">
+            <Pill
+              variant="dark"
+              withArrow
+              type="button"
+              onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+            >
+              Load More Stories
+            </Pill>
+          </div>
+        )}
+      </Container>
+    </Section>
   );
 }
 
-// ─── BOTTOM CTA ───────────────────────────────────────────────────────────────
-function BottomCTA() {
-  return (
-    // <section className="cst-cta-section">
-    //   <div className="cst-inner">
-    //     <div className="cst-cta-card">
-    //       <div className="cst-cta-glow-br" />
-    //       <div className="cst-cta-glow-tl" />
-    //       <div className="cst-cta-inner">
-    //         <p className="cst-cta-label">Start Your Journey</p>
-    //         <h2 className="cst-cta-title">Ready to transform your operations?</h2>
-    //         <p className="cst-cta-sub">
-    //           Begin your case-study backed journey with Bizak today. Join the world's most
-    //           efficient enterprises and scale with confidence.
-    //         </p>
-    //         <div className="cst-cta-btns">
-    //           <button className="cst-btn-cta-accent">Request Custom Demo</button>
-    //           <button className="cst-btn-cta-outline">Explore Technical Docs</button>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </section>
-
-
-
-
-
-
-
-   <section className="blog-newsletter">
-      <div className="blog-newsletter-grid-bg" />
-      <div className="blog-newsletter-glow" />
-      <div style={{ position: "relative", zIndex: 10 }}>
-        <h2 className="blog-newsletter-title">Ready to transform your operations?</h2>
-        <p className="blog-newsletter-sub">
-           Begin your case-study backed journey with Bizak today. Join the world's most
-               efficient enterprises and scale with confidence.
-        </p>
-      
-{/*         
-            <button type="submit" className="blog-newsletter-btn">Subscribe</button> */}
-         <button className="cst-btn-cta-accent1 blog-newsletter-btn">Request Custom Demo</button>
-             {/* <button className="cst-btn-cta-outline">Explore Technical Docs</button> */}
-        
-        <p className="blog-newsletter-fine">Zero spam. Pure intelligence. Unsubscribe anytime.</p>
-      </div>
-    </section>
-
-
-
-
-
-
-
-
-
-
-  );
-}
-
-
-
-
-// ─── NEWSLETTER ───────────────────────────────────────────────────────────────
-// function NewsletterSection() {
-//   const [email, setEmail] = useState("");
-//   const [submitted, setSubmitted] = useState(false);
-
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (email) setSubmitted(true);
-//   };
-
-//   return (
-//     <section className="blog-newsletter">
-//       <div className="blog-newsletter-grid-bg" />
-//       <div className="blog-newsletter-glow" />
-//       <div style={{ position: "relative", zIndex: 10 }}>
-//         <h2 className="blog-newsletter-title">Get ERP insights delivered to your inbox</h2>
-//         <p className="blog-newsletter-sub">
-//           Join 5,000+ operations leaders receiving our bi-weekly breakdown of scaling
-//           strategies and technical innovations.
-//         </p>
-//         {submitted ? (
-//           <div style={{ color: "#C7FF35", fontWeight: 700, fontSize: 16, letterSpacing: "0.02em" }}>
-//             ✓ You're subscribed thanks for joining!
-//           </div>
-//         ) : (
-//           <form className="blog-newsletter-form" onSubmit={handleSubmit}>
-//             <input
-//               className="blog-newsletter-input"
-//               type="email"
-//               placeholder="Enter your work email"
-//               value={email}
-//               onChange={(e) => setEmail(e.target.value)}
-//               required
-//             />
-//             <button type="submit" className="blog-newsletter-btn">Subscribe</button>
-//           </form>
-//         )}
-//         <p className="blog-newsletter-fine">Zero spam. Pure intelligence. Unsubscribe anytime.</p>
-//       </div>
-//     </section>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ─── PAGE ─────────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// PAGE the closing CTA is rendered by <Footer cta={…}> in routes.tsx
+// ════════════════════════════════════════════════════════════════════════════
 export function CaseStudiesPage() {
   return (
-    <div className="cst-page">
-      <Header />
-      <main style={{ paddingTop: 76 }}>
-        <HeroSection />
-        <FeaturedSpotlight />
-        <AllStories />
-        <BottomCTA />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <HeroSection />
+      <FeaturedSpotlight />
+      <AllStories />
+    </main>
   );
 }

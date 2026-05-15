@@ -11,6 +11,7 @@ import {
   BadgeGreen,
   StatusChip,
   DotGrid,
+  Accordion,
 } from "./bz";
 import { Settings } from "lucide-react";
 
@@ -81,22 +82,11 @@ const ENTITY_PROFILES = [
   },
 ];
 
-const IMPACT_STATS = [
-  {
-    value: "<90s",
-    label: "Group close",
-    desc: "FX translation, IC eliminations, minority interest, and group P&L run on demand, not at month-end.",
-  },
-  {
-    value: "38",
-    label: "Tax engines",
-    desc: "VAT, GST, US sales tax, withholding, e-invoicing, OSS/IOSS pre-configured per entity, no add-on required.",
-  },
-  {
-    value: "100%",
-    label: "IC auto-matched",
-    desc: "Every intercompany invoice posts both sides in both currencies with elimination tags pre-applied for close.",
-  },
+const FAQS = [
+  { q: "How long does a group close take?",              a: "Under 90 seconds. FX translation, intercompany eliminations, minority interest and the group P&L all run on demand, so consolidation is a button rather than a month-end project." },
+  { q: "How are intercompany transactions handled?",     a: "Automatically. When one entity sells to another, a single invoice posts the AR and AP on both sides, in both currencies, at the transaction-date FX rate, with elimination tags pre-applied for close." },
+  { q: "Can each entity keep its own books?",            a: "Yes. Every subsidiary, branch or cost centre gets its own chart of accounts, tax engine, fiscal calendar and reporting currency, while still rolling up to one group ledger." },
+  { q: "Does Bizak handle local tax rules?",             a: "38 tax engines ship pre-configured, covering VAT, GST, US sales tax, withholding, e-invoicing and OSS/IOSS, assigned per entity. A new subsidiary is online and compliant in one afternoon." },
 ];
 
 // ─── HERO MOCK ─────────────────────────────────────────────────────────────────
@@ -122,7 +112,6 @@ function HeroGroupBoard() {
               +12.4%
             </span>
           </div>
-          <StatusChip variant="live">Live</StatusChip>
         </div>
 
         {/* Entity tiles: 3 on mobile, 6 on md (5 entities + IC elimination) */}
@@ -178,9 +167,7 @@ function HeroICAutoPost() {
       <div className="flex flex-col gap-2.5 px-5 py-4 flex-1">
         {/* Seller side */}
         <div className="rounded-bz-md bg-bz-paper-warm border border-bz-line-soft p-3">
-          <p className="text-[9px] font-bold tracking-[0.10em] uppercase text-bz-text-muted mb-2">
-            Seller · Bizak US Inc.
-          </p>
+          <p className="text-[9px] font-bold tracking-[0.10em] uppercase text-bz-text-muted mb-2"></p>
           <div className="flex justify-between text-[11.5px] mb-1.5">
             <span className="text-bz-text-muted">AR Intercompany</span>
             <span className="font-bold text-bz-text">DR $24,800</span>
@@ -202,9 +189,7 @@ function HeroICAutoPost() {
 
         {/* Buyer side */}
         <div className="rounded-bz-md bg-bz-paper-warm border border-bz-line-soft p-3">
-          <p className="text-[9px] font-bold tracking-[0.10em] uppercase text-bz-text-muted mb-2">
-            Buyer · Bizak GmbH (DE)
-          </p>
+          <p className="text-[9px] font-bold tracking-[0.10em] uppercase text-bz-text-muted mb-2"></p>
           <div className="flex justify-between text-[11.5px] mb-1.5">
             <span className="text-bz-text-muted">Expense IC Purchases</span>
             <span className="text-bz-text-soft">DR €22,840</span>
@@ -268,7 +253,7 @@ function HeroGroupClosePanel() {
 
 function EntityTreeVisual() {
   return (
-    <div className="rounded-bz-lg border border-bz-line bg-bz-surface overflow-hidden text-[12px]">
+    <div className="w-full rounded-bz-lg border border-bz-line bg-bz-surface overflow-hidden text-[12px]">
       <div className="flex justify-between px-3 py-2 bg-bz-paper-warm border-b border-bz-line">
         <span className="text-[9px] font-bold tracking-[0.12em] uppercase text-bz-text-muted">Node</span>
         <span className="text-[9px] font-bold tracking-[0.12em] uppercase text-bz-text-muted">Scope</span>
@@ -280,7 +265,7 @@ function EntityTreeVisual() {
           style={{ paddingLeft: `${12 + n.indent * 10}px` }}
         >
           <span className="text-bz-text">{n.label}</span>
-          <span className="text-bz-fire font-semibold text-[11px]">{n.scope}</span>
+          <span className="text-bz-text-muted font-semibold text-[11px]">{n.scope}</span>
         </div>
       ))}
     </div>
@@ -366,7 +351,7 @@ function HeroSection() {
             >
               Get Started
             </Pill>
-            <Pill variant="light" withArrow href="/contact">
+            <Pill variant="light" href="/contact">
               Request Demo
             </Pill>
           </PillGroup>
@@ -399,11 +384,11 @@ function EntityStreamSection() {
           label="Cross-entity activity"
           title={
             <>
-              One ledger.{" "}
+              One ledger.{" "}{<br/>}
               <Heading.Muted>Every entity, live.</Heading.Muted>
             </>
           }
-          description="Every IC posting, FX update, VAT submission, and entity close event across all subsidiaries and branches posts to the group view the moment it happens."
+          description="Every IC posting, FX update, VAT submission, and entity close event across all subsidiaries and branches."
         />
 
         <div className="rounded-bz-xl overflow-hidden border border-bz-line-soft">
@@ -494,7 +479,7 @@ function EntityProfilesSection() {
               <Heading.Muted>Its own books, by default.</Heading.Muted>
             </>
           }
-          description="Each subsidiary, branch, or cost centre gets its own chart of accounts, tax engine, fiscal calendar, and reporting currency all in one tenant."
+          description="Each subsidiary, branch, or cost centre gets its own chart of accounts, tax engine, fiscal calendar, and reporting currency."
         />
 
         {/* Entity panel: gap-px grid creates thin dividers without per-item border logic */}
@@ -627,17 +612,14 @@ function AutoICSection() {
               <Heading.Muted>Both sides auto-posted.</Heading.Muted>
             </>
           }
-          description="When Bizak US sells to Bizak GmbH, a single transaction creates the AR and AP in both currencies with a matched IC reference and elimination tags pre-applied for close."
+          description="When Bizak US sells to Bizak GmbH, a single transaction creates the AR and AP in both currencies."
         />
         <BigCard
           text={{
             title: "One IC invoice. Both sides auto-posted.",
-            body: "Every intercompany transaction posts in both entities, at the transaction-date FX rate, with a matched IC reference and elimination tags pre-applied.",
             bullets: [
               "Mirror posting in both entities, instantly.",
               "FX conversion at the transaction-date rate.",
-              "Elimination tags ready for group close.",
-              "Zero manual journal entries, zero reconciliation backlog.",
             ],
             cta: {
               variant: "accent",
@@ -653,46 +635,38 @@ function AutoICSection() {
   );
 }
 
-// Impact horizontal typographic stat strip, no cards
-function ImpactSection() {
+// FAQ dark intro panel + accordion, all questions closed initially
+function FAQSection() {
   return (
     <Section tone="b">
       <Container>
-        <SectionHead
-          index="05"
-          label="Efficiency"
-          title={
-            <>
-              Measurable results.{" "}
-              <Heading.Muted>Every entity.</Heading.Muted>
-            </>
-          }
-          spacing="tight"
-          titleMaxWidth={520}
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-3 border-t border-bz-line-soft pt-10">
-          {IMPACT_STATS.map((s, i) => (
-            <div
-              key={s.label}
-              className={[
-                "py-8 sm:py-0",
-                i === 0 && "sm:pr-10",
-                i === 1 && "sm:px-10 sm:border-l sm:border-r sm:border-bz-line-soft",
-                i === 2 && "sm:pl-10",
-                i < 2 && "border-b border-bz-line-soft sm:border-b-0",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-            >
-              <div className="bz-stat-num" style={{ fontSize: 52, marginBottom: 10 }}>
-                {s.value}
-              </div>
-              <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-bz-text-muted mb-3">
-                {s.label}
-              </div>
-              <p className="text-[13.5px] text-bz-text-muted leading-relaxed">{s.desc}</p>
+        <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[1fr_1.3fr]">
+          {/* Dark intro panel */}
+          <div className="relative flex min-h-[320px] flex-col justify-between overflow-hidden rounded-bz-2xl bg-bz-olive p-8 text-bz-text-on-dark">
+            <DotGrid tone="dark" />
+            <div className="relative">
+              <SectionHead
+                index="05"
+                label="FAQ"
+                tone="dark"
+                title={<>Frequently asked <Heading.Muted>questions.</Heading.Muted></>}
+                spacing="none"
+              />
             </div>
-          ))}
+            <PillGroup className="relative mt-8">
+              <Pill variant="accent" href="https://system.bizakerp.com/account/self-register" withArrowUpRight>Get Started</Pill>
+              <Pill variant="ghostDark" href="/contact" withArrow>Talk to Sales</Pill>
+            </PillGroup>
+          </div>
+
+          {/* Accordion */}
+          <Accordion defaultOpen={null}>
+            {FAQS.map((item, i) => (
+              <Accordion.Item key={i} question={item.q}>
+                {item.a}
+              </Accordion.Item>
+            ))}
+          </Accordion>
         </div>
       </Container>
     </Section>
@@ -709,7 +683,7 @@ export function MulticompanyAndBranchesPage() {
       <EntityProfilesSection />
       <GroupHierarchySection />
       <AutoICSection />
-      <ImpactSection />
+      <FAQSection />
     </>
   );
 }

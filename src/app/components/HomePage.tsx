@@ -431,6 +431,7 @@ function PlatformSection() {
                   title={b.title}
                   icon={<Icon size={26} strokeWidth={1.4} color={iconColor} />}
                 />
+                <div className="pb-16"></div>
                 <Bento.Desc
                   style={b.tone === "fire" ? { color: "#1F3422", opacity: 0.78 } : undefined}
                 >

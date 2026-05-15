@@ -1,6 +1,6 @@
 import { HomePage } from "./components/HomePage"
 
-import { createBrowserRouter,Outlet } from "react-router";
+import { createBrowserRouter,Outlet, useParams } from "react-router";
 import { ProductPage } from "./components/ProductPage";
 import { PurchasingPage } from "./components/PurchasingPage";
 import { DistributionPage } from "./components/DistributionPage";
@@ -30,6 +30,8 @@ import { PartnerEventsPage } from "./components/partners/PartnerEventsPage";
 import { PartnerEventRegisterPage } from "./components/partners/PartnerEventRegisterPage";
 import { PartnerEventEnrollPage } from "./components/partners/PartnerEventEnrollPage";
 import { CaseStudiesPage } from "./components/CaseStudiesPage";
+import { CaseStudyPage } from "./components/CaseStudyPage";
+import { getCaseStudy } from "./components/caseStudyData";
 import { WhyBizakPage } from "./components/WhyBizakPage";
 import { WorkflowPage } from "./components/WorkflowPage";
 import { FinancialManagementPage } from "./components/FinancialManagement";
@@ -216,12 +218,38 @@ function BlogSinglePageLayout() {
 
 function CaseStudiesPageLayout() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
       <Header />
-      <div style={{ paddingTop: 76 }}>
-        <CaseStudiesPage />
-      </div>
-      <Footer />
+      <CaseStudiesPage />
+      <Footer
+        cta={{
+          title: "Ready to transform your operations?",
+          description:
+            "Begin your case-study backed journey with Bizak today. Join the world's most efficient enterprises and scale with confidence.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
+        }}
+      />
+    </div>
+  );
+}
+
+function CaseStudyPageLayout() {
+  const { slug } = useParams();
+  const study = slug ? getCaseStudy(slug) : undefined;
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <CaseStudyPage study={study} />
+      <Footer
+        cta={{
+          title: "Ready to write your own success story?",
+          description:
+            "Join the operators running finance, inventory and operations on one platform. See what Bizak can do for your team.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
+        }}
+      />
     </div>
   );
 }
@@ -480,7 +508,7 @@ function MulticompanyAndBranchesPageLayout() {
           title: "Run the whole group on one ERP.",
           titleMuted: "From new entity to live consolidation.",
           description:
-            "Stop stitching subsidiaries in spreadsheets. Every entity gets its own books and your group gets a real-time consolidated view, every day of the month.",
+            "Stop stitching subsidiaries in spreadsheets. Every entity gets its own books.",
           primaryLabel: "Start free trial",
           secondaryLabel: "Book a demo",
         }}
@@ -511,6 +539,144 @@ function CareersPageLayout() {
 }
 
 
+function GuidesAndPlaybooksPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <GuidesAndPlaybooksPage />
+      <Footer
+        cta={{
+          title: "Put the playbooks to work.",
+          titleMuted: "Plan your Bizak rollout.",
+          description:
+            "Bring your timeline and the modules in scope. We'll match the right playbook and stay on call until you're live.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
+        }}
+      />
+    </div>
+  );
+}
+
+function ResourceDetailPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header dark />
+      <ResourceDetailPage />
+      <Footer
+        cta={{
+          title: "Turn the playbook into a plan.",
+          titleMuted: "Roll out Bizak with an expert.",
+          description:
+            "Bring your timeline and the modules in scope. We'll map the playbook to your team and stay on call until you're live.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
+        }}
+      />
+    </div>
+  );
+}
+
+
+function ResellersPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <ResellersPage />
+      <Footer
+        cta={{
+          title: "Own your territory.",
+          titleMuted: "Compound your book.",
+          description:
+            "Join the Bizak reseller network. Protected territories, up to 35% margin, and recurring commission on every renewal.",
+          primaryLabel: "Talk to Sales",
+          primaryHref: "/contact",
+          secondaryLabel: "Request Demo",
+          secondaryHref: "/contact",
+        }}
+      />
+    </div>
+  );
+}
+
+
+function ConsultantsPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <ConsultantsPage />
+      <Footer
+        cta={{
+          title: "Deliver Bizak.",
+          titleMuted: "Build your practice.",
+          description:
+            "Join the Bizak consultant network. Architect Academy certification, routed pipeline, and the tooling to ship faster implementations.",
+          primaryLabel: "Talk to Sales",
+          primaryHref: "/contact",
+          secondaryLabel: "Request Demo",
+          secondaryHref: "/contact",
+        }}
+      />
+    </div>
+  );
+}
+
+
+function TechnologyPartnersPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <TechnologyPartnersPage />
+      <Footer
+        cta={{
+          title: "Build on Bizak.",
+          titleMuted: "Ship to every customer.",
+          description:
+            "Join the Bizak technology partner network.",
+          primaryLabel: "Become a Partner",
+          primaryHref: "/contact",
+          secondaryLabel: "Task to Sales",
+          secondaryHref: "/contact",
+        }}
+      />
+    </div>
+  );
+}
+
+
+function PartnerPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header dark />
+      <PartnerPage />
+      <Footer hideCta />
+    </div>
+  );
+}
+
+
+function PartnerPortalPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <PartnerPortalPage />
+      <Footer
+        cta={{
+          title: "One login away",
+          titleMuted: "from a sharper partner practice.",
+          description:
+            "Apply to the Bizak partner network and your Portal account is provisioned.",
+          primaryLabel: "Sign in to Portal",
+          primaryHref: "/contact",
+          secondaryLabel: "Become a Partner",
+          secondaryHref: "/partners",
+        }}
+      />
+    </div>
+  );
+}
+
+
 function PointOfSalesPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -529,9 +695,46 @@ function StartupsAndSmesPageLayout() {
       <Footer
         cta={{
           title: "Still running your business on spreadsheets?",
-          titleMuted: "Join 50,000+ companies that made the switch.",
           description:
             "One platform for finance, sales, and inventory. Go live in three days not three months.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
+        }}
+      />
+    </div>
+  );
+}
+
+
+function MidMarketPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <MidMarket />
+      <Footer
+        cta={{
+          title: "Still consolidating every entity by hand?",
+          description:
+            "One platform for every branch, currency, and approval.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
+        }}
+      />
+    </div>
+  );
+}
+
+
+function EnterprisePageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header />
+      <Enterprise />
+      <Footer
+        cta={{
+          title: "Still running the group on a decade-old ERP?",
+          description:
+            "One platform for finance, operations, and consolidation across every entity.",
           primaryLabel: "Get Started",
           secondaryLabel: "Request Demo",
         }}
@@ -657,18 +860,19 @@ export const router = createBrowserRouter([
       { path: "distribution",  Component: DistributionPageLayout },
       { path: "about",         Component: AboutPage           },
       { path: "contact",      Component: ContactPage          },
-      { path: "partners",                Component: PartnerPage              },
-      { path: "partners/resellers",      Component: ResellersPage            },
-      { path: "partners/consultants",    Component: ConsultantsPage          },
-      { path: "partners/technology",     Component: TechnologyPartnersPage   },
-      { path: "partners/portal",         Component: PartnerPortalPage        },
+      { path: "partners",                Component: PartnerPageLayout        },
+      { path: "partners/resellers",      Component: ResellersPageLayout      },
+      { path: "partners/consultants",    Component: ConsultantsPageLayout    },
+      { path: "partners/technology",     Component: TechnologyPartnersPageLayout },
+      { path: "partners/portal",         Component: PartnerPortalPageLayout  },
       { path: "partners/marketplace",    Component: MarketplacePage          },
       { path: "partners/find",           Component: FindAPartnerPage         },
       { path: "partners/awards",         Component: PartnerAwardsPage        },
       { path: "partners/events",                          Component: PartnerEventsPage          },
       { path: "partners/events/register/:slug",           Component: PartnerEventRegisterPage   },
       { path: "partners/events/enroll/:slug",             Component: PartnerEventEnrollPage     },
-      { path: "case-studies",   Component: CaseStudiesPage      },
+      { path: "case-studies",   Component: CaseStudiesPageLayout },
+      { path: "case-studies/:slug", Component: CaseStudyPageLayout },
       { path: "workflow",      Component: WorkFlowAutomationPageLayout },
       { path: "FinancialManagement", Component: FinancialManagementPageLayout },
       { path: "SalesCrm", Component: SalesAndCrmPageLayout },
@@ -686,8 +890,8 @@ export const router = createBrowserRouter([
       { path: "careers", Component: CareersPageLayout },
       { path: "PointOfSales", Component: PointOfSalesPageLayout },
       { path: "StartupsAndSmes", Component: StartupsAndSmesPageLayout },
-      { path: "MidMarket",       Component: MidMarket       },
-      { path: "Enterprise",      Component: Enterprise       },
+      { path: "MidMarket",       Component: MidMarketPageLayout },
+      { path: "Enterprise",      Component: EnterprisePageLayout },
       { path: "support",         Component: HelpCenter       },
       { path: "HelpCenter",      Component: HelpCenter       },
       { path: "OurMission",      Component: OurMissionPage   },
@@ -699,8 +903,8 @@ export const router = createBrowserRouter([
       { path: "Documentation",   Component: DocumentationPage  },
     
       { path: "PressAndMedia",   Component: PressAndMediaPage  },
-      { path: "GuidesAndPlaybooks", Component: GuidesAndPlaybooksPage },
-      { path: "GuidesAndPlaybooks/:slug", Component: ResourceDetailPage },
+      { path: "GuidesAndPlaybooks", Component: GuidesAndPlaybooksPageLayout },
+      { path: "GuidesAndPlaybooks/:slug", Component: ResourceDetailPageLayout },
       { path: "TrainingAndCertification", Component: TrainingAndCertificate },
       { path: "TrainingAndCertification/enrol/:slug", Component: EnrollmentPage },
       { path: "CommunityForum", Component: CommunityForum },

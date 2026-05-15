@@ -1,317 +1,520 @@
 import {
-  Globe,
-  TrendingUp,
-  Map as MapIcon,
+  BadgeCheck,
+  Briefcase,
+  Building2,
+  Factory,
+  Compass,
+  Map,
   Megaphone,
-  Wallet,
   ShieldCheck,
-  Layers,
-  Sparkles,
+  Repeat,
+  Send,
+  GraduationCap,
+  Handshake,
+  TrendingUp,
 } from "lucide-react";
 import {
+  Accordion,
+  BadgeGreen,
+  Bento,
+  BentoGrid,
   Container,
+  DotGrid,
+  Heading,
+  Pill,
+  PillGroup,
   Section,
-  SectionHeading,
-  Button,
-  Card,
-  IconBadge,
-  PillBadge,
-  HeroBadge,
-  HeroSplit,
-} from "../marketing";
-import { Header } from "../Header";
-import { Footer } from "../Footer";
+  SectionHead,
+  StatusChip,
+} from "../bz";
 
-const COMMISSION_TIERS = [
-  { tier: "Authorized",  margin: 18, deals: "1–4 / yr",   color: "var(--bz-sage)" },
-  { tier: "Silver",      margin: 24, deals: "5–11 / yr",  color: "var(--bz-sage)" },
-  { tier: "Gold",        margin: 30, deals: "12–24 / yr", color: "var(--bz-accent)" },
-  { tier: "Platinum",    margin: 35, deals: "25+ / yr",   color: "var(--bz-accent)" },
+// ════════════════════════════════════════════════════════════════════════════
+// CONTENT DATA
+// ════════════════════════════════════════════════════════════════════════════
+
+const CREDENTIAL = [
+  { label: "Program",    value: "One, for every partner" },
+  { label: "Territory",  value: "Protected, and yours" },
+  { label: "Commission", value: "Recurring, always" },
+  { label: "Support",    value: "Co-sell + partner manager" },
 ];
 
-const SUPPORT_PILLARS = [
+const FIRMS = [
   {
-    Icon: MapIcon,
-    title: "Protected territories",
-    body: "Defined geographic and segment scope. Lead routing favors the local reseller co-sell on the rest.",
+    icon: Briefcase,
+    title: "Value-added resellers",
+    desc: "VARs with an existing SMB or mid-market book, ready for a modern ERP.",
   },
   {
-    Icon: Megaphone,
+    icon: Building2,
+    title: "Regional ERP firms",
+    desc: "Add a cloud platform alongside the legacy on-prem stacks you sell today.",
+  },
+  {
+    icon: Factory,
+    title: "Industry boutiques",
+    desc: "Specialists in manufacturing, distribution, retail or professional services.",
+  },
+  {
+    icon: Compass,
+    title: "Channel & expansion teams",
+    desc: "Channel teams moving into a new vertical or a new geography.",
+  },
+];
+
+const MODEL_POINTS = [
+  "One program and one commission rate, the same for every reseller.",
+  "Margin lands on the first invoice, and on every renewal after it.",
+  "Last year's customers carry forward, so your book never restarts at zero.",
+];
+
+const CLAUSES = [
+  {
+    n: "01",
+    icon: Map,
+    title: "Protected territory",
+    body: "A defined geographic and segment scope. Inbound leads route to the local reseller first, and everything outside it is open to co-sell.",
+  },
+  {
+    n: "02",
+    icon: Megaphone,
     title: "Co-branded marketing",
-    body: "Localized landing pages, ad budget through the MDF program, and event support for regional summits.",
+    body: "Localised landing pages, campaign budget through the Market Development Fund, and event support for regional summits.",
   },
   {
-    Icon: Wallet,
-    title: "Recurring commissions",
-    body: "Earn on the initial booking and every renewal. Margin compounds your year-3 book is materially larger than year 1.",
-  },
-  {
-    Icon: ShieldCheck,
+    n: "03",
+    icon: ShieldCheck,
     title: "Deal registration",
-    body: "Register opportunities to lock pricing and protection for 90 days. Conflicts mediated by partner ops within one business day.",
+    body: "Register an opportunity to lock pricing and ninety days of protection. Conflicts are mediated by partner ops within one business day.",
+  },
+  {
+    n: "04",
+    icon: Repeat,
+    title: "Recurring commissions",
+    body: "Earn on the first booking and every renewal after it. Margin compounds, so your year-three book is materially larger than year one.",
   },
 ];
 
-const FIT = [
-  "VAR / value-added resellers with an existing SMB or mid-market book",
-  "Regional ERP firms looking to add a modern cloud platform alongside legacy stacks",
-  "Industry-specialized boutiques (manufacturing, distribution, retail, services)",
-  "Channel teams expanding into a new vertical or geography",
+const STEPS = [
+  {
+    n: "1",
+    icon: Send,
+    title: "Apply",
+    body: "Submit your firm profile and target market. A regional partner manager replies within two business days.",
+  },
+  {
+    n: "2",
+    icon: GraduationCap,
+    title: "Onboard",
+    body: "Sales and product enablement, demo environments, and your first co-branded assets. About two weeks.",
+  },
+  {
+    n: "3",
+    icon: Handshake,
+    title: "Register & co-sell",
+    body: "Lock your territory, register opportunities, and close your first deals with a Bizak rep on the line.",
+  },
+  {
+    n: "4",
+    icon: TrendingUp,
+    title: "Scale",
+    body: "Recurring commission compounds as your book renews, year after year. Every reseller earns on the same terms.",
+  },
 ];
 
-function TerritoryPanel() {
+const FAQS = [
+  {
+    q: "Do larger resellers get better terms?",
+    a: "No. Every Bizak reseller works from the same agreement and earns on the same terms, whether you are a solo VAR or a regional firm. There are no tiers to climb and no volume gates. The full commercial schedule is set out in your partner agreement.",
+  },
+  {
+    q: "What does deal registration protect?",
+    a: "A registered opportunity locks your pricing and gives you ninety days of exclusivity on the account. If two partners register the same customer, partner ops mediates within one business day.",
+  },
+  {
+    q: "Do I keep earning after the first sale?",
+    a: "Yes. Reseller commission is recurring. You earn margin on every renewal for as long as the customer stays on Bizak, not only on the initial booking.",
+  },
+  {
+    q: "Can I sell outside my territory?",
+    a: "Your territory gets first routing on every inbound lead. Outside it, deals stay open. You can co-sell them, with a Bizak rep helping you close.",
+  },
+];
+
+// ════════════════════════════════════════════════════════════════════════════
+// [HERO] reseller credential card
+// ════════════════════════════════════════════════════════════════════════════
+
+function HeroSection() {
   return (
-    <div className="biz-mesh-card relative w-full rounded-bz-xl border border-bz-border bg-bz-surface p-6 shadow-[0_24px_64px_rgba(0,0,0,0.06)]">
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
-            Reseller economics
-          </div>
-          <div className="text-[18px] font-bold mt-0.5">Margin tiers</div>
+    <Section tone="b" pad="hero">
+      <Container>
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>Bizak Reseller Program</BadgeGreen>
+
+          <Heading level={2} className="max-w-[820px]" style={{ marginBottom: 36 }}>
+            Sell Bizak in your market,{" "}
+            <Heading.Muted>
+              and earn recurring margin for the life of every customer.
+            </Heading.Muted>
+          </Heading>
+
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="#join">
+              Become a Reseller
+            </Pill>
+            <Pill variant="light" href="/contact">
+              Talk to Sales
+            </Pill>
+          </PillGroup>
         </div>
-        <PillBadge tone="sage">2025</PillBadge>
-      </div>
 
-      <div className="flex flex-col gap-3 mb-6">
-        {COMMISSION_TIERS.map((t) => (
-          <div key={t.tier}>
-            <div className="flex justify-between items-baseline mb-1.5">
-              <span className="text-[13px] font-semibold text-bz-text">{t.tier}</span>
-              <div className="flex items-baseline gap-3">
-                <span className="text-[11px] text-bz-text-muted">{t.deals}</span>
-                <span className="text-[18px] font-bold tabular-nums text-bz-text">
-                  {t.margin}%
-                </span>
-              </div>
-            </div>
-            <div className="h-1.5 bg-bz-bg rounded-bz-pill overflow-hidden border border-bz-border/60">
-              <div
-                className="h-full rounded-bz-pill"
-                style={{ width: `${(t.margin / 35) * 100}%`, background: t.color }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
+        <div className="bz-hero-visual">
+          <ResellerCredential />
+        </div>
+      </Container>
+    </Section>
+  );
+}
 
-      <div className="grid grid-cols-3 gap-2.5 pt-5 border-t border-bz-border">
-        {[
-          { v: "48",  l: "Countries" },
-          { v: "$2.4M", l: "Avg ARR / Yr 2" },
-          { v: "94%", l: "Renewal" },
-        ].map((s) => (
-          <div key={s.l} className="text-center">
-            <div className="text-[18px] font-bold tabular-nums">{s.v}</div>
-            <div className="text-[10.5px] text-bz-text-muted mt-0.5 uppercase tracking-[0.06em]">
-              {s.l}
-            </div>
+function ResellerCredential() {
+  return (
+    <div className="overflow-hidden rounded-bz-2xl border border-bz-line bg-bz-surface">
+      <div className="grid grid-cols-1 lg:grid-cols-2">
+        {/* Identity face the credential itself */}
+        <div className="flex flex-col p-6 sm:p-8">
+          <div className="flex items-center justify-between gap-3">
+            <span className="flex size-14 items-center justify-center rounded-bz-pill bg-bz-olive sm:size-16">
+              <BadgeCheck size={28} strokeWidth={1.6} className="text-bz-fire" />
+            </span>
+            <StatusChip variant="posted">Applications open</StatusChip>
           </div>
-        ))}
+
+          <h3 className="mt-6 text-[21px] font-medium tracking-tight text-bz-text sm:text-[23px]">
+            Bizak Authorized Reseller
+          </h3>
+          <p className="mt-2.5 text-[14px] leading-[1.65] text-bz-text-muted">
+            One program, equal terms for every partner. The full commercial schedule
+            lives in your partner agreement.
+          </p>
+
+          <p className="mt-auto pt-7 text-[11.5px] text-bz-text-soft">
+            Issued by the Bizak Reseller Network.
+          </p>
+        </div>
+
+        {/* Standard terms credential fields, identical for all.
+            Hidden on mobile the identity face alone carries the hero there. */}
+        <div className="hidden gap-px bg-bz-line-soft lg:grid lg:grid-cols-2 lg:border-l lg:border-bz-line-soft">
+          {CREDENTIAL.map((f) => (
+            <div key={f.label} className="flex flex-col bg-bz-surface p-6 sm:p-7">
+              <span className="text-[10.5px] font-medium uppercase tracking-[0.12em] text-bz-text-soft">
+                {f.label}
+              </span>
+              <span className="mt-2 text-[14.5px] font-medium leading-snug text-bz-text">
+                {f.value}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
-function HeroSection() {
-  return (
-    <HeroSplit
-      badge={<HeroBadge>For Resellers</HeroBadge>}
-      title={
-        <>
-          Sell Bizak in your<br />
-          <span className="text-bz-sage">local market.</span>
-        </>
-      }
-      description="A protected territory model with up to 35% margin, co-branded marketing dollars, and renewal commissions for the life of the customer. Built for VARs and regional ERP firms ready to add a modern cloud platform to their book."
-      actions={
-        <>
-          <Button variant="primary" size="lg" href="/partners#apply" withArrow>
-            Apply as Reseller
-          </Button>
-          <Button variant="outline" size="lg" href="/contact">
-            Talk to Channel
-          </Button>
-        </>
-      }
-      stats={[
-        { value: "35%", label: "Top margin" },
-        { value: "90 days", label: "Deal protection" },
-        { value: "48", label: "Live territories" },
-      ]}
-      visual={<TerritoryPanel />}
-      visualClassName=""
-    />
-  );
-}
+// ════════════════════════════════════════════════════════════════════════════
+// [01] WHO RESELLS BIZAK
+// ════════════════════════════════════════════════════════════════════════════
 
-function FitSection() {
+function WhoResellsSection() {
   return (
-    <Section tone="white">
-      <Container width="narrow">
-        <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-12 lg:gap-16 items-start">
-          <SectionHeading
-            eyebrow="Who this is for"
-            title={<>The reseller program is built for firms that already <span className="text-bz-sage">own a market.</span></>}
-            description="If you're carrying a portfolio today, we slot in alongside it Bizak is the modern platform you offer customers who've outgrown spreadsheets or are shopping for an upgrade."
-          />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {FIT.map((f, i) => (
-              <Card key={f} tone={i % 2 === 0 ? "soft" : "light"} pad="md" hover="lift">
-                <div className="flex items-start gap-3">
-                  <div className="size-7 rounded-full bg-bz-sage/15 text-bz-sage flex items-center justify-center text-[12px] font-bold shrink-0 tabular-nums">
-                    {String(i + 1).padStart(2, "0")}
-                  </div>
-                  <p className="text-[14.5px] leading-[1.65] text-bz-text">{f}</p>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-function SupportSection() {
-  return (
-    <Section tone="light">
-      <Container width="narrow">
-        <SectionHeading
-          eyebrow="What you get"
-          title="A channel program with the engine running."
-          description="Not a slide deck and a discount code the operating system for running a real channel practice."
-          maxWidth={680}
-          className="mb-14"
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="01"
+          label="Who it's for"
+          title={
+            <>
+              Built for firms that already{" "}
+              <Heading.Muted>own a market.</Heading.Muted>
+            </>
+          }
+          description="Carrying a software portfolio today? Bizak is the modern cloud platform you hand customers who have outgrown spreadsheets, or who want off a legacy ERP."
+          titleMaxWidth={680}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {SUPPORT_PILLARS.map(({ Icon, title, body }) => (
-            <Card key={title} tone="light" pad="md" hover="lift">
-              <IconBadge tone="sage" size="md" className="mb-5">
-                <Icon className="size-5" />
-              </IconBadge>
-              <div className="text-[16px] font-bold mb-2">{title}</div>
-              <p className="text-[13.5px] text-bz-text-muted leading-[1.65]">{body}</p>
-            </Card>
+        <BentoGrid cols={4}>
+          {FIRMS.map(({ icon: Icon, title, desc }) => (
+            <Bento key={title} tone="paper" hover>
+              <span className="mb-5 flex size-11 items-center justify-center rounded-bz-pill bg-bz-paper-warm text-bz-olive">
+                <Icon size={19} strokeWidth={1.6} />
+              </span>
+              <h3 className="bz-bento-title">{title}</h3>
+              <Bento.Desc>{desc}</Bento.Desc>
+            </Bento>
           ))}
-        </div>
+        </BentoGrid>
       </Container>
     </Section>
   );
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// [02] THE RESELLER MODEL recurring margin compounds
+// ════════════════════════════════════════════════════════════════════════════
 
 function EconomicsSection() {
   return (
     <Section tone="dark">
+      <Container>
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div>
+            <SectionHead
+              index="02"
+              label="The reseller model"
+              tone="dark"
+              title={
+                <>
+                  Close a customer once,{" "}
+                  <Heading.Muted>and earn from them for years.</Heading.Muted>
+                </>
+              }
+              description="Reseller commission recurs. The book you build doesn't reset each year, it compounds."
+              spacing="none"
+            />
+            <ul className="mt-8 flex flex-col gap-3.5">
+              {MODEL_POINTS.map((p) => (
+                <li
+                  key={p}
+                  className="flex items-start gap-3 text-[13.5px] leading-[1.6] text-white/[0.8]"
+                >
+                  <span className="mt-[7px] size-1.5 shrink-0 rounded-bz-pill bg-bz-fire" />
+                  <span>{p}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <CompoundingBook />
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// Conceptual visual the renewing base accumulates year over year.
+// No hard figures: each band is one cohort of customers, stacking up.
+function CompoundingBook() {
+  const columns = [1, 2, 3, 4];
+  return (
+    <div className="rounded-bz-2xl bg-bz-olive-soft p-6 sm:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-white/[0.5]">
+          Your book of business
+        </span>
+        <div className="flex items-center gap-4 text-[11px] text-white/[0.62]">
+          <span className="flex items-center gap-1.5">
+            <span className="size-2 rounded-bz-pill bg-bz-fire" />
+            New
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="size-2 rounded-bz-pill bg-bz-leaf-deep" />
+            Renewing
+          </span>
+        </div>
+      </div>
+
+      <div className="mt-8 flex items-end gap-2.5 sm:gap-4">
+        {columns.map((n, ci) => (
+          <div key={ci} className="flex flex-1 flex-col gap-1.5">
+            {Array.from({ length: n }).map((_, bi) => (
+              <div
+                key={bi}
+                className={`h-6 rounded-[4px] sm:h-7 ${
+                  bi === 0 ? "bg-bz-fire" : "bg-bz-leaf-deep"
+                }`}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 h-px bg-white/[0.12]" />
+
+      <p className="mt-4 text-[12.5px] leading-[1.6] text-white/[0.62]">
+        Each bar is another year. Earlier customers keep renewing while new ones
+        stack on top, so the book only grows.
+      </p>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [03] THE PROGRAM what every reseller gets
+// ════════════════════════════════════════════════════════════════════════════
+
+function ProgramSection() {
+  return (
+    <Section tone="b">
       <Container width="narrow">
-        <SectionHeading
-          eyebrow="The math"
-          eyebrowTone="accent"
-          title="Year 1 isn't the story. Year 3 is."
-          description="The reseller P&L compounds because every renewal carries margin. A book of 30 active customers generates more revenue in year 3 than a fresh year 1 book of 60."
-          tone="light"
-          maxWidth={680}
-          className="mb-12"
+        <SectionHead
+          index="03"
+          label="The program"
+          title={
+            <>
+              A channel program with the{" "}
+              <Heading.Muted>engine already running.</Heading.Muted>
+            </>
+          }
+          description="Not a slide deck and a discount code. It's the operating system for running a real reseller practice."
+          titleMaxWidth={680}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            {
-              year: "Year 1",
-              arr: "$420K",
-              detail: "20 net-new closes · authorized tier · ramp pricing",
-              Icon: Layers,
-            },
-            {
-              year: "Year 2",
-              arr: "$1.6M",
-              detail: "30 net-new + 18 renewals · silver tier · co-marketing live",
-              Icon: TrendingUp,
-            },
-            {
-              year: "Year 3",
-              arr: "$2.4M",
-              detail: "35 net-new + 44 renewals · gold tier · territory locked",
-              Icon: Sparkles,
-            },
-          ].map(({ year, arr, detail, Icon }, i) => (
-            <Card key={year} tone="dark" pad="lg" hover="glow">
-              <div className="flex items-center justify-between mb-6">
-                <IconBadge tone="accent" size="md">
-                  <Icon className="size-5" />
-                </IconBadge>
-                <PillBadge tone="accent">{year}</PillBadge>
+        <div className="overflow-hidden rounded-bz-2xl border border-bz-line-soft bg-bz-paper">
+          {CLAUSES.map(({ n, icon: Icon, title, body }, i) => (
+            <div
+              key={n}
+              className={`grid grid-cols-[auto_1fr] items-start gap-x-4 p-6 sm:gap-x-5 sm:p-8 ${
+                i !== 0 ? "border-t border-bz-line-soft" : ""
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-[12px] font-medium tabular-nums text-bz-text-soft">
+                  {n}
+                </span>
+                <span className="flex size-10 items-center justify-center rounded-bz-pill bg-bz-paper-warm text-bz-olive">
+                  <Icon size={18} strokeWidth={1.6} />
+                </span>
               </div>
-              <div className="text-[36px] font-bold tabular-nums leading-none">{arr}</div>
-              <div className="text-[12px] uppercase tracking-[0.08em] text-bz-accent mt-1">
-                Avg. partner ARR
+              <div>
+                <h3 className="text-[16px] font-medium text-bz-text">{title}</h3>
+                <p className="mt-2.5 max-w-[600px] text-[14px] leading-[1.65] text-bz-text-muted">
+                  {body}
+                </p>
               </div>
-              <p className="mt-5 text-[13.5px] text-white/55 leading-[1.65]">{detail}</p>
-              {i < 2 && (
-                <div className="mt-6 h-1 bg-white/5 rounded-bz-pill overflow-hidden">
-                  <div
-                    className="h-full bg-bz-accent rounded-bz-pill"
-                    style={{ width: i === 0 ? "18%" : "67%" }}
-                  />
-                </div>
-              )}
-            </Card>
+            </div>
           ))}
         </div>
-
-        <p className="mt-8 text-[12px] text-white/40 text-center">
-          * Aggregate program data, FY2024. Individual results vary by territory and motion.
-        </p>
       </Container>
     </Section>
   );
 }
 
-function ClosingCta() {
+// ════════════════════════════════════════════════════════════════════════════
+// [04] GET STARTED the path to becoming a reseller
+// ════════════════════════════════════════════════════════════════════════════
+
+function JoinSection() {
   return (
-    <Section tone="dark" pad="default">
-      <Container width="narrow">
-        <div className="rounded-bz-xl bg-white/[0.03] border border-white/10 p-12 md:p-14 text-center">
-          <div className="inline-flex items-center gap-2 mb-5">
-            <Globe className="size-4 text-bz-accent" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-bz-accent">
-              Reseller program
-            </span>
-          </div>
-          <SectionHeading
-            title={<>Own your territory.<br />Compound your book.</>}
-            tone="light"
-            align="center"
-            maxWidth={620}
-            className="mx-auto"
-          />
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Button variant="accent" size="lg" href="/partners#apply" withArrow>
-              Apply as Reseller
-            </Button>
-            <Button variant="ghostDark" size="lg" href="/partners/portal">
-              See Reseller Portal
-            </Button>
-          </div>
+    <Section tone="a" id="join">
+      <Container>
+        <SectionHead
+          index="04"
+          label="Get started"
+          title={
+            <>
+              From application{" "}
+              <Heading.Muted>to your first co-sell.</Heading.Muted>
+            </>
+          }
+          description="Most resellers are trained, territoried and registering deals inside a single quarter."
+          titleMaxWidth={680}
+        />
+
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-4 md:gap-6">
+          {STEPS.map(({ n, icon: Icon, title, body }, i) => (
+            <div key={n} className="relative flex gap-4 md:block">
+              {i < STEPS.length - 1 && (
+                <span
+                  aria-hidden
+                  className="absolute left-12 -right-6 top-6 hidden h-px bg-bz-line md:block"
+                />
+              )}
+              <span className="relative z-10 flex size-12 shrink-0 items-center justify-center rounded-bz-pill border border-bz-line bg-bz-section-a text-bz-olive md:mb-6">
+                <Icon size={18} strokeWidth={1.6} />
+              </span>
+              <div>
+                <div className="text-[11px] font-medium uppercase tracking-[0.1em] text-bz-text-soft">
+                  Step {n}
+                </div>
+                <h3 className="mt-1.5 text-[15.5px] font-medium text-bz-text">
+                  {title}
+                </h3>
+                <p className="mt-2 text-[13.5px] leading-[1.6] text-bz-text-muted">
+                  {body}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </Container>
     </Section>
   );
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// [05] QUESTIONS
+// ════════════════════════════════════════════════════════════════════════════
+
+function FaqSection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[1fr_1.3fr]">
+          {/* Dark intro panel */}
+          <div className="relative flex min-h-[320px] flex-col justify-between overflow-hidden rounded-bz-2xl bg-bz-olive p-8 text-bz-text-on-dark">
+            <DotGrid tone="dark" />
+            <div className="relative">
+              <SectionHead
+                index="05"
+                label="FAQ"
+                tone="dark"
+                title={
+                  <>
+                    Reseller questions,{" "}
+                    <Heading.Muted>answered.</Heading.Muted>
+                  </>
+                }
+                spacing="none"
+              />
+            </div>
+            <PillGroup className="relative mt-8">
+              <Pill variant="accent" href="#join" withArrowUpRight>
+                Become a Reseller
+              </Pill>
+              <Pill variant="ghostDark" href="/contact">
+                Talk to Sales
+              </Pill>
+            </PillGroup>
+          </div>
+
+          {/* Accordion */}
+          <Accordion defaultOpen={null}>
+            {FAQS.map((f) => (
+              <Accordion.Item key={f.q} question={f.q}>
+                {f.a}
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// PAGE
+// ════════════════════════════════════════════════════════════════════════════
 
 export function ResellersPage() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <main>
-        <HeroSection />
-        <FitSection />
-        <SupportSection />
-        <EconomicsSection />
-        <ClosingCta />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <HeroSection />
+      <WhoResellsSection />
+      <EconomicsSection />
+      <ProgramSection />
+      <JoinSection />
+      <FaqSection />
+    </main>
   );
 }

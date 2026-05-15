@@ -12,6 +12,7 @@ import {
   MiniBars,
   StatusChip,
   DotGrid,
+  Accordion,
 } from "./bz";
 import { Settings } from "lucide-react";
 
@@ -71,22 +72,11 @@ const SCHEDULES = [
   { name: "Inventory",     freq: "Daily · 06:00", fmt: "CSV" },
 ];
 
-const IMPACT_STATS = [
-  {
-    value: "60%",
-    label: "Faster month-end",
-    desc: "Automated reconciliation and instant cross-module consolidation close without a single manual export.",
-  },
-  {
-    value: "40+",
-    label: "Report templates",
-    desc: "Financial, operational and compliance reports ready on day one customise any of them in minutes.",
-  },
-  {
-    value: "100%",
-    label: "Audit coverage",
-    desc: "Every figure traces to its originating transaction. Full digital trail, timestamped per user.",
-  },
+const FAQS = [
+  { q: "How current is the data on a dashboard?",        a: "Live. Every transaction across Finance, Sales, Inventory, Manufacturing, Projects and Distribution posts to your dashboard the moment it happens, with no overnight refresh and no manual export." },
+  { q: "Can each team get its own view?",                a: "Yes. CFO, Finance, Operations and Sales each open a pre-configured dashboard scoped to the KPIs they own. Users then add, remove or reorder any widget on top of those role defaults." },
+  { q: "Can I trace a number back to its source?",       a: "Every dashboard KPI drills to the report line, then the journal entry, then the originating document, in three clicks. Full audit coverage means every figure stays accountable." },
+  { q: "Do reports have to be built from scratch?",      a: "No. More than 40 financial, operational and compliance reports are ready on day one. Set a delivery schedule once, daily, weekly or monthly, and Bizak sends them as PDF, XLS or CSV automatically." },
 ];
 
 // ─── HERO MOCK ─────────────────────────────────────────────────────────────────
@@ -620,46 +610,38 @@ function ReportsSection() {
   );
 }
 
-// Impact horizontal typographic stat strip, no cards
-function ImpactSection() {
+// FAQ dark intro panel + accordion, all questions closed initially
+function FAQSection() {
   return (
     <Section tone="b">
       <Container>
-        <SectionHead
-          index="05"
-          label="Efficiency"
-          title={
-            <>
-              Measurable results.{" "}
-              <Heading.Muted>Every team.</Heading.Muted>
-            </>
-          }
-          spacing="tight"
-          titleMaxWidth={520}
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-3 border-t border-bz-line-soft pt-10">
-          {IMPACT_STATS.map((s, i) => (
-            <div
-              key={s.label}
-              className={[
-                "py-8 sm:py-0",
-                i === 0 && "sm:pr-10",
-                i === 1 && "sm:px-10 sm:border-l sm:border-r sm:border-bz-line-soft",
-                i === 2 && "sm:pl-10",
-                i < 2 && "border-b border-bz-line-soft sm:border-b-0",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-            >
-              <div className="bz-stat-num" style={{ fontSize: 52, marginBottom: 10 }}>
-                {s.value}
-              </div>
-              <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-bz-text-muted mb-3">
-                {s.label}
-              </div>
-              <p className="text-[13.5px] text-bz-text-muted leading-relaxed">{s.desc}</p>
+        <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[1fr_1.3fr]">
+          {/* Dark intro panel */}
+          <div className="relative flex min-h-[320px] flex-col justify-between overflow-hidden rounded-bz-2xl bg-bz-olive p-8 text-bz-text-on-dark">
+            <DotGrid tone="dark" />
+            <div className="relative">
+              <SectionHead
+                index="05"
+                label="FAQ"
+                tone="dark"
+                title={<>Frequently asked <Heading.Muted>questions.</Heading.Muted></>}
+                spacing="none"
+              />
             </div>
-          ))}
+            <PillGroup className="relative mt-8">
+              <Pill variant="accent" href="https://system.bizakerp.com/account/self-register" withArrowUpRight>Get Started</Pill>
+              <Pill variant="ghostDark" href="/contact" withArrow>Talk to Sales</Pill>
+            </PillGroup>
+          </div>
+
+          {/* Accordion */}
+          <Accordion defaultOpen={null}>
+            {FAQS.map((item, i) => (
+              <Accordion.Item key={i} question={item.q}>
+                {item.a}
+              </Accordion.Item>
+            ))}
+          </Accordion>
         </div>
       </Container>
     </Section>
@@ -676,7 +658,7 @@ export function DashboardAndReportingPage() {
       <RoleIntelligenceSection />
       <DrillToOriginSection />
       <ReportsSection />
-      <ImpactSection />
+      <FAQSection />
     </>
   );
 }

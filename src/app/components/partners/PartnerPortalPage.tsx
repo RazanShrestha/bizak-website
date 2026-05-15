@@ -1,211 +1,323 @@
 import {
-  KeyRound,
+  LayoutDashboard,
+  ClipboardCheck,
   GraduationCap,
   Megaphone,
   Banknote,
-  ListChecks,
-  FileBadge2,
+  Boxes,
   LineChart,
+  Check,
+  CheckCircle2,
   ShieldCheck,
-  CalendarClock,
+  KeyRound,
+  UserPlus,
+  ScrollText,
 } from "lucide-react";
 import {
+  BadgeGreen,
+  Bento,
+  BentoGrid,
   Container,
+  Heading,
+  Pill,
+  PillGroup,
   Section,
-  SectionHeading,
-  Button,
-  Card,
-  IconBadge,
-  PillBadge,
-  HeroBadge,
-  HeroPanel,
-} from "../marketing";
-import { Header } from "../Header";
-import { Footer } from "../Footer";
+  SectionHead,
+  StatusChip,
+  StripeBar,
+} from "../bz";
+
+// ════════════════════════════════════════════════════════════════════════════
+// CONTENT DATA
+// ════════════════════════════════════════════════════════════════════════════
+
+const NAV = [
+  { icon: LayoutDashboard, label: "Overview", active: true },
+  { icon: ClipboardCheck, label: "Deal Registration" },
+  { icon: GraduationCap, label: "Architect Academy" },
+  { icon: Megaphone, label: "Marketing Vault" },
+  { icon: Banknote, label: "Commissions" },
+  { icon: Boxes, label: "Sandbox Tenants" },
+];
+
+const KPIS = [
+  { val: "47", label: "Deals registered · Q2" },
+  { val: "$4.8M", label: "Pipeline value" },
+  { val: "$386K", label: "Commission YTD" },
+];
+
+const ACTIVITY = [
+  { icon: CheckCircle2, text: "Deal DR-2418 approved", time: "2m" },
+  { icon: Banknote, text: "Commission run · $48,200", time: "1h" },
+  { icon: Megaphone, text: "Q3 campaign assets published", time: "Today" },
+];
 
 const TOOLS = [
   {
-    Icon: GraduationCap,
-    title: "Architect Academy",
-    body: "All certification tracks, exam scheduling, and continuing-ed credits in one place.",
-  },
-  {
-    Icon: ListChecks,
+    icon: ClipboardCheck,
     title: "Deal registration",
-    body: "Lock pricing and protection on opportunities. Status, decay, and conflicts visible in one queue.",
+    desc: "Lock pricing and 90-day protection on every opportunity. Status, decay and conflicts in one queue.",
   },
   {
-    Icon: Megaphone,
-    title: "Marketing Vault",
-    body: "Co-branded decks, landing pages, ad creative, and case-study templates ready to deploy.",
-  },
-  {
-    Icon: Banknote,
-    title: "Commission ledger",
-    body: "Real-time view of accruals, holds, paid, and pending by deal, by quarter, by tier.",
-  },
-  {
-    Icon: FileBadge2,
-    title: "Sandbox tenants",
-    body: "Spin up demo environments seeded with industry data. Reset on demand, share with prospects.",
-  },
-  {
-    Icon: LineChart,
+    icon: LineChart,
     title: "Pipeline analytics",
-    body: "Joint dashboards with your regional partner manager. Forecast vs. actual, conversion, velocity.",
+    desc: "Joint forecast-vs-actual dashboards, shared live with your regional partner manager.",
+  },
+  {
+    icon: Megaphone,
+    title: "Marketing Vault",
+    desc: "Co-branded decks, landing pages and campaign creative, ready to deploy.",
+  },
+  {
+    icon: Banknote,
+    title: "Commission ledger",
+    desc: "Accruals, holds, paid and pending by deal, by quarter, by tier, in real time.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Architect Academy",
+    desc: "Certification tracks, exam scheduling and continuing-ed credits, all in one place.",
+  },
+  {
+    icon: Boxes,
+    title: "Sandbox tenants",
+    desc: "Spin up demo environments seeded with industry data. Reset on demand, share with prospects.",
   },
 ];
 
-const PORTAL_KPIS = [
-  { label: "Deals registered (Q2)", val: "47",   delta: "+12%" },
-  { label: "Pipeline value",         val: "$4.8M", delta: "+18%" },
-  { label: "Commission YTD",         val: "$386K", delta: "Paid" },
-  { label: "Certifications active",  val: "11",    delta: "9 valid" },
+const RECORD_VALUE = [
+  "One record holds the deal's full history no email threads, no shared spreadsheet.",
+  "Pricing, the protection countdown and commission all update live as the deal moves.",
 ];
 
-const RECENT_ACTIVITY = [
-  { Icon: ListChecks,    text: "Deal #DR-2418 approved",      time: "2m ago",   tone: "accent" as const },
-  { Icon: GraduationCap, text: "Solution Architect cert · Maya R.",  time: "1h ago",   tone: "sage" as const   },
-  { Icon: Megaphone,     text: "Q3 campaign assets published", time: "Today",   tone: "neutral" as const },
-  { Icon: Banknote,      text: "Commission run · $48,200",     time: "Yesterday", tone: "live" as const   },
+const TIMELINE = [
+  { title: "Registered", meta: "Apr 2 · pricing and 90-day protection locked" },
+  { title: "Co-sell assigned", meta: "Bizak rep joined · conflict check cleared" },
+  { title: "Closed-won", meta: "Apr 28 · $482,000 contract value" },
 ];
 
-function PortalPreviewPanel() {
-  return (
-    <Card tone="dark" pad="md">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="size-9 rounded-md bg-bz-accent/15 text-bz-accent flex items-center justify-center">
-            <KeyRound className="size-4" />
-          </div>
-          <div>
-            <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/35">
-              Partner Portal · Preview
-            </div>
-            <div className="text-[16px] font-bold mt-0.5">Acme Solutions Ltd.</div>
-          </div>
-        </div>
-        <PillBadge tone="accent">Gold tier</PillBadge>
-      </div>
+const ACCESS = [
+  {
+    icon: ShieldCheck,
+    title: "SAML / OIDC SSO",
+    desc: "Sign in through Okta, Azure AD, Google Workspace or any generic SAML provider.",
+  },
+  {
+    icon: KeyRound,
+    title: "Role-based access",
+    desc: "Sales, architects, finance and admins each get their own scoped permissions.",
+  },
+  {
+    icon: UserPlus,
+    title: "Per-deal sharing",
+    desc: "Invite a teammate to one opportunity without opening the rest of the portal.",
+  },
+  {
+    icon: ScrollText,
+    title: "Full audit log",
+    desc: "Every login, registration and export is timestamped and visible to your admins.",
+  },
+];
 
-      <div className="grid grid-cols-2 gap-2.5 mb-5">
-        {PORTAL_KPIS.map((k) => (
-          <div
-            key={k.label}
-            className="bg-white/[0.04] border border-white/10 rounded-bz-md px-3.5 py-3"
-          >
-            <div className="text-[18px] font-bold tabular-nums">{k.val}</div>
-            <div className="text-[11px] text-white/40 mt-0.5">{k.label}</div>
-            <div className="text-[10px] text-bz-accent/80 mt-0.5">{k.delta}</div>
-          </div>
-        ))}
-      </div>
+const STATS = [
+  { val: "20+", label: "Active partner firms" },
+  { val: "Week 1", label: "Portal account provisioned" },
+  { val: "24/7", label: "Partner concierge support" },
+  { val: "< 1 day", label: "Deal conflict mediation" },
+];
 
-      <div className="border-t border-white/10 pt-4">
-        <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/30 mb-3">
-          Recent activity
-        </div>
-        {RECENT_ACTIVITY.map((a, i) => (
-          <div
-            key={i}
-            className={`flex items-center gap-3 ${i < RECENT_ACTIVITY.length - 1 ? "mb-3" : ""}`}
-          >
-            <div className="size-7 rounded-md bg-white/[0.04] border border-white/10 flex items-center justify-center text-white/70">
-              <a.Icon className="size-3.5" />
-            </div>
-            <div className="flex-1 text-[13px] text-white/70">{a.text}</div>
-            <span className="text-[11px] text-white/40">{a.time}</span>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-}
+// ════════════════════════════════════════════════════════════════════════════
+// [HERO] the portal app-shell console
+// ════════════════════════════════════════════════════════════════════════════
 
 function HeroSection() {
   return (
-    <HeroPanel
-      badge={<HeroBadge tone="dark">Partner Portal</HeroBadge>}
-      title={
-        <>
-          Run your partner practice<br />
-          <span className="text-bz-accent">from one console.</span>
-        </>
-      }
-      description="Training, sales tools, deal registration, MDF requests, and live commission ledger every program tool in one console. Your team, your pipeline, your earnings, in real time."
-      actions={
-        <>
-          <Button variant="accent" size="lg" href="https://portal.bizakerp.com" withArrow>
-            Sign in to Portal
-          </Button>
-          <Button variant="ghostDark" size="lg" href="/partners">
-            Become a Partner
-          </Button>
-        </>
-      }
-      stats={[
-        { value: "640+",  label: "Active firms" },
-        { value: "24/7",  label: "Concierge" },
-        { value: "100%",  label: "Real-time data" },
-      ]}
-      panel={<PortalPreviewPanel />}
-    />
-  );
-}
+    <Section tone="b" pad="hero">
+      <Container>
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>Partner Portal</BadgeGreen>
 
-function ToolsSection() {
-  return (
-    <Section tone="white">
-      <Container width="narrow">
-        <SectionHeading
-          eyebrow="What's inside"
-          title="Six tools that move the needle."
-          description="The portal is the one place we send our regional teams to look up partner state, approve deals, and run enablement. It's the tool we use ourselves that's why every screen has a job."
-          maxWidth={680}
-          className="mb-14"
-        />
+          <Heading level={2} className="max-w-[760px]" style={{ marginBottom: 36 }}>
+            Run your entire partner practice{" "}
+            <Heading.Muted>from a single login.</Heading.Muted>
+          </Heading>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {TOOLS.map(({ Icon, title, body }) => (
-            <Card key={title} tone="light" pad="md" hover="lift">
-              <IconBadge tone="sage" size="md" className="mb-5">
-                <Icon className="size-5" />
-              </IconBadge>
-              <div className="text-[16.5px] font-bold mb-2">{title}</div>
-              <p className="text-[13.5px] text-bz-text-muted leading-[1.65]">{body}</p>
-            </Card>
-          ))}
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://portal.bizakerp.com">
+              Sign in to Portal
+            </Pill>
+            <Pill variant="light" withArrow href="/partners">
+              Become a Partner
+            </Pill>
+          </PillGroup>
+        </div>
+
+        <div className="bz-hero-visual mx-auto w-full max-w-[1040px]">
+          <PortalConsole />
         </div>
       </Container>
     </Section>
   );
 }
 
-function SecuritySection() {
+function PortalConsole() {
   return (
-    <Section tone="light">
-      <Container width="narrow">
-        <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-12 lg:gap-16 items-center">
-          <SectionHeading
-            eyebrow="Identity & access"
-            title={<>Your team. Your access. <span className="text-bz-sage">Audited end-to-end.</span></>}
-            description="The portal supports SSO, scoped roles, and per-deal access controls. Every action registration, MDF claim, certification is timestamped and audit-tracked, the same as inside Bizak ERP."
-          />
+    <div className="w-full overflow-hidden rounded-bz-2xl border border-bz-line bg-bz-surface">
+      {/* Window title bar */}
+      <div className="flex items-center justify-between gap-3 bg-bz-olive px-4 py-3 sm:px-5">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            {[0, 1, 2].map((d) => (
+              <span key={d} className="size-2 rounded-bz-pill bg-white/[0.22]" />
+            ))}
+          </div>
+          <span className="h-3.5 w-px bg-white/[0.14]" />
+          <span className="text-[12.5px] font-medium text-bz-text-on-dark">
+            Partner Portal
+          </span>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <span className="hidden text-[12px] text-white/[0.6] sm:inline">
+            Acme Solutions Ltd.
+          </span>
+          <StatusChip variant="neutral">Gold tier</StatusChip>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              { Icon: ShieldCheck, t: "SAML / OIDC SSO",        d: "Okta · Azure AD · Google Workspace · Generic SAML" },
-              { Icon: KeyRound,    t: "Role-based access",      d: "Sales · Architects · Finance · Admins separate permissions" },
-              { Icon: ListChecks,  t: "Per-deal sharing",       d: "Invite a teammate to one deal without giving full access" },
-              { Icon: CalendarClock, t: "Session & device log", d: "Every login, every device, every export visible to admins" },
-            ].map(({ Icon, t, d }, i) => (
-              <Card key={t} tone={i % 2 === 0 ? "soft" : "light"} pad="md" hover="lift">
-                <IconBadge tone="sage" size="sm" className="mb-4">
-                  <Icon className="size-4" />
-                </IconBadge>
-                <div className="text-[14.5px] font-bold mb-1.5">{t}</div>
-                <p className="text-[12.5px] text-bz-text-muted leading-[1.6]">{d}</p>
-              </Card>
+      {/* Body sidebar + workspace */}
+      <div className="flex">
+        {/* Sidebar nav decorative, desktop only */}
+        <aside className="hidden w-[212px] shrink-0 flex-col border-r border-bz-line-soft bg-bz-paper-warm p-3 md:flex">
+          <p className="px-3 pb-2 pt-1 text-[10px] font-medium uppercase tracking-[0.12em] text-bz-text-soft">
+            Workspace
+          </p>
+          {NAV.map(({ icon: Icon, label, active }) => (
+            <div
+              key={label}
+              className={`flex items-center gap-2.5 rounded-bz-md px-3 py-2 text-[12.5px] ${
+                active
+                  ? "bg-bz-olive font-medium text-bz-text-on-dark"
+                  : "text-bz-text-muted"
+              }`}
+            >
+              <Icon size={14} strokeWidth={1.8} />
+              {label}
+            </div>
+          ))}
+        </aside>
+
+        {/* Workspace */}
+        <div className="min-w-0 flex-1 p-4 sm:p-6">
+          <div className="flex items-center justify-between">
+            <p className="text-[13px] font-medium text-bz-text">Overview</p>
+            <span className="text-[11px] text-bz-text-soft">Q2 · 2026</span>
+          </div>
+
+          <div className="mt-4 grid gap-4 lg:grid-cols-[1.55fr_1fr] lg:gap-5">
+            {/* Primary column KPIs + activity */}
+            <div>
+              <div className="grid grid-cols-3 gap-2.5">
+                {KPIS.map((k) => (
+                  <div
+                    key={k.label}
+                    className="rounded-bz-md bg-bz-paper-warm px-3.5 py-3"
+                  >
+                    <p className="text-[17px] font-medium tabular-nums text-bz-text sm:text-[19px]">
+                      {k.val}
+                    </p>
+                    <p className="mt-1 text-[10.5px] leading-tight text-bz-text-muted">
+                      {k.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4">
+                <div className="mb-1 flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.12em] text-bz-text-soft">
+                  <span className="size-1.5 rounded-bz-pill bg-bz-fire" />
+                  Recent activity
+                </div>
+                {ACTIVITY.map(({ icon: Icon, text, time }) => (
+                  <div
+                    key={text}
+                    className="flex items-center gap-3 border-b border-bz-line-soft py-2.5 last:border-0"
+                  >
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-bz-md bg-bz-paper-warm text-bz-olive">
+                      <Icon size={13} strokeWidth={1.8} />
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-[12.5px] text-bz-text">
+                      {text}
+                    </span>
+                    <span className="shrink-0 text-[11px] text-bz-text-soft">
+                      {time}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Secondary panel tier progress, desktop only */}
+            <div className="hidden rounded-bz-md border border-bz-line-soft bg-bz-paper p-4 lg:block">
+              <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-bz-text-soft">
+                Tier progress
+              </p>
+              <div className="mt-2 flex items-end gap-1.5">
+                <span className="text-[26px] font-medium leading-none tabular-nums text-bz-text">
+                  78%
+                </span>
+                <span className="pb-0.5 text-[11px] text-bz-text-muted">
+                  to Gold renewal
+                </span>
+              </div>
+              <div className="mt-3.5">
+                <StripeBar pct={78} />
+              </div>
+              <p className="mt-3.5 text-[11.5px] leading-[1.5] text-bz-text-muted">
+                9 of 11 certifications valid · renews Sep 2026
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [01] INSIDE THE PORTAL the six-tool launcher
+// ════════════════════════════════════════════════════════════════════════════
+
+function WorkspaceSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="01"
+          label="Inside the portal"
+          title={
+            <>
+              Six tools,{" "}
+              <Heading.Muted>one workspace.</Heading.Muted>
+            </>
+          }
+          description="Training, deal registration, marketing assets and live commissions the portal is the one place your sales team, architects and finance all work."
+          titleMaxWidth={680}
+        />
+
+        <div className="overflow-hidden rounded-bz-2xl border border-bz-line bg-bz-surface">
+          <div className="grid grid-cols-1 gap-px bg-bz-line-soft sm:grid-cols-2 lg:grid-cols-3">
+            {TOOLS.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="flex flex-col bg-bz-surface p-6 sm:p-7">
+                <span className="mb-4 flex size-11 items-center justify-center rounded-bz-pill bg-bz-paper-warm text-bz-olive">
+                  <Icon size={19} strokeWidth={1.6} />
+                </span>
+                <h3 className="text-[15.5px] font-medium tracking-tight text-bz-text">
+                  {title}
+                </h3>
+                <p className="mt-2 text-[13.5px] leading-[1.6] text-bz-text-muted">
+                  {desc}
+                </p>
+              </div>
             ))}
           </div>
         </div>
@@ -214,41 +326,204 @@ function SecuritySection() {
   );
 }
 
-function ClosingCta() {
+// ════════════════════════════════════════════════════════════════════════════
+// [02] DEAL REGISTRATION one record, registration to commission
+// ════════════════════════════════════════════════════════════════════════════
+
+function DealRecordSection() {
   return (
-    <Section tone="dark" pad="default">
-      <Container width="narrow">
-        <SectionHeading
-          title={<>Already a partner?</>}
-          description="Sign in with your firm's credentials. New to the network? Apply and get your Portal account provisioned in week one."
-          tone="light"
-          align="center"
-          maxWidth={620}
-        />
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Button variant="accent" size="lg" href="https://portal.bizakerp.com" withArrow>
-            Sign in to Portal
-          </Button>
-          <Button variant="ghostDark" size="lg" href="/partners#apply">
-            Apply for Access
-          </Button>
+    <Section tone="dark">
+      <Container>
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div>
+            <SectionHead
+              index="02"
+              label="Deal registration"
+              tone="dark"
+              title={
+                <>
+                  One record per deal,{" "}
+                  <Heading.Muted>registration to commission.</Heading.Muted>
+                </>
+              }
+              description="Register an opportunity and the portal carries it the whole way locking your pricing."
+              spacing="none"
+            />
+            <ul className="mt-8 flex flex-col gap-3.5">
+              {RECORD_VALUE.map((p) => (
+                <li
+                  key={p}
+                  className="flex items-start gap-3 text-[13.5px] leading-[1.6] text-white/[0.8]"
+                >
+                  <span className="mt-[7px] size-1.5 shrink-0 rounded-bz-pill bg-bz-fire" />
+                  <span>{p}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <DealRecordCard />
         </div>
       </Container>
     </Section>
   );
 }
 
+function DealRecordCard() {
+  return (
+    <div className="rounded-bz-2xl bg-bz-surface p-6 sm:p-7">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="flex size-10 items-center justify-center rounded-bz-md bg-bz-paper-warm text-bz-olive">
+            <ClipboardCheck size={18} strokeWidth={1.7} />
+          </span>
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-bz-text-soft">
+              Registered deal
+            </p>
+            <p className="text-[14px] font-medium text-bz-text">
+              DR-2418 · Northwind Trading
+            </p>
+          </div>
+        </div>
+        <StatusChip variant="live">Active</StatusChip>
+      </div>
+
+      <div className="my-5 h-px bg-bz-line-soft" />
+
+      <div className="flex flex-col">
+        {TIMELINE.map((t, i) => (
+          <div key={t.title} className="flex gap-3.5">
+            <div className="flex flex-col items-center">
+              <span className="flex size-6 items-center justify-center rounded-bz-pill bg-bz-olive text-bz-fire">
+                <Check size={12} strokeWidth={3} />
+              </span>
+              {i < TIMELINE.length - 1 && (
+                <span className="my-1 w-px flex-1 bg-bz-line" />
+              )}
+            </div>
+            <div className={i < TIMELINE.length - 1 ? "pb-5" : ""}>
+              <p className="text-[13.5px] font-medium text-bz-text">{t.title}</p>
+              <p className="mt-0.5 text-[12px] leading-[1.5] text-bz-text-muted">
+                {t.meta}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-1 flex items-center justify-between gap-3 rounded-bz-lg bg-bz-paper-warm px-4 py-3.5">
+        <div>
+          <p className="text-[12.5px] font-medium text-bz-text">
+            Commission accrued
+          </p>
+          <p className="mt-0.5 text-[10.5px] text-bz-text-soft">
+            Recurs on every renewal
+          </p>
+        </div>
+        <span className="text-[20px] font-medium tabular-nums text-bz-text">
+          $48,200
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [03] IDENTITY & ACCESS one login, scoped to the role
+// ════════════════════════════════════════════════════════════════════════════
+
+function AccessSection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <SectionHead
+          index="03"
+          label="Identity & access"
+          title={
+            <>
+              One login for the team,{" "}
+              <Heading.Muted>scoped to the role.</Heading.Muted>
+            </>
+          }
+          description="The portal runs the same access model as Bizak ERP itself single sign-on, scoped roles, and a timestamped trail behind every action."
+          titleMaxWidth={680}
+        />
+
+        <BentoGrid cols={2}>
+          {ACCESS.map(({ icon: Icon, title, desc }) => (
+            <Bento key={title} tone="paper" hover>
+              <div className="flex items-center gap-3.5">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-bz-md bg-bz-paper-warm text-bz-olive">
+                  <Icon size={18} strokeWidth={1.7} />
+                </span>
+                <h3 className="text-[15.5px] font-medium tracking-tight text-bz-text">
+                  {title}
+                </h3>
+              </div>
+              <p className="mt-4 text-[13.5px] leading-[1.65] text-bz-text-muted">
+                {desc}
+              </p>
+            </Bento>
+          ))}
+        </BentoGrid>
+      </Container>
+    </Section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [04] THE NETWORK proof + onboarding
+// ════════════════════════════════════════════════════════════════════════════
+
+function NetworkSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="04"
+          label="The network"
+          title={
+            <>
+              The console behind{" "}
+              <Heading.Muted>20+ partner firms.</Heading.Muted>
+            </>
+          }
+          description="New firms are provisioned in week one training, sandbox tenants and deal registration are live from the first day."
+          titleMaxWidth={680}
+        />
+
+        <div className="overflow-hidden rounded-bz-2xl border border-bz-line bg-bz-surface">
+          <div className="grid grid-cols-2 gap-px bg-bz-line-soft lg:grid-cols-4">
+            {STATS.map((s) => (
+              <div key={s.label} className="flex flex-col bg-bz-surface p-6 sm:p-8">
+                <span className="text-[30px] font-medium tracking-tight text-bz-text sm:text-[38px]">
+                  {s.val}
+                </span>
+                <span className="mt-2 text-[12.5px] leading-[1.5] text-bz-text-muted">
+                  {s.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// PAGE
+// ════════════════════════════════════════════════════════════════════════════
+
 export function PartnerPortalPage() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <main>
-        <HeroSection />
-        <ToolsSection />
-        <SecuritySection />
-        <ClosingCta />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <HeroSection />
+      <WorkspaceSection />
+      <DealRecordSection />
+      <AccessSection />
+      <NetworkSection />
+    </main>
   );
 }

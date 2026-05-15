@@ -11,6 +11,7 @@ import {
   BadgeGreen,
   StatusChip,
   DotGrid,
+  Accordion,
 } from "./bz";
 import { Settings, Check, ChevronRight } from "lucide-react";
 
@@ -64,22 +65,11 @@ const AUDIT_EVENTS = [
   { ref: "INV-2210", action: "forwarded", user: "Priya Nair",  dept: "Procurement", time: "Yesterday", type: "forward"  as const },
 ];
 
-const IMPACT_STATS = [
-  {
-    value: "80%",
-    label: "Faster approvals",
-    desc: "Rule-based routing eliminates manual assignment every request reaches the right approver instantly.",
-  },
-  {
-    value: "100%",
-    label: "Decision audit trail",
-    desc: "Every approval, rejection, and escalation is logged with user, timestamp, and full chain of custody.",
-  },
-  {
-    value: "Zero",
-    label: "Lost approvals",
-    desc: "Automatic escalation means stalled requests surface before they become compliance issues.",
-  },
+const FAQS = [
+  { q: "How are approval requests routed?",              a: "Rule-based. Define conditions once, such as a PO over $5,000 to the Finance Manager or an expense over $500 to the Department Head, and every request is matched and routed to the right approver the instant it is submitted." },
+  { q: "What stops a request from stalling?",            a: "Automatic escalation. If an approver does not act within the configured window, the request escalates up the chain on its own, so stalled approvals surface before they become compliance issues." },
+  { q: "Is every decision recorded?",                    a: "Yes. Every approval, rejection and escalation is logged with the user, timestamp and full chain of custody. Drill from any summary to the originating request in one click, and export the trail on demand." },
+  { q: "Do I need a developer to configure workflows?",  a: "No code required. Routing rules, approval levels and escalation timers are all configured in settings, by amount range, department or module. Teams adjust their own approval queues without admin help." },
 ];
 
 // ─── HERO MOCK ─────────────────────────────────────────────────────────────────
@@ -608,46 +598,38 @@ function AuditSection() {
   );
 }
 
-// Impact horizontal typographic stat strip, no cards
-function ImpactSection() {
+// FAQ dark intro panel + accordion, all questions closed initially
+function FAQSection() {
   return (
     <Section tone="b">
       <Container>
-        <SectionHead
-          index="05"
-          label="Efficiency"
-          title={
-            <>
-              Measurable results.{" "}
-              <Heading.Muted>Every team.</Heading.Muted>
-            </>
-          }
-          spacing="tight"
-          titleMaxWidth={520}
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-3 border-t border-bz-line-soft pt-10">
-          {IMPACT_STATS.map((s, i) => (
-            <div
-              key={s.label}
-              className={[
-                "py-8 sm:py-0",
-                i === 0 && "sm:pr-10",
-                i === 1 && "sm:px-10 sm:border-l sm:border-r sm:border-bz-line-soft",
-                i === 2 && "sm:pl-10",
-                i < 2 && "border-b border-bz-line-soft sm:border-b-0",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-            >
-              <div className="bz-stat-num" style={{ fontSize: 52, marginBottom: 10 }}>
-                {s.value}
-              </div>
-              <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-bz-text-muted mb-3">
-                {s.label}
-              </div>
-              <p className="text-[13.5px] text-bz-text-muted leading-relaxed">{s.desc}</p>
+        <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[1fr_1.3fr]">
+          {/* Dark intro panel */}
+          <div className="relative flex min-h-[320px] flex-col justify-between overflow-hidden rounded-bz-2xl bg-bz-olive p-8 text-bz-text-on-dark">
+            <DotGrid tone="dark" />
+            <div className="relative">
+              <SectionHead
+                index="05"
+                label="FAQ"
+                tone="dark"
+                title={<>Frequently asked <Heading.Muted>questions.</Heading.Muted></>}
+                spacing="none"
+              />
             </div>
-          ))}
+            <PillGroup className="relative mt-8">
+              <Pill variant="accent" href="https://system.bizakerp.com/account/self-register" withArrowUpRight>Get Started</Pill>
+              <Pill variant="ghostDark" href="/contact" withArrow>Talk to Sales</Pill>
+            </PillGroup>
+          </div>
+
+          {/* Accordion */}
+          <Accordion defaultOpen={null}>
+            {FAQS.map((item, i) => (
+              <Accordion.Item key={i} question={item.q}>
+                {item.a}
+              </Accordion.Item>
+            ))}
+          </Accordion>
         </div>
       </Container>
     </Section>
@@ -664,7 +646,7 @@ export function WorkflowPage() {
       <TeamControlSection />
       <RoutingSection />
       <AuditSection />
-      <ImpactSection />
+      <FAQSection />
     </>
   );
 }

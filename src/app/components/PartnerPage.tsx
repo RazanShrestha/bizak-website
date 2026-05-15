@@ -1,285 +1,318 @@
 import { useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
+import type { ChangeEvent, FormEvent, ReactNode } from "react";
+import { CheckCircle2, Handshake, Plug, UserCheck } from "lucide-react";
 import {
-  TrendingUp,
-  Handshake,
-  GraduationCap,
-  ShieldCheck,
-  Sparkles,
-  CheckCircle2,
-  ArrowRight,
-} from "lucide-react";
-import {
+  Accordion,
+  BadgeGreen,
   Container,
+  DotGrid,
+  Eyebrow,
+  Heading,
+  Pill,
+  PillGroup,
   Section,
-  SectionHeading,
-  Button,
-  Card,
-  IconBadge,
-  PillBadge,
-  HeroBadge,
-  HeroPanel,
-} from "./marketing";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
+  SectionHead,
+  StatusChip,
+  StripeBar,
+  Tick,
+} from "./bz";
 
-const PROGRAM_KPIS = [
-  { label: "Active partners",    val: "640+",  delta: "+22% YoY" },
-  { label: "Countries covered",  val: "48",    delta: "+9 in 2025" },
-  { label: "Avg. partner ARR",   val: "$2.4M", delta: "Year 2" },
-  { label: "Renewal rate",       val: "94%",   delta: "3-yr cohort" },
-];
+// ════════════════════════════════════════════════════════════════════════════
+// CONTENT DATA
+// ════════════════════════════════════════════════════════════════════════════
 
-const APPLICATION_PIPELINE = [
-  { stage: "Submitted",    pct: 100, count: 412 },
-  { stage: "In review",    pct: 64,  count: 264 },
-  { stage: "Onboarding",   pct: 38,  count: 156 },
-  { stage: "Certified",    pct: 22,  count: 91  },
-];
+// Initials shown in the hero's overlapping-avatar social-proof cluster.
+const AVATARS = ["AS", "NB", "VO", "PB"] as const;
 
-const VALUE_PROPS = [
-  {
-    Icon: TrendingUp,
-    title: "Recurring revenue, not one-off fees",
-    body: "Earn margin on every renewal not just the initial deal. Our commission stack is tiered to reward long-term customer health, not just signature.",
-    tag: "Up to 35% margin",
-  },
-  {
-    Icon: Handshake,
-    title: "Co-sell with the Bizak team",
-    body: "Get paired with a regional partner manager and direct access to our deal flow. Joint pursuits, shared MQLs, and named-account protection through deal registration.",
-    tag: "Protected accounts",
-  },
-  {
-    Icon: GraduationCap,
-    title: "Enablement that actually lands",
-    body: "Architect-tier certification, sandbox tenants, sales playbooks, and live office hours. Your first three implementations are paired with a Bizak Solution Architect.",
-    tag: "Free certifications",
-  },
-  {
-    Icon: ShieldCheck,
-    title: "An ERP that's modern enough to recommend",
-    body: "Open APIs, audit-by-default, multi-entity from day one. You're selling a platform that holds up technically not legacy software wrapped in a new UI.",
-    tag: "API-first",
-  },
-];
+// Headline metrics on the hero's partner-portal preview panel.
+const PORTAL_METRICS = [
+  { label: "Commission YTD",   value: "$284,600", trend: "+18% QoQ" },
+  { label: "Deals registered", value: "24",       trend: null },
+] as const;
 
-const JOURNEY = [
-  {
-    phase: "01",
-    title: "Apply",
-    detail: "10 min",
-    desc: "Tell us about your firm, focus area, and target market. Submissions reviewed within 5 business days.",
-  },
-  {
-    phase: "02",
-    title: "Discovery call",
-    detail: "30 min",
-    desc: "A working session with our partnerships team fit, territory, GTM motion, and target tier.",
-  },
-  {
-    phase: "03",
-    title: "Onboarding",
-    detail: "2–3 weeks",
-    desc: "Sandbox provisioning, certification kickoff, sales kit, and joint pipeline planning.",
-  },
-  {
-    phase: "04",
-    title: "Go live",
-    detail: "Quarter 1",
-    desc: "Lighthouse engagement with a Bizak Solution Architect. Joint launch announcement, first co-sell.",
-  },
-];
+// Deal-pipeline rows on the partner-portal preview panel. Only "Closing"
+// gets the bright pistachio chip; the rest stay neutral so one item leads.
+const DEALS = [
+  { initials: "AF", client: "Atlas Foods Group", stage: "Closing",     variant: "live"    as const, value: "$42,000" },
+  { initials: "VR", client: "Vela Retail Co.",   stage: "Negotiation", variant: "neutral" as const, value: "$28,500" },
+  { initials: "OL", client: "Orbit Labs",        stage: "Demo",        variant: "neutral" as const, value: "$16,200" },
+] as const;
+
+const STEPS = [
+  { n: "1", title: "Review",         desc: "We read every application within five business days." },
+  { n: "2", title: "Discovery call", desc: "A 30-minute working session on fit, territory and focus." },
+  { n: "3", title: "Onboarding",     desc: "Sandbox access, certification, and your co-branded sales kit." },
+] as const;
+
+const REASSURANCE = [
+  "Free to apply, and free to certify your first architects.",
+  "No exclusivity required. Many partners carry adjacent platforms too.",
+  "A named regional partner manager from week one.",
+] as const;
+
+const FOCUS = [
+  { value: "Reseller",   icon: Handshake },
+  { value: "Consultant", icon: UserCheck },
+  { value: "Technology", icon: Plug },
+] as const;
+
+const REGIONS = [
+  "Asia Pacific",
+  "Europe, Middle East & Africa",
+  "North America",
+  "Latin America",
+] as const;
 
 const FAQS = [
-  {
-    q: "Is there a fee to apply?",
-    a: "No. The application is free, and so is certification for your first three architects. You only invest as you scale your practice.",
-  },
-  {
-    q: "How long does review take?",
-    a: "5 business days for a first response. The full onboarding window is 2–4 weeks depending on your team's availability.",
-  },
-  {
-    q: "Do I have to be exclusive to Bizak?",
-    a: "No. We expect serious partners to focus, but we don't require exclusivity. Many of our top firms also carry adjacent platforms.",
-  },
-  {
-    q: "What does deal protection look like?",
-    a: "Registered opportunities are protected for 90 days from date of registration. Our partner ops team mediates conflicts within one business day.",
-  },
-];
+  { q: "What does it cost to become a partner?",   a: "Nothing. Applying is free, and certifying your first architects is free. There are no joining fees, no annual minimums, and no purchase commitments." },
+  { q: "Do I have to sell Bizak exclusively?",     a: "No. We never require exclusivity. Many partners carry adjacent platforms alongside Bizak, and we only ask that your team certifies before going to market." },
+  { q: "How are partner commissions structured?",  a: "Partners earn recurring commission on every deal they register and close. Rates rise with your tier, from Certified to Premier, and payouts clear quarterly through the partner portal." },
+  { q: "What support do partners get?",            a: "A named regional partner manager from week one, sandbox access for hands-on practice, certification training, and a co-branded sales kit. Premier-tier partners also get priority technical support and early roadmap access." },
+] as const;
 
-function ProgramPanel() {
-  return (
-    <Card tone="dark" pad="md">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/35">
-            Program · Q2 snapshot
-          </div>
-          <div className="text-[18px] font-bold mt-0.5">Partner Network</div>
-        </div>
-        <PillBadge tone="live" dot>LIVE</PillBadge>
-      </div>
+// Shared field paint warm input wells that sit on the white form card.
+const inputClass =
+  "h-11 w-full rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3.5 text-[14px] " +
+  "text-bz-text transition-colors placeholder:text-bz-text-soft focus:border-bz-olive " +
+  "focus:bg-bz-surface focus:outline-none";
 
-      <div className="grid grid-cols-2 gap-2.5 mb-6">
-        {PROGRAM_KPIS.map((k) => (
-          <div
-            key={k.label}
-            className="bg-white/[0.04] border border-white/10 rounded-bz-md px-3.5 py-3"
-          >
-            <div className="text-[20px] font-bold tabular-nums">{k.val}</div>
-            <div className="text-[11px] text-white/40 mt-0.5">{k.label}</div>
-            <div className="text-[10px] text-bz-accent/80 mt-0.5">{k.delta}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="border-t border-white/10 pt-5">
-        <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/30 mb-3.5">
-          2025 Application pipeline
-        </div>
-        {APPLICATION_PIPELINE.map((s, i) => (
-          <div key={s.stage} className={i < APPLICATION_PIPELINE.length - 1 ? "mb-3" : ""}>
-            <div className="flex justify-between mb-1.5">
-              <span className="text-[12.5px] font-medium text-white/70">{s.stage}</span>
-              <span className="text-[12px] tabular-nums text-white/45">{s.count}</span>
-            </div>
-            <div className="h-1 bg-white/10 rounded-bz-pill overflow-hidden">
-              <div
-                className="h-full bg-bz-accent rounded-bz-pill"
-                style={{ width: `${s.pct}%` }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-}
+// ════════════════════════════════════════════════════════════════════════════
+// [HERO] dark canvas copy + the partner-portal preview panel
+// ════════════════════════════════════════════════════════════════════════════
 
 function HeroSection() {
   return (
-    <HeroPanel
-      badge={<HeroBadge tone="dark">Bizak Partner Network · Apply</HeroBadge>}
-      title={
-        <>
-          Build a practice on the<br />
-          <span className="text-bz-accent">operating system</span> of modern business.
-        </>
-      }
-      description="Join the firms reselling, implementing, and extending Bizak ERP across 48 countries. We protect your deals, certify your team, and pay you on every renewal not just the signature."
-      actions={
-        <>
-          <Button variant="accent" size="lg" href="#apply" withArrow>
-            Apply to the Network
-          </Button>
-          <Button variant="ghostDark" size="lg" href="/contact">
-            Talk to Partnerships
-          </Button>
-        </>
-      }
-      stats={[
-        { value: "640+",  label: "Active partners" },
-        { value: "94%",   label: "3-yr renewal" },
-        { value: "5 days", label: "Avg. review time" },
-      ]}
-      panel={<ProgramPanel />}
-    />
-  );
-}
+    <Section tone="dark" pad="hero" className="overflow-hidden">
+      <DotGrid tone="dark" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-28 -top-32 size-[440px] rounded-bz-pill bg-bz-olive-soft/40"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-44 -left-32 size-[400px] rounded-bz-pill bg-bz-olive-soft/30"
+      />
 
-function ValueSection() {
-  return (
-    <Section tone="white">
-      <Container width="narrow">
-        <SectionHeading
-          eyebrow="Why partner with Bizak"
-          title="A program designed around practice economics."
-          description="We built this for firms that take long-term ownership of their customers not for resellers chasing one-off bookings. Everything in the program is shaped around year 2 and year 3."
-          maxWidth={680}
-          className="mb-14"
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {VALUE_PROPS.map(({ Icon, title, body, tag }) => (
-            <Card key={title} tone="soft" pad="lg" hover="lift">
-              <div className="flex items-center justify-between mb-6">
-                <IconBadge tone="sage" size="lg">
-                  <Icon className="size-5" />
-                </IconBadge>
-                <PillBadge tone="sage">{tag}</PillBadge>
-              </div>
-              <div className="text-[20px] font-bold tracking-[-0.015em] mb-3">{title}</div>
-              <p className="text-[15px] text-bz-text-muted leading-[1.7]">{body}</p>
-            </Card>
-          ))}
+      <Container width="narrow" className="relative z-[1]">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <HeroCopy />
+          <PartnerPortal />
         </div>
       </Container>
     </Section>
   );
 }
 
-function JourneySection() {
+function HeroCopy() {
   return (
-    <Section tone="dark">
-      <Container width="narrow">
-        <SectionHeading
-          eyebrow="The path"
-          eyebrowTone="accent"
-          title="From application to your first co-sell, in one quarter."
-          description="A predictable onboarding window, with named owners on every step. No 'partnership purgatory.'"
-          tone="light"
-          maxWidth={680}
-          className="mb-16"
-        />
+    <div>
+      <BadgeGreen style={{ marginBottom: 28 }}>Bizak Partner Network</BadgeGreen>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {JOURNEY.map((step, i) => (
-            <Card key={step.phase} tone="dark" pad="md" hover="glow" className="relative">
-              <span
-                aria-hidden
-                className="absolute -top-3 right-5 text-bz-accent/[0.12] font-black leading-none select-none pointer-events-none"
-                style={{ fontSize: 88 }}
+      <Heading level={2} tone="dark" style={{ marginBottom: 34 }}>
+        Become a Bizak partner.{" "}
+        <Heading.Muted>
+          Apply in five minutes, hear back within five business days.
+        </Heading.Muted>
+      </Heading>
+
+      {/* Social-proof graphic overlapping firm initials + an open slot */}
+      <div className="flex items-center gap-3.5">
+        <div className="flex -space-x-2.5">
+          {AVATARS.map((a) => (
+            <span
+              key={a}
+              className="flex size-9 items-center justify-center rounded-bz-pill border-2 border-bz-olive bg-bz-olive-soft text-[11px] font-semibold text-bz-text-on-dark"
+            >
+              {a}
+            </span>
+          ))}
+          <span className="flex size-9 items-center justify-center rounded-bz-pill border-2 border-bz-olive bg-bz-fire text-[15px] font-medium text-bz-olive">
+            +
+          </span>
+        </div>
+        <p className="text-[13px] leading-[1.5] text-white/[0.6]">
+          Join{" "}
+          <span className="font-medium text-bz-text-on-dark">640+ firms</span>{" "}
+          partnering with Bizak across 48 countries.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// The hero's right-hand visual a preview of the partner portal each
+// accepted firm runs on: live commission, registered deals, tier progress.
+// Reads as the real Bizak product, not abstract geometry.
+function PartnerPortal() {
+  return (
+    <div className="relative mx-auto w-full max-w-[440px] lg:max-w-none">
+      {/* Floating payout accent desktop only, where the 2-col layout has room */}
+      <div className="absolute -right-4 -top-4 z-[2] hidden items-center gap-2 rounded-bz-md border border-white/10 bg-bz-olive px-3 py-2 shadow-[0_18px_38px_-22px_rgba(0,0,0,0.85)] lg:flex">
+        <span className="size-1.5 rounded-bz-pill bg-bz-fire" />
+        <span className="text-[11px] text-white/65">Q2 payout cleared</span>
+        <span className="text-[11px] font-medium tabular-nums text-bz-leaf">
+          $61,200
+        </span>
+      </div>
+
+      <div className="overflow-hidden rounded-bz-2xl border border-white/[0.12] bg-bz-olive-soft shadow-[0_34px_72px_-44px_rgba(0,0,0,0.85)]">
+        {/* Header partner identity + current tier */}
+        <div className="flex items-center gap-3.5 px-5 py-5 sm:px-6">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-bz-pill bg-bz-fire text-[13px] font-semibold text-bz-olive">
+            NA
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[14.5px] font-medium text-bz-text-on-dark">
+              Northwind Advisory
+            </p>
+            <p className="mt-0.5 text-[12px] text-white/55">
+              Partner since 2024 · Asia Pacific
+            </p>
+          </div>
+          <span className="shrink-0 rounded-bz-sm border border-bz-fire/30 bg-bz-fire/10 px-2 py-1 text-[9.5px] font-semibold uppercase tracking-[0.07em] text-bz-fire">
+            Certified
+          </span>
+        </div>
+
+        {/* Metric strip two headline numbers */}
+        <div className="grid grid-cols-2 border-y border-white/[0.08]">
+          {PORTAL_METRICS.map((m, i) => (
+            <div
+              key={m.label}
+              className={
+                "px-5 py-4 sm:px-6" +
+                (i === 1 ? " border-l border-white/[0.08]" : "")
+              }
+            >
+              <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-white/45">
+                {m.label}
+              </p>
+              <div className="mt-1.5 flex items-baseline gap-2">
+                <span className="text-[21px] font-medium tabular-nums text-bz-text-on-dark">
+                  {m.value}
+                </span>
+                {m.trend && (
+                  <span className="text-[10.5px] font-medium text-bz-fire">
+                    {m.trend}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Deal pipeline registered deals carried through the portal */}
+        <div className="px-5 py-5 sm:px-6">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-[12.5px] font-medium text-bz-text-on-dark">
+              Deal pipeline
+            </p>
+            <span className="text-[11px] text-white/50">3 open</span>
+          </div>
+          <div className="flex flex-col gap-2">
+            {DEALS.map((d) => (
+              <div
+                key={d.client}
+                className="flex items-center gap-2.5 rounded-bz-md border border-white/[0.06] bg-white/[0.03] px-3 py-2.5"
               >
-                {step.phase}
-              </span>
-
-              <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-bz-accent">
-                Phase {step.phase}
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-bz-sm bg-white/[0.07] text-[10px] font-semibold text-bz-leaf">
+                  {d.initials}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-[12.5px] text-bz-text-on-dark">
+                  {d.client}
+                </span>
+                <StatusChip variant={d.variant}>{d.stage}</StatusChip>
+                <span className="w-[58px] shrink-0 text-right text-[12px] font-medium tabular-nums text-bz-leaf">
+                  {d.value}
+                </span>
               </div>
-              <div className="text-[20px] font-bold mt-1.5">{step.title}</div>
-              <div className="text-[12px] text-white/40 mt-1">{step.detail}</div>
-
-              <p className="mt-5 text-[14px] leading-[1.65] text-white/65">{step.desc}</p>
-
-              {i < JOURNEY.length - 1 && (
-                <ArrowRight
-                  className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 size-4 text-white/20"
-                  aria-hidden
-                />
-              )}
-            </Card>
-          ))}
+            ))}
+          </div>
         </div>
-      </Container>
-    </Section>
+
+        {/* Tier progress the partner's path to the next tier */}
+        <div className="border-t border-white/[0.08] px-5 py-4 sm:px-6">
+          <div className="mb-2 flex items-center justify-between">
+            <p className="text-[12px] text-white/65">Path to Premier tier</p>
+            <span className="text-[12px] font-medium tabular-nums text-bz-fire">
+              68%
+            </span>
+          </div>
+          <StripeBar pct={68} tone="dark" />
+          <div className="mt-2 flex items-center justify-between text-[10px] uppercase tracking-[0.06em] text-white/40">
+            <span>Certified</span>
+            <span>Premier</span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// [APPLICATION] the form, with an onboarding rail beside it
+// ════════════════════════════════════════════════════════════════════════════
 
 function ApplicationSection() {
+  return (
+    <Section tone="a" id="apply" pad="tight">
+      <Container width="narrow">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[5fr_7fr] lg:items-start lg:gap-14">
+          {/* Onboarding rail desktop-left, drops below the form on mobile */}
+          <div className="order-2 lg:order-1">
+            <Eyebrow>After you apply</Eyebrow>
+            <h2 className="mt-4 text-[21px] font-medium leading-[1.3] tracking-tight text-bz-text">
+              A clear path to becoming a partner.
+            </h2>
+
+            <ol className="mt-8 flex flex-col gap-6">
+              {STEPS.map((s) => (
+                <li key={s.n} className="flex gap-3.5">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-bz-pill bg-bz-paper-warm text-[11.5px] font-semibold tabular-nums text-bz-olive">
+                    {s.n}
+                  </span>
+                  <div>
+                    <p className="text-[14px] font-medium text-bz-text">{s.title}</p>
+                    <p className="mt-1 text-[13px] leading-[1.6] text-bz-text-muted">
+                      {s.desc}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            <div className="mt-8 h-px bg-bz-line-soft" />
+
+            <ul className="mt-8 flex flex-col gap-3">
+              {REASSURANCE.map((r) => (
+                <li key={r} className="flex items-start gap-2.5">
+                  <Tick size="sm" className="mt-[3px]" />
+                  <span className="text-[13.5px] leading-[1.55] text-bz-text">{r}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Form card */}
+          <ApplicationForm />
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+function ApplicationForm() {
   const [form, setForm] = useState({
     name: "",
     org: "",
     email: "",
-    region: "Asia Pacific",
-    focus: "Implementation & Technical",
+    region: REGIONS[0] as string,
+    focus: "Reseller",
   });
   const [submitted, setSubmitted] = useState(false);
 
   const set =
-    (k: string) =>
+    (k: keyof typeof form) =>
     (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
       setForm((p) => ({ ...p, [k]: e.target.value }));
 
@@ -289,202 +322,205 @@ function ApplicationSection() {
   };
 
   return (
-    <Section id="apply" tone="white">
-      <Container width="narrow">
-        <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-12 lg:gap-16 items-start">
-          <div>
-            <SectionHeading
-              eyebrow="Apply"
-              title="Tell us about your firm."
-              description="Five business days to a first response. If we're a fit, you'll be talking to a regional partner manager by week two."
-              maxWidth={460}
-            />
+    <form
+      onSubmit={handleSubmit}
+      className="order-1 overflow-hidden rounded-bz-2xl border border-bz-line bg-bz-surface shadow-[0_28px_60px_-38px_rgba(20,30,20,0.30)] lg:order-2"
+    >
+      <div className="flex items-center justify-between gap-3 border-b border-bz-line-soft px-6 py-5 sm:px-7">
+        <div>
+          <h3 className="text-[17px] font-medium tracking-tight text-bz-text">
+            Partner application
+          </h3>
+          <p className="mt-0.5 text-[12.5px] text-bz-text-muted">
+            Five short fields, about five minutes.
+          </p>
+        </div>
+        <StatusChip variant="posted">2026 cohort</StatusChip>
+      </div>
 
-            <div className="mt-10 flex flex-col gap-4">
-              {[
-                "Free to apply no upfront fees",
-                "First 3 certifications on us",
-                "Named regional partner manager",
-                "Deal protection from week 1",
-              ].map((p) => (
-                <div key={p} className="flex items-start gap-3">
-                  <CheckCircle2 className="size-5 text-bz-sage shrink-0 mt-0.5" />
-                  <span className="text-[14.5px] text-bz-text">{p}</span>
-                </div>
-              ))}
+      {submitted ? (
+        <SuccessPanel />
+      ) : (
+        <div className="flex flex-col gap-5 px-6 py-7 sm:px-7">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Field label="Full name">
+              <input
+                type="text"
+                required
+                value={form.name}
+                onChange={set("name")}
+                placeholder="Your full name"
+                className={inputClass}
+              />
+            </Field>
+            <Field label="Organization">
+              <input
+                type="text"
+                required
+                value={form.org}
+                onChange={set("org")}
+                placeholder="Firm's legal name"
+                className={inputClass}
+              />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Field label="Work email">
+              <input
+                type="email"
+                required
+                value={form.email}
+                onChange={set("email")}
+                placeholder="you@firm.com"
+                className={inputClass}
+              />
+            </Field>
+            <Field label="Region">
+              <select
+                value={form.region}
+                onChange={set("region")}
+                className={inputClass}
+              >
+                {REGIONS.map((r) => (
+                  <option key={r}>{r}</option>
+                ))}
+              </select>
+            </Field>
+          </div>
+
+          {/* Partnership focus segmented icon selector */}
+          <div className="flex flex-col gap-2">
+            <span className="text-[12.5px] font-medium text-bz-text">
+              Partnership focus
+            </span>
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+              {FOCUS.map(({ value, icon: Icon }) => {
+                const active = form.focus === value;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => setForm((p) => ({ ...p, focus: value }))}
+                    className={[
+                      "flex items-center gap-2.5 rounded-bz-md border px-3 py-3 text-left transition-colors",
+                      active
+                        ? "border-bz-olive bg-bz-olive text-bz-text-on-dark"
+                        : "border-bz-line-soft bg-bz-paper-warm text-bz-text hover:border-bz-line",
+                    ].join(" ")}
+                  >
+                    <Icon
+                      size={16}
+                      strokeWidth={1.7}
+                      className={active ? "text-bz-fire" : "text-bz-olive"}
+                    />
+                    <span className="text-[12.5px] font-medium">{value}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <Card pad="lg" tone="light" className="shadow-[0_24px_64px_rgba(0,0,0,0.06)]">
-            <div className="flex items-center justify-between mb-7">
-              <div className="text-[18px] font-bold">Network application</div>
-              <PillBadge tone="sage">2025 cohort</PillBadge>
-            </div>
+          <Pill
+            variant="dark"
+            withArrow
+            type="submit"
+            className="mt-1 w-full justify-center"
+          >
+            Submit application
+          </Pill>
 
-            {submitted ? (
-              <div className="rounded-bz-md border border-bz-sage/30 bg-bz-sage/[0.06] p-6">
-                <div className="flex items-center gap-2 text-bz-sage font-bold mb-1">
-                  <CheckCircle2 className="size-5" /> Application received
-                </div>
-                <p className="text-[14px] text-bz-text-muted leading-[1.65]">
-                  Our partnerships team will review and respond within 5 business
-                  days. In the meantime, take a look at our <a className="text-bz-sage underline" href="/partners/portal">Partner Portal walkthrough</a>.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label="Principal contact">
-                    <input
-                      type="text"
-                      placeholder="Full name"
-                      value={form.name}
-                      onChange={set("name")}
-                      required
-                      className="w-full h-11 px-4 rounded-bz-md border border-bz-border bg-bz-surface text-[14px] text-bz-text placeholder:text-bz-text-muted/60 focus:outline-none focus:border-bz-sage transition-colors"
-                    />
-                  </Field>
-                  <Field label="Organization">
-                    <input
-                      type="text"
-                      placeholder="Legal entity name"
-                      value={form.org}
-                      onChange={set("org")}
-                      required
-                      className="w-full h-11 px-4 rounded-bz-md border border-bz-border bg-bz-surface text-[14px] text-bz-text placeholder:text-bz-text-muted/60 focus:outline-none focus:border-bz-sage transition-colors"
-                    />
-                  </Field>
-                </div>
-                <Field label="Institutional email">
-                  <input
-                    type="email"
-                    placeholder="name@firm.com"
-                    value={form.email}
-                    onChange={set("email")}
-                    required
-                    className="w-full h-11 px-4 rounded-bz-md border border-bz-border bg-bz-surface text-[14px] text-bz-text placeholder:text-bz-text-muted/60 focus:outline-none focus:border-bz-sage transition-colors"
-                  />
-                </Field>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label="Region">
-                    <select
-                      value={form.region}
-                      onChange={set("region")}
-                      className="w-full h-11 px-4 rounded-bz-md border border-bz-border bg-bz-surface text-[14px] text-bz-text focus:outline-none focus:border-bz-sage transition-colors"
-                    >
-                      <option>Asia Pacific</option>
-                      <option>Europe, Middle East &amp; Africa</option>
-                      <option>North America</option>
-                      <option>Latin America</option>
-                    </select>
-                  </Field>
-                  <Field label="Partnership focus">
-                    <select
-                      value={form.focus}
-                      onChange={set("focus")}
-                      className="w-full h-11 px-4 rounded-bz-md border border-bz-border bg-bz-surface text-[14px] text-bz-text focus:outline-none focus:border-bz-sage transition-colors"
-                    >
-                      <option>Implementation &amp; Technical</option>
-                      <option>Reseller / Channel</option>
-                      <option>ISV &amp; Integration</option>
-                      <option>Strategic Consulting</option>
-                    </select>
-                  </Field>
-                </div>
-
-                <Button variant="primary" size="lg" withArrow>
-                  Submit application
-                </Button>
-                <p className="text-[12px] text-bz-text-muted leading-[1.6]">
-                  By submitting you agree to our partner program terms. We won't
-                  contact you for marketing only program-related responses.
-                </p>
-              </form>
-            )}
-          </Card>
+          <p className="text-[12px] leading-[1.6] text-bz-text-muted">
+            Free to apply, no exclusivity required. We respond within five business
+            days.
+          </p>
         </div>
-      </Container>
-    </Section>
+      )}
+    </form>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">
-        {label}
-      </span>
+      <span className="text-[12.5px] font-medium text-bz-text">{label}</span>
       {children}
     </label>
   );
 }
 
-function FaqSection() {
+function SuccessPanel() {
   return (
-    <Section tone="light">
-      <Container width="narrow">
-        <SectionHeading
-          eyebrow="FAQ"
-          title="Common questions, answered."
-          maxWidth={680}
-          className="mb-12"
-        />
+    <div className="flex flex-col items-center px-6 py-14 text-center sm:px-7">
+      <span className="flex size-14 items-center justify-center rounded-bz-pill bg-bz-olive text-bz-fire">
+        <CheckCircle2 size={26} strokeWidth={1.8} />
+      </span>
+      <h3 className="mt-6 text-[19px] font-medium tracking-tight text-bz-text">
+        Application received
+      </h3>
+      <p className="mt-2.5 max-w-[380px] text-[14px] leading-[1.65] text-bz-text-muted">
+        Thanks for applying. Our partnerships team will review your firm and respond
+        within five business days.
+      </p>
+    </div>
+  );
+}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {FAQS.map((f) => (
-            <Card key={f.q} tone="light" pad="md">
-              <div className="flex items-start gap-3">
-                <Sparkles className="size-4 text-bz-sage shrink-0 mt-1" />
-                <div>
-                  <div className="text-[16px] font-bold mb-2">{f.q}</div>
-                  <p className="text-[14px] text-bz-text-muted leading-[1.7]">{f.a}</p>
-                </div>
-              </div>
-            </Card>
-          ))}
+// ════════════════════════════════════════════════════════════════════════════
+// [FAQ] dark intro panel + accordion
+// ════════════════════════════════════════════════════════════════════════════
+
+function FAQSection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[1fr_1.3fr]">
+          {/* Dark intro panel */}
+          <div className="relative flex min-h-[320px] flex-col justify-between overflow-hidden rounded-bz-2xl bg-bz-olive p-8 text-bz-text-on-dark">
+            <DotGrid tone="dark" />
+            <div className="relative">
+              <SectionHead
+                label="FAQ"
+                tone="dark"
+                title={<>Partner program <Heading.Muted>questions.</Heading.Muted></>}
+                spacing="none"
+              />
+            </div>
+            <PillGroup className="relative mt-8">
+              <Pill variant="accent" href="#apply" withArrow>
+                Apply now
+              </Pill>
+              <Pill variant="ghostDark" href="/contact" withArrow>
+                Talk to Sales
+              </Pill>
+            </PillGroup>
+          </div>
+
+          {/* Accordion */}
+          <Accordion defaultOpen={null}>
+            {FAQS.map((item, i) => (
+              <Accordion.Item key={i} question={item.q}>
+                {item.a}
+              </Accordion.Item>
+            ))}
+          </Accordion>
         </div>
       </Container>
     </Section>
   );
 }
 
-function ClosingCta() {
-  return (
-    <Section tone="dark" pad="default">
-      <Container width="narrow">
-        <SectionHeading
-          title={<>Grow your practice<br />with Bizak.</>}
-          description="The application is short and free. The conversation is the rest."
-          tone="light"
-          align="center"
-          maxWidth={620}
-        />
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Button variant="accent" size="lg" href="#apply" withArrow>
-            Apply to the Network
-          </Button>
-          <Button variant="ghostDark" size="lg" href="/partners/portal">
-            Explore the Portal
-          </Button>
-        </div>
-      </Container>
-    </Section>
-  );
-}
+// ════════════════════════════════════════════════════════════════════════════
+// PAGE
+// ════════════════════════════════════════════════════════════════════════════
 
 export function PartnerPage() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <main>
-        <HeroSection />
-        <ValueSection />
-        <JourneySection />
-        <ApplicationSection />
-        <FaqSection />
-        <ClosingCta />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <HeroSection />
+      <ApplicationSection />
+      <FAQSection />
+    </main>
   );
 }

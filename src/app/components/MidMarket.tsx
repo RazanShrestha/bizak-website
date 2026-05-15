@@ -1,294 +1,560 @@
 import "../../styles/style.css";
-import { useRef, useEffect, type ReactNode } from "react";
+import * as React from "react";
 import {
-  Layers, ShieldCheck, BarChart3, Plug, Lock,
-  CheckSquare, Building2, Puzzle, AlertTriangle, Clock,
-  TrendingUp, RefreshCw, Settings, Users, CheckCircle, Rocket, PieChart,
-  type LucideIcon,
+  ArrowRight, BarChart3, Building2, Check, CheckCircle2,
+  ChevronDown, ChevronRight, CreditCard, FolderOpen, GitMerge,
+  Globe, Landmark, Layers, Mail, Rocket, Server, Table2, TrendingUp,
+  UploadCloud, Users, Workflow, type LucideIcon,
 } from "lucide-react";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
 import {
-  Container, Section, SectionHeading, Button, Card,
-  IconBadge, PillBadge, HeroPanel, HeroBadge,
-} from "./marketing";
+  Accordion, BadgeGreen, BigCard, Container, DotGrid, Heading, Pill, PillGroup,
+  Section, SectionHead, StatusChip, StepCard, Tick,
+} from "./bz";
 
-// ─── Hero panel ───────────────────────────────────────────────────────────────
+// ─── DATA ─────────────────────────────────────────────────────────────────────
 
-const ENTITIES = [
-  { label: "HQ – Dubai",      value: "$2.1M", unit: "Revenue",  active: true  },
-  { label: "Cairo Branch",    value: "$840K", unit: "Revenue",  active: true  },
-  { label: "London Branch",   value: "$1.3M", unit: "Revenue",  active: true  },
-  { label: "Consolidation",   value: "98.5%", unit: "Accuracy", active: false },
+const FLOW: { icon: LucideIcon; module: string; title: string; detail: string }[] = [
+  { icon: Building2, module: "Multi-company", title: "Branches close",  detail: "Dubai, Cairo and London post locally" },
+  { icon: GitMerge,  module: "Intercompany",  title: "Entries matched", detail: "Interco balances auto-eliminated" },
+  { icon: Layers,    module: "Consolidation", title: "Group rolled up", detail: "Three currencies translated to USD" },
+  { icon: BarChart3, module: "Reporting",     title: "Board pack live", detail: "Consolidated P&L ready to send" },
 ];
 
-const PENDING_APPROVALS = [
-  { id: "APV-0211", dept: "Procurement", amount: "$48,000", status: "pending"  },
-  { id: "APV-0212", dept: "Finance",     amount: "$12,400", status: "approved" },
-  { id: "APV-0213", dept: "Operations",  amount: "$93,200", status: "review"   },
+const SYMPTOMS = [
+  "Month-end close means a week of exporting, re-keying and reconciling across every entity.",
+  "Approvals live in email chains, so no one can prove who signed off on what.",
 ];
 
-const DEPT_HEALTH = [
-  { label: "Finance",      pct: 96 },
-  { label: "Supply Chain", pct: 88 },
-  { label: "Sales",        pct: 74 },
+const STACK: { icon: LucideIcon; name: string; cat: string; tag: string }[] = [
+  { icon: Server,     name: "Entry-level ERP",  cat: "Core accounting",       tag: "Maxed out" },
+  { icon: Table2,     name: "Excel",            cat: "Group consolidation",   tag: "Manual, monthly" },
+  { icon: Mail,       name: "Email threads",    cat: "Purchase approvals",    tag: "No audit trail" },
+  { icon: BarChart3,  name: "Standalone BI",    cat: "Board reporting",       tag: "$240/mo" },
+  { icon: CreditCard, name: "Separate payroll", cat: "HR & payroll",          tag: "Disconnected" },
+  { icon: FolderOpen, name: "Shared drive",     cat: "Contracts & documents", tag: "Untracked" },
 ];
 
-function ConsolidatedPanel() {
+const REPLACES: { old: string; icon: LucideIcon; module: string }[] = [
+  { old: "Entry-level ERP",  icon: Landmark,   module: "Multi-Entity Financials" },
+  { old: "Excel",            icon: Layers,     module: "Group Consolidation" },
+  { old: "Email threads",    icon: Workflow,   module: "Approval Workflows" },
+  { old: "Standalone BI",    icon: BarChart3,  module: "Executive Dashboards" },
+  { old: "Separate payroll", icon: Users,      module: "HR & Payroll" },
+  { old: "Shared drive",     icon: FolderOpen, module: "Document Management" },
+];
+
+const STAGES: {
+  icon: LucideIcon; stage: string; range: string; desc: string;
+  modules: string[]; current: boolean;
+}[] = [
+  {
+    icon: Building2, stage: "Multi-entity", range: "25 – 250 people", current: true,
+    desc: "Run several branches and currencies on one consolidated set of books.",
+    modules: ["Multi-entity financials", "Approval workflows", "Executive dashboards"],
+  },
+  {
+    icon: TrendingUp, stage: "Multi-region group", range: "250 – 500 people", current: false,
+    desc: "Add depth as entities and regions multiply no migration, no new vendor.",
+    modules: ["Multi-currency consolidation", "Intercompany eliminations", "Advanced RBAC"],
+  },
+  {
+    icon: Globe, stage: "Enterprise scale", range: "500+ people", current: false,
+    desc: "Run a global group with the controls, SLAs and governance enterprise demands.",
+    modules: ["Unlimited entities", "SSO, SCIM and custom SLA", "Dedicated success team"],
+  },
+];
+
+const FAQS = [
+  { q: "How long does a multi-entity rollout actually take?",            a: "Most groups go live in about thirty days. We migrate each entity's ledger and open balances, configure your branches and approval chains, then onboard every team no eighteen-month implementation and no IT project." },
+  { q: "Can Bizak consolidate entities in different currencies?",        a: "Yes. Each branch keeps its own books in its local currency, and Bizak translates and rolls them up into one group view automatically. Intercompany balances are matched and eliminated for you, every close." },
+  { q: "Do we need a consultant or in-house IT to customise it?",        a: "No. Entities, currencies, approval chains and permissions are all configured in the product no custom code and no professional-services contract. Your finance team owns the setup, not IT." },
+  { q: "We've already invested in an ERP. Why switch to Bizak?",         a: "Because an entry-level system bills you for every workaround you build to keep it alive. Bizak includes multi-entity consolidation, approval workflows and executive reporting in one plan so the system grows with the group, not against it." },
+];
+
+// ─── HERO ─────────────────────────────────────────────────────────────────────
+
+function FlowCard({
+  icon: Icon, module, title, detail, index,
+}: (typeof FLOW)[number] & { index: number }) {
   return (
-    <Card tone="dark" pad="md" className="w-full">
-      <div className="flex justify-between items-center mb-5">
-        <div className="flex gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-red-400/50" />
-          <div className="w-2 h-2 rounded-full bg-amber-400/50" />
-          <div className="w-2 h-2 rounded-full bg-green-400/50" />
-        </div>
-        <span className="text-[9px] font-bold tracking-[0.16em] uppercase text-bz-sage/65">Bizak · Consolidated View</span>
-        <div className="flex items-center gap-1.5">
-          <div className="biz-pulse-glow w-1.5 h-1.5 rounded-full bg-bz-accent" />
-          <span className="text-[9px] font-bold tracking-[0.1em] text-bz-sage uppercase">Live</span>
-        </div>
+    <div className="flex flex-1 flex-col rounded-bz-xl border border-bz-line-soft bg-bz-paper p-4 md:p-[18px]">
+      <div className="mb-3.5 flex items-center justify-between">
+        <span className="flex size-9 items-center justify-center rounded-bz-md bg-bz-paper-warm">
+          <Icon size={16} strokeWidth={1.7} className="text-bz-olive" />
+        </span>
+        <span className="text-[10px] font-semibold tabular-nums tracking-[0.08em] text-bz-text-soft">
+          0{index}
+        </span>
       </div>
-
-      <div className="grid grid-cols-4 gap-2 mb-5">
-        {ENTITIES.map((e) => (
-          <div key={e.label} className="flex flex-col items-center gap-1">
-            <div className={`w-9 h-9 rounded-[8px] flex items-center justify-center border ${
-              e.active ? "border-bz-accent/50 bg-bz-accent/[0.06]" : "border-bz-sage/[0.18] bg-bz-sage/[0.03]"
-            }`}>
-              {e.active
-                ? <TrendingUp size={13} className="text-bz-sage" strokeWidth={1.8} />
-                : <BarChart3 size={13} className="text-white/40" strokeWidth={1.8} />
-              }
-            </div>
-            <span className={`text-[10px] font-bold ${e.active ? "text-white" : "text-white/40"}`}>{e.value}</span>
-            <span className="text-[7px] font-bold uppercase tracking-wider text-white/40">{e.unit}</span>
-            <span className="text-[7px] text-white/25 tracking-wide text-center">{e.label}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="border-t border-white/10 pt-3.5 flex flex-col gap-2 mb-4">
-        {PENDING_APPROVALS.map((apv) => {
-          const tone =
-            apv.status === "approved" ? "bg-bz-accent/15 text-bz-sage"
-              : apv.status === "pending" ? "bg-amber-400/10 text-amber-400"
-              : "bg-orange-400/10 text-orange-400";
-          return (
-            <div key={apv.id} className="flex items-center gap-2">
-              <span className="text-[9px] text-bz-sage/70 min-w-[58px]">{apv.id}</span>
-              <span className="text-[9px] text-white/50 flex-1">{apv.dept}</span>
-              <span className="text-[9px] font-bold text-white/80 min-w-[44px] text-right">{apv.amount}</span>
-              <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide ${tone}`}>
-                {apv.status}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="border-t border-white/10 pt-3.5 flex flex-col gap-2">
-        {DEPT_HEALTH.map((m) => (
-          <div key={m.label}>
-            <div className="flex justify-between mb-1">
-              <span className="text-[9px] font-bold text-white/60">{m.label}</span>
-              <span className="text-[9px] font-bold text-bz-accent">{m.pct}%</span>
-            </div>
-            <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full bg-bz-accent rounded-full" style={{ width: `${m.pct}%` }} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </Card>
+      <span className="text-[9px] font-semibold uppercase tracking-[0.13em] text-bz-text-soft">
+        {module}
+      </span>
+      <p className="mt-1.5 text-[14px] font-medium leading-[1.3] text-bz-text">{title}</p>
+      <p className="mt-2 text-[11.5px] leading-[1.5] text-bz-text-muted">{detail}</p>
+    </div>
   );
 }
 
-// ─── Hero ─────────────────────────────────────────────────────────────────────
+function FlowConnector() {
+  return (
+    <div className="flex shrink-0 items-center justify-center" aria-hidden>
+      <ChevronDown size={15} strokeWidth={2.4} className="text-bz-fire md:hidden" />
+      <ChevronRight size={15} strokeWidth={2.4} className="hidden text-bz-fire md:block" />
+    </div>
+  );
+}
+
+function HeroOrderFlow() {
+  return (
+    <div className="relative overflow-hidden rounded-bz-2xl bg-bz-olive p-5 md:py-18 md:px-16">
+      <DotGrid tone="dark" />
+      <div className="relative">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 md:mb-8">
+          <span className="flex items-center gap-2.5">
+            <span className="size-1.5 rounded-bz-pill bg-bz-fire" />
+            <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">
+              One close · every entity
+            </span>
+          </span>
+          <StatusChip variant="live">Live</StatusChip>
+        </div>
+
+        <div className="flex flex-col gap-2.5 md:flex-row md:items-stretch md:gap-2">
+          {FLOW.map((step, i) => (
+            <React.Fragment key={step.title}>
+              <FlowCard {...step} index={i + 1} />
+              {i < FLOW.length - 1 && <FlowConnector />}
+            </React.Fragment>
+          ))}
+        </div>
+
+        <p className="mt-6 text-[12px] leading-[1.6] text-white/[0.55] md:mt-8">
+        </p>
+      </div>
+    </div>
+  );
+}
 
 function HeroSection() {
   return (
-    <HeroPanel
-      badge={<HeroBadge tone="dark">ERP for Mid-Market Companies</HeroBadge>}
-      title={<>Unify Operations.<br /><span className="text-bz-accent">Scale</span> With Precision.</>}
-      description="Mid-market companies outgrow spreadsheets and entry-level ERPs fast. Bizak gives you multi-entity financials, advanced approval workflows, and consolidated reporting without the enterprise price tag or 18-month rollout."
-      actions={
-        <>
-          <Button variant="accent" size="lg" href="/contact" withArrow>Request a Demo</Button>
-          <Button variant="ghostDark" size="lg" href="/contact">See It in Action</Button>
-        </>
-      }
-      stats={[
-        { value: "30 Days", label: "Typical Go-Live" },
-        { value: "800+",    label: "Mid-Market Companies" },
-      ]}
-      panel={<ConsolidatedPanel />}
-    />
+    <Section tone="b" pad="hero">
+      <Container>
+        <div className="flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>For Mid-Market Companies</BadgeGreen>
+          <Heading level={2} style={{ marginBottom: 36 }}>
+            Outgrown your entry-level ERP?{" "}{<br className="hidden md:block"/>}
+            <Heading.Muted>
+              Run every branch on one platform.
+            </Heading.Muted>
+          </Heading>
+          <PillGroup>
+            <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
+              Get Started
+            </Pill>
+            <Pill variant="light" href="/contact">
+              Request Demo
+            </Pill>
+          </PillGroup>
+        </div>
+        <div className="bz-hero-visual">
+          <HeroOrderFlow />
+        </div>
+      </Container>
+    </Section>
   );
 }
 
-// ─── Challenges ───────────────────────────────────────────────────────────────
+// ─── 01 · THE BREAKING POINT ──────────────────────────────────────────────────
 
-type ChallengeItem = { icon: LucideIcon; title: string; desc: string; footer: ReactNode };
+function StackAuditPanel() {
+  return (
+    <div className="overflow-hidden rounded-bz-2xl border border-bz-line-soft bg-bz-surface">
+      <div className="flex items-center justify-between border-b border-bz-line-soft bg-bz-paper-warm px-5 py-3.5">
+        <span className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-bz-text-soft">
+          Your current setup
+        </span>
+        <span className="text-[11px] font-medium text-bz-text-muted">6 systems</span>
+      </div>
+      <div className="flex flex-col">
+        {STACK.map(({ icon: Icon, name, cat, tag }) => (
+          <div
+            key={name}
+            className="flex items-center gap-3 border-b border-bz-line-soft px-5 py-3.5 last:border-0"
+          >
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-bz-md bg-bz-paper-warm">
+              <Icon size={15} strokeWidth={1.7} className="text-bz-olive" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-medium text-bz-text">{name}</p>
+              <p className="text-[11px] text-bz-text-muted">{cat}</p>
+            </div>
+            <span className="shrink-0 rounded-bz-pill bg-bz-paper-warm px-2.5 py-1 text-[10.5px] font-medium text-bz-text-muted">
+              {tag}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="bg-bz-olive px-5 py-4">
+        <p className="text-[12px] leading-[1.6] text-white/[0.7]">
+          <span className="font-medium text-bz-text-on-dark">≈ 9 days</span> on every close ·{" "}
+          <span className="font-medium text-bz-text-on-dark">3 entities</span> reconciled by hand ·{" "}
+          <span className="font-medium text-bz-fire">0</span> real-time group view
+        </p>
+      </div>
+    </div>
+  );
+}
 
-const CHALLENGES: ChallengeItem[] = [
-  {
-    icon: CheckSquare,
-    title: "Approval Bottlenecks",
-    desc: "Purchase orders, budget requests, and vendor invoices sit in email chains for days. Deals slow. Vendors send late-payment notices.",
-    footer: (
-      <div className="flex flex-col gap-2 mt-auto pt-4 border-t border-bz-border">
-        {[
-          { id: "PO-3841", label: "IT Infrastructure PO",   days: "7d pending"  },
-          { id: "PO-3842", label: "Marketing Budget Req.",  days: "4d pending"  },
-          { id: "PO-3843", label: "Office Lease Renewal",   days: "12d pending" },
-        ].map((f) => (
-          <div key={f.id} className="flex items-center gap-2 px-2 py-1 rounded-md bg-red-50">
-            <Clock size={10} className="text-red-400 shrink-0" strokeWidth={1.8} />
-            <span className="text-[8px] flex-1 truncate text-red-400">{f.label}</span>
-            <span className="text-[8px] font-bold text-red-400">{f.days}</span>
+function StackCostSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
+          <div>
+            <SectionHead
+              index="01"
+              label="The breaking point"
+              title={
+                <>
+                  Your ERP worked at one entity.{" "}
+                  <Heading.Muted>At three, it quietly costs you.</Heading.Muted>
+                </>
+              }
+              description="An entry-level ERP gets a single company off the ground."
+              spacing="none"
+            />
+            <ul
+              className="flex flex-col gap-3.5"
+              style={{ listStyle: "none", padding: 0, margin: "32px 0 0" }}
+            >
+              {SYMPTOMS.map((s) => (
+                <li
+                  key={s}
+                  className="flex items-start gap-3 text-[14px] leading-[1.55] text-bz-text"
+                >
+                  <Tick size="sm" className="mt-[2px]" />
+                  <span>{s}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    icon: Building2,
-    title: "Multi-Entity Chaos",
-    desc: "Running three subsidiaries with separate spreadsheets means consolidation takes a full week every month-end. Errors are inevitable.",
-    footer: (
-      <div className="flex flex-col gap-2 mt-auto pt-4 border-t border-bz-border">
-        {[
-          { label: "HQ Consolidation",     lag: "7 days manual" },
-          { label: "Interco Eliminations", lag: "3 days manual" },
-          { label: "FX Revaluation",       lag: "2 days manual" },
-        ].map((row) => (
-          <div key={row.label} className="flex justify-between items-center">
-            <span className="text-[9px] text-bz-text-muted">{row.label}</span>
-            <span className="text-[9px] font-bold text-red-400">{row.lag}</span>
-          </div>
-        ))}
-        <div className="flex items-center gap-2 mt-1">
-          <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
-          <span className="text-[9px] font-bold text-red-400 uppercase tracking-wide">12 days lost monthly</span>
+          <StackAuditPanel />
         </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ─── 02 · ONE PLATFORM ────────────────────────────────────────────────────────
+
+function ReplacesVisual() {
+  return (
+    <div className="flex w-full flex-col gap-2">
+      <div className="mb-1 flex items-center justify-between px-1">
+        <span className="text-[9.5px] font-semibold uppercase tracking-[0.12em] text-white/[0.4]">
+          You leave behind
+        </span>
+        <span className="text-[9.5px] font-semibold uppercase tracking-[0.12em] text-bz-fire">
+          You run on
+        </span>
       </div>
-    ),
-  },
-  {
-    icon: ShieldCheck,
-    title: "Compliance & Audit Gaps",
-    desc: "No clear audit trail, missing approval records, and manual journal entries make every audit a fire drill. Regulators and investors are watching.",
-    footer: (
-      <div className="flex flex-col gap-2 mt-auto pt-4 border-t border-bz-border">
-        {[
-          { label: "Missing audit trail",   risk: "High risk", critical: true  },
-          { label: "Unapproved JE entries", risk: "High risk", critical: true  },
-          { label: "Expired vendor certs",  risk: "Medium",    critical: false },
-        ].map((item) => (
-          <div key={item.label} className="flex justify-between items-center">
-            <span className={`text-[9px] ${item.critical ? "text-red-400" : "text-bz-text-muted"}`}>{item.label}</span>
-            <span className={`text-[9px] font-bold ${item.critical ? "text-red-400" : "text-bz-sage"}`}>{item.risk}</span>
+      {REPLACES.map(({ old, icon: Icon, module }) => (
+        <div
+          key={module}
+          className="flex items-center gap-2.5 rounded-bz-lg border border-white/[0.07] bg-white/[0.05] px-3 py-2.5"
+        >
+          <span className="w-[88px] shrink-0 text-[11.5px] text-white/[0.42] line-through">
+            {old}
+          </span>
+          <ArrowRight size={13} strokeWidth={2} className="shrink-0 text-bz-fire" />
+          <span className="flex min-w-0 flex-1 items-center gap-2">
+            <Icon size={13} strokeWidth={1.8} className="shrink-0 text-bz-leaf" />
+            <span className="truncate text-[12.5px] font-medium text-bz-text-on-dark">
+              {module}
+            </span>
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function OnePlatformSection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <SectionHead
+          index="02"
+          label="One platform"
+          title={
+            <>
+              Stop paying enterprise prices for half a system.{" "}
+              <Heading.Muted>Run the whole group on one platform.</Heading.Muted>
+            </>
+          }
+          description="Every system you've bolted together maps to a Bizak module. The difference: one shared database across every entity, instead of six that need reconciling."
+          titleMaxWidth={780}
+        />
+        <BigCard
+          text={{
+            title: "One platform, sized for a multi-entity group.",
+            bullets: [
+              "Every entity, currency and approval on one consolidated ledger.",
+              "Group books update in real time, the moment a branch posts.",
+            ],
+            cta: {
+              variant: "accent",
+              withArrow: true,
+              href: "/contact",
+              children: "Request Demo",
+            },
+          }}
+          visual={<ReplacesVisual />}
+        />
+      </Container>
+    </Section>
+  );
+}
+
+// ─── 03 · ROLLOUT ─────────────────────────────────────────────────────────────
+
+function StepVisualShell({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="w-full max-w-[320px]">
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-bz-text-soft">
+        {label}
+      </p>
+      {children}
+    </div>
+  );
+}
+
+function StepImportVisual() {
+  const files = [
+    { name: "dubai-hq.csv", meta: "Ledger + balances", done: true },
+    { name: "cairo.csv",    meta: "Ledger + balances", done: true },
+    { name: "london.csv",   meta: "importing…",        done: false },
+  ];
+  return (
+    <StepVisualShell label="Entity migration">
+      <div className="flex flex-col gap-2 rounded-bz-xl border border-bz-line-soft bg-bz-surface p-4">
+        {files.map((f) => (
+          <div
+            key={f.name}
+            className="flex items-center justify-between rounded-bz-md border border-bz-line-soft bg-bz-paper px-3 py-2.5"
+          >
+            <div>
+              <p className="text-[12px] font-medium text-bz-text">{f.name}</p>
+              <p className="text-[10px] text-bz-text-muted">{f.meta}</p>
+            </div>
+            {f.done ? (
+              <CheckCircle2 size={15} strokeWidth={1.9} className="shrink-0 text-emerald-500" />
+            ) : (
+              <UploadCloud size={15} strokeWidth={1.8} className="shrink-0 text-bz-text-soft" />
+            )}
           </div>
         ))}
-        <span className="text-[9px] font-bold text-red-400 uppercase tracking-wide mt-1">3 critical findings</span>
       </div>
-    ),
-  },
-  {
-    icon: Puzzle,
-    title: "Siloed Departments",
-    desc: "Finance doesn't see what Ops is ordering. Sales doesn't know inventory levels. Each department optimizes alone and the business pays the cost.",
-    footer: (
-      <div className="mt-auto pt-4 border-t border-bz-border">
-        <div className="flex items-center justify-center mb-3">
-          {["FIN", "OPS", "SCM", "SLS"].map((dept, i) => (
-            <div key={dept} className="flex items-center">
-              <div className="w-7 h-7 rounded-lg bg-bz-bg border border-bz-border flex items-center justify-center">
-                <span className="text-[8px] font-bold text-bz-sage">{dept}</span>
-              </div>
-              {i < 3 && <div className="w-4 h-px bg-red-300" />}
-            </div>
-          ))}
-        </div>
-        <p className="text-center text-[9px] font-bold text-red-400 uppercase tracking-wide">4 depts, 0 shared visibility</p>
-      </div>
-    ),
-  },
-  {
-    icon: BarChart3,
-    title: "Reporting Takes Too Long",
-    desc: "Board packs assembled in PowerPoint. Management reports emailed as PDFs. By the time the data reaches decision-makers, it's already stale.",
-    footer: (
-      <div className="flex flex-col gap-2 mt-auto pt-4 border-t border-bz-border">
-        {[
-          { label: "Board Report",  days: 18, critical: true  },
-          { label: "P&L Statement", days: 12, critical: true  },
-          { label: "Cashflow Fcst", days: 5,  critical: false },
-        ].map((m) => (
-          <div key={m.label}>
-            <div className="flex justify-between mb-1">
-              <span className="text-[8px] text-bz-text-muted">{m.label}</span>
-              <span className={`text-[8px] font-bold ${m.critical ? "text-red-400" : "text-bz-sage"}`}>
-                {m.days} days{m.critical ? " ⚠" : ""}
-              </span>
-            </div>
-            <div className="h-1 bg-bz-bg rounded-full overflow-hidden">
+    </StepVisualShell>
+  );
+}
+
+function StepActivateVisual() {
+  const mods = [
+    { label: "Multi-entity ledger", on: true },
+    { label: "Approval workflows",  on: true },
+    { label: "Consolidation",       on: true },
+    { label: "Advanced RBAC",       on: false },
+  ];
+  return (
+    <StepVisualShell label="Configure modules">
+      <div className="flex flex-col gap-2 rounded-bz-xl border border-bz-line-soft bg-bz-surface p-4">
+        {mods.map((m) => (
+          <div
+            key={m.label}
+            className={`flex items-center justify-between rounded-bz-md px-3 py-2.5 ${m.on ? "bg-bz-paper-warm" : "border border-bz-line-soft bg-bz-paper"}`}
+          >
+            <span className="text-[13px] text-bz-text">{m.label}</span>
+            <div className={`relative h-4 w-7 rounded-bz-pill ${m.on ? "bg-bz-olive" : "bg-bz-line-soft"}`}>
               <div
-                className={`h-full rounded-full ${m.critical ? "bg-red-400" : "bg-bz-sage"}`}
-                style={{ width: `${Math.min((m.days / 20) * 100, 100)}%` }}
+                className={`absolute top-0.5 h-3 w-3 rounded-bz-pill ${m.on ? "right-0.5 bg-bz-leaf" : "left-0.5 bg-bz-paper"}`}
               />
             </div>
           </div>
         ))}
       </div>
-    ),
-  },
-  {
-    icon: AlertTriangle,
-    title: "Outgrown Your Current ERP",
-    desc: "That entry-level system worked at 20 users but breaks at 150. Custom workarounds multiply, and the vendor says the features you need are \"roadmap.\"",
-    footer: (
-      <div className="flex flex-col gap-2 mt-auto pt-4 border-t border-bz-border">
-        {[
-          { label: "Workaround Scripts", pct: 87 },
-          { label: "Native Automation",  pct: 11 },
-        ].map((row) => (
-          <div key={row.label} className="flex items-center gap-2">
-            <span className="text-[8px] font-bold text-bz-text-muted uppercase tracking-wide min-w-[96px]">{row.label}</span>
-            <div className="flex-1 h-1.5 bg-bz-bg rounded overflow-hidden">
-              <div className="h-full bg-red-300/60 rounded" style={{ width: `${row.pct}%` }} />
+    </StepVisualShell>
+  );
+}
+
+function StepLiveVisual() {
+  const stats = [
+    { v: "$4.24M", l: "Group revenue · MTD" },
+    { v: "3",      l: "Entities consolidated" },
+  ];
+  return (
+    <StepVisualShell label="You're live">
+      <div className="flex flex-col gap-2.5">
+        <div className="flex items-center gap-3 rounded-bz-xl border border-bz-line-soft bg-bz-surface p-4">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-bz-pill bg-bz-fire">
+            <Rocket size={15} strokeWidth={1.9} className="text-bz-deep" />
+          </span>
+          <div>
+            <p className="text-[12.5px] font-medium text-bz-text">Your group is live</p>
+            <p className="text-[10.5px] text-bz-text-muted">5 teams · 3 entities consolidated</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2.5">
+          {stats.map((s) => (
+            <div
+              key={s.l}
+              className="rounded-bz-xl border border-bz-line-soft bg-bz-surface p-3.5 text-center"
+            >
+              <p className="text-[18px] font-medium tabular-nums text-bz-text">{s.v}</p>
+              <p className="mt-1 text-[10px] text-bz-text-muted">{s.l}</p>
             </div>
-            <span className="text-[8px] font-bold text-red-400">{row.pct}%</span>
+          ))}
+        </div>
+      </div>
+    </StepVisualShell>
+  );
+}
+
+function GoLiveSection() {
+  return (
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="03"
+          label="Rollout"
+          title={
+            <>
+              Live in thirty days <Heading.Muted>not eighteen months.</Heading.Muted>
+            </>
+          }
+          description="Bizak rolls out without an IT project. Most groups migrate their entities, configure their approvals and onboard every team inside thirty working days."
+          titleMaxWidth={720}
+        />
+        <div className="flex flex-col gap-5">
+          <StepCard
+            number="01"
+            tag="Week one"
+            title="Bring every entity in"
+            bullets={[
+              "Migrate the chart of accounts, customers and open balances for each branch.",
+              "A guided importer maps every column and flags issues before anything saves.",
+            ]}
+            visual={<StepImportVisual />}
+          />
+          <StepCard
+            number="02"
+            tag="Week two"
+            title="Map entities and approval chains"
+            bullets={[
+              "Configure each branch, currency and intercompany rule with no custom code.",
+              "Build role-based approval chains for POs, budgets and journals same system.",
+            ]}
+            visual={<StepActivateVisual />}
+          />
+          <StepCard
+            number="03"
+            tag="Week three"
+            title="Onboard the group and go live"
+            bullets={[
+              "Role-based access for every team across every entity no IT bottleneck.",
+              "Consolidated dashboards light up the moment your first branch posts.",
+            ]}
+            visual={<StepLiveVisual />}
+          />
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ─── 04 · BUILT TO SCALE ──────────────────────────────────────────────────────
+
+function StageCard({
+  icon: Icon, stage, range, desc, modules, current,
+}: (typeof STAGES)[number]) {
+  return (
+    <div
+      className={`flex flex-col rounded-bz-2xl p-6 md:p-7 ${
+        current
+          ? "border border-bz-fire/35 bg-bz-olive-soft"
+          : "border border-white/[0.08] bg-white/[0.03]"
+      }`}
+    >
+      <div className="mb-5 flex items-center justify-between">
+        <span className="flex size-10 items-center justify-center rounded-bz-md bg-white/[0.06]">
+          <Icon
+            size={18}
+            strokeWidth={1.6}
+            className={current ? "text-bz-fire" : "text-bz-leaf"}
+          />
+        </span>
+        {current ? (
+          <StatusChip variant="live">You are here</StatusChip>
+        ) : (
+          <span className="text-[9.5px] font-semibold uppercase tracking-[0.1em] text-white/[0.4]">
+            Add later
+          </span>
+        )}
+      </div>
+      <p className="text-[10.5px] font-medium uppercase tracking-[0.12em] text-white/[0.45]">
+        {range}
+      </p>
+      <h3 className="bz-bento-title mt-1.5 text-bz-text-on-dark">{stage}</h3>
+      <p className="text-[13px] leading-[1.6] text-white/[0.6]">{desc}</p>
+      <div className="mt-6 flex flex-col gap-2 border-t border-white/[0.08] pt-5">
+        {modules.map((m) => (
+          <div key={m} className="flex items-center gap-2.5">
+            <span
+              className={`flex size-4 shrink-0 items-center justify-center rounded-bz-pill ${
+                current ? "bg-bz-fire" : "bg-white/[0.1]"
+              }`}
+            >
+              <Check
+                size={9}
+                strokeWidth={3}
+                className={current ? "text-bz-deep" : "text-white/[0.55]"}
+              />
+            </span>
+            <span className="text-[12.5px] text-white/[0.82]">{m}</span>
           </div>
         ))}
-        <span className="text-[9px] font-bold text-red-400 uppercase tracking-wide mt-1">Tech debt compounding</span>
       </div>
-    ),
-  },
-];
+    </div>
+  );
+}
 
-function ChallengesSection() {
+function ScaleSection() {
   return (
-    <Section tone="light">
+    <Section tone="dark">
+      <DotGrid tone="dark" />
       <Container>
-        <SectionHeading
-          eyebrow="Challenges"
-          title="Growing fast is easy. Managing that growth is where mid-market companies break."
-          description="At 50–500 employees, complexity compounds. Approval chains get long, entities multiply, and the systems built for 20 people can't keep up."
-          maxWidth={680}
-          className="mb-14"
+        <SectionHead
+          index="04"
+          label="Built to scale"
+          tone="dark"
+          title={
+            <>
+              A system you grow into,{" "}
+              <Heading.Muted>never one you outgrow.</Heading.Muted>
+            </>
+          }
+          description="Start with what a multi-entity group needs today. Switch on the rest as you expand into new regions."
+          titleMaxWidth={720}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {CHALLENGES.map(({ icon: ChalIcon, title, desc, footer }) => (
-            <Card key={title} tone="soft" className="flex flex-col">
-              <IconBadge tone="sage" size="md" className="mb-4">
-                <ChalIcon className="size-5" />
-              </IconBadge>
-              <h3 className="text-[17px] font-bold text-bz-text mb-2">{title}</h3>
-              <p className="text-[14px] text-bz-text-muted leading-[1.6]">{desc}</p>
-              {footer}
-            </Card>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
+          {STAGES.map((s) => (
+            <StageCard key={s.stage} {...s} />
           ))}
         </div>
       </Container>
@@ -296,482 +562,56 @@ function ChallengesSection() {
   );
 }
 
-// ─── Solution ─────────────────────────────────────────────────────────────────
+// ─── 05 · FAQ ─────────────────────────────────────────────────────────────────
 
-type SolutionItem = { icon: LucideIcon; title: string; desc: string };
-
-const SOLUTIONS: SolutionItem[] = [
-  { icon: Layers,      title: "Multi-Entity Financials",     desc: "Manage multiple subsidiaries in one platform. Auto-consolidate, handle intercompany eliminations, and close books in hours not days." },
-  { icon: CheckSquare, title: "Advanced Approval Workflows", desc: "Build multi-level, role-based approval chains for POs, budgets, and expenses. Auto-escalate when thresholds are breached." },
-  { icon: ShieldCheck, title: "Audit-Ready Controls",        desc: "Full audit trail, segregation of duties, and policy enforcement baked in. Every change is logged, every approval is documented." },
-  { icon: BarChart3,   title: "Executive Dashboards",        desc: "Board-level reporting in real time. P&L by entity, consolidated cashflow, and department KPIs available on any device." },
-  { icon: Plug,        title: "Deep Integrations",           desc: "Connect your bank feeds, CRM, payroll, and logistics platforms. Bizak becomes the operational backbone of your entire org." },
-  { icon: Lock,        title: "Role-Based Access Control",   desc: "Granular permissions ensure each team sees only what they need. Delegate without risk from CFO to field rep." },
-];
-
-function SolutionSection() {
+function FAQSection() {
   return (
-    <Section tone="white">
+    <Section tone="b">
       <Container>
-        <SectionHeading
-          eyebrow="The Solution"
-          title="Built for the complexity mid-market demands"
-          align="left"
-          className="mb-16"
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {SOLUTIONS.map(({ icon: SolIcon, title, desc }) => (
-            <div key={title} className="flex flex-col">
-              <IconBadge tone="sage" size="md" className="mb-4">
-                <SolIcon className="size-5" />
-              </IconBadge>
-              <h4 className="text-[17px] font-bold text-bz-text mb-2">{title}</h4>
-              <p className="text-[14px] text-bz-text-muted leading-[1.7]">{desc}</p>
+        <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[1fr_1.3fr]">
+          {/* Dark intro panel */}
+          <div className="relative flex min-h-[320px] flex-col justify-between overflow-hidden rounded-bz-2xl bg-bz-olive p-8 text-bz-text-on-dark">
+            <DotGrid tone="dark" />
+            <div className="relative">
+              <SectionHead
+                index="05"
+                label="FAQ"
+                tone="dark"
+                title={<>Frequently asked <Heading.Muted>questions.</Heading.Muted></>}
+                spacing="none"
+              />
             </div>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── Capabilities ─────────────────────────────────────────────────────────────
-
-const ENTITY_TABLE = [
-  { entity: "Dubai HQ",      revenue: "$2.1M", ebitda: "24%", status: "healthy" },
-  { entity: "Cairo Branch",  revenue: "$840K", ebitda: "18%", status: "healthy" },
-  { entity: "London Branch", revenue: "$1.3M", ebitda: "21%", status: "review"  },
-];
-
-const APPROVAL_STEPS = [
-  { step: "01", role: "Dept Head", status: "DONE",    ok: true  },
-  { step: "02", role: "Finance",   status: "DONE",    ok: true  },
-  { step: "03", role: "CFO",       status: "ACTIVE",  ok: true  },
-  { step: "04", role: "CEO",       status: "PENDING", ok: false },
-];
-
-const AUDIT_STATS: [string, string][] = [
-  ["100%",    "Audit Trail"],
-  ["<1 Day",  "Audit Prep"],
-  ["SOX-lite", "Controls"],
-];
-
-function CapabilitiesSection() {
-  return (
-    <Section tone="dark">
-      <Container>
-        <SectionHeading
-          eyebrow="Capabilities"
-          title="Enterprise power. Mid-market agility."
-          tone="light"
-          maxWidth={560}
-          className="mb-16"
-        />
-
-        <div className="grid grid-cols-6 gap-4">
-
-          {/* Consolidated Oversight */}
-          <div className="col-span-6">
-            <Card tone="dark" pad="lg" className="min-h-[260px]">
-              <div className="flex items-start gap-12 flex-wrap">
-                <div className="shrink-0">
-                  <div className="text-[42px] font-bold text-white leading-tight">$4.24M</div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/45 mt-2">Consolidated Revenue</p>
-                  <div className="flex gap-7 mt-5">
-                    {[{ val: "+22%", lbl: "YoY Growth" }, { val: "3", lbl: "Active Entities" }].map((s) => (
-                      <div key={s.lbl}>
-                        <div className="text-[22px] font-bold text-bz-accent">{s.val}</div>
-                        <div className="text-[9px] font-bold uppercase tracking-[0.1em] text-white/35 mt-1">{s.lbl}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex-1 min-w-[240px]">
-                  <h4 className="text-[18px] font-bold text-white mb-2">Consolidated Oversight</h4>
-                  <p className="text-[13px] text-white/50 leading-[1.6] mb-5">
-                    Revenue, costs, headcount, and approvals across all entities live in a single board-ready view.
-                  </p>
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b border-white/[0.06]">
-                        {["Entity", "Revenue", "EBITDA", "Status"].map((h, i) => (
-                          <th key={h} className={`text-[9px] font-bold uppercase tracking-[0.1em] text-white/30 pb-2.5 ${i > 1 ? "text-right" : "text-left"}`}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ENTITY_TABLE.map((row) => (
-                        <tr key={row.entity} className="border-b border-white/[0.04]">
-                          <td className="text-[11px] text-white py-2.5">{row.entity}</td>
-                          <td className="text-[11px] text-white/45 py-2.5">{row.revenue}</td>
-                          <td className="text-[11px] font-bold text-white/80 py-2.5 text-right">{row.ebitda}</td>
-                          <td className="py-2.5 text-right">
-                            <span className={`text-[9px] font-bold px-2 py-1 rounded uppercase tracking-[0.08em] ${
-                              row.status === "healthy" ? "bg-bz-accent/[0.12] text-bz-accent" : "bg-amber-400/10 text-amber-400"
-                            }`}>
-                              {row.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </Card>
+            <PillGroup className="relative mt-8">
+              <Pill variant="accent" href="https://system.bizakerp.com/account/self-register" withArrowUpRight>Get Started</Pill>
+              <Pill variant="ghostDark" href="/contact" withArrow>Talk to Sales</Pill>
+            </PillGroup>
           </div>
 
-          {/* Advanced Approvals */}
-          <div className="col-span-6 lg:col-span-3">
-            <Card tone="dark" pad="lg" className="h-full min-h-[420px] flex flex-col gap-6">
-              <div>
-                <h3 className="text-[18px] font-bold text-white mb-2">Advanced Approvals</h3>
-                <p className="text-[13px] text-white/50 leading-[1.6]">Multi-level, policy-driven approval chains across any module. Auto-escalate, auto-notify, and maintain a tamper-proof audit trail for every decision.</p>
-              </div>
-              <div className="mt-auto">
-                <div className="flex border-b border-white/[0.06] pb-2">
-                  {["STEP", "APPROVER", "STATUS"].map((h) => (
-                    <span key={h} className="text-[9px] font-bold uppercase tracking-[0.1em] text-white/30 flex-1">{h}</span>
-                  ))}
-                </div>
-                {APPROVAL_STEPS.map((r) => (
-                  <div key={r.step} className="flex border-b border-white/[0.04] py-2.5">
-                    <span className="text-[11px] text-white/50 flex-1">{r.step}</span>
-                    <span className="text-[11px] text-white/70 flex-1">{r.role}</span>
-                    <span className={`text-[11px] font-bold flex-1 ${r.ok ? "text-green-400" : "text-white/30"}`}>{r.status}</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-
-          {/* Audit & Compliance */}
-          <div className="col-span-6 lg:col-span-3">
-            <Card tone="dark" pad="lg" className="h-full min-h-[420px] flex flex-col">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h3 className="text-[18px] font-bold text-white mb-2">Audit & Compliance</h3>
-                  <p className="text-[13px] text-white/50 leading-[1.6]">Complete audit log, segregation of duties, and policy enforcement. Prepare for any audit in minutes not weeks.</p>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-bz-accent/10 flex items-center justify-center text-bz-accent shrink-0 ml-4">
-                  <ShieldCheck size={22} strokeWidth={1.8} />
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-3 mt-auto">
-                {AUDIT_STATS.map(([val, sub]) => (
-                  <div key={sub} className="bg-white/[0.04] rounded-bz-md p-3 text-center">
-                    <div className="text-[20px] font-bold text-bz-accent leading-tight">{val}</div>
-                    <div className="text-[9px] font-bold uppercase tracking-[0.08em] text-white/40 mt-1">{sub}</div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-
-          {/* Multi-Entity Management */}
-          <div className="col-span-6 lg:col-span-2">
-            <Card tone="dark" pad="lg" className="min-h-[240px]">
-              <Layers size={32} className="text-bz-accent mb-5" strokeWidth={1.8} />
-              <h4 className="text-[17px] font-bold text-white mb-2">Multi-Entity Management</h4>
-              <p className="text-[13px] text-white/50 leading-[1.6]">Manage subsidiaries, branches, and JVs from one platform. Intercompany transactions auto-eliminate at consolidation.</p>
-            </Card>
-          </div>
-
-          {/* Executive Reporting */}
-          <div className="col-span-6 lg:col-span-2">
-            <Card tone="dark" pad="lg" className="min-h-[240px] border-bz-accent/30 relative">
-              <div className="absolute top-5 right-5">
-                <PillBadge tone="accent" dot>Real-time</PillBadge>
-              </div>
-              <PieChart size={32} className="text-bz-accent mb-5" strokeWidth={1.8} />
-              <h4 className="text-[17px] font-bold text-white mb-2">Executive Reporting</h4>
-              <p className="text-[13px] text-white/50 leading-[1.6]">Board packs, management accounts, and KPI dashboards built live from your data no Excel assembly required.</p>
-            </Card>
-          </div>
-
-          {/* Granular Access Control */}
-          <div className="col-span-6 lg:col-span-2">
-            <Card tone="dark" pad="lg" className="min-h-[240px] flex flex-col">
-              <Lock size={32} className="text-bz-accent mb-5" strokeWidth={1.8} />
-              <h4 className="text-[17px] font-bold text-white mb-2">Granular Access Control</h4>
-              <p className="text-[13px] text-white/50 leading-[1.6]">Entity-level, department-level, and field-level permissions. Every user sees exactly what their role allows nothing more.</p>
-              <div className="mt-auto pt-4">
-                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-bz-accent rounded-full" style={{ width: "97%" }} />
-                </div>
-              </div>
-            </Card>
-          </div>
-
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── Insights ─────────────────────────────────────────────────────────────────
-
-const INSIGHT_BULLETS = [
-  { bold: "Real-Time Consolidation",     rest: " P&L, balance sheet, and cashflow across all entities with intercompany eliminations handled automatically." },
-  { bold: "Department-Level Visibility", rest: " Every team's budget vs actuals, approval queue, and KPIs in one unified view." },
-  { bold: "Board-Ready Reports",         rest: " Export investor-grade reports directly from live data no spreadsheet assembly needed." },
-];
-
-// ─── Workflow ─────────────────────────────────────────────────────────────────
-
-type WorkflowStep = { icon: LucideIcon; label: string };
-
-const WORKFLOW_STEPS: WorkflowStep[] = [
-  { icon: Settings,  label: "Configure"       },
-  { icon: Users,     label: "Set Permissions" },
-  { icon: Layers,    label: "Map Entities"    },
-  { icon: RefreshCw, label: "Migrate Data"    },
-  { icon: Plug,      label: "Integrate"       },
-  { icon: Rocket,    label: "Go Live"         },
-];
-
-function WorkflowSection() {
-  return (
-    <Section tone="light">
-      <Container>
-        <SectionHeading
-          eyebrow="Implementation"
-          title="Structured rollout. Zero disruption."
-          description="Our dedicated implementation team follows a proven 30-day playbook phased go-live, data migration included, and handover training for every team."
-          align="left"
-          maxWidth={520}
-          className="mb-16"
-        />
-        <div className="relative">
-          <div className="hidden md:block absolute top-7 left-[8%] right-[8%] pointer-events-none">
-            <svg className="w-full" height="4" viewBox="0 0 1000 4" fill="none" preserveAspectRatio="none">
-              <line x1="0" y1="2" x2="1000" y2="2" stroke="rgba(122,130,109,0.15)" strokeWidth="1.5" />
-              <path className="biz-flow" d="M0,2 L1000,2" stroke="#C7FF35" strokeDasharray="12 40" strokeLinecap="round" strokeWidth="3" />
-            </svg>
-          </div>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-            {WORKFLOW_STEPS.map(({ icon: StepIcon, label }) => (
-              <div key={label} className="flex flex-col items-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-bz-surface border border-bz-border flex items-center justify-center text-bz-sage relative z-10">
-                  <StepIcon size={22} strokeWidth={1.8} />
-                </div>
-                <span className="text-[12px] font-bold text-bz-text-muted text-center">{label}</span>
-              </div>
+          {/* Accordion */}
+          <Accordion defaultOpen={null}>
+            {FAQS.map((item, i) => (
+              <Accordion.Item key={i} question={item.q}>
+                {item.a}
+              </Accordion.Item>
             ))}
-          </div>
+          </Accordion>
         </div>
       </Container>
     </Section>
   );
 }
 
-// ─── Testimonials ─────────────────────────────────────────────────────────────
-
-const TESTIMONIALS = [
-  {
-    quote: "We consolidated three subsidiaries onto Bizak in 30 days. Month-end close dropped from 14 days to 3. Our CFO calls it a career highlight.",
-    name: "Tariq Al-Hassan",
-    role: "CEO, Meridian Holdings",
-    metric: "3-day month close",
-  },
-  {
-    quote: "The multi-level approval workflows alone saved us from two costly compliance findings in our last audit. Bizak paid for itself in the first quarter.",
-    name: "Sophie Nkemdirim",
-    role: "CFO, Stratum Group",
-    metric: "Zero audit findings",
-  },
-  {
-    quote: "We needed real-time visibility across four departments without giving everyone access to everything. Bizak's permission model is exactly what enterprises charge ten times more for.",
-    name: "David Leung",
-    role: "COO, Apex Distribution",
-    metric: "4 depts, 1 platform",
-  },
-];
-
-function TestimonialsSection() {
-  return (
-    <Section tone="white">
-      <Container>
-        <SectionHeading
-          eyebrow="Customer Stories"
-          title="Mid-market companies that made the move to Bizak"
-          align="center"
-          className="mb-14"
-        />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t) => (
-            <Card key={t.name} tone="light" hover="lift" className="flex flex-col gap-5">
-              <div className="flex gap-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <svg key={i} width={13} height={13} viewBox="0 0 24 24" fill="#C7FF35" stroke="#C7FF35" strokeWidth={1.5}>
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                ))}
-              </div>
-              <p className="text-[15px] text-bz-text-muted leading-[1.7] italic flex-1">"{t.quote}"</p>
-              <div className="flex justify-between items-end">
-                <div>
-                  <div className="text-[14px] font-bold text-bz-text">{t.name}</div>
-                  <div className="text-[12px] text-bz-text-muted mt-0.5">{t.role}</div>
-                </div>
-                <span className="text-[10px] font-bold text-bz-sage uppercase tracking-[0.06em] bg-bz-sage/[0.08] px-2.5 py-1.5 rounded-md whitespace-nowrap ml-3">
-                  {t.metric}
-                </span>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── Pricing ──────────────────────────────────────────────────────────────────
-
-type PricingPlan = {
-  tier: string; price: string; sub: string; subNote?: string;
-  features: string[]; highlight: boolean; badge: string | null;
-};
-
-const PRICING_PLANS: PricingPlan[] = [
-  {
-    tier: "Growth", price: "$49", sub: "Includes 5 users", subNote: "+$10/user up to 10",
-    features: ["1 Entity", "Advanced Workflows", "Executive Dashboards", "Standard Integrations", "Priority Support"],
-    highlight: false, badge: null,
-  },
-  {
-    tier: "Scale", price: "$89", sub: "Includes 10 users", subNote: "+$10/user up to 20",
-    features: ["Up to 5 Entities", "Multi-currency", "Consolidation Engine", "Audit Trail", "Advanced RBAC", "Dedicated CSM"],
-    highlight: true, badge: "Best for Mid-Market",
-  },
-  {
-    tier: "Enterprise", price: "Custom", sub: "50+ users · volume pricing",
-    features: ["Unlimited Entities", "Custom SLA", "SSO & SCIM", "On-premise Option", "Advanced RBAC", "Dedicated Account Manager"],
-    highlight: false, badge: null,
-  },
-];
-
-function PricingSection() {
-  const carouselRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const scaleCard = el.children[1] as HTMLElement;
-    if (scaleCard) el.scrollLeft = scaleCard.offsetLeft - el.offsetLeft;
-  }, []);
-
-  return (
-    <Section tone="light">
-      <Container>
-        <SectionHeading
-          eyebrow="Pricing"
-          title="Mid-market power without the enterprise price tag"
-          description="Transparent pricing that scales with your headcount and entity count. No hidden fees, no proprietary lock-in."
-          align="center"
-          maxWidth={560}
-          className="mb-14"
-        />
-        <div className="-mx-6 px-6 md:mx-0 md:px-0">
-        <div ref={carouselRef} className="flex overflow-x-auto gap-4 pt-5 pb-2 snap-x snap-mandatory md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:pt-0 md:max-w-[860px] md:mx-auto [&::-webkit-scrollbar]:hidden">
-          {PRICING_PLANS.map((plan) => (
-            <Card
-              key={plan.tier}
-              tone={plan.highlight ? "dark" : "soft"}
-              pad="lg"
-              className={`shrink-0 w-[78vw] max-w-[300px] snap-center md:w-auto md:max-w-none flex flex-col relative ${plan.highlight ? "bg-bz-deep border-bz-accent/40" : ""}`}
-            >
-              {plan.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-bz-accent text-bz-deep text-[10px] font-bold px-3.5 py-1 rounded-full uppercase tracking-[0.06em] whitespace-nowrap">
-                  {plan.badge}
-                </div>
-              )}
-              <div className={`text-[11px] font-bold uppercase tracking-[0.1em] mb-3 ${plan.highlight ? "text-white/50" : "text-bz-sage"}`}>
-                {plan.tier}
-              </div>
-              <div className={`text-[36px] font-bold leading-tight mb-1 ${plan.highlight ? "text-white" : "text-bz-text"}`}>
-                {plan.price}
-                {plan.price !== "Custom" && (
-                  <span className={`text-[15px] font-medium ml-0.5 ${plan.highlight ? "text-white/40" : "text-bz-text-muted"}`}>/mo</span>
-                )}
-              </div>
-              {plan.subNote ? (
-                <div className="flex flex-col gap-1.5 mb-7">
-                  <div className={`inline-flex items-center gap-1.5 self-start text-[11px] font-semibold px-2.5 py-1 rounded-md ${plan.highlight ? "bg-bz-accent/15 text-bz-accent" : "bg-bz-sage/10 text-bz-sage"}`}>
-                    <Users size={11} strokeWidth={2} />
-                    {plan.sub}
-                  </div>
-                  <div className={`inline-flex items-center gap-1.5 self-start text-[11px] font-medium px-2.5 py-1 rounded-md ${plan.highlight ? "bg-white/[0.06] text-white/40" : "bg-bz-bg border border-bz-border text-bz-text-muted"}`}>
-                    {plan.subNote}
-                  </div>
-                </div>
-              ) : (
-                <div className={`text-[13px] mb-7 ${plan.highlight ? "text-white/40" : "text-bz-text-muted"}`}>
-                  {plan.sub}
-                </div>
-              )}
-              <div className="flex flex-col gap-3 mb-8 flex-1">
-                {plan.features.map((f) => (
-                  <div key={f} className="flex items-center gap-2.5">
-                    <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? "bg-bz-accent/15" : "bg-bz-sage/10"}`}>
-                      <CheckCircle size={10} className={plan.highlight ? "text-bz-accent" : "text-bz-sage"} strokeWidth={2} />
-                    </div>
-                    <span className={`text-[13px] ${plan.highlight ? "text-white/75" : "text-bz-text-muted"}`}>{f}</span>
-                  </div>
-                ))}
-              </div>
-              <Button variant={plan.highlight ? "accent" : "outline"} href="/contact">
-                {plan.price === "Custom" ? "Talk to Sales" : "Get Started"}
-              </Button>
-            </Card>
-          ))}
-        </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── CTA ──────────────────────────────────────────────────────────────────────
-
-function CTASection() {
-  return (
-    <Section tone="dark">
-      <Container width="narrow">
-        <SectionHeading
-          title="Your complexity deserves a system built for it."
-          description="Join 800+ mid-market companies that replaced fragmented tools with Bizak. Multi-entity. Audit-ready. Live in 30 days."
-          tone="light"
-          align="center"
-          maxWidth={640}
-          className="mb-10"
-        />
-        <div className="flex flex-wrap justify-center gap-3">
-          <Button variant="accent" size="lg" href="/contact" withArrow>Request a Demo</Button>
-          <Button variant="ghostDark" size="lg" href="/contact">Talk to Sales</Button>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── PAGE ─────────────────────────────────────────────────────────────────────
 
 export function MidMarket() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <main>
-        <HeroSection />
-        <ChallengesSection />
-        <SolutionSection />
-        <CapabilitiesSection />
-        <WorkflowSection />
-        <TestimonialsSection />
-        <PricingSection />
-        <CTASection />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <HeroSection />
+      <StackCostSection />
+      <OnePlatformSection />
+      <GoLiveSection />
+      <ScaleSection />
+      <FAQSection />
+    </main>
   );
 }

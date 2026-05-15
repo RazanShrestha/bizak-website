@@ -30,8 +30,6 @@ import {
   MessageSquare,
   Globe,
   Award,
-  Star,
-  Heart,
   Rocket,
   Handshake,
   BookMarked,
@@ -44,6 +42,27 @@ import {
   Activity,
 } from "lucide-react";
 import bizakLogo from "../../assets/logo/SVG/all-black-horizontal-lockup.svg";
+
+// ─── Bizak wordmark (white) ───────────────────────────────────────────────────
+// The "bizak" lettering lifted from the all-white horizontal lockup, with the
+// leaf symbol dropped. Used by the dark header variant. fill="currentColor" so
+// the colour is theme-driven.
+function BizakWordmark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="223.86 2.5 348.59 120.17"
+      className={className}
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M224.86,119.5V8.83h19.56v41.39h.81c4.9-9.87,12.81-14.81,23.72-14.81,4.83,0,9.31.94,13.45,2.81,4.14,1.87,7.76,4.58,10.86,8.11,3.1,3.53,5.53,8.02,7.29,13.48,1.76,5.46,2.65,11.56,2.65,18.29s-.86,12.77-2.59,18.21c-1.73,5.44-4.13,9.94-7.19,13.51-3.06,3.57-6.67,6.31-10.83,8.24-4.16,1.93-8.69,2.89-13.59,2.89-10.92,0-18.84-4.84-23.78-14.54h-1.13v13.08h-19.24ZM249.15,58.6c-3.4,4.76-5.11,11.22-5.11,19.4s1.71,14.71,5.13,19.59c3.42,4.88,8.21,7.32,14.37,7.32s11.12-2.48,14.56-7.43c3.44-4.95,5.16-11.45,5.16-19.48,0-5.22-.73-9.81-2.19-13.75-1.46-3.94-3.68-7.06-6.67-9.35-2.99-2.29-6.61-3.43-10.86-3.43-6.2,0-11,2.38-14.4,7.13Z" />
+      <path d="M320.61,24.72c-3.13,0-5.81-1.03-8.02-3.11-2.22-2.07-3.32-4.57-3.32-7.48s1.11-5.47,3.32-7.54c2.21-2.07,4.89-3.11,8.02-3.11s5.75,1.04,7.97,3.11c2.22,2.07,3.32,4.58,3.32,7.54s-1.11,5.41-3.32,7.48-4.87,3.11-7.97,3.11ZM310.78,119.5V36.5h19.56v83h-19.56Z" />
+      <path d="M340.23,119.5v-12.43l42.8-53.66v-.7h-41.39v-16.21h65.33v13.35l-40.74,52.74v.7h42.15v16.21h-68.14Z" />
+      <path d="M441.55,121.17c-5.37,0-10.11-.93-14.24-2.78-4.13-1.85-7.41-4.69-9.86-8.51-2.45-3.82-3.67-8.38-3.67-13.67,0-3.6.59-6.81,1.78-9.62,1.19-2.81,2.73-5.1,4.62-6.86,1.89-1.77,4.26-3.27,7.11-4.51,2.85-1.24,5.67-2.16,8.48-2.76s5.98-1.09,9.51-1.49c8-.86,12.91-1.51,14.75-1.95,3.06-.72,4.9-1.93,5.51-3.62.18-.54.27-1.17.27-1.89v-.32c0-4.11-1.21-7.27-3.62-9.48-2.41-2.22-5.89-3.32-10.43-3.32s-8.21.99-11.1,2.97c-2.9,1.98-4.87,4.5-5.92,7.57l-18.26-2.59c2.13-7.42,6.3-13.09,12.51-17.02,6.21-3.93,13.77-5.89,22.67-5.89,3.35,0,6.56.28,9.62.84,3.06.56,6.09,1.53,9.08,2.92,2.99,1.39,5.57,3.13,7.75,5.24,2.18,2.11,3.93,4.84,5.27,8.19,1.33,3.35,2,7.13,2,11.35v55.55h-18.81v-11.4h-.65c-1.95,3.82-4.97,6.95-9.08,9.4-4.11,2.45-9.21,3.67-15.29,3.67ZM446.63,106.8c5.73,0,10.37-1.66,13.91-4.97,3.55-3.31,5.32-7.35,5.32-12.1v-9.78c-1.59,1.3-7.57,2.65-17.94,4.05-10.2,1.44-15.29,5.4-15.29,11.89,0,3.49,1.28,6.19,3.84,8.08,2.56,1.89,5.94,2.84,10.16,2.84Z" />
+      <path d="M495.96,119.5V8.83h19.56v61.01h1.35l29.83-33.34h22.86l-32.15,35.83,34.04,47.17h-23.4l-25.4-35.5-7.13,7.62v27.88h-19.56Z" />
+    </svg>
+  );
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -60,8 +79,19 @@ interface MenuColumn {
   items: MenuItem[];
 }
 
+interface FeaturedMenu {
+  icon: React.ReactNode;
+  eyebrow: string;
+  title: string;
+  description: string;
+  href: string;
+  ctaLabel: string;
+  highlights: { value: string; label: string }[];
+}
+
 interface MegaMenuData {
   columns: MenuColumn[];
+  featured?: FeaturedMenu;
   cta?: {
     label: string;
     buttonLabel: string;
@@ -123,33 +153,21 @@ const megaMenus: Record<string, MegaMenuData> = {
   },
 
   Customers: {
-    columns: [
-      {
-        heading: "Success Stories",
-        items: [
-          { icon: <Star size={16} />, title: "Customer Stories", description: "How teams scaled with Bizak" },
-          { icon: <BarChart3 size={16} />, title: "Case Studies", description: "Metrics and outcomes", href: "/case-studies" },
-          { icon: <Heart size={16} />, title: "Reviews & Ratings", description: "Verified G2, Capterra reviews" },
-        ],
-      },
-      {
-        heading: "By Industry",
-        items: [
-          { icon: <Factory size={16} />, title: "Manufacturing Wins", description: "Production efficiency gains" },
-          { icon: <Truck size={16} />, title: "Distribution Leaders", description: "Logistics transformations" },
-          { icon: <Store size={16} />, title: "Retail Champions", description: "Omnichannel POS wins" },
-        ],
-      },
-      {
-        heading: "Community",
-        items: [
-          { icon: <Users size={16} />, title: "Customer Community", description: "5,000+ Bizak users" },
-          { icon: <Award size={16} />, title: "Customer Advisory Board", description: "Shape the roadmap" },
-          { icon: <Calendar size={16} />, title: "BizakConnect", description: "Annual user summit", badge: "Sept 2025" },
-        ],
-      },
-    ],
-    cta: { label: "Join 5,000+ businesses growing with Bizak.", buttonLabel: "Read Stories" },
+    columns: [],
+    featured: {
+      icon: <BarChart3 size={20} />,
+      eyebrow: "Success Stories",
+      title: "Case Studies",
+      description:
+        "Real metrics and measurable outcomes from teams running on Bizak: faster closes, cleaner books, and operations built to scale.",
+      href: "/case-studies",
+      ctaLabel: "Explore all case studies",
+      highlights: [
+        { value: "100%", label: "Cloud-based platform" },
+        { value: "24/7", label: "Anytime, anywhere" },
+        { value: "12+", label: "Industries served" },
+      ],
+    },
   },
 
   Partners: {
@@ -166,16 +184,12 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Resources",
         items: [
           { icon: <BookOpen size={16} />, title: "Partner Portal", description: "Training & sales tools", href: "/partners/portal" },
-          { icon: <FileText size={16} />, title: "Marketplace", description: "List your extensions", href: "/partners/marketplace" },
-          { icon: <Globe size={16} />, title: "Find a Partner", description: "Locate certified partners", href: "/partners/find" },
         ],
       },
       {
         heading: "Grow Together",
         items: [
           { icon: <Rocket size={16} />, title: "Become a Partner", description: "Join the network", href: "/partners" },
-          { icon: <Award size={16} />, title: "Partner Awards", description: "Recognizing excellence", href: "/partners/awards" },
-          { icon: <Calendar size={16} />, title: "Partner Events", description: "Training & summits", href: "/partners/events" },
         ],
       },
     ],
@@ -187,7 +201,6 @@ const megaMenus: Record<string, MegaMenuData> = {
       {
         heading: "Learn",
         items: [
-          { icon: <BookOpen size={16} />, title: "Documentation", description: "Technical docs and APIs", href: "/documentation" },
           { icon: <FileText size={16} />, title: "Blog", description: "ERP, finance, ops insights", href: "/blog" },
           { icon: <BookMarked size={16} />, title: "Guides & Playbooks", description: "Implementation guides", href: "/GuidesAndPlaybooks" },
         ],
@@ -196,16 +209,7 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Support",
         items: [
           { icon: <HeadphonesIcon size={16} />, title: "Help Center", description: "Answers to common Qs", href: "/HelpCenter" },
-          { icon: <MessageSquare size={16} />, title: "Community Forum", description: "Ask peers, share tips", href: "/CommunityForum" },
           { icon: <GraduationCap size={16} />, title: "Training & Certification", description: "Courses & badges", href: "/TrainingAndCertification" },
-        ],
-      },
-      {
-        heading: "Tools",
-        items: [
-          { icon: <Calculator size={16} />, title: "ROI Calculator", description: "Estimate your savings" },
-          { icon: <FileText size={16} />, title: "Templates Library", description: "Finance & ops templates" },
-          { icon: <Video size={16} />, title: "Webinars & Events", description: "Live & on-demand", badge: "Live", href: "/WebinarsAndEvents" },
         ],
       },
     ],
@@ -219,7 +223,6 @@ const megaMenus: Record<string, MegaMenuData> = {
         items: [
           { icon: <Info size={16} />, title: "About Bizak", description: "Our story and mission", href: "/about" },
           { icon: <Target size={16} />, title: "Our Mission", description: "Clarity and control", href: "/OurMission" },
-          { icon: <Users size={16} />, title: "Leadership Team", description: "Meet the team", href: "/LeadershipTeam" },
         ],
       },
       {
@@ -227,15 +230,12 @@ const megaMenus: Record<string, MegaMenuData> = {
         items: [
           { icon: <Briefcase size={16} />, title: "Careers", description: "Build the future of ERP", badge: "Hiring", href: "/careers" },
           { icon: <FileText size={16} />, title: "Press & Media", description: "News and brand kit", href: "/PressAndMedia" },
-          { icon: <Calendar size={16} />, title: "Events", description: "Conferences and webinars" },
         ],
       },
       {
         heading: "Support & Trust",
         items: [
           { icon: <Mail size={16} />, title: "Contact Us", description: "Sales & support", href: "/contact" },
-          { icon: <Shield size={16} />, title: "Trust Center", description: "Compliance & policies" },
-          { icon: <Activity size={16} />, title: "System Status", description: "Live uptime monitoring", href: "/system-status" },
         ],
       },
     ],
@@ -280,10 +280,66 @@ function MegaItem({ item }: { item: MenuItem }) {
   );
 }
 
+// ─── Featured Menu Panel (single-focus menus, e.g. Customers) ─────────────────
+
+function FeaturedPanel({ data }: { data: FeaturedMenu }) {
+  return (
+    <a href={data.href} className="group block no-underline p-[22px]">
+      <div className="flex items-center gap-3.5">
+        <div className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center bg-bz-olive text-bz-leaf">
+          {data.icon}
+        </div>
+        <div className="min-w-0">
+          <div className="text-[11px] font-medium tracking-[0.2em] text-bz-text-soft uppercase leading-none">
+            {data.eyebrow}
+          </div>
+          <div className="font-semibold text-[17px] text-bz-text tracking-[-0.01em] mt-[7px] leading-none">
+            {data.title}
+          </div>
+        </div>
+      </div>
+
+      <p className="text-[13px] text-bz-text-muted mt-3.5 leading-[1.55] mb-0">
+        {data.description}
+      </p>
+
+      <div className="grid grid-cols-3 mt-[18px] rounded-bz-2xl bg-bz-paper-warm overflow-hidden">
+        {data.highlights.map((h, i) => (
+          <div
+            key={h.label}
+            className={`px-4 py-3.5 ${i > 0 ? "border-l border-bz-line-soft" : ""}`}
+          >
+            <div className="text-[19px] font-semibold text-bz-text tracking-[-0.02em] leading-none">
+              {h.value}
+            </div>
+            <div className="text-[11px] text-bz-text-muted mt-[7px] leading-[1.3]">
+              {h.label}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex items-center justify-between mt-[18px] pt-[18px] border-t border-bz-line-soft">
+        <span className="text-[13.5px] font-medium text-bz-text tracking-[-0.005em]">
+          {data.ctaLabel}
+        </span>
+        <span className="w-7 h-7 rounded-full bg-bz-olive text-bz-leaf flex items-center justify-center flex-shrink-0 transition-transform duration-150 group-hover:translate-x-0.5">
+          <ArrowRight size={14} />
+        </span>
+      </div>
+    </a>
+  );
+}
+
 // ─── Mega Menu Panel ──────────────────────────────────────────────────────────
 
 function MegaPanel({ data, visible }: { data: MegaMenuData; visible: boolean }) {
   const colCount = data.columns.length;
+  const width = data.featured
+    ? "min(520px, calc(100vw - 32px))"
+    : colCount === 3
+      ? "min(1180px, calc(100vw - 32px))"
+      : "min(820px, calc(100vw - 32px))";
   return (
     <div
       onMouseDown={(e) => e.stopPropagation()}
@@ -297,50 +353,54 @@ function MegaPanel({ data, visible }: { data: MegaMenuData; visible: boolean }) 
         opacity: visible ? 1 : 0,
         pointerEvents: visible ? "all" : "none",
         transition: "opacity 0.2s ease, transform 0.22s ease",
-        width: colCount === 3 ? "min(1180px, calc(100vw - 32px))" : "min(820px, calc(100vw - 32px))",
+        width,
         boxShadow: "0 4px 32px rgba(15,20,17,0.08)",
       }}
     >
-      <div className="px-[26px] pt-[26px] pb-[22px]">
-        <div
-          className="grid gap-x-6 gap-y-3"
-          style={{ gridTemplateColumns: `repeat(${colCount}, 1fr)` }}
-        >
-          {data.columns.map((col, ci) => (
-            <div key={ci} className="relative">
-              {ci > 0 && (
-                <div aria-hidden className="absolute left-[-12px] top-2 bottom-2 w-px bg-bz-line-soft" />
-              )}
-              {col.heading && (
-                <div className="text-[11px] font-medium tracking-[0.2em] text-bz-text-soft uppercase px-3 pb-3">
-                  {col.heading}
+      {data.featured ? (
+        <FeaturedPanel data={data.featured} />
+      ) : (
+        <div className="px-[26px] pt-[26px] pb-[22px]">
+          <div
+            className="grid gap-x-6 gap-y-3"
+            style={{ gridTemplateColumns: `repeat(${colCount}, 1fr)` }}
+          >
+            {data.columns.map((col, ci) => (
+              <div key={ci} className="relative">
+                {ci > 0 && (
+                  <div aria-hidden className="absolute left-[-12px] top-2 bottom-2 w-px bg-bz-line-soft" />
+                )}
+                {col.heading && (
+                  <div className="text-[11px] font-medium tracking-[0.2em] text-bz-text-soft uppercase px-3 pb-3">
+                    {col.heading}
+                  </div>
+                )}
+                <div className="flex flex-col gap-0.5">
+                  {col.items.map((it, ii) => (
+                    <MegaItem key={ii} item={it} />
+                  ))}
                 </div>
-              )}
-              <div className="flex flex-col gap-0.5">
-                {col.items.map((it, ii) => (
-                  <MegaItem key={ii} item={it} />
-                ))}
               </div>
-            </div>
-          ))}
-        </div>
-
-        {data.cta && (
-          <div className="mt-[18px] px-[18px] py-4 rounded-bz-xl bg-bz-olive flex items-center justify-between gap-[14px] flex-wrap">
-            <div className="text-[14px] font-medium text-bz-text-on-dark tracking-[-0.005em]">
-              {data.cta.label}
-            </div>
-            <a
-              href={data.cta.href || "#"}
-              onClick={!data.cta.href ? (e) => e.preventDefault() : undefined}
-              className="bz-pill bz-pill-accent"
-            >
-              {data.cta.buttonLabel}
-              <ArrowRight size={14} />
-            </a>
+            ))}
           </div>
-        )}
-      </div>
+
+          {data.cta && (
+            <div className="mt-[18px] px-[18px] py-4 rounded-bz-xl bg-bz-olive flex items-center justify-between gap-[14px] flex-wrap">
+              <div className="text-[14px] font-medium text-bz-text-on-dark tracking-[-0.005em]">
+                {data.cta.label}
+              </div>
+              <a
+                href={data.cta.href || "#"}
+                onClick={!data.cta.href ? (e) => e.preventDefault() : undefined}
+                className="bz-pill bz-pill-accent"
+              >
+                {data.cta.buttonLabel}
+                <ArrowRight size={14} />
+              </a>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -421,7 +481,45 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                     transition: "max-height 0.32s ease",
                   }}
                 >
-                  {data && (
+                  {data?.featured && (
+                    <div className="px-1.5 pb-3 pt-1.5">
+                      <a
+                        href={data.featured.href}
+                        onClick={onClose}
+                        className="block no-underline rounded-bz-xl border border-bz-line-soft bg-bz-paper-warm p-4"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-bz-olive text-bz-leaf flex items-center justify-center flex-shrink-0">
+                            {data.featured.icon}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-[10px] font-medium tracking-[0.18em] text-bz-text-soft uppercase">
+                              {data.featured.eyebrow}
+                            </div>
+                            <div className="font-semibold text-[14px] text-bz-text mt-0.5">
+                              {data.featured.title}
+                            </div>
+                          </div>
+                        </div>
+                        <p className="text-[12px] text-bz-text-muted mt-2.5 leading-[1.5] mb-0">
+                          {data.featured.description}
+                        </p>
+                        <div className="grid grid-cols-3 gap-2.5 mt-3.5 pt-3.5 border-t border-bz-line-soft">
+                          {data.featured.highlights.map((h) => (
+                            <div key={h.label}>
+                              <div className="text-[15px] font-semibold text-bz-text leading-none">
+                                {h.value}
+                              </div>
+                              <div className="text-[10px] text-bz-text-muted mt-1 leading-[1.3]">
+                                {h.label}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </a>
+                    </div>
+                  )}
+                  {data && !data.featured && (
                     <div className="px-1.5 pb-2.5 pt-1">
                       {data.columns.map((col, ci) => (
                         <div key={ci} className="mb-2">
@@ -491,7 +589,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 
 // ─── Header ───────────────────────────────────────────────────────────────────
 
-export function Header() {
+export function Header({ dark = false }: { dark?: boolean } = {}) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
@@ -523,15 +621,25 @@ export function Header() {
     <>
       <header
         ref={headerRef}
-        className="relative bg-bz-section-b border-b py-1 lg:pt-2 lg:pb-3"
-        style={{ borderBottomColor: "rgba(15,20,17,0.08)" }}
+        className={`relative border-b py-1 lg:pt-2 lg:pb-3 ${
+          dark ? "bz-nav--dark bg-bz-olive" : "bg-bz-section-b"
+        }`}
+        style={{ borderBottomColor: dark ? "transparent" : "rgba(15,20,17,0.08)" }}
       >
         <div className="bz-container-px" style={{ maxWidth: 1320, margin: "0 auto" }}>
           <div className="bz-nav-card">
 
             {/* Logo */}
-            <a href="/" className="flex items-center no-underline flex-shrink-0 mr-7">
-              <img src={bizakLogo} alt="Bizak ERP" className="h-6 w-auto" />
+            <a
+              href="/"
+              aria-label="Bizak ERP"
+              className="flex items-center no-underline flex-shrink-0 mr-7"
+            >
+              {dark ? (
+                <BizakWordmark className="h-[22px] w-auto text-bz-paper" />
+              ) : (
+                <img src={bizakLogo} alt="Bizak ERP" className="h-6 w-auto" />
+              )}
             </a>
 
             {/* Desktop nav */}
@@ -555,7 +663,11 @@ export function Header() {
                         <ChevronDown
                           size={13}
                           className={`ml-0.5 transition-[transform,color] duration-200 ${
-                            isActive ? "text-bz-text rotate-180" : "text-bz-text-soft"
+                            isActive
+                              ? `rotate-180 ${dark ? "text-bz-text-on-dark" : "text-bz-text"}`
+                              : dark
+                                ? "text-white/55"
+                                : "text-bz-text-soft"
                           }`}
                         />
                       )}
@@ -575,14 +687,16 @@ export function Header() {
               >
                 Sign in
               </a>
-              <Pill variant="dark" href="/contact" withArrow>
+              <Pill variant={dark ? "accent" : "dark"} href="/contact" withArrow>
                 Request Demo
               </Pill>
             </div>
 
             {/* Mobile hamburger */}
             <button
-              className="flex lg:hidden ml-auto w-11 h-11 items-center justify-center border-none bg-transparent cursor-pointer text-bz-text"
+              className={`flex lg:hidden ml-auto w-11 h-11 items-center justify-center border-none bg-transparent cursor-pointer ${
+                dark ? "text-bz-text-on-dark" : "text-bz-text"
+              }`}
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
             >

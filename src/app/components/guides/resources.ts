@@ -114,7 +114,7 @@ export const RESOURCES: Resource[] = [
     slug: "sixty-day-implementation",
     category: "implementation",
     format: "Playbook",
-    title: "From kickoff to go-live: the 60-day Bizak implementation playbook",
+    title: "From kickoff to go-live: the Bizak implementation playbook",
     summary:
       "A week-by-week field guide for the operations lead running a Bizak rollout every milestone, owner, and decision gate.",
     readTime: "60 min",
@@ -147,7 +147,7 @@ export const RESOURCES: Resource[] = [
     chapters: [
       {
         id: "discover",
-        title: "Phase 1 · Discover (Week 1 – 2)",
+        title: "Phase 1 · Discover (Week 1-2)",
         intro:
           "Map the operating model, agree on the modules in scope, and name owners for every workstream before a single record moves.",
         tasks: [
@@ -175,7 +175,7 @@ export const RESOURCES: Resource[] = [
       },
       {
         id: "configure",
-        title: "Phase 2 · Configure (Week 2 – 4)",
+        title: "Phase 2 · Configure (Week 2-4)",
         intro:
           "Stand up Bizak to mirror how your business actually runs chart of accounts, item master, approval flows, branding.",
         tasks: [
@@ -203,7 +203,7 @@ export const RESOURCES: Resource[] = [
       },
       {
         id: "migrate",
-        title: "Phase 3 · Migrate (Week 3 – 5)",
+        title: "Phase 3 · Migrate (Week 3-5)",
         intro:
           "Move master data and opening balances using validated templates every record reconciled against your source system.",
         tasks: [
@@ -231,7 +231,7 @@ export const RESOURCES: Resource[] = [
       },
       {
         id: "train",
-        title: "Phase 4 · Train (Week 5 – 7)",
+        title: "Phase 4 · Train (Week 5-7)",
         intro:
           "Role-based enablement so each team learns the workflows they'll actually run measured by certification, not by attendance.",
         tasks: [
@@ -259,7 +259,7 @@ export const RESOURCES: Resource[] = [
       },
       {
         id: "golive",
-        title: "Phase 5 · Go-live (Week 7 – 8)",
+        title: "Phase 5 · Go-live (Week 7-8)",
         intro:
           "Cut over on a controlled weekend, switch users on Monday, and run a hyper-care war-room for the first two weeks.",
         tasks: [
@@ -287,7 +287,7 @@ export const RESOURCES: Resource[] = [
       },
       {
         id: "optimise",
-        title: "Phase 6 · Optimise (Day 30 – 90+)",
+        title: "Phase 6 · Optimise (Day 30-90+)",
         intro:
           "Tune dashboards, automate the workflows you deferred, and graduate to advanced modules once the foundation is stable.",
         tasks: [
@@ -336,8 +336,8 @@ export const RESOURCES: Resource[] = [
     ],
     faqs: [
       {
-        q: "Can the rollout actually happen in 60 days?",
-        a: "The 60-day arc fits a clean mid-market scope single entity, standard modules, a project lead with executive air-cover. Multi-entity, complex integrations, or contested data ownership push it to 12 weeks or more. The phases stay the same; the durations stretch.",
+        q: "How long does a rollout actually take?",
+        a: "There's no fixed timeline. Duration scales with your organization. A clean scope (single entity, standard modules, a project lead with executive air-cover) moves quickly. Multi-entity setups, complex integrations, or contested data ownership stretch it further. The phases stay the same; only the durations change with your size and requirements.",
       },
       {
         q: "Who needs to be on the project team?",
@@ -1013,7 +1013,7 @@ export const RESOURCES: Resource[] = [
         title: "Pack contents",
         intro: "Three workflow JSONs, ready to import. Edit thresholds, edit approvers, ship.",
         tasks: [
-          { title: "Discount approval flow", detail: "Tiered: under 5% auto-approve, 5–15% manager, 15%+ CFO." },
+          { title: "Discount approval flow", detail: "Tiered: under 5% auto-approve, 5-15% manager, 15%+ CFO." },
           { title: "Credit-limit override flow", detail: "Routes overrides above customer credit limit to AR + finance." },
           { title: "Margin-floor exception flow", detail: "Trips when quote margin drops below your floor. Routes to commercial lead." },
         ],

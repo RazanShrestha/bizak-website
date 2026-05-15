@@ -170,7 +170,7 @@ function HeroSection() {
       <Container>
         <div className="flex flex-col items-center text-center">
           <BadgeGreen style={{ marginBottom: 28 }}>
-            Sell everywhere, fulfil flawlessly
+            Sell Stock Settle
           </BadgeGreen>
           <Heading level={2} style={{ marginBottom: 36 }}>
             Sell everywhere. Fulfil flawlessly and{" "}{<br className="hidden md:block"/>}
@@ -182,7 +182,7 @@ function HeroSection() {
             <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
-            <Pill variant="light" withArrow href="/contact">
+            <Pill variant="light" href="/contact">
               Request Demo
             </Pill>
           </PillGroup>
@@ -214,7 +214,7 @@ function CapabilitiesSection() {
           actions={
             <PillGroup>
               <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">Get Started</Pill>
-              <Pill variant="light" withArrow href="/contact">Request Demo</Pill>
+              <Pill variant="light" href="/contact">Request Demo</Pill>
             </PillGroup>
           }
         />
@@ -322,7 +322,6 @@ function ChannelSyncVisual() {
       </div>
       <div className="mb-2 rounded-bz-md bg-bz-paper-warm px-3 py-2.5">
         <div className="text-[11.5px] font-medium text-bz-text">Shared Pool · 48 units</div>
-        <div className="text-[10.5px] text-bz-text-muted">Across all channels</div>
       </div>
       <div className="mb-3 ml-3 flex flex-col gap-1.5 border-l border-bz-line-soft pl-3">
         {[
@@ -457,7 +456,7 @@ function SaleLedgerVisual() {
         <div className="text-[11.5px] text-bz-text-muted">Orders completed · today</div>
         <ShoppingCart size={16} color="#1F3422" />
       </div>
-      <div className="bz-stat-num" style={{ fontSize: 28 }}>$0</div>
+      <div className="bz-stat-num" style={{ fontSize: 28 }}>$982</div>
       <div className="mb-4 pb-6 text-[11px] text-bz-text-muted">Manual journal entries at sale close</div>
 
       <div className="flex flex-col gap-1.5">
@@ -505,7 +504,6 @@ function SaleToLedgerSection() {
             title: "Every sale auto-posts to inventory and the books.",
             bullets: [
               "Revenue, COGS, and inventory update in a single balanced entry per order.",
-              "Margin is live the moment the sale completes not at month-end reconciliation.",
             ],
             cta: { variant: "accent", withArrow: true, href: "/contact", children: "Talk to Sales" },
           }}

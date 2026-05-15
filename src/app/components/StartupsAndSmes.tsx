@@ -1,191 +1,135 @@
 import "../../styles/style.css";
+import * as React from "react";
 import {
-  BarChart3, Check, CheckCircle2, DollarSign, Package,
-  Plug, Rocket, Settings, ShoppingCart, Zap,
-  type LucideIcon,
+  ArrowRight, BarChart3, Building2, Calculator, Check, CheckCircle2,
+  ChevronDown, ChevronRight, CreditCard, FileSpreadsheet, KanbanSquare,
+  Landmark, Package, Receipt, Rocket, ShoppingCart, Table2, TrendingUp,
+  UploadCloud, Users, Workflow, type LucideIcon,
 } from "lucide-react";
 import {
-  BadgeGreen, Bento, BentoGrid, BigCard, Container, Heading,
-  Pill, PillGroup, Section, SectionHead, StatusChip, StepCard,
+  Accordion, BadgeGreen, BigCard, Container, DotGrid, Heading, Pill, PillGroup,
+  Section, SectionHead, StatusChip, StepCard, Tick,
 } from "./bz";
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
-const BEFORE_TOOLS = [
-  { name: "QuickBooks",     sub: "Finance",   lag: "30d stale"  },
-  { name: "Excel",          sub: "Inventory", lag: "Manual"     },
-  { name: "HubSpot",        sub: "CRM",       lag: "14d stale"  },
-  { name: "Google Sheets",  sub: "Reporting", lag: "No sync"    },
+const FLOW: { icon: LucideIcon; module: string; title: string; detail: string }[] = [
+  { icon: ShoppingCart, module: "Sales & CRM", title: "Order placed",   detail: "SO-1042 confirmed for $4,820" },
+  { icon: Package,      module: "Inventory",   title: "Stock reserved",  detail: "3 items allocated · COGS recorded" },
+  { icon: Receipt,      module: "Financial",   title: "Invoice raised",  detail: "INV-2046 sent · AR and tax posted" },
+  { icon: BarChart3,    module: "Reporting",   title: "Books updated",   detail: "Revenue live on the P&L" },
 ];
 
-const AFTER_MODULES = [
-  "Financial Mgmt", "Sales & CRM",
-  "Inventory",      "Purchasing",
-  "Reporting",      "Workflow",
+const SYMPTOMS = [
+  "The same figure lives in three files and no two of them agree.",
+  "Every new hire needs six logins before they can get anything done.",
 ];
 
-const PAINS = [
+const STACK: { icon: LucideIcon; name: string; cat: string; tag: string }[] = [
+  { icon: Calculator,      name: "QuickBooks",    cat: "Accounting & invoicing", tag: "$90/mo" },
+  { icon: Users,           name: "HubSpot",       cat: "CRM & pipeline",         tag: "$180/mo" },
+  { icon: Table2,          name: "Excel",         cat: "Inventory tracking",     tag: "Manual entry" },
+  { icon: FileSpreadsheet, name: "Google Sheets", cat: "Reporting & dashboards", tag: "No live sync" },
+  { icon: KanbanSquare,    name: "Trello",        cat: "Tasks & approvals",      tag: "$60/mo" },
+  { icon: CreditCard,      name: "Bill.com",      cat: "Vendor payments",        tag: "$79/mo" },
+];
+
+const REPLACES: { old: string; icon: LucideIcon; module: string }[] = [
+  { old: "QuickBooks",    icon: Landmark,     module: "Financial Management" },
+  { old: "HubSpot",       icon: Users,        module: "Sales & CRM" },
+  { old: "Excel",         icon: Package,      module: "Inventory" },
+  { old: "Bill.com",      icon: ShoppingCart, module: "Purchasing" },
+  { old: "Google Sheets", icon: BarChart3,    module: "Dashboards & Reporting" },
+  { old: "Trello",        icon: Workflow,     module: "Workflow Automation" },
+];
+
+const STAGES: {
+  icon: LucideIcon; stage: string; range: string; desc: string;
+  modules: string[]; current: boolean;
+}[] = [
   {
-    icon: Package,
-    title: "Spreadsheet overload",
-    desc: "Critical data scattered across Excel sheets leads to version conflicts, errors, and decisions based on numbers that are already out of date.",
-    tone: "paper" as const,
-    footer: (
-      <div className="flex flex-col gap-1.5">
-        {[
-          { name: "Sales_Q1_FINAL.xlsx",     conflict: true  },
-          { name: "Inventory_v7_ACTUAL.xlsx", conflict: true  },
-          { name: "Finance_Mar_CORRECT.xlsx", conflict: false },
-        ].map((f) => (
-          <div key={f.name} className="flex items-center justify-between rounded-bz-md border border-bz-line bg-bz-paper px-2.5 py-1.5">
-            <span className="text-[11px] text-bz-text truncate">{f.name}</span>
-            {f.conflict && (
-              <span className="shrink-0 ml-2 text-[9.5px] font-medium text-rose-500">Conflict</span>
-            )}
-          </div>
-        ))}
-      </div>
-    ),
+    icon: Rocket, stage: "Starting out", range: "1 – 25 people", current: true,
+    desc: "The essentials, pre-configured invoice, sell and track stock from day one.",
+    modules: ["Financial Management", "Sales & CRM", "Inventory"],
   },
   {
-    icon: BarChart3,
-    title: "No real-time visibility",
-    desc: "Finance closes monthly, inventory counted quarterly. By the time you see a problem, the damage is already done.",
-    tone: "dark" as const,
-    footer: (
-      <div className="flex flex-col gap-1.5">
-        {[
-          { label: "Cash position",  lag: "30 days stale" },
-          { label: "Stock levels",   lag: "3 wks stale"   },
-          { label: "Sales pipeline", lag: "14 days stale" },
-        ].map((r) => (
-          <div key={r.label} className="flex items-center justify-between rounded-bz-md bg-white/[0.06] px-2.5 py-1.5">
-            <span className="text-[11px] text-bz-text-on-dark">{r.label}</span>
-            <span className="text-[9.5px] font-medium text-rose-400">{r.lag}</span>
-          </div>
-        ))}
-      </div>
-    ),
+    icon: TrendingUp, stage: "Scaling up", range: "25 – 80 people", current: false,
+    desc: "Add depth as headcount and order volume climb no migration, no new vendor.",
+    modules: ["Purchasing & approvals", "Projects & job costing", "Workflow automation"],
   },
   {
-    icon: Plug,
-    title: "Patchwork app stack",
-    desc: "Accounting in QuickBooks, CRM in HubSpot, inventory in another tool each integration is a fragile bridge that breaks at the worst time.",
-    tone: "paper" as const,
-    footer: (
-      <div>
-        <div className="flex items-center justify-center gap-1.5 mb-3">
-          {["QB", "HS", "SH", "GS"].map((app, i) => (
-            <span key={app} className="flex items-center gap-1">
-              <span className="size-7 rounded-bz-md bg-bz-paper-warm border border-bz-line flex items-center justify-center text-[9px] font-bold text-bz-text">
-                {app}
-              </span>
-              {i < 3 && <span className="w-3 h-px bg-rose-300/60" />}
-            </span>
-          ))}
-        </div>
-        <p className="text-center text-[9.5px] font-medium uppercase tracking-wide text-bz-text-muted">
-          4 tools · 0 single source of truth
-        </p>
-      </div>
-    ),
+    icon: Building2, stage: "Established", range: "80+ people", current: false,
+    desc: "Run multiple branches and entities on one consolidated set of books.",
+    modules: ["Multi-company & branches", "Manufacturing", "Advanced reporting"],
   },
 ];
 
-const MODULES: { icon: LucideIcon; label: string }[] = [
-  { icon: DollarSign,   label: "Financial Mgmt" },
-  { icon: ShoppingCart, label: "Sales & CRM"     },
-  { icon: Package,      label: "Inventory"       },
-  { icon: Settings,     label: "Purchasing"      },
-  { icon: BarChart3,    label: "Reporting"       },
-  { icon: Zap,          label: "Workflow"        },
-];
-
-const IMPACT_STATS = [
-  {
-    value: "50,000+",
-    label: "Companies on Bizak",
-    desc:  "From 5-person startups to 250-person mid-market businesses, all running on one platform.",
-  },
-  {
-    value: "3 Days",
-    label: "Average go-live",
-    desc:  "Pre-configured modules for common SME workflows import data, invite your team, and ship.",
-  },
-  {
-    value: "60%",
-    label: "Faster month-end close",
-    desc:  "Automated reconciliation and auto-posted journals cut close times in half.",
-  },
+const FAQS = [
+  { q: "How long does it take to get up and running?",            a: "Most teams go live in about three working days. Upload customers, products and open invoices, switch on the modules you need, then invite the team no consultant, no IT project and no migration sprint." },
+  { q: "Do I pay for modules I'm not using yet?",                 a: "No. Every module is included in one plan there are no add-ons and no per-seat surprises. Start with Finance, Sales and Inventory, then switch on Purchasing, Projects or Reporting whenever you're ready, on the same system." },
+  { q: "Can Bizak import data from QuickBooks, HubSpot or spreadsheets?", a: "Yes. A guided importer pulls customers, products and open invoices straight from CSV exports or your old tools. It maps every column and flags issues before anything saves, so you start clean." },
+  { q: "What happens when my team grows past the starter modules?", a: "Nothing breaks and nothing moves. As headcount and order volume climb you switch on Purchasing, job costing, workflow automation, multi-company and more all on the same shared database, with no new vendor and no re-platforming." },
 ];
 
 // ─── HERO ─────────────────────────────────────────────────────────────────────
 
-function HeroBeforeCard() {
+function FlowCard({
+  icon: Icon, module, title, detail, index,
+}: (typeof FLOW)[number] & { index: number }) {
   return (
-    <div className="rounded-bz-2xl border border-bz-line-soft bg-bz-surface p-5 flex flex-col sm:min-h-[340px]">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-[10.5px] font-medium uppercase tracking-[0.1em] text-bz-text-soft">
-          Before Bizak
+    <div className="flex flex-1 flex-col rounded-bz-xl border border-bz-line-soft bg-bz-paper p-4 md:p-[18px]">
+      <div className="mb-3.5 flex items-center justify-between">
+        <span className="flex size-9 items-center justify-center rounded-bz-md bg-bz-paper-warm">
+          <Icon size={16} strokeWidth={1.7} className="text-bz-olive" />
         </span>
-        <span className="flex items-center gap-1.5 text-[10px] font-medium text-rose-500 uppercase tracking-wide">
-          <span className="size-1.5 rounded-full bg-rose-400 shrink-0" />
-          Fragmented
+        <span className="text-[10px] font-semibold tabular-nums tracking-[0.08em] text-bz-text-soft">
+          0{index}
         </span>
       </div>
-      <div className="flex flex-col gap-2 flex-1">
-        {BEFORE_TOOLS.map((tool) => (
-          <div
-            key={tool.name}
-            className="flex items-center justify-between rounded-bz-md border border-bz-line-soft bg-bz-paper px-3 py-2.5"
-          >
-            <div>
-              <p className="text-[12.5px] font-medium text-bz-text">{tool.name}</p>
-              <p className="text-[10px] text-bz-text-muted">{tool.sub}</p>
-            </div>
-            <span className="shrink-0 ml-2 text-[9.5px] font-medium text-rose-500 bg-rose-50 px-2 py-0.5 rounded">
-              {tool.lag}
-            </span>
-          </div>
-        ))}
-      </div>
-      <div className="mt-4 pt-3.5 border-t border-bz-line-soft">
-        <p className="text-[10px] font-medium uppercase tracking-wide text-rose-400">
-          4 tools · 0 single source of truth
-        </p>
-      </div>
+      <span className="text-[9px] font-semibold uppercase tracking-[0.13em] text-bz-text-soft">
+        {module}
+      </span>
+      <p className="mt-1.5 text-[14px] font-medium leading-[1.3] text-bz-text">{title}</p>
+      <p className="mt-2 text-[11.5px] leading-[1.5] text-bz-text-muted">{detail}</p>
     </div>
   );
 }
 
-function HeroAfterCard() {
+function FlowConnector() {
   return (
-    <div className="rounded-bz-2xl overflow-hidden bg-bz-paper flex flex-col sm:min-h-[340px]">
-      <div className="bg-bz-olive px-5 py-3.5 flex items-center justify-between">
-        <span className="text-[14px] font-medium text-bz-text-on-dark">
-          Bizak<sup className="ml-0.5 text-[8px] opacity-60">®</sup>
-        </span>
-        <StatusChip variant="live">Live</StatusChip>
-      </div>
-      <div className="p-5 flex flex-col flex-1">
-        <div className="grid grid-cols-2 gap-2 flex-1">
-          {AFTER_MODULES.map((mod) => (
-            <div
-              key={mod}
-              className="flex items-center gap-2 rounded-bz-md bg-bz-paper-warm border border-bz-line-soft px-3 py-2.5"
-            >
-              <span className="size-4 rounded-full bg-bz-fire flex items-center justify-center shrink-0">
-                <Check size={9} strokeWidth={2.5} className="text-bz-deep" />
-              </span>
-              <span className="text-[11.5px] font-medium text-bz-text truncate">{mod}</span>
-            </div>
+    <div className="flex shrink-0 items-center justify-center" aria-hidden>
+      <ChevronDown size={15} strokeWidth={2.4} className="text-bz-fire md:hidden" />
+      <ChevronRight size={15} strokeWidth={2.4} className="hidden text-bz-fire md:block" />
+    </div>
+  );
+}
+
+function HeroOrderFlow() {
+  return (
+    <div className="relative overflow-hidden rounded-bz-2xl bg-bz-olive p-5 md:py-18 md:px-16">
+      <DotGrid tone="dark" />
+      <div className="relative">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 md:mb-8">
+          <span className="flex items-center gap-2.5">
+            <span className="size-1.5 rounded-bz-pill bg-bz-fire" />
+            <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-white/[0.62]">
+              One order · every module
+            </span>
+          </span>
+          <StatusChip variant="live">Live</StatusChip>
+        </div>
+
+        <div className="flex flex-col gap-2.5 md:flex-row md:items-stretch md:gap-2">
+          {FLOW.map((step, i) => (
+            <React.Fragment key={step.title}>
+              <FlowCard {...step} index={i + 1} />
+              {i < FLOW.length - 1 && <FlowConnector />}
+            </React.Fragment>
           ))}
         </div>
-        <div className="mt-4 pt-3.5 border-t border-bz-line-soft">
-          <p className="text-[10px] font-medium uppercase tracking-wide text-bz-text-muted">
-            6 modules · one platform · real-time
-          </p>
-        </div>
+
+        <p className="mt-6 text-[12px] leading-[1.6] text-white/[0.55] md:mt-8">
+        </p>
       </div>
     </div>
   );
@@ -196,93 +140,146 @@ function HeroSection() {
     <Section tone="b" pad="hero">
       <Container>
         <div className="flex flex-col items-center text-center">
-          <BadgeGreen style={{ marginBottom: 28 }}>ERP for Startups & SMEs</BadgeGreen>
+          <BadgeGreen style={{ marginBottom: 28 }}>For Startups & SMEs</BadgeGreen>
           <Heading level={2} style={{ marginBottom: 36 }}>
-            Replace your tools. Run your business{" "}
-            <Heading.Muted>on one platform, live in three days.</Heading.Muted>
+            Outgrowing spreadsheets?{" "}{<br className="hidden md:block"/>}
+            <Heading.Muted>
+              Run the whole business on one platform.
+            </Heading.Muted>
           </Heading>
           <PillGroup>
             <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
-            <Pill variant="light" withArrow href="/contact">
+            <Pill variant="light" href="/contact">
               Request Demo
             </Pill>
           </PillGroup>
         </div>
-        <div className="bz-hero-visual mx-auto w-full max-w-[1080px] grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <HeroBeforeCard />
-          <HeroAfterCard />
+        <div className="bz-hero-visual">
+          <HeroOrderFlow />
         </div>
       </Container>
     </Section>
   );
 }
 
-// ─── PAIN POINTS ──────────────────────────────────────────────────────────────
+// ─── 01 · THE BREAKING POINT ──────────────────────────────────────────────────
 
-function PainSection() {
+function StackAuditPanel() {
+  return (
+    <div className="overflow-hidden rounded-bz-2xl border border-bz-line-soft bg-bz-surface">
+      <div className="flex items-center justify-between border-b border-bz-line-soft bg-bz-paper-warm px-5 py-3.5">
+        <span className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-bz-text-soft">
+          Your current stack
+        </span>
+        <span className="text-[11px] font-medium text-bz-text-muted">6 tools</span>
+      </div>
+      <div className="flex flex-col">
+        {STACK.map(({ icon: Icon, name, cat, tag }) => (
+          <div
+            key={name}
+            className="flex items-center gap-3 border-b border-bz-line-soft px-5 py-3.5 last:border-0"
+          >
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-bz-md bg-bz-paper-warm">
+              <Icon size={15} strokeWidth={1.7} className="text-bz-olive" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-medium text-bz-text">{name}</p>
+              <p className="text-[11px] text-bz-text-muted">{cat}</p>
+            </div>
+            <span className="shrink-0 rounded-bz-pill bg-bz-paper-warm px-2.5 py-1 text-[10.5px] font-medium text-bz-text-muted">
+              {tag}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="bg-bz-olive px-5 py-4">
+        <p className="text-[12px] leading-[1.6] text-white/[0.7]">
+          <span className="font-medium text-bz-text-on-dark">≈ $410/mo</span> in subscriptions ·{" "}
+          <span className="font-medium text-bz-text-on-dark">14 hrs/week</span> reconciling ·{" "}
+          <span className="font-medium text-bz-fire">0</span> single source of truth
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function StackCostSection() {
   return (
     <Section tone="a">
       <Container>
-        <SectionHead
-          index="01"
-          label="The problem"
-          title={
-            <>
-              Disconnected tools{" "}
-              <Heading.Muted>don't scale with your business.</Heading.Muted>
-            </>
-          }
-          description="Manual processes and patched-together apps work at ten employees. At fifty, they collapse and your team pays the price."
-          titleMaxWidth={700}
-        />
-        <BentoGrid cols={3}>
-          {PAINS.map(({ icon: Icon, title, desc, tone, footer }) => (
-            <Bento key={title} tone={tone} hover dotGrid={tone === "dark"} minHeight={340}>
-              <Bento.Header
-                title={title}
-                icon={
-                  <Icon
-                    size={24}
-                    strokeWidth={1.5}
-                    color={tone === "dark" ? "#DBE9B8" : "#1F3422"}
-                  />
-                }
-              />
-              <Bento.Desc>{desc}</Bento.Desc>
-              <Bento.Footer tone={tone === "dark" ? "dark" : "light"}>
-                {footer}
-              </Bento.Footer>
-            </Bento>
-          ))}
-        </BentoGrid>
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
+          <div>
+            <SectionHead
+              index="01"
+              label="The breaking point"
+              title={
+                <>
+                  Your stack worked at ten people.{" "}
+                  <Heading.Muted>At fifty, it quietly costs you.</Heading.Muted>
+                </>
+              }
+              description="Spreadsheets and single-purpose apps get a small team off the ground."
+              spacing="none"
+            />
+            <ul
+              className="flex flex-col gap-3.5"
+              style={{ listStyle: "none", padding: 0, margin: "32px 0 0" }}
+            >
+              {SYMPTOMS.map((s) => (
+                <li
+                  key={s}
+                  className="flex items-start gap-3 text-[14px] leading-[1.55] text-bz-text"
+                >
+                  <Tick size="sm" className="mt-[2px]" />
+                  <span>{s}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <StackAuditPanel />
+        </div>
       </Container>
     </Section>
   );
 }
 
-// ─── PLATFORM OVERVIEW ────────────────────────────────────────────────────────
+// ─── 02 · ONE PLATFORM ────────────────────────────────────────────────────────
 
-function ModuleGridVisual() {
+function ReplacesVisual() {
   return (
-    <div className="grid grid-cols-2 gap-2.5 p-6 md:p-8">
-      {MODULES.map(({ icon: Icon, label }) => (
+    <div className="flex w-full flex-col gap-2">
+      <div className="mb-1 flex items-center justify-between px-1">
+        <span className="text-[9.5px] font-semibold uppercase tracking-[0.12em] text-white/[0.4]">
+          You leave behind
+        </span>
+        <span className="text-[9.5px] font-semibold uppercase tracking-[0.12em] text-bz-fire">
+          You run on
+        </span>
+      </div>
+      {REPLACES.map(({ old, icon: Icon, module }) => (
         <div
-          key={label}
-          className="flex items-center gap-2.5 rounded-bz-lg border border-white/[0.1] bg-white/[0.05] px-3 py-3"
+          key={module}
+          className="flex items-center gap-2.5 rounded-bz-lg border border-white/[0.07] bg-white/[0.05] px-3 py-2.5"
         >
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-bz-md bg-bz-fire/10">
-            <Icon size={14} strokeWidth={1.8} className="text-bz-fire" />
+          <span className="w-[88px] shrink-0 text-[11.5px] text-white/[0.42] line-through">
+            {old}
           </span>
-          <span className="text-[12px] font-medium text-bz-text-on-dark">{label}</span>
+          <ArrowRight size={13} strokeWidth={2} className="shrink-0 text-bz-fire" />
+          <span className="flex min-w-0 flex-1 items-center gap-2">
+            <Icon size={13} strokeWidth={1.8} className="shrink-0 text-bz-leaf" />
+            <span className="truncate text-[12.5px] font-medium text-bz-text-on-dark">
+              {module}
+            </span>
+          </span>
         </div>
       ))}
     </div>
   );
 }
 
-function PlatformSection() {
+function OnePlatformSection() {
   return (
     <Section tone="b">
       <Container>
@@ -291,168 +288,188 @@ function PlatformSection() {
           label="One platform"
           title={
             <>
-              Every module your business needs,{" "}
-              <Heading.Muted>connected by design.</Heading.Muted>
+              Stop paying the integration tax.{" "}
+              <Heading.Muted>Run the whole business on one system.</Heading.Muted>
             </>
           }
-          titleMaxWidth={680}
+          description="Every tool you're juggling maps to a Bizak module. The difference: one shared database instead of six that need syncing."
+          titleMaxWidth={780}
         />
         <BigCard
           text={{
-            title: "The operating system for growing businesses.",
-            body: "Replace your disconnected tools with a single system where finance, sales, and inventory work together auto-posting every transaction to the ledger the moment it happens.",
+            title: "One platform, sized for a growing business.",
             bullets: [
-              "Finance, payables and reconciliation auto-posted",
-              "Sales pipeline and CRM connected to inventory",
-              "Purchasing, warehousing and reporting one ledger",
+              "Six disconnected tools replaced by a single shared database.",
+              "Every module included no add-ons, no per-seat surprises.",
+              "Books update in real time, the moment a transaction happens.",
             ],
             cta: {
               variant: "accent",
               withArrow: true,
               href: "/contact",
-              children: "Talk to Sales",
+              children: "Request Demo",
             },
           }}
-          visual={<ModuleGridVisual />}
+          visual={<ReplacesVisual />}
         />
       </Container>
     </Section>
   );
 }
 
-// ─── ONBOARDING ───────────────────────────────────────────────────────────────
+// ─── 03 · ONBOARDING ──────────────────────────────────────────────────────────
 
-function StepImportVisual() {
-  const files = [
-    { name: "Customers.csv",  count: "1,240 records", done: true  },
-    { name: "Products.csv",   count: "856 items",     done: true  },
-    { name: "Invoices.csv",   count: "3,102 entries", done: false },
-  ];
+function StepVisualShell({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex flex-col gap-2 p-4 md:p-6">
-      {files.map((f) => (
-        <div
-          key={f.name}
-          className="flex items-center justify-between rounded-bz-md border border-bz-line-soft bg-bz-paper px-3 py-2.5"
-        >
-          <div>
-            <p className="text-[12.5px] font-medium text-bz-text">{f.name}</p>
-            <p className="text-[10.5px] text-bz-text-muted">{f.count}</p>
-          </div>
-          {f.done
-            ? <CheckCircle2 size={16} strokeWidth={1.8} className="text-emerald-500 shrink-0" />
-            : <span className="size-2.5 rounded-full border-2 border-bz-line shrink-0 animate-pulse" />
-          }
-        </div>
-      ))}
+    <div className="w-full max-w-[320px]">
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-bz-text-soft">
+        {label}
+      </p>
+      {children}
     </div>
   );
 }
 
-function StepModulesVisual() {
-  const mods = [
-    { label: "Financial Management", active: true  },
-    { label: "Sales & CRM",          active: true  },
-    { label: "Inventory",            active: true  },
-    { label: "Purchasing",           active: false },
+function StepImportVisual() {
+  const files = [
+    { name: "customers.csv", meta: "1,240 records", done: true },
+    { name: "products.csv",  meta: "856 items",     done: true },
+    { name: "invoices.csv",  meta: "importing…",    done: false },
   ];
   return (
-    <div className="flex flex-col gap-2 p-4 md:p-6">
-      {mods.map((m) => (
-        <div
-          key={m.label}
-          className="flex items-center justify-between rounded-bz-md border border-bz-line-soft bg-bz-paper px-3 py-2.5"
-        >
-          <span className="text-[12.5px] font-medium text-bz-text">{m.label}</span>
-          <span
-            className={`text-[9.5px] font-medium uppercase tracking-wide px-2 py-0.5 rounded ${
-              m.active
-                ? "bg-bz-fire/20 text-[#1F3422]"
-                : "bg-bz-paper-warm text-bz-text-muted"
-            }`}
+    <StepVisualShell label="Data import">
+      <div className="flex flex-col gap-2 rounded-bz-xl border border-bz-line-soft bg-bz-surface p-4">
+        {files.map((f) => (
+          <div
+            key={f.name}
+            className="flex items-center justify-between rounded-bz-md border border-bz-line-soft bg-bz-paper px-3 py-2.5"
           >
-            {m.active ? "Active" : "Pending"}
-          </span>
-        </div>
-      ))}
-    </div>
+            <div>
+              <p className="text-[12px] font-medium text-bz-text">{f.name}</p>
+              <p className="text-[10px] text-bz-text-muted">{f.meta}</p>
+            </div>
+            {f.done ? (
+              <CheckCircle2 size={15} strokeWidth={1.9} className="shrink-0 text-emerald-500" />
+            ) : (
+              <UploadCloud size={15} strokeWidth={1.8} className="shrink-0 text-bz-text-soft" />
+            )}
+          </div>
+        ))}
+      </div>
+    </StepVisualShell>
+  );
+}
+
+function StepActivateVisual() {
+  const mods = [
+    { label: "Financial Management", on: true },
+    { label: "Sales & CRM",          on: true },
+    { label: "Inventory",            on: true },
+    { label: "Purchasing",           on: false },
+  ];
+  return (
+    <StepVisualShell label="Activate modules">
+      <div className="flex flex-col gap-2 rounded-bz-xl border border-bz-line-soft bg-bz-surface p-4">
+        {mods.map((m) => (
+          <div
+            key={m.label}
+            className={`flex items-center justify-between rounded-bz-md px-3 py-2.5 ${m.on ? "bg-bz-paper-warm" : "border border-bz-line-soft bg-bz-paper"}`}
+          >
+            <span className="text-[13px] text-bz-text">{m.label}</span>
+            <div className={`relative h-4 w-7 rounded-bz-pill ${m.on ? "bg-bz-olive" : "bg-bz-line-soft"}`}>
+              <div
+                className={`absolute top-0.5 h-3 w-3 rounded-bz-pill ${m.on ? "right-0.5 bg-bz-leaf" : "left-0.5 bg-bz-paper"}`}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </StepVisualShell>
   );
 }
 
 function StepLiveVisual() {
+  const stats = [
+    { v: "$84.2K", l: "Revenue · MTD" },
+    { v: "1,240",  l: "Active customers" },
+  ];
   return (
-    <div className="p-4 md:p-6 flex flex-col gap-3">
-      <div className="flex items-center gap-3 rounded-bz-lg bg-bz-paper-warm border border-bz-line-soft px-4 py-3.5">
-        <span className="size-8 rounded-full bg-bz-fire/20 flex items-center justify-center shrink-0">
-          <Rocket size={15} strokeWidth={1.8} className="text-[#1F3422]" />
-        </span>
-        <div>
-          <p className="text-[13px] font-medium text-bz-text">Your business is live</p>
-          <p className="text-[10.5px] text-bz-text-muted">3 modules active · 4 users onboarded</p>
+    <StepVisualShell label="You're live">
+      <div className="flex flex-col gap-2.5">
+        <div className="flex items-center gap-3 rounded-bz-xl border border-bz-line-soft bg-bz-surface p-4">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-bz-pill bg-bz-fire">
+            <Rocket size={15} strokeWidth={1.9} className="text-bz-deep" />
+          </span>
+          <div>
+            <p className="text-[12.5px] font-medium text-bz-text">Your business is live</p>
+            <p className="text-[10.5px] text-bz-text-muted">4 teammates · 3 modules running</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2.5">
+          {stats.map((s) => (
+            <div
+              key={s.l}
+              className="rounded-bz-xl border border-bz-line-soft bg-bz-surface p-3.5 text-center"
+            >
+              <p className="text-[18px] font-medium tabular-nums text-bz-text">{s.v}</p>
+              <p className="mt-1 text-[10px] text-bz-text-muted">{s.l}</p>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        {[
-          { val: "$84K",  lbl: "Revenue MRR"       },
-          { val: "1,240", lbl: "Active Customers"  },
-        ].map((s) => (
-          <div
-            key={s.lbl}
-            className="rounded-bz-md border border-bz-line-soft bg-bz-paper px-3 py-2.5 text-center"
-          >
-            <p className="text-[18px] font-medium text-bz-text">{s.val}</p>
-            <p className="text-[10px] text-bz-text-muted mt-0.5">{s.lbl}</p>
-          </div>
-        ))}
-      </div>
-    </div>
+    </StepVisualShell>
   );
 }
 
-function OnboardingSection() {
+function GoLiveSection() {
   return (
     <Section tone="a">
       <Container>
         <SectionHead
           index="03"
-          label="Quick start"
+          label="Onboarding"
           title={
             <>
-              From sign-up to live{" "}
-              <Heading.Muted>in three days.</Heading.Muted>
+              Live this week <Heading.Muted>not next quarter.</Heading.Muted>
             </>
           }
-          description="Pre-configured modules for common SME workflows. Import your data, invite your team, and go live no consultant needed."
-          titleMaxWidth={680}
+          description="Bizak is built to be self-served. Most teams import their data, switch on their modules and onboard everyone inside three working days."
+          titleMaxWidth={720}
         />
         <div className="flex flex-col gap-5">
           <StepCard
             number="01"
-            tag="Day 1"
-            title="Import your existing data"
+            tag="Day one"
+            title="Bring your data in"
             bullets={[
-              "Upload customers, products and historical transactions via CSV",
-              "Our guided importer maps columns and validates in minutes",
+              "Upload customers, products and open invoices from CSV or your old tools.",
+              "A guided importer maps every column and flags issues before anything saves.",
             ]}
             visual={<StepImportVisual />}
           />
           <StepCard
             number="02"
-            tag="Day 2"
-            title="Activate the modules you need"
+            tag="Day two"
+            title="Switch on the modules you need"
             bullets={[
-              "Finance, Sales and Inventory ship pre-configured for SME workflows",
-              "Add Purchasing, Projects or Reporting any time as your team grows",
+              "Finance, Sales and Inventory arrive pre-configured for common SME workflows.",
+              "Turn on Purchasing, Projects or Reporting whenever you're ready same system.",
             ]}
-            visual={<StepModulesVisual />}
+            visual={<StepActivateVisual />}
           />
           <StepCard
             number="03"
-            tag="Day 3"
-            title="Invite your team and go live"
+            tag="Day three"
+            title="Invite the team and go live"
             bullets={[
-              "Role-based access for every team member no IT department required",
-              "Real-time dashboards activate the moment your first transaction posts",
+              "Role-based access for every teammate no IT admin or consultant required.",
+              "Live dashboards light up the moment your first transaction posts.",
             ]}
             visual={<StepLiveVisual />}
           />
@@ -462,36 +479,124 @@ function OnboardingSection() {
   );
 }
 
-// ─── IMPACT ───────────────────────────────────────────────────────────────────
+// ─── 04 · BUILT TO SCALE ──────────────────────────────────────────────────────
 
-function ImpactSection() {
+function StageCard({
+  icon: Icon, stage, range, desc, modules, current,
+}: (typeof STAGES)[number]) {
   return (
-    <Section tone="b">
+    <div
+      className={`flex flex-col rounded-bz-2xl p-6 md:p-7 ${
+        current
+          ? "border border-bz-fire/35 bg-bz-olive-soft"
+          : "border border-white/[0.08] bg-white/[0.03]"
+      }`}
+    >
+      <div className="mb-5 flex items-center justify-between">
+        <span className="flex size-10 items-center justify-center rounded-bz-md bg-white/[0.06]">
+          <Icon
+            size={18}
+            strokeWidth={1.6}
+            className={current ? "text-bz-fire" : "text-bz-leaf"}
+          />
+        </span>
+        {current ? (
+          <StatusChip variant="live">You are here</StatusChip>
+        ) : (
+          <span className="text-[9.5px] font-semibold uppercase tracking-[0.1em] text-white/[0.4]">
+            Add later
+          </span>
+        )}
+      </div>
+      <p className="text-[10.5px] font-medium uppercase tracking-[0.12em] text-white/[0.45]">
+        {range}
+      </p>
+      <h3 className="bz-bento-title mt-1.5 text-bz-text-on-dark">{stage}</h3>
+      <p className="text-[13px] leading-[1.6] text-white/[0.6]">{desc}</p>
+      <div className="mt-6 flex flex-col gap-2 border-t border-white/[0.08] pt-5">
+        {modules.map((m) => (
+          <div key={m} className="flex items-center gap-2.5">
+            <span
+              className={`flex size-4 shrink-0 items-center justify-center rounded-bz-pill ${
+                current ? "bg-bz-fire" : "bg-white/[0.1]"
+              }`}
+            >
+              <Check
+                size={9}
+                strokeWidth={3}
+                className={current ? "text-bz-deep" : "text-white/[0.55]"}
+              />
+            </span>
+            <span className="text-[12.5px] text-white/[0.82]">{m}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ScaleSection() {
+  return (
+    <Section tone="dark">
+      <DotGrid tone="dark" />
       <Container>
         <SectionHead
           index="04"
-          label="Impact"
+          label="Built to scale"
+          tone="dark"
           title={
             <>
-              Real results{" "}
-              <Heading.Muted>for growing businesses.</Heading.Muted>
+              A system you grow into,{" "}
+              <Heading.Muted>never one you outgrow.</Heading.Muted>
             </>
           }
-          titleMaxWidth={680}
+          description="Start with the modules a small team needs. Switch on the rest as you hire."
+          titleMaxWidth={720}
         />
-        <BentoGrid cols={3}>
-          {IMPACT_STATS.map((s) => (
-            <Bento key={s.label} tone="paper" hover minHeight={220}>
-              <div className="bz-stat-num" style={{ fontSize: 48, marginBottom: 12 }}>
-                {s.value}
-              </div>
-              <div className="mb-3 text-[11px] font-medium uppercase tracking-[0.12em] text-bz-text-muted">
-                {s.label}
-              </div>
-              <Bento.Desc>{s.desc}</Bento.Desc>
-            </Bento>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
+          {STAGES.map((s) => (
+            <StageCard key={s.stage} {...s} />
           ))}
-        </BentoGrid>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ─── 05 · FAQ ─────────────────────────────────────────────────────────────────
+
+function FAQSection() {
+  return (
+    <Section tone="b">
+      <Container>
+        <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[1fr_1.3fr]">
+          {/* Dark intro panel */}
+          <div className="relative flex min-h-[320px] flex-col justify-between overflow-hidden rounded-bz-2xl bg-bz-olive p-8 text-bz-text-on-dark">
+            <DotGrid tone="dark" />
+            <div className="relative">
+              <SectionHead
+                index="05"
+                label="FAQ"
+                tone="dark"
+                title={<>Frequently asked <Heading.Muted>questions.</Heading.Muted></>}
+                spacing="none"
+              />
+            </div>
+            <PillGroup className="relative mt-8">
+              <Pill variant="accent" href="https://system.bizakerp.com/account/self-register" withArrowUpRight>Get Started</Pill>
+              <Pill variant="ghostDark" href="/contact" withArrow>Talk to Sales</Pill>
+            </PillGroup>
+          </div>
+
+          {/* Accordion */}
+          <Accordion defaultOpen={null}>
+            {FAQS.map((item, i) => (
+              <Accordion.Item key={i} question={item.q}>
+                {item.a}
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </div>
       </Container>
     </Section>
   );
@@ -503,10 +608,11 @@ export function StartupsAndSmes() {
   return (
     <main>
       <HeroSection />
-      <PainSection />
-      <PlatformSection />
-      <OnboardingSection />
-      <ImpactSection />
+      <StackCostSection />
+      <OnePlatformSection />
+      <GoLiveSection />
+      <ScaleSection />
+      <FAQSection />
     </main>
   );
 }

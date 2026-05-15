@@ -35,6 +35,16 @@
   --bz-leaf:         #DBE9B8;   /* pistachio soft secondary accent */
   --bz-leaf-deep:    #A8C76C;
 
+  /* ── File-type icon colours ──────────────────────────────────────────
+     Standard document colour-coding for the file-vault mock on
+     DocumentManagementPage. Deliberately kept OUT of the brand-accent
+     family so they read as file marks, not page accents.
+     ───────────────────────────────────────────────────────────────── */
+  --bz-file-pdf:     #D9382C;   /* red    PDF documents */
+  --bz-file-doc:     #2B579A;   /* blue   text documents */
+  --bz-file-xls:     #217346;   /* green  spreadsheets */
+  --bz-file-img:     #7A5AF8;   /* violet images */
+
   /* ── Legacy semantic aliases ─────────────────────────────────────────
      Kept as `var(--bz-fire)` etc. so un-migrated pages keep rendering.
      NEW code should use the descriptive names above (--bz-fire,
