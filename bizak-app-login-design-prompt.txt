@@ -1,0 +1,390 @@
+BIZAK ERP — MOBILE APP LOGIN SCREEN — DESIGN PROMPT
+======================================================
+
+Feed this brief to your design LLM. It produces a high-fidelity mockup of the
+Bizak mobile-app login flow that matches the Bizak website's design system
+exactly. Read every section before designing — the design language is
+non-negotiable; only the marked "design choices" are open.
+
+
+------------------------------------------------------------------------
+1. ROLE & TASK
+------------------------------------------------------------------------
+
+You are designing the LOGIN SCREEN for the Bizak ERP mobile app (iOS/Android).
+It is a TWO-STEP flow, one full screen per step:
+
+  Step 1 — Email      (enter work email → Continue)
+  Step 2 — Password   (enter password → Log in)
+
+The flow must feel minimal, calm, and unmistakably "Bizak" — the same design
+language as the Bizak marketing website (bizakerp.com). The Bizak logo is the
+hero visual of the screen; use it to carry the design, not as a small mark
+in a corner.
+
+Deliver high-fidelity mockups of BOTH steps at mobile size (see §7).
+
+
+------------------------------------------------------------------------
+2. WHAT BIZAK IS (so the tone is right)
+------------------------------------------------------------------------
+
+Bizak ERP — "The Operating System for Modern Business." A unified cloud ERP
+that small-to-mid-market companies run their finance, sales, inventory,
+manufacturing and operations on, replacing a stack of spreadsheets and
+disconnected SaaS. Early-stage, focused on South Asia.
+
+Voice: confident, terse, technical-but-accessible. Short sentences. No
+marketing hedge, no AI-magic clichés, no vanity metrics. Outcomes over
+features. The login screen should feel like the calm front door to a serious
+operating system — not a flashy consumer app.
+
+
+------------------------------------------------------------------------
+3. REFERENCE & INTENT
+------------------------------------------------------------------------
+
+The structural reference is the Ramp app's login screen — a "step screen":
+a short headline at the top, a single hero visual in the middle, and ONE
+input field + ONE primary button anchored at the bottom. Generous empty
+space. One decision per screen.
+
+TAKE from the reference:
+  • The step structure — one field + one button per screen, nothing else.
+  • The bottom-anchored form block.
+  • The single, confident hero visual that owns the middle of the screen.
+  • The generous, unhurried whitespace.
+
+IGNORE from the reference:
+  • Its all-dark palette — Bizak's login is a LIGHT paper-cream screen.
+  • Its physical-card product shot — Bizak has no card; the hero visual is a
+    logo-card built from the Bizak brand mark (see §6).
+  • Its disabled-looking grey button — Bizak's primary button is solid and
+    confident.
+
+The result must look like a Bizak product, not a Ramp clone.
+
+
+------------------------------------------------------------------------
+4. DESIGN LANGUAGE — NON-NEGOTIABLE
+------------------------------------------------------------------------
+
+4.1 PALETTE  (use these exact hex values — do not invent shades)
+
+  Surfaces
+    Paper (page bg)        #FCFCF7   ← the login screen background
+    Paper-warm             #F4F4ED   ← input fill / subtle inset blocks
+    Surface (white card)   #FFFFFF
+    Olive (dark)           #1A2D20   ← the hero logo-card
+    Olive-soft             #243A2D
+    Deep (button fill)     #0F1411   ← primary button fill
+
+  Accent
+    Lime / "fire"          #d3f969   ← THE single pop colour. The logomark,
+                                       one focus accent. Use sparingly.
+    Lime-soft              rgba(211,249,105,0.10)
+    Lime-mid               rgba(211,249,105,0.20)
+    Pistachio / "leaf"     #DBE9B8   ← soft secondary accent (e.g. a "Secure"
+                                       badge tint)
+
+  Text
+    Text (primary)         #1A1D19
+    Text-muted             #6E7466   ← labels, helper copy, secondary text
+    Text-soft              #A2A296   ← the muted half of a two-tone heading
+    Text-on-dark           #FCFCF7   ← any text/mark on the olive card
+    Text-on-dark-muted     rgba(252,252,247,0.62)
+
+  Lines
+    Line                   #D8D9D3   ← input borders, dividers
+    Line-soft              #E5E5E0
+
+4.2 TYPOGRAPHY
+  • ONE font family: Inter. End to end. No exceptions, no second family,
+    no monospace. Differentiate with weight / size / letter-spacing only.
+  • Weights available: 300, 400, 500, 600, 700. Headings use weight 500
+    (the brand is calm, not loud — do NOT use 700 for the headline).
+  • Scale for this screen:
+      Headline       28–32px, weight 500, line-height ~1.15, tracking -0.02em
+      Sub / helper   14–15px, weight 400, text-muted, line-height ~1.6
+      Field label    13px,    weight 500, text-muted
+      Input text     16px     (never below 16px — prevents mobile zoom)
+      Button label   15–16px, weight 500
+      Small links    13–14px, weight 500
+      Eyebrow (opt)  12px,    weight 600, UPPERCASE, tracking 0.22em
+
+4.3 RADII   (use this scale — not generic "rounded-lg")
+    sm 6 · md 10 · lg 12 · xl 18 · 2xl 22 · 3xl 28 · pill 9999
+  • Input fields:    lg (12px)
+  • Hero logo-card:  2xl–3xl (22–28px)
+  • Primary button:  pill (9999) — fully rounded, full-width
+  • Small badge:     pill
+
+4.4 HARD RULES — breaking any of these fails the brief
+    1. NO GRADIENTS anywhere. Not on backgrounds, cards, buttons, glows,
+       borders. Flat fills only. Depth comes from soft shadows, flat olive,
+       and 1px line texture — never a gradient.
+    2. ONE font: Inter. ONE accent: lime #d3f969, used sparingly.
+    3. Clean and minimal. One decision per screen. Empty space is the design
+       — do not fill it with decorative chrome.
+    4. The screen background is flat paper-cream #FCFCF7. No patterned bg.
+    5. Soft, restrained shadows only (for the logo-card and the button).
+       No hard drop shadows, no neon glows.
+
+
+------------------------------------------------------------------------
+5. THE BIZAK LOGO
+------------------------------------------------------------------------
+
+The Bizak brand mark has two parts:
+  • The SYMBOL — an organic, curved "leaf/blade" mark made of two nested
+    arc-shaped strokes. It reads as motion and growth. In brand lime green.
+  • The WORDMARK — "bizak", lowercase, in near-black.
+
+Logo lockups exist in: all-black, all-white, all-green/lime, dark-mode, and
+a primary (lime symbol + dark wordmark) version — in horizontal and vertical
+layouts.
+
+USE THE LOGO AS THE HERO VISUAL — this is the core instruction.
+  • On the olive logo-card (§6): use the lime/white logo lockup so the mark
+    glows on the dark olive.
+  • The logo's own geometry is curved concentric arcs — echo that geometry
+    in the card's texture (see §6). This is the "use the logo to enhance
+    the design" move: the texture is derived from the mark itself.
+  • Do NOT stretch, recolour outside the palette, add effects to, or crop
+    the logo. Keep clear space around it.
+
+
+------------------------------------------------------------------------
+6. THE HERO VISUAL — THE "LOGO-CARD"
+------------------------------------------------------------------------
+
+The middle of the screen is owned by a single hero visual: a LOGO-CARD.
+
+  • A rounded rectangle card, radius 22–28px, filled flat olive #1A2D20.
+  • Soft, deep, diffuse shadow beneath it — it floats gently on the
+    paper-cream screen. (Shadow, NOT a glow, NOT a gradient.)
+  • Centered on the card: the Bizak logomark in lime #d3f969 (symbol, or
+    symbol + lowercase "bizak" wordmark in paper-white). Large and confident.
+  • TEXTURE — echo the logomark's own curved-arc geometry: faint 1px
+    concentric arc strokes radiating across the olive card, in
+    rgba(252,252,247,0.06–0.10). Flat strokes only. This is what makes the
+    card feel crafted, and ties it back to the brand mark. (A subtle 1px
+    dot-grid is an acceptable alternative texture.)
+  • RECOMMENDED: tilt the card a gentle 4–6° — a calm, deliberate lean that
+    gives the screen life (a nod to the reference). Upright with no tilt is
+    the acceptable minimal fallback. Either way it stays composed, not playful.
+  • Optional, tiny: one line of paper-white-muted micro-copy on the card,
+    e.g. "The Operating System for Modern Business." Keep it whisper-quiet
+    or omit it. The mark is the message.
+
+[DESIGN CHOICE — open] The exact card proportion, the tilt amount, whether
+the wordmark joins the symbol, and the arc-texture density are yours to
+tune. Keep it minimal: the card should feel like one clean object.
+
+Step 1 and Step 2 share the SAME logo-card so the flow feels continuous.
+
+
+------------------------------------------------------------------------
+7. SCREEN ARCHITECTURE  (applies to both steps)
+------------------------------------------------------------------------
+
+Frame: mobile, 375 × 812pt baseline. Respect top (~59px) and bottom (~34px)
+safe areas. Design for 375px first; it must also hold up to ~430px wide.
+
+Vertical zones, top → bottom:
+
+  ┌─────────────────────────────────────┐
+  │ (status bar — system)               │
+  │ A. TOP BAR                          │  back arrow (Step 2 only) +
+  │                                     │  thin 2-segment step indicator
+  │ B. HEADLINE BLOCK                   │  short headline + one helper line
+  │                                     │
+  │ C. HERO LOGO-CARD                   │  the §6 visual, centered
+  │     (flexible space above + below)  │
+  │                                     │
+  │ D. FORM BLOCK  (anchored low)       │  one field + primary button
+  │ E. SECONDARY LINKS                  │  small text links
+  │ (home indicator — system)           │
+  └─────────────────────────────────────┘
+
+  • A — TOP BAR. A thin 2-segment progress indicator (each segment a small
+    rounded bar): Step 1 = first segment filled lime/olive, second is
+    line-soft; Step 2 = both filled. On Step 2 only, a back arrow (lucide
+    "arrow-left", text colour) sits at the left. Minimal — no title text here.
+  • B — HEADLINE. A short headline (weight 500) + one muted helper line.
+    Left-aligned. (Centered is an acceptable alternative — pick one and keep
+    it consistent across both steps.)
+  • C — HERO LOGO-CARD. The §6 visual. It absorbs the flexible vertical
+    space between the headline and the form.
+  • D — FORM BLOCK. Anchored toward the bottom (like the reference). One
+    input field, then the full-width primary button directly below it.
+  • E — SECONDARY LINKS. Small, quiet text links beneath the button.
+
+  Horizontal page padding: 24px left/right.
+  Vertical rhythm: generous — ~28–40px between zones. Let it breathe.
+
+KEYBOARD BEHAVIOUR: when the keyboard opens, the FORM BLOCK (D) and the
+primary button stay visible directly above the keyboard. The logo-card (C)
+may shrink or scroll up gracefully — the field and button must never be
+hidden behind the keyboard.
+
+
+------------------------------------------------------------------------
+8. STEP 1 — EMAIL
+------------------------------------------------------------------------
+
+  A. Top bar:   2-segment indicator, segment 1 filled. No back arrow.
+  B. Headline:  "One login. Your whole business."
+     Helper:    "Sign in to your Bizak workspace."
+     (Alternative headlines, pick the calmest: "Welcome to Bizak." /
+      "Sign in to Bizak.")
+  C. Logo-card: the §6 hero visual.
+  D. Form:
+       • Field — label "Work email", type=email, placeholder e.g.
+         "you@company.com". Keyboard = email. Autofocus optional.
+       • Primary button — label "Continue", full-width pill, with a small
+         right-arrow (→) at the end of the label. Deep #0F1411 fill,
+         paper-white text. (See §10 for button spec.)
+  E. Secondary links (small, centered or left, muted):
+       • "New to Bizak?  Get started" — "Get started" is the lime/olive
+         emphasised link, opens self-registration.
+
+Behaviour note (for state mockups): button is enabled once the email looks
+valid; tapping Continue advances to Step 2.
+
+
+------------------------------------------------------------------------
+9. STEP 2 — PASSWORD
+------------------------------------------------------------------------
+
+  A. Top bar:   back arrow at left + 2-segment indicator, both filled.
+  B. Headline:  "Welcome back."
+     Helper:    show the email entered in Step 1 as a small, quiet
+                identity row beneath the headline — the email in text
+                colour + a tiny "Change" link (lucide "pencil" or a text
+                link) to return to Step 1. This confirms context without a
+                second field.
+  C. Logo-card: the SAME §6 hero visual as Step 1 (continuity).
+  D. Form:
+       • Field — label "Password", type=password, with a show/hide eye
+         toggle (lucide "eye" / "eye-off") inside the field on the right.
+       • Primary button — label "Log in", full-width pill, Deep #0F1411
+         fill, paper-white text. (No arrow on the final action, or a small
+         → — designer's choice; keep it consistent if used.)
+  E. Secondary links (small, muted):
+       • "Forgot password?" — quiet text link.
+
+
+------------------------------------------------------------------------
+10. COMPONENTS & STATES  (mock the key states)
+------------------------------------------------------------------------
+
+INPUT FIELD
+  • Shape: full-width, height 52–56px, radius 12px (lg).
+  • Fill: paper-warm #F4F4ED  (or white #FFFFFF — pick one, stay consistent).
+  • Border: 1px line #D8D9D3.
+  • Label: 13px, weight 500, text-muted #6E7466 — sitting just above the
+    field. (A floating label that rests as placeholder and animates up on
+    focus is an acceptable, more minimal alternative.)
+  • Input text: 16px, text #1A1D19.
+  • States to show:
+      – Default:  as above.
+      – Focus:    border darkens to olive #1A2D20 (1.5px) + a soft 3px
+                  lime-soft rgba(211,249,105,0.10) ring. This is the ONE
+                  place the lime accent appears in the form.
+      – Filled:   value in full text colour.
+      – Error:    border + helper text in a restrained, muted brick-red
+                  (quiet, not alarming) with a one-line message below the
+                  field, e.g. "Enter a valid email" / "Incorrect password."
+                  Keep it calm — no shouting red.
+
+PRIMARY BUTTON
+  • Full-width, height 52–56px, radius pill (9999).
+  • Fill: Deep #0F1411 (flat). Label: paper-white #FCFCF7, 15–16px weight 500.
+  • Optional small arrow icon (lucide "arrow-right") trailing the label.
+  • States to show:
+      – Default:  solid deep fill, confident.
+      – Pressed:  very slight darken / scale-down — subtle.
+      – Loading:  label replaced by a small spinner; fill unchanged (it is
+                  NOT greyed out).
+      – Disabled: fill drops to a muted olive/grey, text text-soft — but
+                  prefer to keep it enabled and validate on tap rather than
+                  showing a dead grey button.
+
+STEP INDICATOR
+  • Two small rounded segment bars, ~4px tall, in the top bar.
+  • Filled segment: olive #1A2D20 or lime #d3f969 (pick one). Empty
+    segment: line-soft #E5E5E0.
+
+SECONDARY LINKS
+  • 13–14px, weight 500. Resting colour text-muted #6E7466; the
+    emphasised word ("Get started") in text #1A1D19 or olive. Underline on
+    press only. No buttons — plain text links.
+
+OPTIONAL "SECURE" BADGE
+  • A small pill badge (pistachio leaf #DBE9B8 fill, dark text, lucide
+    "lock" or "shield-check" icon), e.g. "Encrypted & secure", placed
+    quietly near the form or footer. Optional — only if it does not add
+    clutter. Minimalism wins ties.
+
+
+------------------------------------------------------------------------
+11. MOTION / TRANSITION  (describe, for the dev handoff)
+------------------------------------------------------------------------
+
+  • Step 1 → Step 2: a calm horizontal slide (new screen in from the right)
+    OR a soft cross-fade. The logo-card stays put / morphs in place so the
+    flow feels like one continuous surface, not two unrelated screens.
+  • Field focus, button press: short, ease-out, ~150–200ms. Calm, never
+    bouncy.
+  • No parallax, no confetti, no flashy entrance animation.
+
+
+------------------------------------------------------------------------
+12. ACCESSIBILITY
+------------------------------------------------------------------------
+
+  • Input text ≥ 16px (prevents mobile auto-zoom).
+  • All tap targets ≥ 48 × 48px.
+  • Text/background contrast: body text on paper, and paper-white on olive,
+    must pass WCAG AA.
+  • The lime accent is decorative/focus only — never the sole carrier of
+    meaning (don't rely on colour alone for the error state; use text too).
+  • Labels are always visible to screen readers (a floating label must keep
+    an accessible name).
+  • Logical focus order: field → button → secondary links.
+
+
+------------------------------------------------------------------------
+13. DELIVERABLE
+------------------------------------------------------------------------
+
+  1. High-fidelity mockup of STEP 1 (Email) — mobile 375×812.
+  2. High-fidelity mockup of STEP 2 (Password) — mobile 375×812.
+  3. A states sheet: input default / focus / error, and button default /
+     loading, for the primary components.
+  4. (Optional) the keyboard-open variant of Step 1, showing the form
+     anchored above the keyboard.
+
+All four on a flat paper-cream background, exact tokens from §4.
+
+
+------------------------------------------------------------------------
+14. DO NOT
+------------------------------------------------------------------------
+
+  ✗ No gradients — anywhere, for any reason.
+  ✗ No second font, no monospace.
+  ✗ No second accent colour; lime is the only pop, used sparingly.
+  ✗ No dark full-screen background — the screen is paper-cream.
+  ✗ No more than one input field and one primary button per step.
+  ✗ No social-login row, no "or continue with" divider, no marketing
+    illustration — unless explicitly added later. Keep it minimal.
+  ✗ No hard drop shadows or neon glows — soft, diffuse shadows only.
+  ✗ No 700-weight shouting headline — the brand is calm (weight 500).
+  ✗ Do not shrink the logo to a tiny corner mark — the logo-card IS the
+    hero of the screen.
+  ✗ Do not clone the Ramp screenshot's colours or its physical card — take
+    its STRUCTURE only.
+
+End of brief.

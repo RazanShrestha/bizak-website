@@ -99,7 +99,7 @@ function HeroSection() {
             <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
-            <Pill variant="light" withArrow href="/contact">
+            <Pill variant="light" href="/contact">
               Request Demo
             </Pill>
           </PillGroup>
