@@ -131,7 +131,7 @@ function footerTheme(dark: boolean) {
         metaLink: "hover:text-white",
       }
     : {
-        shell: "border-bz-line bg-bz-paper",
+        shell: "border-bz-line bg-bz-section-b",
         hairline: "border-bz-line-soft",
         desc: "text-bz-text-muted",
         label: "text-bz-text-soft",
@@ -224,7 +224,7 @@ export function Footer({
             <img
               src={dark ? logoDark : logoLight}
               alt="Bizak"
-              className="h-[clamp(84px,10vw,120px)] w-auto"
+              className="h-[clamp(84px,10vw,110px)] w-auto"
             />
           </a>
 
