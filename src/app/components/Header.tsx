@@ -687,7 +687,7 @@ export function Header({ dark = false }: { dark?: boolean } = {}) {
               >
                 Sign in
               </a>
-              <Pill variant={dark ? "accent" : "dark"} href="/contact" >
+              <Pill variant={dark ? "accent" : "dark"} href="https://system.bizakerp.com/account/self-register" >
                 Get Started
               </Pill>
             </div>
