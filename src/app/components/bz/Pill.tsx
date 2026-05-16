@@ -70,8 +70,8 @@ export function Pill(props: PillProps) {
   const content = (
     <>
       {children}
-      {withArrow && <ArrowRight size={14} />}
-      {withArrowUpRight && <ArrowUpRight size={14} />}
+      {withArrow && <ArrowRight size={14} className="bz-pill-arrow" />}
+      {withArrowUpRight && <ArrowUpRight size={14} className="bz-pill-arrow" />}
     </>
   );
 

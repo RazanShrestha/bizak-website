@@ -7324,16 +7324,33 @@
 }
 
 /* CTA pair wrapper equal-width buttons, desktop cap, full-width on mobile */
+/* minmax(0, 1fr) so tracks split 50/50 of available width instead of being
+   forced wider than the container by each pill's nowrap min-content width.
+   container-type lets the @container rule below react to the group's own
+   width (not the viewport) so a narrow group anywhere drops its arrows. */
 .bz-pill-group {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
   width: 100%;
   max-width: 440px;
+  container: bz-pill-group / inline-size;
 }
-/* Grid blockifies inline-flex items, so pills fill their cell; center the label */
+/* Grid blockifies inline-flex items, so pills fill their cell; center the label.
+   min-width: 0 lets the pill shrink with its track; the label stays nowrap and
+   is clipped (not page-overflowing) if a track ever gets narrower than it. */
 .bz-pill-group .bz-pill {
   justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+}
+/* When the pill group is too narrow for label + arrow, drop the arrow entirely
+   rather than letting it clip or squeeze the label. Solo pills (no pill-group
+   container ancestor) are unaffected and keep their arrow at every width. */
+@container bz-pill-group (max-width: 400px) {
+  .bz-pill-arrow {
+    display: none;
+  }
 }
 
 .bz-pill-dark {
