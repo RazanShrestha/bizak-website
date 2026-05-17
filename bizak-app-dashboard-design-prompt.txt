@@ -1,0 +1,229 @@
+BIZAK ERP — MOBILE APP DASHBOARD (HOME) SCREEN — DESIGN PROMPT
+================================================================
+
+Feed this brief to your design LLM. It produces a high-fidelity mockup of the
+Bizak ERP mobile-app dashboard (the Home tab).
+
+This brief tells you WHAT the screen contains and WHICH design language to
+work in — but it deliberately does NOT dictate how each component looks.
+The visual design is YOURS to invent. Be creative, be premium. Stay inside
+the design language; own everything else.
+
+
+------------------------------------------------------------------------
+1. ROLE & TASK
+------------------------------------------------------------------------
+
+Design the DASHBOARD / HOME screen of the Bizak ERP mobile app (iOS/Android)
+— the first screen after login. It is a vertically scrolling feed of cards,
+each card showing one slice of the business.
+
+The result must look and feel: PREMIUM, CLEAN, PROFESSIONAL, MINIMAL. It is
+the companion screen to the Bizak app login, so it must read as the same
+product — the same calm, considered, high-end design language as the Bizak
+marketing website (bizakerp.com).
+
+You have full creative latitude over layout, composition, and component
+design — see §6. The only things fixed are the design language (§3) and the
+content (§4).
+
+
+------------------------------------------------------------------------
+2. WHAT BIZAK IS (so the tone is right)
+------------------------------------------------------------------------
+
+Bizak ERP — "The Operating System for Modern Business." A unified cloud ERP
+that small-to-mid-market companies run their finance, sales, inventory and
+field operations on. Early-stage, focused on SOUTH ASIA.
+
+The dashboard user is a sales / ops / finance person opening the app to see,
+at a glance: available cash, who owes what, how sales are trending, stock
+health, and what's on their plate today.
+
+Tone: confident, terse, professional. The dashboard shows, it does not sell.
+No marketing fluff, no exclamation marks.
+
+Regional framing — Bizak is a SOUTH ASIA product. All sample data in the
+mockup must be South-Asian: currency in Rs / NPR (or ₹ / INR), a South-Asian
+name in the greeting, plausible South-Asian item / customer names. No $ /
+USD, no Western names.
+
+
+------------------------------------------------------------------------
+3. THE DESIGN LANGUAGE — THIS IS THE FIXED PART
+------------------------------------------------------------------------
+
+Work entirely within the Bizak website design language. This is the anchor;
+everything visual must feel like it belongs to the same system.
+
+PALETTE — use these colours; YOU decide where each one goes. The palette is
+intentionally restrained: paper-cream + olive + a single lime accent. Choose
+combinations that read premium and calm. Do not introduce colours outside
+this set.
+
+  Paper / cream      #FCFCF7   light page & card surfaces
+  Paper-warm         #F4F4ED   slightly warmer cream
+  Section-b (warm)   #efefe9   a warm off-white, good for the screen base
+  Surface white      #FFFFFF   clean elevated card surface
+  Olive (dark)       #1A2D20   the dark surface — rich, deep green
+  Olive-soft         #243A2D   a lighter olive
+  Deep               #0F1411   the deepest near-black green
+  Lime / accent      #d3f969   THE single accent — a fresh lime. Use it
+                                sparingly: it should feel like a highlight,
+                                never a flood.
+  Pistachio          #DBE9B8   a soft secondary accent
+  Pistachio-deep     #A8C76C   a deeper pistachio
+  Text               #1A1D19   primary text / numbers
+  Text-muted         #6E7466   secondary text
+  Text-soft          #A2A296   the quietest captions
+  Text on dark       #FCFCF7   text on olive surfaces
+  Line               #D8D9D3   borders / dividers
+  Line-soft          #E5E5E0   hairline dividers
+
+  For genuinely negative / "needs attention" data (overdue, a down-trend)
+  the palette has no red. Use ONE restrained, desaturated warm tone (a quiet
+  muted brick / terracotta) — calm, never an alarming bright red — and use
+  it consistently. Do not add a second or third semantic colour beyond that.
+
+TYPOGRAPHY
+  • One font only: Inter. End to end — labels, numbers, IDs, everything.
+  • Calm weights — 400 / 500 / 600. Reserve the heaviest weight for at most
+    one hero number. The brand is composed, not loud; avoid 800-weight text.
+  • A clear hierarchy: large calm numbers for the figures that matter, small
+    tracked uppercase labels for eyebrows, quiet muted captions for support.
+
+SHAPE & FEEL
+  • Soft, considered corner radii — a small consistent radius scale (roughly
+    6 / 10 / 12 / 18 / 22, plus full pills). Pick from it; stay consistent.
+  • Generous whitespace. Empty space is part of the design — let it breathe.
+  • Flat surfaces with hairline 1px borders; depth from at most a single
+    soft, diffuse shadow. Restraint reads as premium.
+  • NO GRADIENTS anywhere — backgrounds, cards, charts, fills, all flat.
+  • A subtle 1px dot-grid is the only sanctioned texture, used sparingly on
+    dark surfaces if at all.
+
+THE FEELING TO HIT
+  Premium, editorial, calm. Think a high-end finance product: confident
+  typography, lots of air, one crisp accent, nothing shouting. If a screen
+  feels busy, dense, or "dashboard-y", it has failed — simplify until it
+  feels effortless.
+
+
+------------------------------------------------------------------------
+4. WHAT THE DASHBOARD CONTAINS
+------------------------------------------------------------------------
+
+The dashboard is a scrolling feed of section cards. Each section below is
+described by WHAT it communicates — not how to build it. How each one looks,
+how data is visualised, and how the cards are composed is your design call.
+
+  • A TOP GREETING — a time-aware greeting ("Good morning", etc.) with the
+    user's name, and a way to reach their profile (e.g. an avatar).
+
+  • AVAILABLE BALANCE — the headline figure of the screen: how much cash is
+    available right now. This is the moment to anchor the design — make it
+    feel important.
+
+  • RECEIVABLES & PAYABLES — money owed to the business and money it owes,
+    each with its total and how much of it is overdue.
+
+  • SALES TREND — total sales over a selectable time range, the trend
+    visualised over time, and how it compares to the previous period
+    (up or down).
+
+  • TOP SALES BY ITEM — the best-selling items for a selectable range,
+    shown as a share-of-total breakdown, with the total quantity sold.
+
+  • INVENTORY — a snapshot of stock across a few states (on hand, committed,
+    on order, in transit, available).
+
+  • TODAY'S ROUTES — the user's delivery routes for today: how many are
+    active vs completed. (Has an empty state: "no routes scheduled".)
+
+  • REMINDERS — a short list of actions the user owes attention to (bills to
+    approve, estimates to convert, invoices to collect), each with a count
+    and an urgency. (Shown only when there are reminders.)
+
+Each section also navigates somewhere on tap (to a detail screen). Each
+section loads its data independently, so each can show a LOADING, ERROR,
+or EMPTY state — design these to feel as calm and considered as the happy
+path, never an afterthought.
+
+The user can reorder the cards by dragging, and some cards are hidden
+depending on their permissions — so the feed must look intentional with any
+subset of cards in any order.
+
+
+------------------------------------------------------------------------
+5. SCREEN ARCHITECTURE (loose — refine as you see fit)
+------------------------------------------------------------------------
+
+  • Mobile, 375 × 812pt baseline; must also hold up to ~430px wide. Respect
+    system safe areas top and bottom.
+  • A top greeting area, a scrolling card feed below it, and the app's
+    bottom tab bar at the base (Home active — a simple, clean tab bar; it is
+    framing, not the focus).
+  • Pull-to-refresh on the feed.
+
+Beyond that, the composition is yours — card grouping, rhythm, where to
+place the hero figure, whether any surface goes dark, how dense or airy the
+feed is. Aim for premium and minimal over feature-packed.
+
+
+------------------------------------------------------------------------
+6. YOUR CREATIVE LATITUDE
+------------------------------------------------------------------------
+
+You decide, freely:
+
+  • The composition and rhythm of the feed.
+  • How each section card is shaped, structured, and laid out.
+  • Which palette colours go where, and how the lime accent is spent.
+  • Whether (and where) to use a dark olive surface for emphasis.
+  • How every chart and figure is visualised.
+  • Iconography, spacing, the texture of the whole thing.
+
+The ONLY constraints: stay inside the design language (§3) and the content
+(§4), and make it look genuinely premium, clean, professional and minimal.
+Within that, design boldly — invent the best version of this screen.
+
+
+------------------------------------------------------------------------
+7. QUALITY BAR
+------------------------------------------------------------------------
+
+  • Premium first. Every choice should read considered and high-end.
+  • Minimal. One clear takeaway per card. If it feels busy, cut.
+  • Mobile-true. Correct and uncramped from 375px through ~430px, no
+    horizontal scroll. Card interiors stay generous even when stacked.
+  • Consistent. Cards, type, spacing and radii feel like one system.
+  • Walk the finished screen top to bottom at 375px — if any card feels
+    busy, bulky, or noisy, simplify before calling it done.
+
+
+------------------------------------------------------------------------
+8. DELIVERABLE
+------------------------------------------------------------------------
+
+  1. The full dashboard feed — mobile 375×812 — greeting, card feed, tab bar.
+  2. A small states study — a section card shown in loading, error and empty.
+
+All using only the palette in §3, with South-Asian sample data (Rs / NPR
+amounts, a South-Asian name and item names).
+
+
+------------------------------------------------------------------------
+9. DO NOT
+------------------------------------------------------------------------
+
+  ✗ No gradients — anywhere, including chart fills.
+  ✗ No colours outside the §3 palette. One accent (lime); one restrained
+    attention tone. No bright multi-colour semantic rainbow.
+  ✗ No second font, no monospace — Inter only.
+  ✗ No heavy 800-weight text — keep type calm.
+  ✗ No stock Material look — no Material elevation/shadow stacking, no
+    bright Material spinners, no navy/slate surfaces (dark = Bizak olive).
+  ✗ No busy, dense, "dashboard demo" feel — premium means restraint.
+  ✗ No $ / USD, no Western sample names — this is a South Asia product.
+
+End of brief.

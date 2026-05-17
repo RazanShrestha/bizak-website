@@ -1,7 +1,7 @@
 import { HomePage } from "./components/HomePage"
 
 import { createBrowserRouter,Outlet, useParams } from "react-router";
-import { ProductPage } from "./components/ProductPage";
+
 import { PurchasingPage } from "./components/PurchasingPage";
 import { DistributionPage } from "./components/DistributionPage";
 import { Header } from "./components/Header";
@@ -32,7 +32,7 @@ import { PartnerEventEnrollPage } from "./components/partners/PartnerEventEnroll
 import { CaseStudiesPage } from "./components/CaseStudiesPage";
 import { CaseStudyPage } from "./components/CaseStudyPage";
 import { getCaseStudy } from "./components/caseStudyData";
-import { WhyBizakPage } from "./components/WhyBizakPage";
+
 import { WorkflowPage } from "./components/WorkflowPage";
 import { FinancialManagementPage } from "./components/FinancialManagement";
 import { SalesAndCrmPage } from "./components/SalesCrm";
@@ -65,6 +65,10 @@ import { EnrollmentPage } from "./components/EnrollmentPage";
 import { CommunityForum } from "./components/CommunityForum";
 import { WebinarsAndEvents } from "./components/WebinarsAndEvents";
 import { SaveSeatPage } from "./components/SaveSeatPage";
+import { PrivacyPolicyPage } from "./components/PrivacyPolicyPage";
+import { TermsPage } from "./components/TermsPage";
+import { CookiePolicyPage } from "./components/CookiePolicyPage";
+import { SecurityPage } from "./components/SecurityPage";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
 function RootLayout() {
@@ -544,8 +548,10 @@ function CareersPageLayout() {
           titleMuted: "We're growing fast so is the opportunity.",
           description:
             "One team, building the operating system for modern business across South Asia. Your next chapter starts here.",
-          primaryLabel: "View open roles",
-          secondaryLabel: "Send a speculative application",
+
+          primaryLabel: "View roles",
+          secondaryLabel: "Send application",
+
         }}
       />
     </div>
@@ -841,6 +847,49 @@ function HomeLayout() {
 }
 
 
+// ─── Legal & Trust pages dark header flows into the dark hero ────────────────
+
+function PrivacyPolicyPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header dark />
+      <PrivacyPolicyPage />
+      <Footer hideCta />
+    </div>
+  );
+}
+
+function TermsPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header dark />
+      <TermsPage />
+      <Footer hideCta />
+    </div>
+  );
+}
+
+function CookiePolicyPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header dark />
+      <CookiePolicyPage />
+      <Footer hideCta />
+    </div>
+  );
+}
+
+function SecurityPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header dark />
+      <SecurityPage />
+      <Footer hideCta />
+    </div>
+  );
+}
+
+
 
  
 
@@ -996,6 +1045,10 @@ export const router = createBrowserRouter([
       { path: "CommunityForum", Component: CommunityForum },
       { path: "WebinarsAndEvents", Component: WebinarsAndEvents },
       { path: "WebinarsAndEvents/save-seat/:eventId", Component: SaveSeatPage },
+      { path: "privacy",  Component: PrivacyPolicyPageLayout },
+      { path: "terms",    Component: TermsPageLayout },
+      { path: "cookies",  Component: CookiePolicyPageLayout },
+      { path: "security", Component: SecurityPageLayout },
       {
         path: "blog",
         Component: () => <Outlet />,

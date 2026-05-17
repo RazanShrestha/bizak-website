@@ -41,7 +41,7 @@ import {
   Mail,
   Activity,
 } from "lucide-react";
-import bizakLogo from "../../assets/logo/SVG/all-black-horizontal-lockup.svg";
+import bizakLogo from "../../assets/logo/all-black-horizontal.png";
 
 // ─── Bizak wordmark (white) ───────────────────────────────────────────────────
 // The "bizak" lettering lifted from the all-white horizontal lockup, with the
@@ -687,7 +687,9 @@ export function Header({ dark = false }: { dark?: boolean } = {}) {
               >
                 Sign in
               </a>
-              <Pill variant={dark ? "accent" : "dark"} href="/contact" >
+
+              <Pill variant={dark ? "accent" : "dark"} href="https://system.bizakerp.com/account/self-register" >
+
                 Get Started
               </Pill>
             </div>

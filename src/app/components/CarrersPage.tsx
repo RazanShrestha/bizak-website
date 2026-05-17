@@ -86,8 +86,8 @@ const CULTURE: { Icon: LucideIcon; title: string; desc: string; tone: "paper" | 
 const BENEFITS: { Icon: LucideIcon; label: string; sub: string }[] = [
   { Icon: Banknote,      label: "Salary and equity",   sub: "Top-of-market pay, reviewed twice a year, with real ownership." },
   { Icon: HeartPulse,    label: "Health, fully covered", sub: "Medical, dental and vision for you and your family." },
-  { Icon: GraduationCap, label: "$2,000 to learn",     sub: "Books, courses and conferences. Your call, every year." },
-  { Icon: Laptop,        label: "Home-office setup",   sub: "An $800 stipend to build a workspace that works for you." },
+
+
   { Icon: CalendarClock, label: "Flexible time off",   sub: "Take the leave you need, on a 20-day floor, not a ceiling." },
   { Icon: Plane,         label: "Annual offsite",      sub: "The whole company together, somewhere new, once a year." },
 ];
@@ -190,8 +190,10 @@ function HeroSection() {
             we're growing fast.
           </p>
           <PillGroup>
-            <Pill variant="dark" withArrow href="#open-roles">View open roles</Pill>
-            <Pill variant="light" withArrow href="#life">Life at Bizak</Pill>
+
+            <Pill variant="dark" withArrowUpRight href="#open-roles">View open roles</Pill>
+            <Pill variant="light" href="#life">Life at Bizak</Pill>
+
           </PillGroup>
         </div>
 

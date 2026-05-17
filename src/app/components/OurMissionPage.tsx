@@ -153,7 +153,9 @@ function HeroSection() {
             <Pill variant="dark" withArrowUpRight href="https://system.bizakerp.com/account/self-register">
               Get Started
             </Pill>
-            <Pill variant="light" withArrow href="/contact">
+ 
+            <Pill variant="light" href="/contact">
+ 
               Request Demo
             </Pill>
           </PillGroup>
@@ -181,9 +183,12 @@ function MissionCharter() {
         </div>
         <div className="flex items-center gap-2">
           <span className="size-1.5 animate-pulse rounded-bz-pill bg-bz-fire" />
+ 
           <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-white/[0.55]">
             Live now
           </span>
+ 
+ 
         </div>
       </div>
 
