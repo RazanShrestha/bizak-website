@@ -95,6 +95,7 @@ const COLS: { heading: string; links: { label: string; href: string }[] }[] = [
       { label: "Careers", href: "/careers" },
       { label: "Press & Media", href: "/PressAndMedia" },
       { label: "Contact Us", href: "/contact" },
+
     ],
   },
   {
@@ -105,6 +106,7 @@ const COLS: { heading: string; links: { label: string; href: string }[] }[] = [
       { label: "Cookie Policy", href: "/cookies" },
       { label: "Security", href: "/security" },
       { label: "Contact", href: "/contact" },
+
     ],
   },
 ];
@@ -194,7 +196,9 @@ export function Footer({
             leave a row-alignment gap each group flows tight under the
             previous one in its column. From `sm:` up it's a real grid. */}
         <div
+
           className={`columns-2 gap-x-8 border-b pt-14 pb-12 sm:grid sm:grid-cols-3 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-7 lg:gap-x-6 ${t.hairline}`}
+
         >
           {COLS.map((col) => (
             <div key={col.heading} className="mb-10 break-inside-avoid sm:mb-0">
@@ -224,7 +228,9 @@ export function Footer({
             <img
               src={dark ? logoDark : logoLight}
               alt="Bizak"
+
               className="h-[clamp(84px,10vw,110px)] w-auto"
+
             />
           </a>
 

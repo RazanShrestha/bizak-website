@@ -1,7 +1,7 @@
 import { HomePage } from "./components/HomePage"
 
 import { createBrowserRouter,Outlet, useParams } from "react-router";
-import { ProductPage } from "./components/ProductPage";
+
 import { PurchasingPage } from "./components/PurchasingPage";
 import { DistributionPage } from "./components/DistributionPage";
 import { Header } from "./components/Header";
@@ -32,7 +32,7 @@ import { PartnerEventEnrollPage } from "./components/partners/PartnerEventEnroll
 import { CaseStudiesPage } from "./components/CaseStudiesPage";
 import { CaseStudyPage } from "./components/CaseStudyPage";
 import { getCaseStudy } from "./components/caseStudyData";
-import { WhyBizakPage } from "./components/WhyBizakPage";
+
 import { WorkflowPage } from "./components/WorkflowPage";
 import { FinancialManagementPage } from "./components/FinancialManagement";
 import { SalesAndCrmPage } from "./components/SalesCrm";
@@ -554,8 +554,10 @@ function CareersPageLayout() {
           titleMuted: "We're growing fast so is the opportunity.",
           description:
             "One team, building the operating system for modern business across South Asia. Your next chapter starts here.",
+
           primaryLabel: "View roles",
           secondaryLabel: "Send application",
+
         }}
       />
     </div>
