@@ -75,7 +75,7 @@ export function SectionHead({
           >
             {title}
           </Heading>
-          <div className="flex flex-wrap gap-2">{actions}</div>
+          <div className="flex w-full flex-wrap gap-2 md:w-auto md:flex-none md:basis-[440px] md:justify-end">{actions}</div>
         </div>
       ) : (
         <Heading

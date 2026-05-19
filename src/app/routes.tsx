@@ -69,10 +69,16 @@ import { PrivacyPolicyPage } from "./components/PrivacyPolicyPage";
 import { TermsPage } from "./components/TermsPage";
 import { CookiePolicyPage } from "./components/CookiePolicyPage";
 import { SecurityPage } from "./components/SecurityPage";
+import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
 function RootLayout() {
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      <BackToTop />
+    </>
+  );
 }
 
 // ─── Global error fallback ────────────────────────────────────────────────────

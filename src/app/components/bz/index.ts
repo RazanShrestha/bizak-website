@@ -46,6 +46,9 @@ export type { TickProps } from "./Tick";
 export { DotGrid } from "./DotGrid";
 export type { DotGridProps } from "./DotGrid";
 
+export { BackToTop } from "./BackToTop";
+export type { BackToTopProps } from "./BackToTop";
+
 // ── Layout ───────────────────────────────────────────────────────────────────
 export { Container } from "./Container";
 export type { ContainerProps } from "./Container";
