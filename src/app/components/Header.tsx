@@ -41,7 +41,7 @@ import {
   Mail,
   Activity,
 } from "lucide-react";
-import bizakLogo from "../../assets/logo/all-black-horizontal.png";
+import bizakLogo from "../../assets/logo/SVG/all-black-horizontal-lockup.svg";
 
 // ─── Bizak wordmark (white) ───────────────────────────────────────────────────
 // The "bizak" lettering lifted from the all-white horizontal lockup, with the
