@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useParams, Link } from "react-router";
+import { useParams, Link, useNavigate } from "react-router";
 import {
   ChevronLeft,
   ChevronDown,
@@ -439,6 +439,7 @@ function MoreMenu({
   onClose: () => void;
   onDelete: () => void;
 }) {
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -482,8 +483,10 @@ function MoreMenu({
           <MoreItem
             icon={Pencil}
             label="Edit"
-            hint={!d.canEdit ? "Locked in this state" : undefined}
-            disabled={!d.canEdit}
+            onClick={() => {
+              setOpen(false);
+              navigate(`/design/sales-order-list/${d.id}/edit`);
+            }}
           />
           <MoreItem icon={Copy} label="Copy / Duplicate" />
           {d.canClose && (

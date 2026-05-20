@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation, Link } from "react-router";
 import {
   // Brand / chrome
   Search,
@@ -28,6 +28,7 @@ import {
   FileSpreadsheet,
   MoreHorizontal,
   X,
+  Check,
   // Analytics + states
   TrendingUp,
   Loader2,
@@ -94,7 +95,6 @@ export const ORDERS = [
     fulfill: "Pending Deliver",
     bill: "Pending Bill",
     amount: "NPR 482,500",
-    expanded: false,
   },
   {
     id: "SO-1047",
@@ -107,7 +107,6 @@ export const ORDERS = [
     fulfill: "Partial Fulfill",
     bill: "Partial Bill",
     amount: "NPR 1,240,000",
-    expanded: true,
   },
   {
     id: "SO-1046",
@@ -120,7 +119,6 @@ export const ORDERS = [
     fulfill: "Delivered",
     bill: "Invoiced",
     amount: "INR 880,400",
-    expanded: false,
   },
   {
     id: "SO-1045",
@@ -133,7 +131,6 @@ export const ORDERS = [
     fulfill: "Pending Deliver",
     bill: "Pending Bill",
     amount: "NPR 124,800",
-    expanded: false,
   },
   {
     id: "SO-1044",
@@ -146,7 +143,6 @@ export const ORDERS = [
     fulfill: "Delivered",
     bill: "Invoiced",
     amount: "NPR 296,100",
-    expanded: false,
   },
   {
     id: "SO-1043",
@@ -159,7 +155,6 @@ export const ORDERS = [
     fulfill: "Partial Fulfill",
     bill: "Partial Bill",
     amount: "NPR 614,200",
-    expanded: false,
   },
   {
     id: "SO-1042",
@@ -172,7 +167,6 @@ export const ORDERS = [
     fulfill: "Pending Deliver",
     bill: "Pending Bill",
     amount: "NPR 372,900",
-    expanded: false,
   },
 ] as const;
 
@@ -239,15 +233,15 @@ function StatusPill({
   tone: "delivered" | "partial" | "pending" | "invoiced" | "pendingBill" | "partialBill";
 }) {
   const styles: Record<string, string> = {
-    delivered:   "bg-bz-fire/[0.18] text-bz-text border border-bz-fire/40",
-    partial:     "bg-bz-leaf/40    text-bz-text border border-bz-leaf-deep/30",
-    pending:     "bg-bz-paper-warm text-bz-text-muted border border-bz-line",
-    invoiced:    "bg-bz-fire/[0.18] text-bz-text border border-bz-fire/40",
-    pendingBill: "bg-bz-paper-warm text-bz-text-muted border border-bz-line",
-    partialBill: "bg-bz-leaf/40    text-bz-text border border-bz-leaf-deep/30",
+    delivered:   "bg-bz-fire/[0.18] text-bz-text",
+    partial:     "bg-bz-leaf/40    text-bz-text",
+    pending:     "bg-bz-paper-warm  text-bz-text-muted",
+    invoiced:    "bg-bz-fire/[0.18] text-bz-text",
+    pendingBill: "bg-bz-paper-warm  text-bz-text-muted",
+    partialBill: "bg-bz-leaf/40    text-bz-text",
   };
   return (
-    <span className={`inline-flex items-center rounded-bz-pill px-2.5 py-0.5 text-[10.5px] font-semibold tabular-nums ${styles[tone]}`}>
+    <span className={`inline-flex items-center rounded-bz-pill px-2 py-0.5 text-[10.5px] font-medium tabular-nums ${styles[tone]}`}>
       {label}
     </span>
   );
@@ -524,19 +518,19 @@ function TopBar({ breadcrumb }: { breadcrumb: React.ReactNode }) {
 
 function PageHeader({ onOpenFilters }: { onOpenFilters: () => void }) {
   return (
-    <div className="flex flex-col gap-3 border-b border-bz-line bg-bz-paper px-4 py-4 md:flex-row md:items-center md:px-6">
-      <div className="flex items-center gap-3">
+    <div className="flex flex-col gap-3 px-4 pb-2 pt-5 md:flex-row md:items-center md:px-6">
+      <div className="flex items-baseline gap-2.5">
         <h1 className="text-[22px] font-semibold tracking-tight text-bz-text">
           Sales Order
         </h1>
-        <span className="inline-flex h-5 items-center rounded-bz-pill bg-bz-paper-warm px-2 text-[10.5px] font-semibold text-bz-text-muted border border-bz-line tabular-nums">
-          {TOTAL_RECORDS}
+        <span className="text-[12px] text-bz-text-muted tabular-nums">
+          · {TOTAL_RECORDS}
         </span>
       </div>
 
-      <div className="flex flex-1 flex-wrap items-center gap-2 md:justify-end">
+      <div className="flex flex-1 flex-wrap items-center gap-1.5 md:justify-end">
         {/* Search */}
-        <div className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-bz-md border border-bz-line bg-bz-surface px-3 md:max-w-[280px]">
+        <div className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-bz-md border border-bz-line-soft bg-bz-surface px-3 md:max-w-[280px]">
           <Search size={13} className="shrink-0 text-bz-text-muted" />
           <span className="truncate text-[12px] text-bz-text-muted">
             Search orders or customers…
@@ -546,7 +540,7 @@ function PageHeader({ onOpenFilters }: { onOpenFilters: () => void }) {
         {/* Filter */}
         <button
           onClick={onOpenFilters}
-          className="relative inline-flex h-9 items-center gap-1.5 rounded-bz-md border border-bz-line bg-bz-surface px-3 text-[12px] font-medium text-bz-text hover:bg-bz-paper-warm"
+          className="relative inline-flex h-9 items-center gap-1.5 rounded-bz-md border border-bz-line-soft bg-bz-surface px-3 text-[12px] font-medium text-bz-text hover:bg-bz-paper-warm"
         >
           <Filter size={13} />
           Filters
@@ -556,29 +550,32 @@ function PageHeader({ onOpenFilters }: { onOpenFilters: () => void }) {
         </button>
 
         {/* Export menu */}
-        <button className="inline-flex h-9 items-center gap-1.5 rounded-bz-md border border-bz-line bg-bz-surface px-3 text-[12px] font-medium text-bz-text">
+        <button className="inline-flex h-9 items-center gap-1.5 rounded-bz-md px-2.5 text-[12px] font-medium text-bz-text hover:bg-bz-paper-warm">
           <Download size={13} />
           Export
           <ChevronDown size={11} className="text-bz-text-muted" />
         </button>
 
         {/* Import */}
-        <button className="inline-flex h-9 items-center justify-center gap-1.5 rounded-bz-md border border-bz-line bg-bz-surface px-3 text-[12px] font-medium text-bz-text">
+        <button className="inline-flex h-9 items-center justify-center gap-1.5 rounded-bz-md px-2.5 text-[12px] font-medium text-bz-text hover:bg-bz-paper-warm">
           <Upload size={13} />
           <span className="hidden xl:inline">Import</span>
         </button>
 
         {/* Template */}
-        <button className="inline-flex h-9 items-center justify-center gap-1.5 rounded-bz-md border border-bz-line bg-bz-surface px-3 text-[12px] font-medium text-bz-text">
+        <button className="inline-flex h-9 items-center justify-center gap-1.5 rounded-bz-md px-2.5 text-[12px] font-medium text-bz-text hover:bg-bz-paper-warm">
           <FileSpreadsheet size={13} />
           <span className="hidden xl:inline">Template</span>
         </button>
 
         {/* Primary CTA */}
-        <button className="inline-flex h-9 items-center gap-1.5 rounded-bz-md bg-bz-deep px-3.5 text-[12px] font-semibold text-bz-text-on-dark">
+        <Link
+          to="/design/sales-order-list/new"
+          className="ml-1 inline-flex h-9 items-center gap-1.5 rounded-bz-md bg-bz-deep px-3.5 text-[12px] font-semibold text-bz-text-on-dark"
+        >
           <Plus size={13} />
           New Sales Order
-        </button>
+        </Link>
       </div>
     </div>
   );
@@ -590,29 +587,25 @@ function PageHeader({ onOpenFilters }: { onOpenFilters: () => void }) {
 
 function AnalyticsStrip() {
   return (
-    <div className="grid grid-cols-1 gap-3 px-4 py-4 md:grid-cols-2 md:px-6 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3 px-4 py-5 md:grid-cols-2 md:px-6 xl:grid-cols-4">
       {/* Total Sales Value */}
-      <div className="flex flex-col justify-between rounded-bz-lg border border-bz-line bg-bz-surface p-4">
+      <div className="flex flex-col justify-between rounded-bz-lg border border-bz-line-soft bg-bz-surface p-5">
         <div className="flex items-start justify-between">
-          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
-            Total Sales Value
-          </p>
-          <span className="inline-flex items-center gap-0.5 rounded-bz-pill bg-bz-fire/[0.18] px-1.5 py-0.5 text-[10px] font-semibold text-bz-text">
-            <TrendingUp size={10} /> 12.4%
+          <p className="text-[11.5px] text-bz-text-muted">Total Sales Value</p>
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-bz-text">
+            <TrendingUp size={11} className="text-bz-leaf-deep" /> 12.4%
           </span>
         </div>
-        <p className="mt-2.5 text-[26px] font-semibold leading-none tabular-nums text-bz-text">
+        <p className="mt-3 text-[26px] font-semibold leading-none tabular-nums text-bz-text">
           NPR 18.42M
         </p>
         <p className="mt-1.5 text-[11px] text-bz-text-muted">YTD · 2026</p>
       </div>
 
       {/* Fulfillment */}
-      <div className="flex flex-col rounded-bz-lg border border-bz-line bg-bz-surface p-4">
-        <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
-          Fulfillment Status
-        </p>
-        <div className="mt-2 flex flex-1 items-center gap-4">
+      <div className="flex flex-col rounded-bz-lg border border-bz-line-soft bg-bz-surface p-5">
+        <p className="text-[11.5px] text-bz-text-muted">Fulfillment Status</p>
+        <div className="mt-3 flex flex-1 items-center gap-4">
           <DonutMini size={64} thickness={11} segments={FULFILL_BREAKDOWN} />
           <div className="flex flex-1 flex-col gap-1.5">
             {FULFILL_BREAKDOWN.map((s) => (
@@ -621,7 +614,7 @@ function AnalyticsStrip() {
                   <span className="size-1.5 rounded-bz-pill" style={{ background: s.color }} />
                   <span className="text-[11px] text-bz-text">{s.key}</span>
                 </div>
-                <span className="text-[11px] font-semibold tabular-nums text-bz-text">
+                <span className="text-[11px] font-medium tabular-nums text-bz-text">
                   {s.pct}%
                 </span>
               </div>
@@ -631,26 +624,24 @@ function AnalyticsStrip() {
       </div>
 
       {/* Approval Pipeline */}
-      <div className="flex flex-col rounded-bz-lg border border-bz-line bg-bz-surface p-4">
-        <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
-          Approval Pipeline
-        </p>
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          <div className="rounded-bz-md bg-bz-paper-warm p-2.5">
-            <p className="text-[20px] font-semibold leading-none tabular-nums text-bz-text">84</p>
-            <p className="mt-0.5 text-[10px] text-bz-text-muted">Approved</p>
+      <div className="flex flex-col rounded-bz-lg border border-bz-line-soft bg-bz-surface p-5">
+        <p className="text-[11.5px] text-bz-text-muted">Approval Pipeline</p>
+        <div className="mt-3 flex items-baseline gap-6">
+          <div>
+            <p className="text-[26px] font-semibold leading-none tabular-nums text-bz-text">84</p>
+            <p className="mt-1.5 text-[11px] text-bz-text-muted">Approved</p>
           </div>
-          <div className="rounded-bz-md bg-bz-paper-warm p-2.5">
+          <div>
             <p className="text-[20px] font-semibold leading-none tabular-nums text-bz-text">19</p>
-            <p className="mt-0.5 text-[10px] text-bz-text-muted">Pending</p>
+            <p className="mt-1.5 text-[11px] text-bz-text-muted">Pending</p>
           </div>
         </div>
-        <div className="mt-auto pt-3">
-          <div className="mb-1 flex items-center justify-between text-[10px] text-bz-text-muted">
+        <div className="mt-auto pt-4">
+          <div className="mb-1.5 flex items-center justify-between text-[10.5px] text-bz-text-muted">
             <span>81.5% approved</span>
             <span className="tabular-nums">103 total</span>
           </div>
-          <div className="flex h-1.5 overflow-hidden rounded-bz-pill bg-bz-line">
+          <div className="flex h-1.5 overflow-hidden rounded-bz-pill bg-bz-line-soft">
             <div className="h-full bg-bz-leaf-deep" style={{ width: "81.5%" }} />
             <div className="h-full bg-bz-fire"      style={{ width: "18.5%" }} />
           </div>
@@ -658,30 +649,28 @@ function AnalyticsStrip() {
       </div>
 
       {/* Trend */}
-      <div className="flex flex-col rounded-bz-lg border border-bz-line bg-bz-surface p-4">
+      <div className="flex flex-col rounded-bz-lg border border-bz-line-soft bg-bz-surface p-5">
         <div className="flex items-start justify-between">
-          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
-            Monthly Sales Trend
-          </p>
-          <span className="inline-flex items-center gap-0.5 rounded-bz-pill bg-bz-fire/[0.18] px-1.5 py-0.5 text-[10px] font-semibold text-bz-text">
-            <TrendingUp size={10} /> 16.7%
+          <p className="text-[11.5px] text-bz-text-muted">Monthly Sales Trend</p>
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-bz-text">
+            <TrendingUp size={11} className="text-bz-leaf-deep" /> 16.7%
           </span>
         </div>
-        <div className="mt-2 flex-1">
+        <div className="mt-3 flex-1">
           <SparkArea last={TREND_LAST_6} prior={TREND_PRIOR_6} />
-          <div className="mt-1 flex items-center justify-between text-[10px] text-bz-text-muted">
+          <div className="mt-1.5 flex items-center justify-between text-[10.5px] text-bz-text-muted">
             <span>Jun–Nov 2025</span>
             <span>Dec–May 2026</span>
           </div>
         </div>
-        <div className="mt-2.5 grid grid-cols-2 gap-2 border-t border-bz-line-soft pt-2.5">
+        <div className="mt-4 flex items-baseline justify-between gap-4">
           <div>
-            <p className="text-[9px] uppercase tracking-[0.08em] text-bz-text-muted">Prior 6</p>
-            <p className="text-[12px] font-semibold tabular-nums text-bz-text">NPR 9.6M</p>
+            <p className="text-[11px] text-bz-text-muted">Prior 6</p>
+            <p className="mt-0.5 text-[13px] font-semibold tabular-nums text-bz-text">NPR 9.6M</p>
           </div>
-          <div>
-            <p className="text-[9px] uppercase tracking-[0.08em] text-bz-text-muted">Last 6</p>
-            <p className="text-[12px] font-semibold tabular-nums text-bz-text">NPR 11.2M</p>
+          <div className="text-right">
+            <p className="text-[11px] text-bz-text-muted">Last 6</p>
+            <p className="mt-0.5 text-[13px] font-semibold tabular-nums text-bz-text">NPR 11.2M</p>
           </div>
         </div>
       </div>
@@ -693,38 +682,28 @@ function AnalyticsStrip() {
 // ACTIVE FILTERS BAR + RECORD COUNT
 // ════════════════════════════════════════════════════════════════════════════
 
-function ActiveFiltersBar() {
+function FiltersAndCountBar() {
   return (
-    <div className="flex flex-wrap items-center gap-2 border-y border-bz-line bg-bz-paper-warm px-4 py-2.5 md:px-6">
-      <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
-        Active filters
-      </span>
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 pb-3 md:px-6">
       {ACTIVE_FILTERS.map((f) => (
         <span
           key={f.label}
-          className="inline-flex items-center gap-1.5 rounded-bz-pill border border-bz-line bg-bz-surface px-2.5 py-1 text-[11px] text-bz-text"
+          className="inline-flex items-center gap-1.5 rounded-bz-pill bg-bz-surface px-2.5 py-1 text-[11px] text-bz-text"
         >
           <span className="text-bz-text-muted">{f.kind}:</span>
           <span className="font-medium">{f.label}</span>
           <X size={10} className="text-bz-text-muted" />
         </span>
       ))}
-      <button className="ml-auto inline-flex items-center text-[11px] font-semibold text-bz-text underline decoration-bz-line underline-offset-2">
-        Clear All
+      <button className="text-[11px] font-medium text-bz-text-muted hover:text-bz-text">
+        Clear all
       </button>
-    </div>
-  );
-}
-
-function RecordCountBar() {
-  return (
-    <div className="flex items-center justify-between border-b border-bz-line bg-bz-paper px-4 py-2.5 md:px-6">
-      <p className="text-[12px] font-medium text-bz-text">
-        <span className="tabular-nums font-semibold">{TOTAL_RECORDS}</span> Active records found
-      </p>
-      <p className="hidden text-[11px] text-bz-text-muted sm:block">
-        Sorted by Document No. · descending
-      </p>
+      <span className="ml-auto text-[11.5px] text-bz-text-muted">
+        <span className="tabular-nums font-semibold text-bz-text">{TOTAL_RECORDS}</span>{" "}
+        active records
+        <span className="mx-2 text-bz-text-soft">·</span>
+        Sorted by Doc No. desc
+      </span>
     </div>
   );
 }
@@ -735,17 +714,28 @@ function RecordCountBar() {
 
 function OrderTable() {
   const navigate = useNavigate();
+  const [expanded, setExpanded] = React.useState<Set<string>>(new Set(["SO-1047"]));
+
+  function toggleExpand(id: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
   return (
-    <div className="px-4 py-4 md:px-6">
-      <div className="overflow-hidden rounded-bz-lg border border-bz-line bg-bz-surface">
+    <div className="px-4 pb-5 md:px-6">
+      <div className="overflow-hidden rounded-bz-lg border border-bz-line-soft bg-bz-surface">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left" style={{ minWidth: 1180 }}>
             <thead>
-              <tr className="border-b border-bz-line bg-bz-paper-warm">
+              <tr className="border-b border-bz-line-soft">
                 {COLUMNS.map((c) => (
                   <th
                     key={c.label}
-                    className="px-3 py-2.5 text-[10px] font-bold uppercase tracking-[0.08em] text-bz-text-muted"
+                    className="px-3 py-2.5 text-[10px] font-medium uppercase tracking-[0.06em] text-bz-text-muted"
                     style={c.width ? { width: c.width } : undefined}
                   >
                     <span className="inline-flex items-center">
@@ -757,26 +747,32 @@ function OrderTable() {
               </tr>
             </thead>
             <tbody className="divide-y divide-bz-line-soft">
-              {ORDERS.map((o) => (
+              {ORDERS.map((o) => {
+                const isExpanded = expanded.has(o.id);
+                return (
                 <React.Fragment key={o.id}>
                   <tr
                     onClick={() => navigate(`/design/sales-order-list/${o.id}`)}
                     className={`cursor-pointer transition-colors ${
-                      o.expanded ? "bg-bz-fire/[0.05]" : "bg-bz-surface hover:bg-bz-paper-warm/60"
+                      isExpanded ? "bg-bz-fire/[0.05]" : "bg-bz-surface hover:bg-bz-paper-warm/60"
                     }`}
                   >
                     <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-1">
-                        <button className="flex size-6 items-center justify-center rounded-bz-sm border border-bz-line bg-bz-surface text-bz-text-muted hover:bg-bz-paper-warm">
-                          {o.expanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                        <button
+                          onClick={() => toggleExpand(o.id)}
+                          aria-label={isExpanded ? "Collapse row" : "Expand row"}
+                          className="flex size-6 items-center justify-center rounded-bz-sm text-bz-text-muted hover:bg-bz-paper-warm"
+                        >
+                          {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                         </button>
-                        <button className="flex size-6 items-center justify-center rounded-bz-sm border border-bz-line bg-bz-surface text-bz-text-muted hover:bg-bz-paper-warm">
-                          <MoreHorizontal size={11} />
+                        <button className="flex size-6 items-center justify-center rounded-bz-sm text-bz-text-muted hover:bg-bz-paper-warm">
+                          <MoreHorizontal size={12} />
                         </button>
                       </div>
                     </td>
                     <td className="px-3 py-3">
-                      <span className="text-[12.5px] font-semibold tabular-nums text-bz-text underline decoration-bz-line decoration-dotted underline-offset-2">
+                      <span className="text-[12.5px] font-semibold tabular-nums text-bz-text">
                         {o.id}
                       </span>
                     </td>
@@ -825,30 +821,30 @@ function OrderTable() {
                     </td>
                   </tr>
 
-                  {o.expanded && (
+                  {isExpanded && (
                     <tr className="bg-bz-fire/[0.04]">
                       <td colSpan={COLUMNS.length} className="px-3 pb-5 pt-1">
-                        <div className="ml-7 rounded-bz-lg border border-bz-line-soft bg-bz-surface">
-                          <div className="flex items-center justify-between border-b border-bz-line-soft px-4 py-2.5">
-                            <div className="flex items-center gap-2">
+                        <div className="ml-7 rounded-bz-md bg-bz-surface">
+                          <div className="flex items-center justify-between px-4 py-2.5">
+                            <div className="flex items-center gap-1.5">
                               <FileText size={11} className="text-bz-text-muted" />
-                              <p className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">
+                              <p className="text-[11px] text-bz-text-muted">
                                 Order line items · {SO_1047_LINES.length}
                               </p>
                             </div>
-                            <p className="text-[10.5px] text-bz-text-muted">
-                              Order total &nbsp;
+                            <p className="text-[11px] text-bz-text-muted">
+                              Total{" "}
                               <span className="font-semibold text-bz-text tabular-nums">{o.amount}</span>
                             </p>
                           </div>
                           <table className="w-full table-fixed">
                             <thead>
-                              <tr className="border-b border-bz-line-soft bg-bz-paper">
-                                <th className="w-10 px-3 py-2 text-left text-[9.5px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">#</th>
-                                <th className="px-3 py-2 text-left text-[9.5px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">Item</th>
-                                <th className="w-16 px-3 py-2 text-right text-[9.5px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">Qty</th>
-                                <th className="w-32 px-3 py-2 text-right text-[9.5px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">Rate</th>
-                                <th className="w-32 px-3 py-2 text-right text-[9.5px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">Amount</th>
+                              <tr className="border-y border-bz-line-soft">
+                                <th className="w-10 px-3 py-2 text-left text-[10px] font-medium uppercase tracking-[0.06em] text-bz-text-muted">#</th>
+                                <th className="px-3 py-2 text-left text-[10px] font-medium uppercase tracking-[0.06em] text-bz-text-muted">Item</th>
+                                <th className="w-16 px-3 py-2 text-right text-[10px] font-medium uppercase tracking-[0.06em] text-bz-text-muted">Qty</th>
+                                <th className="w-32 px-3 py-2 text-right text-[10px] font-medium uppercase tracking-[0.06em] text-bz-text-muted">Rate</th>
+                                <th className="w-32 px-3 py-2 text-right text-[10px] font-medium uppercase tracking-[0.06em] text-bz-text-muted">Amount</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-bz-line-soft">
@@ -868,18 +864,19 @@ function OrderTable() {
                     </tr>
                   )}
                 </React.Fragment>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
 
         {/* Footer pagination */}
-        <div className="flex flex-col gap-2 border-t border-bz-line bg-bz-paper-warm px-4 py-3 sm:flex-row sm:items-center sm:justify-between md:px-5">
+        <div className="flex flex-col gap-2 border-t border-bz-line-soft px-4 py-3 sm:flex-row sm:items-center sm:justify-between md:px-5">
           <span className="text-[11.5px] text-bz-text-muted tabular-nums">
-            Showing <span className="font-semibold text-bz-text">{PAGE_SIZE}</span> records out of{" "}
+            Showing <span className="font-semibold text-bz-text">{PAGE_SIZE}</span> of{" "}
             <span className="font-semibold text-bz-text">{TOTAL_RECORDS}</span>
           </span>
-          <span className="inline-flex items-center gap-2 text-[11.5px] font-medium text-bz-text-muted">
+          <span className="inline-flex items-center gap-2 text-[11.5px] text-bz-text-muted">
             <Loader2 size={12} className="animate-spin text-bz-fire" />
             Loading more…
           </span>
@@ -1102,8 +1099,45 @@ function ListBreadcrumb() {
   );
 }
 
+function SuccessToast({ message, onClose }: { message: string; onClose: () => void }) {
+  return (
+    <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center">
+      <div className="pointer-events-auto flex items-center gap-3 rounded-bz-lg border border-bz-line-soft bg-bz-surface px-4 py-3 shadow-[0_18px_44px_-20px_rgba(15,20,17,0.18)]">
+        <span className="flex size-7 items-center justify-center rounded-bz-pill bg-bz-fire/[0.18]">
+          <Check size={13} className="text-bz-leaf-deep" />
+        </span>
+        <p className="text-[12.5px] font-medium text-bz-text">{message}</p>
+        <button
+          onClick={onClose}
+          className="ml-2 flex size-6 items-center justify-center rounded-bz-sm text-bz-text-muted hover:bg-bz-paper-warm"
+        >
+          <X size={11} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function SalesOrderListDesignPage() {
   const [filtersOpen, setFiltersOpen] = React.useState(false);
+  const location = useLocation();
+  const initialToast = (location.state as { toast?: string } | null)?.toast ?? null;
+  const [toast, setToast] = React.useState<string | null>(initialToast);
+
+  // Clear the navigation state so the toast doesn't reappear on back/forward.
+  React.useEffect(() => {
+    if (initialToast) {
+      window.history.replaceState({}, "");
+    }
+  }, [initialToast]);
+
+  // Auto-dismiss after 4.5s.
+  React.useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4500);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   return (
     <AppShell
       breadcrumb={<ListBreadcrumb />}
@@ -1111,9 +1145,9 @@ export function SalesOrderListDesignPage() {
     >
       <PageHeader onOpenFilters={() => setFiltersOpen(true)} />
       <AnalyticsStrip />
-      <ActiveFiltersBar />
-      <RecordCountBar />
+      <FiltersAndCountBar />
       <OrderTable />
+      {toast && <SuccessToast message={toast} onClose={() => setToast(null)} />}
     </AppShell>
   );
 }

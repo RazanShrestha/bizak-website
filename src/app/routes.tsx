@@ -72,6 +72,7 @@ import { SecurityPage } from "./components/SecurityPage";
 import { PoliciesAndAgreementsPage } from "./components/PoliciesAndAgreementsPage";
 import { SalesOrderListDesignPage } from "./components/SalesOrderListDesignPage";
 import { SalesOrderDetailDesignPage } from "./components/SalesOrderDetailDesignPage";
+import { SalesOrderFormDesignPage } from "./components/SalesOrderFormDesignPage";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -924,6 +925,22 @@ function SalesOrderDetailDesignPageLayout() {
   );
 }
 
+function SalesOrderCreateDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SalesOrderFormDesignPage mode="create" />
+    </div>
+  );
+}
+
+function SalesOrderEditDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SalesOrderFormDesignPage mode="edit" />
+    </div>
+  );
+}
+
 
 
  
@@ -1085,8 +1102,10 @@ export const router = createBrowserRouter([
       { path: "cookies",   Component: CookiePolicyPageLayout },
       { path: "security",  Component: SecurityPageLayout },
       { path: "policies",  Component: PoliciesAndAgreementsPageLayout },
-      { path: "design/sales-order-list", Component: SalesOrderListDesignPageLayout },
-      { path: "design/sales-order-list/:id", Component: SalesOrderDetailDesignPageLayout },
+      { path: "design/sales-order-list",            Component: SalesOrderListDesignPageLayout    },
+      { path: "design/sales-order-list/new",        Component: SalesOrderCreateDesignPageLayout  },
+      { path: "design/sales-order-list/:id",        Component: SalesOrderDetailDesignPageLayout  },
+      { path: "design/sales-order-list/:id/edit",   Component: SalesOrderEditDesignPageLayout    },
       {
         path: "blog",
         Component: () => <Outlet />,
