@@ -70,6 +70,8 @@ import { TermsPage } from "./components/TermsPage";
 import { CookiePolicyPage } from "./components/CookiePolicyPage";
 import { SecurityPage } from "./components/SecurityPage";
 import { PoliciesAndAgreementsPage } from "./components/PoliciesAndAgreementsPage";
+import { SalesOrderListDesignPage } from "./components/SalesOrderListDesignPage";
+import { SalesOrderDetailDesignPage } from "./components/SalesOrderDetailDesignPage";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -906,6 +908,22 @@ function PoliciesAndAgreementsPageLayout() {
   );
 }
 
+function SalesOrderListDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SalesOrderListDesignPage />
+    </div>
+  );
+}
+
+function SalesOrderDetailDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SalesOrderDetailDesignPage />
+    </div>
+  );
+}
+
 
 
  
@@ -1067,6 +1085,8 @@ export const router = createBrowserRouter([
       { path: "cookies",   Component: CookiePolicyPageLayout },
       { path: "security",  Component: SecurityPageLayout },
       { path: "policies",  Component: PoliciesAndAgreementsPageLayout },
+      { path: "design/sales-order-list", Component: SalesOrderListDesignPageLayout },
+      { path: "design/sales-order-list/:id", Component: SalesOrderDetailDesignPageLayout },
       {
         path: "blog",
         Component: () => <Outlet />,
