@@ -4,10 +4,7 @@ import {
   FileCode2,
   Download,
   Shield,
-  ShieldCheck,
-  Users,
   Building2,
-  FileCheck,
   CheckCircle,
   Info,
 } from "lucide-react";
@@ -26,56 +23,14 @@ interface PolicyDoc {
   fileType: FileType;
   size: string;
   updated: string;
-  filename: string;
-}
-
-// ─── Download utility ─────────────────────────────────────────────────────────
-// Generates a real downloadable file in the browser. PDF uses a minimal valid
-// PDF blob; DOCX uses a plain-text stub with the correct MIME type. Both
-// produce a real browser download — the server will supply actual content
-// once the document management backend is wired up.
-
-function triggerDownload(filename: string, type: FileType) {
-  let blob: Blob;
-
-  if (type === "DOCX") {
-    blob = new Blob(
-      [
-        `${filename.replace(".docx", "")}\r\n\r\nThis is a placeholder document.\r\nFull content will be available from the Bizak document server.\r\n\r\n\xA9 2026 Bizak Technologies`,
-      ],
-      {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      }
-    );
-  } else {
-    // Minimal valid PDF-1.0 (blank single page, renders in every viewer)
-    const PDF_B64 =
-      "JVBERi0xLjAKMSAwIG9iajw8L1BhZ2VzIDIgMCBSPj5lbmRvYmoKMiAwIG9iajw8L0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagozIDAgb2JqPDwvTWVkaWFCb3hbMCAwIDMgM10+PmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCnRyYWlsZXI8PC9TaXplIDQvUm9vdCAxIDAgUj4+CnN0YXJ0eHJlZgoxNDUKJUVPRgo=";
-    const raw = atob(PDF_B64);
-    const arr = new Uint8Array(raw.length);
-    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-    blob = new Blob([arr], { type: "application/pdf" });
-  }
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  fileUrl: string;
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
   "All",
-  "Corporate",
   "Data & Privacy",
-  "Security",
-  "Partner Agreements",
-  "Compliance",
 ] as const;
 
 type DocCategory = (typeof CATEGORIES)[number];
@@ -84,155 +39,14 @@ const DOCS: PolicyDoc[] = [
   // Corporate
   {
     id: "aup",
-    title: "Acceptable Use Policy",
-    description:
-      "Governs how Bizak software and services may be used by customers, employees, and partners.",
-    category: "Corporate",
+    title: "Hosting & Support Delivery Policy",
+    description: "The infrastructure, security safeguards, support services and service-level commitments applicable to the Bizak ERP Service.",
+    category: "Data & Privacy",
     fileType: "PDF",
     size: "84 KB",
     updated: "Jan 2026",
-    filename: "Bizak-Acceptable-Use-Policy.pdf",
-  },
-  {
-    id: "data-retention",
-    title: "Data Retention Policy",
-    description:
-      "Defines how long Bizak retains customer data and the procedures for deletion upon request or contract end.",
-    category: "Corporate",
-    fileType: "PDF",
-    size: "112 KB",
-    updated: "Jan 2026",
-    filename: "Bizak-Data-Retention-Policy.pdf",
-  },
-  {
-    id: "whistleblower",
-    title: "Whistleblower Policy",
-    description:
-      "Protected disclosure procedures for reporting ethical concerns within Bizak and its partner network.",
-    category: "Corporate",
-    fileType: "PDF",
-    size: "68 KB",
-    updated: "Dec 2025",
-    filename: "Bizak-Whistleblower-Policy.pdf",
-  },
-
-  // Data & Privacy
-  {
-    id: "privacy",
-    title: "Privacy Policy",
-    description:
-      "How Bizak collects, uses, and safeguards personal information across the marketing site and ERP platform.",
-    category: "Data & Privacy",
-    fileType: "PDF",
-    size: "210 KB",
-    updated: "Jan 2026",
-    filename: "Bizak-Privacy-Policy.pdf",
-  },
-  {
-    id: "dpa",
-    title: "Data Processing Agreement (DPA)",
-    description:
-      "Standard DPA for customers requiring GDPR-compliant processing terms. Sign and return to activate.",
-    category: "Data & Privacy",
-    fileType: "DOCX",
-    size: "148 KB",
-    updated: "Jan 2026",
-    filename: "Bizak-Data-Processing-Agreement.docx",
-  },
-  {
-    id: "cookie",
-    title: "Cookie Policy",
-    description:
-      "Details the essential cookies used by Bizak and how they support authentication and platform security.",
-    category: "Data & Privacy",
-    fileType: "PDF",
-    size: "56 KB",
-    updated: "Jan 2026",
-    filename: "Bizak-Cookie-Policy.pdf",
-  },
-
-  // Security
-  {
-    id: "infosec",
-    title: "Information Security Policy",
-    description:
-      "Bizak's internal framework for protecting customer data at rest, in transit, and in cloud infrastructure.",
-    category: "Security",
-    fileType: "PDF",
-    size: "176 KB",
-    updated: "Feb 2026",
-    filename: "Bizak-Information-Security-Policy.pdf",
-  },
-  {
-    id: "vdp",
-    title: "Vulnerability Disclosure Policy",
-    description:
-      "How to responsibly disclose security vulnerabilities to Bizak and what protections apply to researchers.",
-    category: "Security",
-    fileType: "PDF",
-    size: "94 KB",
-    updated: "Nov 2025",
-    filename: "Bizak-Vulnerability-Disclosure-Policy.pdf",
-  },
-
-  // Partner Agreements
-  {
-    id: "reseller-agreement",
-    title: "Reseller Agreement Template",
-    description:
-      "Standard agreement for Bizak Authorised Resellers covering licensing, pricing, and support obligations.",
-    category: "Partner Agreements",
-    fileType: "DOCX",
-    size: "228 KB",
-    updated: "Mar 2026",
-    filename: "Bizak-Reseller-Agreement.docx",
-  },
-  {
-    id: "tech-partner",
-    title: "Technology Partner Agreement",
-    description:
-      "Integration and co-marketing terms for ISVs and technology partners connecting to Bizak APIs.",
-    category: "Partner Agreements",
-    fileType: "DOCX",
-    size: "192 KB",
-    updated: "Feb 2026",
-    filename: "Bizak-Technology-Partner-Agreement.docx",
-  },
-  {
-    id: "consultant-agreement",
-    title: "Consultant & SI Agreement",
-    description:
-      "Framework agreement for implementation consultants and system integrators under the Bizak partner programme.",
-    category: "Partner Agreements",
-    fileType: "PDF",
-    size: "164 KB",
-    updated: "Jan 2026",
-    filename: "Bizak-Consultant-SI-Agreement.pdf",
-  },
-
-  // Compliance
-  {
-    id: "gdpr-overview",
-    title: "GDPR Compliance Overview",
-    description:
-      "Summary of Bizak's technical and organisational measures to meet GDPR obligations for EU customers.",
-    category: "Compliance",
-    fileType: "PDF",
-    size: "138 KB",
-    updated: "Jan 2026",
-    filename: "Bizak-GDPR-Compliance-Overview.pdf",
-  },
-  {
-    id: "soc2",
-    title: "SOC 2 Type II Summary",
-    description:
-      "Executive summary of Bizak's SOC 2 Type II audit findings covering Security, Availability, and Confidentiality.",
-    category: "Compliance",
-    fileType: "PDF",
-    size: "256 KB",
-    updated: "Apr 2026",
-    filename: "Bizak-SOC2-Type-II-Summary.pdf",
-  },
+    fileUrl: "https://your-bucket-url/Bizak-Acceptable-Use-Policy.pdf",
+  }
 ];
 
 // ─── Category icon map ────────────────────────────────────────────────────────
@@ -241,12 +55,6 @@ function categoryIcon(cat: string) {
   switch (cat) {
     case "Data & Privacy":
       return Shield;
-    case "Security":
-      return ShieldCheck;
-    case "Partner Agreements":
-      return Users;
-    case "Compliance":
-      return FileCheck;
     default:
       return Building2;
   }
@@ -259,7 +67,12 @@ function DocCard({ doc }: { doc: PolicyDoc }) {
 
   function handleDownload() {
     if (status !== "idle") return;
-    triggerDownload(doc.filename, doc.fileType);
+    const a = document.createElement("a");
+    a.href = doc.fileUrl;
+    a.download = doc.fileUrl.split("/").pop() ?? doc.title;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     setStatus("done");
     setTimeout(() => setStatus("idle"), 2200);
   }

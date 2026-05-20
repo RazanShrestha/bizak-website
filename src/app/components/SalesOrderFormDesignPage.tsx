@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { useParams, useNavigate, Link } from "react-router";
 import {
   ChevronLeft,
@@ -19,7 +20,6 @@ import {
   ShieldCheck,
   RotateCcw,
   AlertTriangle,
-  Briefcase,
 } from "lucide-react";
 import { AppShell, ORDERS } from "./SalesOrderListDesignPage";
 
@@ -175,12 +175,124 @@ function getFormData(mode: Mode, id?: string): FormData {
   };
 }
 
-const CUSTOMER_OPTIONS = [
-  { name: "Apex Manufacturing Pvt Ltd", code: "C-1029", meta: "Industrial · Pokhara"      },
-  { name: "Helio Distribution",         code: "C-2218", meta: "Distribution · Biratnagar" },
-  { name: "Himalayan Beverages Co.",    code: "C-3104", meta: "FMCG · Kathmandu"          },
-  { name: "Northwind Retail",           code: "C-4422", meta: "Retail · Lalitpur"         },
-  { name: "Sagar Trading House",        code: "C-5781", meta: "Trading · Bharatpur"       },
+type Option = { value: string; label: string; meta?: string };
+
+const CUSTOMER_OPTIONS: Option[] = [
+  { value: "Apex Manufacturing Pvt Ltd", label: "Apex Manufacturing Pvt Ltd", meta: "C-1029 · Industrial · Pokhara"     },
+  { value: "Helio Distribution",         label: "Helio Distribution",         meta: "C-2218 · Distribution · Biratnagar" },
+  { value: "Himalayan Beverages Co.",    label: "Himalayan Beverages Co.",    meta: "C-3104 · FMCG · Kathmandu"          },
+  { value: "Northwind Retail",           label: "Northwind Retail",           meta: "C-4422 · Retail · Lalitpur"         },
+  { value: "Sagar Trading House",        label: "Sagar Trading House",        meta: "C-5781 · Trading · Bharatpur"       },
+  { value: "Everest Tea Estates",        label: "Everest Tea Estates",        meta: "C-6022 · Agro · Ilam"               },
+  { value: "Annapurna Foods Pvt Ltd",    label: "Annapurna Foods Pvt Ltd",    meta: "C-6184 · FMCG · Kathmandu"          },
+];
+
+const SALES_REP_OPTIONS: Option[] = [
+  { value: "Priya Maharjan",  label: "Priya Maharjan",  meta: "NP-02 · Pokhara office"      },
+  { value: "Manas Singh",     label: "Manas Singh",     meta: "NP-01 · Kathmandu HQ"        },
+  { value: "Omar Tamang",     label: "Omar Tamang",     meta: "NP-01 · Kathmandu HQ"        },
+  { value: "David Richardson", label: "David Richardson", meta: "IN-01 · Biratnagar branch" },
+  { value: "Lena Wong",       label: "Lena Wong",       meta: "NP-03 · Bharatpur branch"    },
+];
+
+const SUBSIDIARY_OPTIONS: Option[] = [
+  { value: "NP-01 · Bizak Nepal",          label: "NP-01 · Bizak Nepal",          meta: "Kathmandu HQ"           },
+  { value: "NP-02 · Bizak Nepal Pokhara",  label: "NP-02 · Bizak Nepal Pokhara",  meta: "Pokhara branch"         },
+  { value: "NP-03 · Bizak Nepal Terai",    label: "NP-03 · Bizak Nepal Terai",    meta: "Bharatpur branch"       },
+  { value: "IN-01 · Bizak India",          label: "IN-01 · Bizak India",          meta: "Patna regional office"  },
+];
+
+const LOCATION_OPTIONS: Option[] = [
+  { value: "Kathmandu Warehouse 01",  label: "Kathmandu Warehouse 01",  meta: "Sano Thimi · 4,200 m²" },
+  { value: "Pokhara Warehouse 02",    label: "Pokhara Warehouse 02",    meta: "Lekhnath · 2,800 m²"   },
+  { value: "Biratnagar Warehouse 03", label: "Biratnagar Warehouse 03", meta: "Industrial Estate"     },
+  { value: "Bharatpur Warehouse 04",  label: "Bharatpur Warehouse 04",  meta: "Narayangarh"           },
+  { value: "Lalitpur Storefront",     label: "Lalitpur Storefront",     meta: "Patan retail"          },
+];
+
+const CURRENCY_OPTIONS: Option[] = [
+  { value: "NPR", label: "NPR · Nepalese Rupee", meta: "Base · 1.0000" },
+  { value: "INR", label: "INR · Indian Rupee",   meta: "0.6250"        },
+  { value: "USD", label: "USD · US Dollar",      meta: "133.4200"      },
+  { value: "EUR", label: "EUR · Euro",           meta: "143.8800"      },
+];
+
+const DEPARTMENT_OPTIONS: Option[] = [
+  { value: "Sales — Kathmandu", label: "Sales — Kathmandu", meta: "DPT-01" },
+  { value: "Sales — Pokhara",   label: "Sales — Pokhara",   meta: "DPT-02" },
+  { value: "Sales — Terai",     label: "Sales — Terai",     meta: "DPT-03" },
+  { value: "Distribution",      label: "Distribution",      meta: "DPT-10" },
+];
+
+const CLASS_OPTIONS: Option[] = [
+  { value: "Industrial",  label: "Industrial"  },
+  { value: "Retail",      label: "Retail"      },
+  { value: "Wholesale",   label: "Wholesale"   },
+  { value: "Government",  label: "Government"  },
+];
+
+const PROJECT_OPTIONS: Option[] = [
+  { value: "APEX-PH2",  label: "APEX-PH2",  meta: "Apex phase-2 install"   },
+  { value: "HBC-2026",  label: "HBC-2026",  meta: "Himalayan Beverages CY26" },
+  { value: "NWR-FY26",  label: "NWR-FY26",  meta: "Northwind retail FY26"  },
+  { value: "INTERNAL",  label: "Internal",  meta: "Non-billable"           },
+];
+
+const PARTNER_OPTIONS: Option[] = [
+  { value: "Apex Group",    label: "Apex Group",    meta: "Strategic" },
+  { value: "Helio Holdings", label: "Helio Holdings", meta: "Channel"  },
+];
+
+const YES_NO_OPTIONS: Option[] = [
+  { value: "Yes", label: "Yes" },
+  { value: "No",  label: "No"  },
+];
+
+const TERM_OPTIONS: Option[] = [
+  { value: "Net 15",       label: "Net 15",       meta: "+ 15 days" },
+  { value: "Net 30",       label: "Net 30",       meta: "+ 30 days" },
+  { value: "Net 45",       label: "Net 45",       meta: "+ 45 days" },
+  { value: "Net 60",       label: "Net 60",       meta: "+ 60 days" },
+  { value: "Due on receipt", label: "Due on receipt", meta: "Immediate" },
+];
+
+type ItemCatalogEntry = Option & {
+  description: string;
+  unit: string;
+  rate: string;
+  taxCode: string;
+  taxPct: string;
+};
+
+const ITEM_CATALOG: ItemCatalogEntry[] = [
+  { value: "ICP-A220", label: "Industrial Coupling A-220",    meta: "ICP-A220 · pcs · NPR 18,500",  description: "Standard duty coupling, zinc-plated",     unit: "pcs", rate: "18,500",  taxCode: "VAT", taxPct: "13" },
+  { value: "HP7-2026", label: "Hydraulic Pump HP-7",          meta: "HP7-2026 · pcs · NPR 142,000", description: "Phase-2 high-pressure pump unit",         unit: "pcs", rate: "142,000", taxCode: "VAT", taxPct: "13" },
+  { value: "MPS-006",  label: "Mounting Plate Set",           meta: "MPS-006 · pkg · NPR 11,200",   description: "Pkg of 6 · stainless-steel mount plate", unit: "pkg", rate: "11,200",  taxCode: "VAT", taxPct: "13" },
+  { value: "SVC-INS",  label: "Service & Installation",       meta: "SVC-INS · hrs · NPR 114,000",  description: "On-site fitting + first-run validation", unit: "hrs", rate: "114,000", taxCode: "EXM", taxPct: "0"  },
+  { value: "ICP-B340", label: "Industrial Coupling B-340",    meta: "ICP-B340 · pcs · NPR 22,800",  description: "Heavy duty coupling, stainless",          unit: "pcs", rate: "22,800",  taxCode: "VAT", taxPct: "13" },
+  { value: "FLT-200",  label: "Inline Filter 200µm",          meta: "FLT-200 · pcs · NPR 6,400",    description: "Replaceable cartridge filter",            unit: "pcs", rate: "6,400",   taxCode: "VAT", taxPct: "13" },
+];
+
+const UNIT_OPTIONS: Option[] = [
+  { value: "pcs", label: "pcs", meta: "Pieces"        },
+  { value: "pkg", label: "pkg", meta: "Package"       },
+  { value: "box", label: "box", meta: "Box"           },
+  { value: "hrs", label: "hrs", meta: "Hours"         },
+  { value: "kg",  label: "kg",  meta: "Kilograms"     },
+  { value: "lt",  label: "lt",  meta: "Litres"        },
+];
+
+const PRICE_LEVEL_OPTIONS: Option[] = [
+  { value: "STD",      label: "STD",      meta: "Standard"      },
+  { value: "BULK",     label: "BULK",     meta: "Bulk discount" },
+  { value: "PROMO",    label: "PROMO",    meta: "Promotional"   },
+  { value: "ENTERPRISE", label: "ENTERPRISE", meta: "Negotiated" },
+];
+
+const TAX_CODE_OPTIONS: Option[] = [
+  { value: "VAT", label: "VAT", meta: "Standard VAT · 13%" },
+  { value: "EXM", label: "EXM", meta: "Exempt · 0%"        },
+  { value: "ZER", label: "ZER", meta: "Zero-rated · 0%"    },
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -252,32 +364,243 @@ function TextareaInput({
   );
 }
 
-function LookupInput({
+// ────────────────────────────────────────────────────────────────────────────
+// DROPDOWN portal-based, type-to-filter, with Create new + Advanced search
+// ────────────────────────────────────────────────────────────────────────────
+
+function Dropdown({
+  anchorRef,
+  open,
+  onClose,
+  options,
+  value,
+  onSelect,
+  onCreateNew,
+  onAdvancedSearch,
+  searchPlaceholder = "Search…",
+  createLabel = "Create new",
+  emptyLabel = "No matches",
+}: {
+  anchorRef: React.RefObject<HTMLElement | null>;
+  open: boolean;
+  onClose: () => void;
+  options: Option[];
+  value?: string;
+  onSelect: (opt: Option) => void;
+  onCreateNew?: () => void;
+  onAdvancedSearch?: () => void;
+  searchPlaceholder?: string;
+  createLabel?: string;
+  emptyLabel?: string;
+}) {
+  const [query, setQuery] = React.useState("");
+  const [pos, setPos] = React.useState<{ top: number; left: number; width: number } | null>(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useLayoutEffect(() => {
+    if (!open || !anchorRef.current) return;
+    const rect = anchorRef.current.getBoundingClientRect();
+    setPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+    setQuery("");
+  }, [open, anchorRef]);
+
+  React.useEffect(() => {
+    if (!open) return;
+    function onMouseDown(e: MouseEvent) {
+      const target = e.target as Node;
+      if (
+        dropdownRef.current && !dropdownRef.current.contains(target) &&
+        anchorRef.current && !anchorRef.current.contains(target)
+      ) {
+        onClose();
+      }
+    }
+    function onScroll() { onClose(); }
+    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
+    document.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("scroll", onScroll, true);
+    document.addEventListener("keydown", onKey);
+    // Focus the search input after the dropdown is mounted
+    const tid = window.setTimeout(() => inputRef.current?.focus(), 0);
+    return () => {
+      document.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("scroll", onScroll, true);
+      document.removeEventListener("keydown", onKey);
+      window.clearTimeout(tid);
+    };
+  }, [open, onClose, anchorRef]);
+
+  if (!open || !pos) return null;
+
+  const q = query.trim().toLowerCase();
+  const filtered = q
+    ? options.filter((o) =>
+        o.label.toLowerCase().includes(q) ||
+        (o.meta?.toLowerCase().includes(q) ?? false),
+      )
+    : options;
+
+  return createPortal(
+    <div
+      ref={dropdownRef}
+      style={{
+        position: "fixed",
+        top: pos.top,
+        left: pos.left,
+        minWidth: Math.max(pos.width, 260),
+        maxWidth: 420,
+      }}
+      className="z-50 overflow-hidden rounded-bz-md border border-bz-line bg-bz-surface shadow-[0_18px_44px_-20px_rgba(15,20,17,0.22)]"
+    >
+      <div className="border-b border-bz-line-soft p-2">
+        <div className="flex h-8 items-center gap-2 rounded-bz-sm border border-bz-line-soft bg-bz-paper-warm px-2">
+          <Search size={11} className="shrink-0 text-bz-text-muted" />
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={searchPlaceholder}
+            className="flex-1 bg-transparent text-[12px] text-bz-text outline-none placeholder:text-bz-text-muted"
+          />
+          {query && (
+            <button
+              onClick={() => setQuery("")}
+              className="flex size-4 items-center justify-center rounded-bz-sm text-bz-text-muted hover:bg-bz-surface"
+              aria-label="Clear search"
+            >
+              <X size={10} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="max-h-[260px] overflow-y-auto py-1">
+        {filtered.length === 0 ? (
+          <p className="px-3 py-5 text-center text-[11.5px] text-bz-text-muted">
+            {emptyLabel}
+          </p>
+        ) : (
+          filtered.map((o) => {
+            const selected = o.value === value;
+            return (
+              <button
+                key={o.value}
+                onClick={() => {
+                  onSelect(o);
+                  onClose();
+                }}
+                className={`flex w-full items-start gap-2 px-3 py-2 text-left hover:bg-bz-paper-warm ${
+                  selected ? "bg-bz-fire/[0.06]" : ""
+                }`}
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[12.5px] text-bz-text">{o.label}</p>
+                  {o.meta && (
+                    <p className="mt-0.5 truncate text-[10.5px] text-bz-text-muted">{o.meta}</p>
+                  )}
+                </div>
+                {selected && <Check size={12} className="mt-0.5 shrink-0 text-bz-text" />}
+              </button>
+            );
+          })
+        )}
+      </div>
+
+      {(onCreateNew || onAdvancedSearch) && (
+        <div className="flex border-t border-bz-line-soft p-1">
+          {onCreateNew && (
+            <button
+              onClick={() => {
+                onCreateNew();
+                onClose();
+              }}
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-bz-sm px-2 py-1.5 text-[11.5px] font-medium text-bz-text hover:bg-bz-paper-warm"
+            >
+              <Plus size={11} /> {createLabel}
+            </button>
+          )}
+          {onAdvancedSearch && (
+            <button
+              onClick={() => {
+                onAdvancedSearch();
+                onClose();
+              }}
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-bz-sm px-2 py-1.5 text-[11.5px] font-medium text-bz-text hover:bg-bz-paper-warm"
+            >
+              <Search size={11} /> Advanced
+            </button>
+          )}
+        </div>
+      )}
+    </div>,
+    document.body,
+  );
+}
+
+// LookupField field-sized button + dropdown anchored beneath it.
+function LookupField({
   value,
   placeholder,
-  onClick,
   readOnly,
+  options,
+  onSelect,
+  onCreateNew,
+  onAdvancedSearch,
+  searchPlaceholder,
+  createLabel,
 }: {
   value: string;
   placeholder?: string;
-  onClick?: () => void;
   readOnly?: boolean;
+  options: Option[];
+  onSelect: (opt: Option) => void;
+  onCreateNew?: () => void;
+  onAdvancedSearch?: () => void;
+  searchPlaceholder?: string;
+  createLabel?: string;
 }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLButtonElement>(null);
+
   return (
-    <button
-      onClick={onClick}
-      disabled={readOnly}
-      className={`flex h-9 w-full items-center justify-between gap-2 rounded-bz-md border border-bz-line-soft px-3 text-left text-[13px] outline-none transition-colors hover:border-bz-line focus:border-bz-text ${
-        readOnly
-          ? "cursor-not-allowed bg-bz-paper-warm text-bz-text-muted"
-          : "bg-bz-surface text-bz-text"
-      }`}
-    >
-      <span className={`flex-1 truncate ${!value ? "text-bz-text-muted" : ""}`}>
-        {value || placeholder}
-      </span>
-      {!readOnly && <ChevronDown size={12} className="shrink-0 text-bz-text-muted" />}
-    </button>
+    <>
+      <button
+        ref={ref}
+        onClick={() => !readOnly && setOpen((v) => !v)}
+        disabled={readOnly}
+        className={`flex h-9 w-full items-center justify-between gap-2 rounded-bz-md border px-3 text-left text-[13px] outline-none transition-colors ${
+          readOnly
+            ? "cursor-not-allowed border-bz-line-soft bg-bz-paper-warm text-bz-text-muted"
+            : open
+            ? "border-bz-text bg-bz-surface text-bz-text"
+            : "border-bz-line-soft bg-bz-surface text-bz-text hover:border-bz-line"
+        }`}
+      >
+        <span className={`flex-1 truncate ${!value ? "text-bz-text-muted" : ""}`}>
+          {value || placeholder}
+        </span>
+        {!readOnly && (
+          <ChevronDown
+            size={12}
+            className={`shrink-0 text-bz-text-muted transition-transform ${open ? "rotate-180" : ""}`}
+          />
+        )}
+      </button>
+      <Dropdown
+        anchorRef={ref}
+        open={open}
+        onClose={() => setOpen(false)}
+        options={options}
+        value={value}
+        onSelect={onSelect}
+        onCreateNew={onCreateNew}
+        onAdvancedSearch={onAdvancedSearch}
+        searchPlaceholder={searchPlaceholder}
+        createLabel={createLabel}
+      />
+    </>
   );
 }
 
@@ -410,12 +733,18 @@ function FormMoreMenu({ mode, onReset }: { mode: Mode; onReset: () => void }) {
 
 function LeftRail({
   data,
-  onCustomerClick,
-  onSalesRepClick,
+  onSelectCustomer,
+  onSelectSalesRep,
+  onCreateCustomer,
+  onCreateSalesRep,
+  onAdvancedSearch,
 }: {
   data: FormData;
-  onCustomerClick: () => void;
-  onSalesRepClick: () => void;
+  onSelectCustomer: (opt: Option) => void;
+  onSelectSalesRep: (opt: Option) => void;
+  onCreateCustomer: () => void;
+  onCreateSalesRep: () => void;
+  onAdvancedSearch: (field: string) => void;
 }) {
   return (
     <aside className="rounded-bz-lg border border-bz-line-soft bg-bz-surface">
@@ -433,22 +762,32 @@ function LeftRail({
       {/* Customer */}
       <RailSection label="Customer" required>
         <PickerRow
-          onClick={onCustomerClick}
           placeholder="Select customer…"
           primary={data.party}
           meta={data.partyMeta}
           avatarTone="fire"
+          options={CUSTOMER_OPTIONS}
+          onSelect={onSelectCustomer}
+          onCreateNew={onCreateCustomer}
+          onAdvancedSearch={() => onAdvancedSearch("Customer")}
+          searchPlaceholder="Search customers…"
+          createLabel="Create customer"
         />
       </RailSection>
 
       {/* Sales Rep */}
       <RailSection label="Sales representative">
         <PickerRow
-          onClick={onSalesRepClick}
           placeholder="Assign sales rep…"
           primary={data.salesRep}
           meta={data.salesRepMeta}
           avatarTone="neutral"
+          options={SALES_REP_OPTIONS}
+          onSelect={onSelectSalesRep}
+          onCreateNew={onCreateSalesRep}
+          onAdvancedSearch={() => onAdvancedSearch("Sales Rep")}
+          searchPlaceholder="Search reps…"
+          createLabel="Add sales rep"
         />
       </RailSection>
 
@@ -496,43 +835,73 @@ function RailSection({
 }
 
 function PickerRow({
-  onClick,
   primary,
   meta,
   placeholder,
   avatarTone,
+  options,
+  onSelect,
+  onCreateNew,
+  onAdvancedSearch,
+  searchPlaceholder,
+  createLabel,
 }: {
-  onClick: () => void;
   primary: string;
   meta: string;
   placeholder: string;
   avatarTone: "fire" | "neutral";
+  options: Option[];
+  onSelect: (opt: Option) => void;
+  onCreateNew?: () => void;
+  onAdvancedSearch?: () => void;
+  searchPlaceholder?: string;
+  createLabel?: string;
 }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLButtonElement>(null);
   const has = !!primary;
   return (
-    <button
-      onClick={onClick}
-      className="-mx-2 -my-1 flex w-[calc(100%+1rem)] items-start gap-3 rounded-bz-md px-2 py-1 text-left hover:bg-bz-paper-warm/60"
-    >
-      {has ? (
-        <Avatar text={primary} tone={avatarTone} />
-      ) : (
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-bz-pill border border-dashed border-bz-line bg-bz-paper-warm text-bz-text-muted">
-          <Plus size={12} />
-        </span>
-      )}
-      <div className="min-w-0 flex-1">
+    <>
+      <button
+        ref={ref}
+        onClick={() => setOpen((v) => !v)}
+        className="-mx-2 -my-1 flex w-[calc(100%+1rem)] items-start gap-3 rounded-bz-md px-2 py-1 text-left hover:bg-bz-paper-warm/60"
+      >
         {has ? (
-          <>
-            <p className="truncate text-[13px] font-semibold text-bz-text">{primary}</p>
-            <p className="mt-0.5 text-[11px] text-bz-text-muted">{meta}</p>
-          </>
+          <Avatar text={primary} tone={avatarTone} />
         ) : (
-          <p className="text-[12.5px] text-bz-text-muted">{placeholder}</p>
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-bz-pill border border-dashed border-bz-line bg-bz-paper-warm text-bz-text-muted">
+            <Plus size={12} />
+          </span>
         )}
-      </div>
-      <ChevronRight size={12} className="mt-1 shrink-0 text-bz-text-muted" />
-    </button>
+        <div className="min-w-0 flex-1">
+          {has ? (
+            <>
+              <p className="truncate text-[13px] font-semibold text-bz-text">{primary}</p>
+              <p className="mt-0.5 text-[11px] text-bz-text-muted">{meta}</p>
+            </>
+          ) : (
+            <p className="text-[12.5px] text-bz-text-muted">{placeholder}</p>
+          )}
+        </div>
+        <ChevronDown
+          size={12}
+          className={`mt-1 shrink-0 text-bz-text-muted transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      <Dropdown
+        anchorRef={ref}
+        open={open}
+        onClose={() => setOpen(false)}
+        options={options}
+        value={primary}
+        onSelect={onSelect}
+        onCreateNew={onCreateNew}
+        onAdvancedSearch={onAdvancedSearch}
+        searchPlaceholder={searchPlaceholder}
+        createLabel={createLabel}
+      />
+    </>
   );
 }
 
@@ -556,11 +925,15 @@ function Avatar({ text, tone }: { text: string; tone: "fire" | "neutral" }) {
 function PrimaryInformationCard({
   mode,
   data,
-  onLookup,
+  onUpdate,
+  onCreateNew,
+  onAdvancedSearch,
 }: {
   mode: Mode;
   data: FormData;
-  onLookup: (field: string) => void;
+  onUpdate: (patch: Partial<FormData>) => void;
+  onCreateNew: (field: string) => void;
+  onAdvancedSearch: (field: string) => void;
 }) {
   const [open, setOpen] = React.useState<"class" | "custom" | null>("class");
   const multiSubsidiary = true;
@@ -585,11 +958,16 @@ function PrimaryInformationCard({
             required={mode === "create"}
             hint={mode === "edit" ? "read-only" : "cascades — wipes form"}
           >
-            <LookupInput
+            <LookupField
               value={data.subsidiary}
               placeholder="Select subsidiary…"
-              onClick={() => onLookup("subsidiary")}
               readOnly={mode === "edit"}
+              options={SUBSIDIARY_OPTIONS}
+              onSelect={(o) => onUpdate({ subsidiary: o.value })}
+              onCreateNew={() => onCreateNew("Subsidiary")}
+              onAdvancedSearch={() => onAdvancedSearch("Subsidiary")}
+              searchPlaceholder="Search subsidiaries…"
+              createLabel="Add subsidiary"
             />
           </Field>
         )}
@@ -611,18 +989,28 @@ function PrimaryInformationCard({
         </Field>
 
         <Field label="Location" required>
-          <LookupInput
+          <LookupField
             value={data.location}
             placeholder="Select location…"
-            onClick={() => onLookup("location")}
+            options={LOCATION_OPTIONS}
+            onSelect={(o) => onUpdate({ location: o.value })}
+            onCreateNew={() => onCreateNew("Location")}
+            onAdvancedSearch={() => onAdvancedSearch("Location")}
+            searchPlaceholder="Search locations…"
+            createLabel="Add location"
           />
         </Field>
 
         <Field label="Currency" required>
-          <LookupInput
+          <LookupField
             value={data.currency}
             placeholder="Select currency…"
-            onClick={() => onLookup("currency")}
+            options={CURRENCY_OPTIONS}
+            onSelect={(o) => onUpdate({ currency: o.value })}
+            onCreateNew={() => onCreateNew("Currency")}
+            onAdvancedSearch={() => onAdvancedSearch("Currency")}
+            searchPlaceholder="Search currencies…"
+            createLabel="Add currency"
           />
         </Field>
 
@@ -647,31 +1035,51 @@ function PrimaryInformationCard({
       >
         <div className="grid grid-cols-1 gap-x-10 gap-y-5 md:grid-cols-2">
           <Field label="Department">
-            <LookupInput
+            <LookupField
               value={data.department}
               placeholder="Select department…"
-              onClick={() => onLookup("department")}
+              options={DEPARTMENT_OPTIONS}
+              onSelect={(o) => onUpdate({ department: o.value })}
+              onCreateNew={() => onCreateNew("Department")}
+              onAdvancedSearch={() => onAdvancedSearch("Department")}
+              searchPlaceholder="Search departments…"
+              createLabel="Add department"
             />
           </Field>
           <Field label="Class">
-            <LookupInput
+            <LookupField
               value={data.clazz}
               placeholder="Select class…"
-              onClick={() => onLookup("class")}
+              options={CLASS_OPTIONS}
+              onSelect={(o) => onUpdate({ clazz: o.value })}
+              onCreateNew={() => onCreateNew("Class")}
+              onAdvancedSearch={() => onAdvancedSearch("Class")}
+              searchPlaceholder="Search classes…"
+              createLabel="Add class"
             />
           </Field>
           <Field label="Project">
-            <LookupInput
+            <LookupField
               value={data.project}
               placeholder="Select project…"
-              onClick={() => onLookup("project")}
+              options={PROJECT_OPTIONS}
+              onSelect={(o) => onUpdate({ project: o.value })}
+              onCreateNew={() => onCreateNew("Project")}
+              onAdvancedSearch={() => onAdvancedSearch("Project")}
+              searchPlaceholder="Search projects…"
+              createLabel="Add project"
             />
           </Field>
           <Field label="Partner">
-            <LookupInput
+            <LookupField
               value={data.partner}
               placeholder="Select partner…"
-              onClick={() => onLookup("partner")}
+              options={PARTNER_OPTIONS}
+              onSelect={(o) => onUpdate({ partner: o.value })}
+              onCreateNew={() => onCreateNew("Partner")}
+              onAdvancedSearch={() => onAdvancedSearch("Partner")}
+              searchPlaceholder="Search partners…"
+              createLabel="Add partner"
             />
           </Field>
         </div>
@@ -694,10 +1102,11 @@ function PrimaryInformationCard({
               <TextInput value={mode === "edit" ? "QTE-APX-0188" : ""} placeholder="QTE-…" tabularNums />
             </Field>
             <Field label="Crane required">
-              <LookupInput
+              <LookupField
                 value={mode === "edit" ? "Yes" : ""}
                 placeholder="Yes / No"
-                onClick={() => onLookup("crane")}
+                options={YES_NO_OPTIONS}
+                onSelect={() => undefined}
               />
             </Field>
           </div>
@@ -774,13 +1183,21 @@ function ItemsSection({
   data,
   onDeleteRow,
   onAddRow,
-  onItemPicker,
+  onItemSelect,
+  onLineUpdate,
+  onUpdate,
+  onCreateNew,
+  onAdvancedSearch,
 }: {
   mode: Mode;
   data: FormData;
   onDeleteRow: (sn: number) => void;
   onAddRow: () => void;
-  onItemPicker: (sn: number) => void;
+  onItemSelect: (sn: number, item: ItemCatalogEntry) => void;
+  onLineUpdate: (sn: number, patch: Partial<LineRow>) => void;
+  onUpdate: (patch: Partial<FormData>) => void;
+  onCreateNew: (field: string) => void;
+  onAdvancedSearch: (field: string) => void;
 }) {
   const [tab, setTab] = React.useState<TabKey>("item");
   return (
@@ -823,11 +1240,14 @@ function ItemsSection({
             lines={data.lines}
             onDeleteRow={onDeleteRow}
             onAddRow={onAddRow}
-            onItemPicker={onItemPicker}
+            onItemSelect={onItemSelect}
+            onLineUpdate={onLineUpdate}
+            onAdvancedSearch={onAdvancedSearch}
+            onCreateNew={onCreateNew}
           />
         )}
         {tab === "activity" && <ActivityTab mode={mode} />}
-        {tab === "billing"  && <BillingTab  data={data} />}
+        {tab === "billing"  && <BillingTab  data={data} onUpdate={onUpdate} />}
         {tab === "files"    && <FilesTab    />}
       </div>
     </section>
@@ -858,12 +1278,18 @@ function ItemGrid({
   lines,
   onDeleteRow,
   onAddRow,
-  onItemPicker,
+  onItemSelect,
+  onLineUpdate,
+  onAdvancedSearch,
+  onCreateNew,
 }: {
   lines: LineRow[];
   onDeleteRow: (sn: number) => void;
   onAddRow: () => void;
-  onItemPicker: (sn: number) => void;
+  onItemSelect: (sn: number, item: ItemCatalogEntry) => void;
+  onLineUpdate: (sn: number, patch: Partial<LineRow>) => void;
+  onAdvancedSearch: (field: string) => void;
+  onCreateNew: (field: string) => void;
 }) {
   return (
     <div>
@@ -893,20 +1319,41 @@ function ItemGrid({
                   <CellLookup
                     value={l.item}
                     placeholder="Pick item…"
-                    onClick={() => onItemPicker(l.sn)}
+                    options={ITEM_CATALOG}
+                    onSelect={(o) => onItemSelect(l.sn, o as ItemCatalogEntry)}
+                    onCreateNew={() => onCreateNew("Item")}
+                    onAdvancedSearch={() => onAdvancedSearch(`Item · line ${l.sn}`)}
+                    searchPlaceholder="Search items…"
+                    createLabel="Add item"
                   />
                 </td>
                 <td className="px-2 py-1.5">
                   <CellInput value={l.description} placeholder="—" />
                 </td>
                 <td className="px-2 py-1.5">
-                  <CellLookup value={l.unit} placeholder="Unit" onClick={() => onItemPicker(l.sn)} />
+                  <CellLookup
+                    value={l.unit}
+                    placeholder="Unit"
+                    options={UNIT_OPTIONS}
+                    onSelect={(o) => onLineUpdate(l.sn, { unit: o.value })}
+                    onCreateNew={() => onCreateNew("Unit")}
+                    searchPlaceholder="Search units…"
+                    createLabel="Add unit"
+                  />
                 </td>
                 <td className="px-2 py-1.5">
                   <CellInput value={l.qty} placeholder="0" align="right" />
                 </td>
                 <td className="px-2 py-1.5">
-                  <CellLookup value={l.priceLevel} placeholder="—" onClick={() => onItemPicker(l.sn)} />
+                  <CellLookup
+                    value={l.priceLevel}
+                    placeholder="—"
+                    options={PRICE_LEVEL_OPTIONS}
+                    onSelect={(o) => onLineUpdate(l.sn, { priceLevel: o.value })}
+                    onCreateNew={() => onCreateNew("Price Level")}
+                    searchPlaceholder="Search price levels…"
+                    createLabel="Add level"
+                  />
                 </td>
                 <td className="px-2 py-1.5">
                   <CellInput value={l.rate} placeholder="0" align="right" />
@@ -921,7 +1368,13 @@ function ItemGrid({
                   {l.gross}
                 </td>
                 <td className="px-2 py-1.5">
-                  <CellLookup value={l.taxCode} placeholder="—" onClick={() => onItemPicker(l.sn)} />
+                  <CellLookup
+                    value={l.taxCode}
+                    placeholder="—"
+                    options={TAX_CODE_OPTIONS}
+                    onSelect={(o) => onLineUpdate(l.sn, { taxCode: o.value })}
+                    searchPlaceholder="Search tax codes…"
+                  />
                 </td>
                 <td className="px-2 py-1.5">
                   <CellInput value={l.taxPct} placeholder="0" align="right" />
@@ -981,22 +1434,53 @@ function CellInput({
 function CellLookup({
   value,
   placeholder,
-  onClick,
+  options,
+  onSelect,
+  onCreateNew,
+  onAdvancedSearch,
+  searchPlaceholder,
+  createLabel,
 }: {
   value: string;
   placeholder: string;
-  onClick: () => void;
+  options: Option[];
+  onSelect: (opt: Option) => void;
+  onCreateNew?: () => void;
+  onAdvancedSearch?: () => void;
+  searchPlaceholder?: string;
+  createLabel?: string;
 }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLButtonElement>(null);
   return (
-    <button
-      onClick={onClick}
-      className="flex w-full items-center justify-between gap-1 rounded-bz-sm bg-transparent px-1.5 py-1 text-left text-[11.5px] hover:bg-bz-paper-warm/50"
-    >
-      <span className={`truncate ${value ? "text-bz-text" : "text-bz-text-soft"}`}>
-        {value || placeholder}
-      </span>
-      <ChevronDown size={9} className="shrink-0 text-bz-text-soft" />
-    </button>
+    <>
+      <button
+        ref={ref}
+        onClick={() => setOpen((v) => !v)}
+        className={`flex w-full items-center justify-between gap-1 rounded-bz-sm px-1.5 py-1 text-left text-[11.5px] ${
+          open
+            ? "bg-bz-paper-warm outline outline-1 outline-bz-text"
+            : "bg-transparent hover:bg-bz-paper-warm/50"
+        }`}
+      >
+        <span className={`truncate ${value ? "text-bz-text" : "text-bz-text-soft"}`}>
+          {value || placeholder}
+        </span>
+        <ChevronDown size={9} className="shrink-0 text-bz-text-soft" />
+      </button>
+      <Dropdown
+        anchorRef={ref}
+        open={open}
+        onClose={() => setOpen(false)}
+        options={options}
+        value={value}
+        onSelect={onSelect}
+        onCreateNew={onCreateNew}
+        onAdvancedSearch={onAdvancedSearch}
+        searchPlaceholder={searchPlaceholder}
+        createLabel={createLabel}
+      />
+    </>
   );
 }
 
@@ -1023,14 +1507,26 @@ function ActivityTab({ mode }: { mode: Mode }) {
 
 // ── BILLING TAB ────────────────────────────────────────────────────────────
 
-function BillingTab({ data }: { data: FormData }) {
+function BillingTab({
+  data,
+  onUpdate,
+}: {
+  data: FormData;
+  onUpdate: (patch: Partial<FormData>) => void;
+}) {
   return (
     <div className="grid grid-cols-1 gap-x-10 gap-y-5 md:grid-cols-2">
       <Field label="Tax ID (PAN No)" hint="from customer">
         <TextInput value={data.taxId} readOnly tabularNums />
       </Field>
       <Field label="Term">
-        <LookupInput value={data.term} placeholder="Select term…" onClick={() => undefined} />
+        <LookupField
+          value={data.term}
+          placeholder="Select term…"
+          options={TERM_OPTIONS}
+          onSelect={(o) => onUpdate({ term: o.value })}
+          searchPlaceholder="Search terms…"
+        />
       </Field>
       <div className="md:col-span-2">
         <FieldLabel label="Address" hint="from customer" />
@@ -1261,65 +1757,68 @@ function DialogShell({
   );
 }
 
-function CustomerPickerDialog({
+function CreateNewDialog({
   open,
+  field,
   onClose,
-  onSelect,
+  onCreate,
 }: {
   open: boolean;
+  field: string | null;
   onClose: () => void;
-  onSelect: (name: string, meta: string) => void;
+  onCreate: (field: string, name: string) => void;
 }) {
+  const [name, setName] = React.useState("");
+  React.useEffect(() => {
+    if (open) setName("");
+  }, [open]);
+  if (!field) return null;
   return (
     <DialogOverlay open={open} onClose={onClose}>
       <DialogShell
-        title="Select customer"
+        title={`New ${field.toLowerCase()}`}
         badge={
-          <span className="inline-flex items-center rounded-bz-pill bg-bz-paper-warm px-2 py-0.5 text-[10px] font-semibold text-bz-text-muted">
-            Picker
+          <span className="inline-flex items-center gap-1 rounded-bz-pill bg-bz-fire/[0.18] px-2 py-0.5 text-[10px] font-semibold text-bz-text">
+            <Plus size={9} /> Create
           </span>
         }
         onClose={onClose}
+        maxWidth={440}
         footer={
           <>
-            <button className="mr-auto inline-flex h-9 items-center gap-1.5 rounded-bz-md border border-bz-line-soft bg-bz-surface px-3.5 text-[12px] font-medium text-bz-text hover:bg-bz-paper-warm">
-              <Briefcase size={11} /> Add new
-            </button>
-            <button className="inline-flex h-9 items-center gap-1.5 rounded-bz-md border border-bz-line-soft bg-bz-surface px-3.5 text-[12px] font-medium text-bz-text hover:bg-bz-paper-warm">
-              <Search size={11} /> Advanced search
-            </button>
             <button
               onClick={onClose}
               className="inline-flex h-9 items-center rounded-bz-md border border-bz-line-soft bg-bz-surface px-3.5 text-[12px] font-medium text-bz-text hover:bg-bz-paper-warm"
             >
               Cancel
             </button>
+            <button
+              onClick={() => {
+                if (!name.trim()) return;
+                onCreate(field, name.trim());
+                onClose();
+              }}
+              disabled={!name.trim()}
+              className="inline-flex h-9 items-center gap-1.5 rounded-bz-md bg-bz-deep px-3.5 text-[12px] font-semibold text-bz-text-on-dark disabled:opacity-60"
+            >
+              <Check size={11} /> Save &amp; use
+            </button>
           </>
         }
       >
-        <div className="mb-3 flex h-9 items-center gap-2 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3">
-          <Search size={12} className="text-bz-text-muted" />
-          <span className="text-[12px] text-bz-text-muted">Search customers…</span>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          {CUSTOMER_OPTIONS.map((c) => (
-            <button
-              key={c.code}
-              onClick={() => onSelect(c.name, c.meta)}
-              className="flex items-center gap-3 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3 py-2.5 text-left hover:bg-bz-surface"
-            >
-              <span className="flex size-8 items-center justify-center rounded-bz-pill bg-bz-fire/[0.18] text-[10.5px] font-bold text-bz-text">
-                {c.name.split(" ").map((w) => w[0]).join("").slice(0, 2)}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[12.5px] font-semibold text-bz-text">{c.name}</p>
-                <p className="mt-0.5 text-[10.5px] text-bz-text-muted tabular-nums">
-                  {c.code} · {c.meta}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
+        <p className="mb-3 text-[11.5px] leading-relaxed text-bz-text-muted">
+          Quick-create a {field.toLowerCase()} without leaving the form. The full record can be
+          enriched later from its own page.
+        </p>
+        <FieldLabel label={`${field} name`} required />
+        <input
+          autoFocus
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={`Type a ${field.toLowerCase()} name…`}
+          className="h-9 w-full rounded-bz-md border border-bz-line-soft bg-bz-surface px-3 text-[13px] text-bz-text outline-none focus:border-bz-text"
+        />
       </DialogShell>
     </DialogOverlay>
   );
@@ -1449,9 +1948,46 @@ export function SalesOrderFormDesignPage({ mode }: { mode: Mode }) {
     getFormData(mode, params.id),
   );
   const [posting, setPosting] = React.useState(false);
-  const [customerOpen, setCustomerOpen] = React.useState(false);
   const [advancedOpen, setAdvancedOpen] = React.useState<string | null>(null);
+  const [createOpen, setCreateOpen] = React.useState<string | null>(null);
   const [resetOpen, setResetOpen] = React.useState(false);
+
+  function updateData(patch: Partial<FormData>) {
+    setData((d) => ({ ...d, ...patch }));
+  }
+
+  function updateLine(sn: number, patch: Partial<LineRow>) {
+    setData((d) => ({
+      ...d,
+      lines: d.lines.map((l) => (l.sn === sn ? { ...l, ...patch } : l)),
+    }));
+  }
+
+  function handleItemSelect(sn: number, item: ItemCatalogEntry) {
+    // cascading defaults from the item catalog rate/unit/tax/description
+    updateLine(sn, {
+      item: item.label,
+      description: item.description,
+      unit: item.unit,
+      rate: item.rate,
+      taxCode: item.taxCode,
+      taxPct: item.taxPct,
+    });
+  }
+
+  function handleCreateNew(field: string, name: string) {
+    // For demo: the just-created value is applied to the corresponding form field.
+    const f = field.toLowerCase();
+    if (f === "customer")        updateData({ party: name, partyMeta: "Newly created · pending enrichment" });
+    else if (f === "sales rep")  updateData({ salesRep: name, salesRepMeta: "Newly created" });
+    else if (f === "subsidiary") updateData({ subsidiary: name });
+    else if (f === "location")   updateData({ location: name });
+    else if (f === "currency")   updateData({ currency: name });
+    else if (f === "department") updateData({ department: name });
+    else if (f === "class")      updateData({ clazz: name });
+    else if (f === "project")    updateData({ project: name });
+    else if (f === "partner")    updateData({ partner: name });
+  }
 
   const isValid =
     data.party.length > 0 &&
@@ -1496,18 +2032,16 @@ export function SalesOrderFormDesignPage({ mode }: { mode: Mode }) {
       breadcrumb={<FormBreadcrumb mode={mode} />}
       overlay={
         <>
-          <CustomerPickerDialog
-            open={customerOpen}
-            onClose={() => setCustomerOpen(false)}
-            onSelect={(name, meta) => {
-              setData((d) => ({ ...d, party: name, partyMeta: meta }));
-              setCustomerOpen(false);
-            }}
-          />
           <AdvancedSearchDialog
             open={!!advancedOpen}
             onClose={() => setAdvancedOpen(null)}
             field={advancedOpen ?? ""}
+          />
+          <CreateNewDialog
+            open={!!createOpen}
+            field={createOpen}
+            onClose={() => setCreateOpen(null)}
+            onCreate={handleCreateNew}
           />
           <ResetConfirmDialog
             open={resetOpen}
@@ -1528,21 +2062,34 @@ export function SalesOrderFormDesignPage({ mode }: { mode: Mode }) {
       <div className="grid grid-cols-1 gap-6 px-4 py-7 md:px-8 lg:grid-cols-[300px_1fr]">
         <LeftRail
           data={data}
-          onCustomerClick={() => setCustomerOpen(true)}
-          onSalesRepClick={() => setAdvancedOpen("Sales Rep")}
+          onSelectCustomer={(o) =>
+            updateData({ party: o.value, partyMeta: o.meta ?? "" })
+          }
+          onSelectSalesRep={(o) =>
+            updateData({ salesRep: o.value, salesRepMeta: o.meta ?? "" })
+          }
+          onCreateCustomer={() => setCreateOpen("Customer")}
+          onCreateSalesRep={() => setCreateOpen("Sales rep")}
+          onAdvancedSearch={(field) => setAdvancedOpen(field)}
         />
         <div className="flex min-w-0 flex-col gap-6">
           <PrimaryInformationCard
             mode={mode}
             data={data}
-            onLookup={(field) => setAdvancedOpen(field)}
+            onUpdate={updateData}
+            onCreateNew={(field) => setCreateOpen(field)}
+            onAdvancedSearch={(field) => setAdvancedOpen(field)}
           />
           <ItemsSection
             mode={mode}
             data={data}
             onDeleteRow={handleDeleteRow}
             onAddRow={handleAddRow}
-            onItemPicker={(sn) => setAdvancedOpen(`Item · line ${sn}`)}
+            onItemSelect={handleItemSelect}
+            onLineUpdate={updateLine}
+            onUpdate={updateData}
+            onCreateNew={(field) => setCreateOpen(field)}
+            onAdvancedSearch={(field) => setAdvancedOpen(field)}
           />
           <SummaryFooter data={data} />
         </div>
