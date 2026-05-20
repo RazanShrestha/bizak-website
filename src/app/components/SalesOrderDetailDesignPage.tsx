@@ -17,15 +17,11 @@ import {
   FileText,
   Receipt,
   Truck,
-  Activity,
-  Paperclip,
-  Link2,
   Info,
   Briefcase,
   Layers,
   Eye,
   Download,
-  ListChecks,
   Search,
   PauseCircle,
   RotateCcw,
@@ -269,7 +265,7 @@ function getDetail(id: string): DetailData {
 // SHARED visual atoms
 // ════════════════════════════════════════════════════════════════════════════
 
-function StatusBadge({
+function StatusInline({
   kind,
   label,
   tone,
@@ -279,30 +275,26 @@ function StatusBadge({
   tone: "fire" | "leaf" | "neutral" | "danger";
 }) {
   const dot =
-    tone === "fire"    ? "bg-bz-fire"      :
-    tone === "leaf"    ? "bg-bz-leaf-deep" :
+    tone === "fire"    ? "bg-bz-leaf-deep" :
+    tone === "leaf"    ? "bg-bz-fire"      :
     tone === "danger"  ? "bg-[#C0413A]"    :
                          "bg-bz-text-soft";
   return (
-    <div className="inline-flex items-center gap-2 rounded-bz-md border border-bz-line bg-bz-surface px-2.5 py-1.5">
-      <span className={`size-2 rounded-bz-pill ${dot}`} />
-      <div className="flex flex-col leading-tight">
-        <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
-          {kind}
-        </span>
-        <span className="text-[12px] font-semibold text-bz-text">{label}</span>
-      </div>
-    </div>
+    <span className="inline-flex items-center gap-2 text-[12.5px]">
+      <span className="text-bz-text-muted">{kind}</span>
+      <span className={`size-1.5 rounded-bz-pill ${dot}`} />
+      <span className="font-medium text-bz-text">{label}</span>
+    </span>
   );
 }
 
 function FieldCell({ label, value, full }: { label: string; value: React.ReactNode; full?: boolean }) {
   return (
     <div className={full ? "md:col-span-2" : ""}>
-      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">
+      <p className="text-[11px] text-bz-text-muted">
         {label}
       </p>
-      <p className="mt-1 text-[12.5px] text-bz-text">{value}</p>
+      <p className="mt-1 text-[13px] text-bz-text">{value}</p>
     </div>
   );
 }
@@ -329,25 +321,37 @@ function DetailBreadcrumb({ id }: { id: string }) {
 // HEADER BANNER back · title + party · status badges
 // ════════════════════════════════════════════════════════════════════════════
 
-function HeaderBanner({ d }: { d: DetailData }) {
-  const showFulfill = d.isApproved;
-  const showBilling = d.isApproved && !d.isClosed;
-  const showWorkflow = d.workflowConfigured;
-  const showOrderStatus = !d.workflowConfigured && d.workflowState !== "Approved";
+function HeaderArea({
+  d,
+  onClose,
+  onDelete,
+}: {
+  d: DetailData;
+  onClose: () => void;
+  onDelete: () => void;
+}) {
+  const showFulfill      = d.isApproved;
+  const showBilling      = d.isApproved && !d.isClosed;
+  const showWorkflow     = d.workflowConfigured;
+  const showOrderStatus  = !d.workflowConfigured && d.workflowState !== "Approved";
+
+  const prominentWorkflow = d.workflowActions.filter((a) => a.tone !== "neutral");
 
   return (
-    <div className="flex flex-col gap-3 border-b border-bz-line bg-bz-paper px-4 py-4 md:flex-row md:items-center md:px-6">
-      <div className="flex items-center gap-3">
-        <Link
-          to="/design/sales-order-list"
-          className="flex size-8 items-center justify-center rounded-bz-md border border-bz-line bg-bz-surface text-bz-text-muted hover:bg-bz-paper-warm"
-        >
-          <ChevronLeft size={14} />
-        </Link>
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-[20px] font-semibold tracking-tight text-bz-text">
-              Sales Order · <span className="tabular-nums">{d.id}</span>
+    <div className="border-b border-bz-line-soft bg-bz-paper px-4 pb-5 pt-6 md:px-8">
+      <Link
+        to="/design/sales-order-list"
+        className="inline-flex items-center gap-1 text-[11.5px] text-bz-text-muted hover:text-bz-text"
+      >
+        <ChevronLeft size={11} />
+        Sales Order
+      </Link>
+
+      <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-[26px] font-semibold tracking-tight text-bz-text tabular-nums">
+              {d.id}
             </h1>
             {d.isClosed && (
               <span className="inline-flex items-center gap-1 rounded-bz-pill bg-bz-paper-warm px-2 py-0.5 text-[10px] font-semibold text-bz-text-muted">
@@ -355,24 +359,63 @@ function HeaderBanner({ d }: { d: DetailData }) {
               </span>
             )}
           </div>
-          <p className="mt-0.5 text-[12.5px] text-bz-text-muted">{d.party}</p>
+          <p className="mt-1 text-[13.5px] text-bz-text-muted">
+            {d.party}
+            <span className="mx-2 text-bz-text-soft">·</span>
+            Created {d.createdAt.split("·")[0].trim()}
+          </p>
+        </div>
+
+        {/* Actions — at most two prominent buttons, then a More menu */}
+        <div className="flex flex-wrap items-center gap-2">
+          {prominentWorkflow.map((a) => (
+            <WorkflowButton key={a.label} action={a} />
+          ))}
+          {d.canConvertFulfillment && (
+            <button className="inline-flex h-9 items-center gap-1.5 rounded-bz-md bg-bz-deep px-3.5 text-[12px] font-semibold text-bz-text-on-dark">
+              <Truck size={13} />
+              Convert to Fulfillment
+            </button>
+          )}
+          {d.canConvertInvoice && (
+            <button className="inline-flex h-9 items-center gap-1.5 rounded-bz-md border border-bz-line bg-bz-surface px-3 text-[12px] font-medium text-bz-text hover:bg-bz-paper-warm">
+              <Receipt size={13} />
+              Convert to Invoice
+            </button>
+          )}
+          <MoreMenu d={d} onClose={onClose} onDelete={onDelete} />
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 md:ml-auto">
+      {/* Status row inline pills */}
+      <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
+        {showWorkflow && (
+          <StatusInline
+            kind="Workflow"
+            label={d.workflowState}
+            tone={
+              d.workflowState === "Approved" ? "fire"   :
+              d.workflowState === "Rejected" ? "danger" :
+                                               "neutral"
+            }
+          />
+        )}
+        {showOrderStatus && (
+          <StatusInline kind="Order" label={d.orderStatus} tone="neutral" />
+        )}
         {showFulfill && (
-          <StatusBadge
+          <StatusInline
             kind="Fulfillment"
             label={d.fulfillment}
             tone={
-              d.fulfillment === "Delivered"      ? "fire" :
+              d.fulfillment === "Delivered"       ? "fire" :
               d.fulfillment === "Partial Fulfill" ? "leaf" :
                                                     "neutral"
             }
           />
         )}
         {showBilling && (
-          <StatusBadge
+          <StatusInline
             kind="Billing"
             label={d.billing}
             tone={
@@ -382,30 +425,12 @@ function HeaderBanner({ d }: { d: DetailData }) {
             }
           />
         )}
-        {showWorkflow && (
-          <StatusBadge
-            kind="Workflow"
-            label={d.workflowState}
-            tone={
-              d.workflowState === "Approved"        ? "fire"   :
-              d.workflowState === "Rejected"        ? "danger" :
-                                                      "neutral"
-            }
-          />
-        )}
-        {showOrderStatus && (
-          <StatusBadge kind="Order" label={d.orderStatus} tone="neutral" />
-        )}
       </div>
     </div>
   );
 }
 
-// ════════════════════════════════════════════════════════════════════════════
-// ACTION BAR workflow buttons + convert + print + more menu
-// ════════════════════════════════════════════════════════════════════════════
-
-function ActionBar({
+function MoreMenu({
   d,
   onClose,
   onDelete,
@@ -414,101 +439,84 @@ function ActionBar({
   onClose: () => void;
   onDelete: () => void;
 }) {
-  const [moreOpen, setMoreOpen] = React.useState(false);
-  const moreRef = React.useRef<HTMLDivElement>(null);
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     function handler(e: MouseEvent) {
-      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
-        setMoreOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
       }
     }
-    if (moreOpen) document.addEventListener("mousedown", handler);
+    if (open) document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [moreOpen]);
+  }, [open]);
+
+  const neutralWorkflow = d.workflowActions.filter((a) => a.tone === "neutral");
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-bz-line bg-bz-paper-warm px-4 py-3 md:px-6">
-      {/* Workflow actions (left side) */}
-      {d.workflowActions.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          {d.workflowActions.map((a) => (
-            <WorkflowButton key={a.label} action={a} />
-          ))}
-          <span className="ml-1 hidden h-5 border-l border-bz-line md:block" />
-        </div>
-      )}
-
-      {/* Convert + Print */}
-      {d.canConvertInvoice && (
-        <button className="inline-flex h-9 items-center gap-1.5 rounded-bz-md border border-bz-line bg-bz-surface px-3 text-[12px] font-medium text-bz-text hover:bg-bz-paper">
-          <Receipt size={13} />
-          Convert to Invoice
-        </button>
-      )}
-      {d.canConvertFulfillment && (
-        <button className="inline-flex h-9 items-center gap-1.5 rounded-bz-md border border-bz-line bg-bz-surface px-3 text-[12px] font-medium text-bz-text hover:bg-bz-paper">
-          <Truck size={13} />
-          Convert to Fulfillment
-        </button>
-      )}
-      <button className="inline-flex h-9 items-center gap-1.5 rounded-bz-md border border-bz-line bg-bz-surface px-3 text-[12px] font-medium text-bz-text hover:bg-bz-paper">
-        <Printer size={13} />
-        Print
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className={`flex h-9 items-center justify-center rounded-bz-md border px-2.5 text-bz-text ${
+          open
+            ? "border-bz-text bg-bz-surface"
+            : "border-bz-line bg-bz-surface hover:bg-bz-paper-warm"
+        }`}
+        aria-label="More actions"
+      >
+        <MoreHorizontal size={14} />
       </button>
 
-      {/* More */}
-      <div className="relative ml-auto" ref={moreRef}>
-        <button
-          onClick={() => setMoreOpen((v) => !v)}
-          className={`inline-flex h-9 items-center gap-1.5 rounded-bz-md border px-3 text-[12px] font-medium ${
-            moreOpen
-              ? "border-bz-text bg-bz-surface text-bz-text"
-              : "border-bz-line bg-bz-surface text-bz-text hover:bg-bz-paper"
-          }`}
-        >
-          <MoreHorizontal size={13} />
-          More Actions
-          <ChevronDown size={11} className="text-bz-text-muted" />
-        </button>
-
-        {moreOpen && (
-          <div className="absolute right-0 top-[42px] z-30 w-56 overflow-hidden rounded-bz-md border border-bz-line bg-bz-surface shadow-[0_18px_44px_-20px_rgba(15,20,17,0.18)]">
+      {open && (
+        <div className="absolute right-0 top-[42px] z-30 w-60 overflow-hidden rounded-bz-md border border-bz-line bg-bz-surface shadow-[0_18px_44px_-20px_rgba(15,20,17,0.18)]">
+          <MoreItem icon={Printer} label="Print" />
+          {neutralWorkflow.map((a) => (
             <MoreItem
-              icon={Pencil}
-              label="Edit"
-              hint={!d.canEdit ? "Locked in this state" : undefined}
-              disabled={!d.canEdit}
+              key={a.label}
+              icon={a.label === "Hold" ? PauseCircle : RotateCcw}
+              label={a.label}
             />
-            <MoreItem icon={Copy} label="Copy / Duplicate" />
-            {d.canClose && (
-              <MoreItem
-                icon={Lock}
-                label="Close Order"
-                onClick={() => {
-                  setMoreOpen(false);
-                  onClose();
-                }}
-              />
-            )}
-            <div className="border-t border-bz-line-soft" />
+          ))}
+          <div className="border-t border-bz-line-soft" />
+          <MoreItem
+            icon={Pencil}
+            label="Edit"
+            hint={!d.canEdit ? "Locked in this state" : undefined}
+            disabled={!d.canEdit}
+          />
+          <MoreItem icon={Copy} label="Copy / Duplicate" />
+          {d.canClose && (
             <MoreItem
-              icon={Trash2}
-              label="Delete"
-              tone="danger"
-              disabled={!d.canDelete}
-              hint={!d.canDelete ? "Approved order — cannot delete" : undefined}
+              icon={Lock}
+              label="Close order"
               onClick={() => {
-                setMoreOpen(false);
-                onDelete();
+                setOpen(false);
+                onClose();
               }}
             />
-          </div>
-        )}
-      </div>
+          )}
+          <div className="border-t border-bz-line-soft" />
+          <MoreItem
+            icon={Trash2}
+            label="Delete"
+            tone="danger"
+            disabled={!d.canDelete}
+            hint={!d.canDelete ? "Approved order — cannot delete" : undefined}
+            onClick={() => {
+              setOpen(false);
+              onDelete();
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// ACTION BAR workflow buttons + convert + print + more menu
+// ════════════════════════════════════════════════════════════════════════════
 
 function WorkflowButton({ action }: { action: WorkflowAction }) {
   if (action.tone === "approve") {
@@ -597,90 +605,87 @@ function LeftRail({
   onCustomerClick: () => void;
 }) {
   return (
-    <aside className="flex flex-col gap-4">
+    <aside className="rounded-bz-lg border border-bz-line-soft bg-bz-surface">
       {/* Sales Overview */}
-      <div className="rounded-bz-lg border border-bz-line bg-bz-surface p-4">
-        <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
+      <div className="px-5 py-5">
+        <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-bz-text-muted">
           Sales overview
         </p>
-        <p className="mt-2 text-[14px] font-semibold leading-snug text-bz-text">
-          {d.id}
-        </p>
-        <p className="mt-1 text-[11.5px] leading-relaxed text-bz-text-muted">
+        <p className="mt-2 text-[12.5px] leading-relaxed text-bz-text-muted">
           View and manage every detail of this sales order — line items, fulfillment, billing and approvals.
         </p>
       </div>
 
       {/* Customer */}
-      <div className="rounded-bz-lg border border-bz-line bg-bz-surface">
-        <div className="border-b border-bz-line-soft px-4 py-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
-            Customer
-          </p>
-        </div>
+      <RailSection label="Customer">
         <button
           onClick={onCustomerClick}
-          className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-bz-paper-warm"
+          className="-mx-2 -my-1 flex w-[calc(100%+1rem)] items-start gap-3 rounded-bz-md px-2 py-1 text-left hover:bg-bz-paper-warm/60"
         >
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-bz-pill bg-bz-fire/[0.18] text-[11px] font-bold text-bz-text">
-            {d.party.split(" ").map((w) => w[0]).join("").slice(0, 2)}
-          </span>
+          <Avatar text={d.party} tone="fire" />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[12.5px] font-semibold text-bz-text">{d.party}</p>
-            <p className="mt-0.5 text-[10.5px] text-bz-text-muted">{d.partyMeta}</p>
+            <p className="truncate text-[13px] font-semibold text-bz-text">{d.party}</p>
+            <p className="mt-0.5 text-[11px] text-bz-text-muted">{d.partyMeta}</p>
           </div>
           <ChevronRight size={12} className="mt-1 shrink-0 text-bz-text-muted" />
         </button>
-      </div>
+      </RailSection>
 
       {/* Sales Rep */}
-      <div className="rounded-bz-lg border border-bz-line bg-bz-surface">
-        <div className="border-b border-bz-line-soft px-4 py-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
-            Sales representative
-          </p>
-        </div>
-        <div className="flex items-start gap-3 px-4 py-3">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-bz-pill bg-bz-paper-warm text-[11px] font-bold text-bz-text">
-            {d.salesRep.split(" ").map((w) => w[0]).join("").slice(0, 2)}
-          </span>
+      <RailSection label="Sales representative">
+        <div className="flex items-start gap-3">
+          <Avatar text={d.salesRep} tone="neutral" />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[12.5px] font-semibold text-bz-text">{d.salesRep}</p>
-            <p className="mt-0.5 text-[10.5px] text-bz-text-muted">{d.salesRepMeta}</p>
+            <p className="truncate text-[13px] font-semibold text-bz-text">{d.salesRep}</p>
+            <p className="mt-0.5 text-[11px] text-bz-text-muted">{d.salesRepMeta}</p>
           </div>
         </div>
-      </div>
+      </RailSection>
 
       {/* Linked Documents */}
-      <div className="rounded-bz-lg border border-bz-line bg-bz-surface">
-        <div className="flex items-center justify-between border-b border-bz-line-soft px-4 py-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-bz-text-muted">
-            Linked documents
-          </p>
-          <Link2 size={11} className="text-bz-text-muted" />
-        </div>
+      <RailSection label="Linked documents">
         {d.sourceEstimate ? (
-          <div className="px-4 py-3">
-            <button className="flex w-full items-center gap-2.5 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm px-3 py-2.5 text-left hover:bg-bz-surface">
-              <FileText size={13} className="shrink-0 text-bz-text-muted" />
-              <div className="min-w-0 flex-1">
-                <p className="text-[9.5px] font-bold uppercase tracking-[0.08em] text-bz-text-muted">
-                  Estimate · source
-                </p>
-                <p className="mt-0.5 truncate text-[12px] font-semibold tabular-nums text-bz-text">
-                  {d.sourceEstimate}
-                </p>
-              </div>
-              <ArrowUpRight size={12} className="shrink-0 text-bz-text-muted" />
-            </button>
-          </div>
+          <button className="flex w-full items-center gap-2.5 text-left">
+            <FileText size={13} className="shrink-0 text-bz-text-muted" />
+            <div className="min-w-0 flex-1">
+              <p className="text-[10.5px] uppercase tracking-[0.06em] text-bz-text-soft">
+                Estimate · source
+              </p>
+              <p className="mt-0.5 truncate text-[12.5px] font-semibold tabular-nums text-bz-text">
+                {d.sourceEstimate}
+              </p>
+            </div>
+            <ArrowUpRight size={12} className="shrink-0 text-bz-text-muted" />
+          </button>
         ) : (
-          <div className="px-4 py-4 text-center">
-            <p className="text-[11px] text-bz-text-muted">No linked documents yet.</p>
-          </div>
+          <p className="text-[11.5px] text-bz-text-muted">No linked documents yet.</p>
         )}
-      </div>
+      </RailSection>
     </aside>
+  );
+}
+
+function RailSection({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="border-t border-bz-line-soft px-5 py-4">
+      <p className="mb-2.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-bz-text-muted">
+        {label}
+      </p>
+      {children}
+    </div>
+  );
+}
+
+function Avatar({ text, tone }: { text: string; tone: "fire" | "neutral" }) {
+  const initials = text.split(" ").map((w) => w[0]).join("").slice(0, 2);
+  return (
+    <span
+      className={`flex size-8 shrink-0 items-center justify-center rounded-bz-pill text-[11px] font-bold text-bz-text ${
+        tone === "fire" ? "bg-bz-fire/[0.18]" : "bg-bz-paper-warm"
+      }`}
+    >
+      {initials}
+    </span>
   );
 }
 
@@ -693,17 +698,17 @@ function PrimaryInformation({ d }: { d: DetailData }) {
   const [customOpen, setCustomOpen] = React.useState(false);
 
   return (
-    <section className="rounded-bz-lg border border-bz-line bg-bz-surface">
-      <div className="flex items-center justify-between border-b border-bz-line-soft px-5 py-3.5">
-        <h2 className="text-[13px] font-semibold tracking-tight text-bz-text">
+    <section className="rounded-bz-lg border border-bz-line-soft bg-bz-surface">
+      <div className="flex items-center justify-between px-6 pt-5">
+        <h2 className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-bz-text-muted">
           Primary information
         </h2>
         <button
           disabled={!d.canEdit}
           className={`inline-flex h-7 items-center gap-1.5 rounded-bz-sm px-2 text-[11px] font-medium ${
             d.canEdit
-              ? "border border-bz-line bg-bz-surface text-bz-text hover:bg-bz-paper-warm"
-              : "border border-bz-line-soft bg-bz-paper-warm text-bz-text-soft cursor-not-allowed"
+              ? "text-bz-text hover:bg-bz-paper-warm"
+              : "cursor-not-allowed text-bz-text-soft"
           }`}
         >
           <Pencil size={11} />
@@ -711,24 +716,22 @@ function PrimaryInformation({ d }: { d: DetailData }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-x-6 gap-y-4 px-5 py-4 md:grid-cols-2">
-        <FieldCell label="Document No."  value={<span className="tabular-nums font-semibold">{d.id}</span>} />
+      <div className="grid grid-cols-1 gap-x-10 gap-y-5 px-6 pb-6 pt-5 md:grid-cols-2">
+        <FieldCell label="Document No."     value={<span className="tabular-nums font-semibold">{d.id}</span>} />
         {d.multiSubsidiary && (
-          <FieldCell label="Subsidiary"   value={d.subsidiary} />
+          <FieldCell label="Subsidiary"     value={d.subsidiary} />
         )}
-        <FieldCell label="Date"           value={d.date} />
+        <FieldCell label="Date"             value={d.date} />
         <FieldCell label="Expected delivery" value={d.expectedDelivery} />
-        <FieldCell label="Supplier PO #" value={<span className="tabular-nums">{d.supplierPo}</span>} />
-        <FieldCell label="Location"       value={d.location} />
-        <FieldCell label="Currency"       value={
+        <FieldCell label="Supplier PO #"   value={<span className="tabular-nums">{d.supplierPo}</span>} />
+        <FieldCell label="Location"         value={d.location} />
+        <FieldCell label="Currency"         value={
           <span className="inline-flex items-center gap-1.5">
             {d.currency}
-            <span className="inline-flex h-4 items-center rounded-bz-sm bg-bz-paper-warm px-1.5 text-[9.5px] font-semibold uppercase tracking-[0.05em] text-bz-text-muted">
-              Base
-            </span>
+            <span className="text-[10.5px] text-bz-text-soft">Base</span>
           </span>
         } />
-        <FieldCell label="Exchange rate" value={<span className="tabular-nums">{d.exchangeRate}</span>} />
+        <FieldCell label="Exchange rate"   value={<span className="tabular-nums">{d.exchangeRate}</span>} />
         <FieldCell
           label="Memo"
           full
@@ -736,14 +739,12 @@ function PrimaryInformation({ d }: { d: DetailData }) {
         />
       </div>
 
-      {/* Classification */}
       <CollapsiblePanel
         open={classOpen}
         onToggle={() => setClassOpen((v) => !v)}
         title="Classification"
-        icon={Layers}
       >
-        <div className="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-x-10 gap-y-5 md:grid-cols-2">
           <FieldCell label="Class"      value={d.clazz} />
           <FieldCell label="Department" value={d.department} />
           <FieldCell label="Project"    value={<span className="tabular-nums">{d.project}</span>} />
@@ -751,18 +752,23 @@ function PrimaryInformation({ d }: { d: DetailData }) {
         </div>
       </CollapsiblePanel>
 
-      {/* Custom Fields */}
       {d.hasCustomFields && (
         <CollapsiblePanel
           open={customOpen}
           onToggle={() => setCustomOpen((v) => !v)}
           title="Custom fields"
-          icon={ListChecks}
         >
-          <div className="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-            <FieldCell label="Plant"           value="Bharatpur · Industrial Park" />
+          <div className="grid grid-cols-1 gap-x-10 gap-y-5 md:grid-cols-2">
+            <FieldCell label="Plant"            value="Bharatpur · Industrial Park" />
             <FieldCell label="Commissioning by" value="Engineering — Phase 2" />
-            <FieldCell label="Crane required"  value={<span className="inline-flex items-center gap-1 text-bz-text"><Check size={12} className="text-bz-leaf-deep" /> Yes</span>} />
+            <FieldCell
+              label="Crane required"
+              value={
+                <span className="inline-flex items-center gap-1 text-bz-text">
+                  <Check size={12} className="text-bz-leaf-deep" /> Yes
+                </span>
+              }
+            />
             <FieldCell label="Reference quote" value={<span className="tabular-nums">QTE-APX-0188</span>} />
           </div>
         </CollapsiblePanel>
@@ -775,29 +781,28 @@ function CollapsiblePanel({
   open,
   onToggle,
   title,
-  icon: Icon,
   children,
 }: {
   open: boolean;
   onToggle: () => void;
   title: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
   children: React.ReactNode;
 }) {
   return (
-    <div className="border-t border-bz-line-soft">
+    <div className="border-t border-bz-line-soft px-6">
       <button
         onClick={onToggle}
-        className="flex w-full items-center gap-2.5 px-5 py-3 text-left hover:bg-bz-paper-warm/60"
+        className="-mx-2 flex w-[calc(100%+1rem)] items-center gap-2.5 rounded-bz-sm py-3 text-left hover:bg-bz-paper-warm/40"
       >
-        <Icon size={13} className="text-bz-text-muted" />
-        <span className="flex-1 text-[12px] font-semibold text-bz-text">{title}</span>
+        <span className="flex-1 text-[12.5px] font-semibold uppercase tracking-[0.08em] text-bz-text-muted">
+          {title}
+        </span>
         <ChevronDown
           size={13}
           className={`text-bz-text-muted transition-transform ${open ? "" : "-rotate-90"}`}
         />
       </button>
-      {open && <div className="border-t border-bz-line-soft px-5 py-4">{children}</div>}
+      {open && <div className="pb-5 pt-1">{children}</div>}
     </div>
   );
 }
@@ -807,12 +812,12 @@ function CollapsiblePanel({
 // ════════════════════════════════════════════════════════════════════════════
 
 const TABS = [
-  { key: "item",     label: "Item",                icon: ListChecks },
-  { key: "activity", label: "Activity",            icon: Activity   },
-  { key: "billing",  label: "Billing",             icon: Receipt    },
-  { key: "files",    label: "Files",               icon: Paperclip  },
-  { key: "related",  label: "Related Record",      icon: Link2      },
-  { key: "system",   label: "System Information",  icon: Info       },
+  { key: "item",     label: "Item"                },
+  { key: "activity", label: "Activity"            },
+  { key: "billing",  label: "Billing"             },
+  { key: "files",    label: "Files"               },
+  { key: "related",  label: "Related Record"      },
+  { key: "system",   label: "System Information"  },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
@@ -821,37 +826,35 @@ function ItemsSection({ d }: { d: DetailData }) {
   const [activeTab, setActiveTab] = React.useState<TabKey>("item");
 
   return (
-    <section className="rounded-bz-lg border border-bz-line bg-bz-surface">
-      <div className="flex flex-wrap items-center gap-3 border-b border-bz-line-soft px-5 py-3.5">
-        <h2 className="text-[13px] font-semibold tracking-tight text-bz-text">
-          Items specification
+    <section className="rounded-bz-lg border border-bz-line-soft bg-bz-surface">
+      <div className="flex flex-wrap items-baseline gap-3 px-6 pt-5">
+        <h2 className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-bz-text-muted">
+          Items
         </h2>
-        <span className="inline-flex h-5 items-center rounded-bz-pill bg-bz-paper-warm px-2 text-[10.5px] font-semibold text-bz-text-muted border border-bz-line tabular-nums">
-          {d.lines.length} items
+        <span className="text-[12px] text-bz-text-muted tabular-nums">
+          · {d.lines.length} {d.lines.length === 1 ? "item" : "items"}
         </span>
       </div>
 
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-1 border-b border-bz-line-soft px-4 pt-3 md:px-5">
+      {/* Tabs text-only, underline indicator on hover/active */}
+      <div className="mt-4 flex flex-wrap gap-0.5 border-b border-bz-line-soft px-4 md:px-6">
         {TABS.map((t) => {
-          const Icon = t.icon;
           const active = t.key === activeTab;
           return (
             <button
               key={t.key}
               onClick={() => setActiveTab(t.key)}
-              className={`relative inline-flex items-center gap-1.5 rounded-t-bz-sm px-3 py-2 text-[11.5px] font-medium ${
+              className={`relative px-2.5 py-2 text-[12px] ${
                 active
-                  ? "text-bz-text"
+                  ? "font-semibold text-bz-text"
                   : "text-bz-text-muted hover:text-bz-text"
               }`}
             >
-              <Icon size={12} />
               {t.label}
               {active && (
                 <span
                   aria-hidden
-                  className="absolute -bottom-px left-2 right-2 h-[2px] rounded-bz-pill bg-bz-text"
+                  className="absolute -bottom-px left-2.5 right-2.5 h-[2px] rounded-bz-pill bg-bz-text"
                 />
               )}
             </button>
@@ -859,7 +862,7 @@ function ItemsSection({ d }: { d: DetailData }) {
         })}
       </div>
 
-      <div className="p-4 md:p-5">
+      <div className="px-4 py-5 md:px-6">
         {activeTab === "item"     && <ItemTab     d={d} />}
         {activeTab === "activity" && <ActivityTab />}
         {activeTab === "billing"  && <BillingTab  />}
@@ -904,24 +907,23 @@ function ItemTab({ d }: { d: DetailData }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-bz-md border border-bz-line-soft">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left" style={{ minWidth: 1280 }}>
-          <thead>
-            <tr className="border-b border-bz-line-soft bg-bz-paper-warm">
-              {ITEM_COLS.map((c, i) => (
-                <th
-                  key={i}
-                  className={`px-3 py-2.5 text-[9.5px] font-bold uppercase tracking-[0.08em] text-bz-text-muted ${
-                    c.align === "right" ? "text-right" : ""
-                  }`}
-                  style={c.width ? { width: c.width } : undefined}
-                >
-                  {c.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse text-left" style={{ minWidth: 1280 }}>
+        <thead>
+          <tr className="border-y border-bz-line-soft">
+            {ITEM_COLS.map((c, i) => (
+              <th
+                key={i}
+                className={`px-3 py-2.5 text-[10px] font-medium uppercase tracking-[0.06em] text-bz-text-muted ${
+                  c.align === "right" ? "text-right" : ""
+                }`}
+                style={c.width ? { width: c.width } : undefined}
+              >
+                {c.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
           <tbody className="divide-y divide-bz-line-soft">
             {d.lines.map((l) => {
               const hasDetail = !!d.inventoryDetail[l.sn];
@@ -977,9 +979,8 @@ function ItemTab({ d }: { d: DetailData }) {
                 </React.Fragment>
               );
             })}
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -1195,35 +1196,23 @@ function SystemTab({ d }: { d: DetailData }) {
 
 function ItemsSummaryFooter({ d }: { d: DetailData }) {
   return (
-    <section className="flex flex-col gap-3 lg:flex-row lg:items-stretch">
-      <div className="flex flex-1 items-start gap-3 rounded-bz-lg border border-bz-line bg-bz-paper-warm p-4">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-bz-md bg-bz-surface">
-          <Info size={14} className="text-bz-text-muted" />
-        </div>
-        <div className="min-w-0">
-          <p className="text-[12.5px] font-semibold text-bz-text">
-            Changes to order value may require re-approval.
-          </p>
-          <p className="mt-1 text-[11.5px] leading-relaxed text-bz-text-muted">
-            Edits to quantity, rate, discount or tax once the order is approved trigger a return to <span className="font-semibold text-bz-text">Pending Approval</span> until re-signed.
-          </p>
-        </div>
-      </div>
+    <section className="flex flex-col gap-3 lg:items-end">
+      <p className="inline-flex items-center gap-1.5 text-[11.5px] text-bz-text-muted">
+        <Info size={11} />
+        Changes to the order value may trigger re-approval.
+      </p>
 
-      <div className="lg:w-[340px] rounded-bz-lg border border-bz-line bg-bz-surface">
-        <SummaryRow label="Subtotal" value={d.subtotal} />
-        <SummaryRow label="Discount" value={<span className="text-bz-text-muted">{d.discount}</span>} />
+      <div className="w-full rounded-bz-lg border border-bz-line-soft bg-bz-surface lg:w-[360px]">
+        <SummaryRow label="Subtotal"  value={d.subtotal} />
+        <SummaryRow label="Discount"  value={<span className="text-bz-text-muted">−{d.discount.replace("NPR ", "NPR ")}</span>} />
         <SummaryRow label="VAT / Tax" value={d.vat} />
-        <div className="border-t border-bz-line-soft" />
-        <div className="flex items-center justify-between px-4 py-3.5">
-          <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-bz-text">
-            Invoice total
-          </p>
+        <div className="flex items-baseline justify-between border-t border-bz-line-soft px-5 py-4">
+          <p className="text-[12px] font-medium text-bz-text">Invoice total</p>
           <div className="flex items-baseline gap-2">
-            <span className="inline-flex h-5 items-center rounded-bz-sm bg-bz-fire/[0.18] px-1.5 text-[10px] font-bold text-bz-text">
-              {d.currency}
+            <span className="text-[10.5px] font-semibold text-bz-text-muted">{d.currency}</span>
+            <span className="text-[22px] font-semibold tabular-nums text-bz-text">
+              {d.total.replace("NPR ", "")}
             </span>
-            <span className="text-[20px] font-semibold tabular-nums text-bz-text">{d.total}</span>
           </div>
         </div>
       </div>
@@ -1233,9 +1222,9 @@ function ItemsSummaryFooter({ d }: { d: DetailData }) {
 
 function SummaryRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between border-b border-bz-line-soft px-4 py-2.5 last:border-b-0">
-      <p className="text-[11.5px] text-bz-text-muted">{label}</p>
-      <p className="text-[12.5px] font-semibold tabular-nums text-bz-text">{value}</p>
+    <div className="flex items-center justify-between px-5 py-2.5">
+      <p className="text-[12px] text-bz-text-muted">{label}</p>
+      <p className="text-[13px] tabular-nums text-bz-text">{value}</p>
     </div>
   );
 }
@@ -1498,16 +1487,15 @@ export function SalesOrderDetailDesignPage() {
         </>
       }
     >
-      <HeaderBanner d={d} />
-      <ActionBar
+      <HeaderArea
         d={d}
         onClose={() => setCloseOpen(true)}
         onDelete={() => setDeleteOpen(true)}
       />
 
-      <div className="grid grid-cols-1 gap-5 px-4 py-5 md:px-6 lg:grid-cols-[300px_1fr]">
+      <div className="grid grid-cols-1 gap-6 px-4 py-7 md:px-8 lg:grid-cols-[300px_1fr]">
         <LeftRail d={d} onCustomerClick={() => setCustomerOpen(true)} />
-        <div className="flex min-w-0 flex-col gap-5">
+        <div className="flex min-w-0 flex-col gap-6">
           <PrimaryInformation d={d} />
           <ItemsSection d={d} />
           <ItemsSummaryFooter d={d} />
