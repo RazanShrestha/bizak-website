@@ -69,6 +69,7 @@ import { PrivacyPolicyPage } from "./components/PrivacyPolicyPage";
 import { TermsPage } from "./components/TermsPage";
 import { CookiePolicyPage } from "./components/CookiePolicyPage";
 import { SecurityPage } from "./components/SecurityPage";
+import { PoliciesAndAgreementsPage } from "./components/PoliciesAndAgreementsPage";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -895,6 +896,16 @@ function SecurityPageLayout() {
   );
 }
 
+function PoliciesAndAgreementsPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header dark />
+      <PoliciesAndAgreementsPage />
+      <Footer hideCta />
+    </div>
+  );
+}
+
 
 
  
@@ -1051,10 +1062,11 @@ export const router = createBrowserRouter([
       { path: "CommunityForum", Component: CommunityForum },
       { path: "WebinarsAndEvents", Component: WebinarsAndEvents },
       { path: "WebinarsAndEvents/save-seat/:eventId", Component: SaveSeatPage },
-      { path: "privacy",  Component: PrivacyPolicyPageLayout },
-      { path: "terms",    Component: TermsPageLayout },
-      { path: "cookies",  Component: CookiePolicyPageLayout },
-      { path: "security", Component: SecurityPageLayout },
+      { path: "privacy",   Component: PrivacyPolicyPageLayout },
+      { path: "terms",     Component: TermsPageLayout },
+      { path: "cookies",   Component: CookiePolicyPageLayout },
+      { path: "security",  Component: SecurityPageLayout },
+      { path: "policies",  Component: PoliciesAndAgreementsPageLayout },
       {
         path: "blog",
         Component: () => <Outlet />,

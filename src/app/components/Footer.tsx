@@ -105,8 +105,8 @@ const COLS: { heading: string; links: { label: string; href: string }[] }[] = [
       { label: "Terms of Service", href: "/terms" },
       { label: "Cookie Policy", href: "/cookies" },
       { label: "Security", href: "/security" },
+      { label: "Policies & Agreements", href: "/policies" },
       { label: "Contact", href: "/contact" },
-
     ],
   },
 ];
