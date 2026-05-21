@@ -184,6 +184,7 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Resources",
         items: [
           { icon: <BookOpen size={16} />, title: "Partner Portal", description: "Training & sales tools", href: "/partners/portal" },
+          { icon: <Users size={16} />, title: "Find a Partner", description: "Browse the partner directory", href: "/partners/find" },
         ],
       },
       {

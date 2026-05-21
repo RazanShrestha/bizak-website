@@ -685,6 +685,26 @@ function PartnerPageLayout() {
 }
 
 
+function FindAPartnerPageLayout() {
+  return (
+    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <Header dark />
+      <FindAPartnerPage />
+      <Footer
+        cta={{
+          title: "Run your business with a Bizak partner.",
+          titleMuted: "Or talk to our team directly.",
+          description:
+            "Match with a certified partner in your country, or start a self-serve trial today our team will help you find the right fit, usually within a day.",
+          primaryLabel: "Get Started",
+          secondaryLabel: "Request Demo",
+        }}
+      />
+    </div>
+  );
+}
+
+
 function ContactPageLayout() {
   return (
     <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -1053,7 +1073,7 @@ export const router = createBrowserRouter([
       { path: "partners/technology",     Component: TechnologyPartnersPageLayout },
       { path: "partners/portal",         Component: PartnerPortalPageLayout  },
       { path: "partners/marketplace",    Component: MarketplacePage          },
-      { path: "partners/find",           Component: FindAPartnerPage         },
+      { path: "partners/find",           Component: FindAPartnerPageLayout   },
       { path: "partners/awards",         Component: PartnerAwardsPage        },
       { path: "partners/events",                          Component: PartnerEventsPage          },
       { path: "partners/events/register/:slug",           Component: PartnerEventRegisterPage   },

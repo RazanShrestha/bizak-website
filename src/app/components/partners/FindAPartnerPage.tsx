@@ -1,281 +1,349 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
-  Search,
   MapPin,
-  Award,
+  Phone,
+  Mail,
   Globe,
-  Factory,
-  Building2,
-  Truck,
-  Store,
-  Briefcase,
-  Sparkles,
-  CheckCircle2,
+  BadgeCheck,
+  ArrowUpRight,
 } from "lucide-react";
 import {
-  Container,
   Section,
-  SectionHeading,
-  Button,
-  Card,
-  IconBadge,
-  PillBadge,
-  HeroBadge,
-} from "../marketing";
-import { Header } from "../Header";
-import { Footer } from "../Footer";
+  Container,
+  Heading,
+  BadgeGreen,
+  Pill,
+  PillGroup,
+  DotGrid,
+  SectionHead,
+  StatusChip,
+} from "../bz";
+import { cn } from "../ui/utils";
+import anchorpointLogo from "../../../assets/partners/anchorpoint.jpeg";
+import croweLogo from "../../../assets/partners/crowe.svg";
 
-type Tier = "Authorized" | "Silver" | "Gold" | "Platinum";
+// ════════════════════════════════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════════════════════════════════
 
 type Partner = {
   name: string;
-  region: string;
+  legalName?: string;
+  description: string;
+  country: string;
+  code: string;       // ISO-2 country code matches geolocation API output
+  flag: string;
   city: string;
-  tier: Tier;
-  industries: string[];
-  bio: string;
-  founded: number;
-  consultants: number;
+  address: string;
+  phone: string;
+  email: string;
+  website?: string;
+  logo: string;
 };
-
-const REGIONS = ["All", "Nepal", "India", "Bangladesh", "Sri Lanka", "Pakistan"];
-const INDUSTRIES = [
-  { Icon: Factory,   name: "Manufacturing" },
-  { Icon: Truck,     name: "Distribution" },
-  { Icon: Store,     name: "Retail" },
-  { Icon: Briefcase, name: "Services" },
-  { Icon: Building2, name: "Multi-entity" },
-];
-const TIERS: Tier[] = ["Authorized", "Silver", "Gold", "Platinum"];
 
 const PARTNERS: Partner[] = [
   {
-    name: "Lattice Solutions",  region: "India", city: "Bengaluru",
-    tier: "Platinum", industries: ["Manufacturing", "Distribution"],
-    bio: "Mid-market manufacturing implementations with end-to-end shop-floor integration. 14 industries covered.",
-    founded: 2011, consultants: 38,
+    name: "Anchorpoint (Pvt.) Ltd",
+    description:
+      "Anchorpoint fuels startup success with expert guidance in launch, funding, and growth. From seamless IT solutions to strategic financial management, the firm equips entrepreneurs and established companies with the tools to thrive in competitive markets.",
+    country: "Pakistan",
+    code: "PK",
+    flag: "🇵🇰",
+    city: "Lahore",
+    address:
+      "35 A, Sector C, Commercial Area, Bahria Town, Lahore, Pakistan",
+    phone: "+92-339-8586875",
+    email: "asad.habib@anchorpoint.pro",
+    website: "www.anchorpoint.pro",
+    logo: anchorpointLogo,
   },
   {
-    name: "Northbeam Consulting", region: "Nepal", city: "Kathmandu",
-    tier: "Gold", industries: ["Services", "Multi-entity"],
-    bio: "Professional services and multi-entity finance specialists. Heavy on FP&A and consolidations.",
-    founded: 2014, consultants: 22,
-  },
-  {
-    name: "Verdant Ops", region: "Sri Lanka", city: "Colombo",
-    tier: "Gold", industries: ["Distribution", "Retail"],
-    bio: "Omnichannel retail and distribution practice. Shopify, POS, and 3PL integrations.",
-    founded: 2013, consultants: 18,
-  },
-  {
-    name: "Atlas SI", region: "India", city: "Mumbai",
-    tier: "Platinum", industries: ["Manufacturing", "Multi-entity"],
-    bio: "Large-scale manufacturing rollouts across the region. Specialists in process and discrete manufacturing.",
-    founded: 2008, consultants: 64,
-  },
-  {
-    name: "Meridian Advisory", region: "Bangladesh", city: "Dhaka",
-    tier: "Silver", industries: ["Services", "Multi-entity"],
-    bio: "Boutique advisory firm focused on group reporting and audit-ready close cycles.",
-    founded: 2017, consultants: 12,
-  },
-  {
-    name: "Polaris Bridge", region: "Pakistan", city: "Karachi",
-    tier: "Silver", industries: ["Distribution", "Manufacturing"],
-    bio: "Bilingual implementation team covering Pakistan and the wider region. Tax and customs specialists.",
-    founded: 2018, consultants: 9,
-  },
-  {
-    name: "Riverstone Partners", region: "Nepal", city: "Pokhara",
-    tier: "Authorized", industries: ["Retail", "Services"],
-    bio: "DTC and small-to-mid retailers. Quick-win deployments with prebuilt configuration kits.",
-    founded: 2021, consultants: 6,
-  },
-  {
-    name: "Aurora Cloud Group", region: "India", city: "Hyderabad",
-    tier: "Gold", industries: ["Multi-entity", "Services"],
-    bio: "Group consolidations across the region. Strong with private-equity portfolio companies.",
-    founded: 2015, consultants: 24,
+    name: "Crowe Nepal",
+    legalName: "B.K Agrawal & Co.",
+    description:
+      "An audit, tax, and advisory services firm in Nepal, backed by a network of highly qualified professionals across a range of disciplines and offering a comprehensive set of solutions to clients of every size.",
+    country: "Nepal",
+    code: "NP",
+    flag: "🇳🇵",
+    city: "Kathmandu",
+    address:
+      "Saraswati Vatika 122 Pannahiti Marg, Sifal, Ward No. 7, PO Box: 3761, Kathmandu, Nepal",
+    phone: "+977-1-4481865",
+    email: "info@crowe.com.np",
+    website: "www.crowe.com/np",
+    logo: croweLogo,
   },
 ];
 
-const TIER_PILL: Record<Tier, "accent" | "sage" | "neutral"> = {
-  Platinum: "accent",
-  Gold:     "accent",
-  Silver:   "sage",
-  Authorized: "neutral",
-};
+type CountryEntry = { code: string; name: string; flag: string };
 
-function HeroSection() {
+const COUNTRIES: CountryEntry[] = [
+  { code: "PK", name: "Pakistan",   flag: "🇵🇰" },
+  { code: "NP", name: "Nepal",      flag: "🇳🇵" },
+  { code: "IN", name: "India",      flag: "🇮🇳" },
+  { code: "BD", name: "Bangladesh", flag: "🇧🇩" },
+  { code: "LK", name: "Sri Lanka",  flag: "🇱🇰" },
+];
+
+// ════════════════════════════════════════════════════════════════════════════
+// GEOLOCATION  detect user country once and cache for the session.
+// Uses https://api.country.is/ free, no API key, returns { ip, country }.
+// Falls back silently to null if the request fails or is blocked.
+// ════════════════════════════════════════════════════════════════════════════
+
+function useDetectedCountry(): string | null {
+  const [country, setCountry] = useState<string | null>(() => {
+    try {
+      return sessionStorage.getItem("bz_detected_country");
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (country) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch("https://api.country.is/", {
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+        if (!res.ok) return;
+        const data: { country?: string } = await res.json();
+        if (cancelled || !data?.country) return;
+        setCountry(data.country);
+        try {
+          sessionStorage.setItem("bz_detected_country", data.country);
+        } catch {
+          /* sessionStorage unavailable acceptable */
+        }
+      } catch {
+        /* network failure / timeout / blocked silent fallback */
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [country]);
+
+  return country;
+}
+
+// Reorder the country list so the detected country sits first.
+// If detection is null or not in the list, return the canonical order.
+function orderCountries(
+  list: CountryEntry[],
+  detected: string | null,
+): CountryEntry[] {
+  if (!detected) return list;
+  const idx = list.findIndex((c) => c.code === detected);
+  if (idx <= 0) return list;
+  return [list[idx], ...list.slice(0, idx), ...list.slice(idx + 1)];
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// [HERO] dark olive surface, geo-detection indicator
+// ════════════════════════════════════════════════════════════════════════════
+
+function HeroSection({
+  detectedCountry,
+}: {
+  detectedCountry: CountryEntry | null;
+}) {
   return (
-    <Section tone="light" pad="hero" className="biz-mesh">
-      <Container width="narrow">
-        <div className="text-center max-w-[760px] mx-auto">
-          <HeroBadge>Find a Partner</HeroBadge>
-          <h1 className="mt-5 font-bold tracking-[-0.02em] text-[clamp(36px,5vw,60px)] leading-[1.1]">
-            Locate a certified Bizak<br />
-            <span className="text-bz-sage">partner near you.</span>
-          </h1>
-          <p className="mt-6 text-[17px] leading-[1.7] text-bz-text-muted">
-            Vetted partner firms across South Asia. Filter by region, industry, and tier every partner listed is exam-certified and renewed annually.
+    <Section tone="dark" pad="hero" className="overflow-hidden">
+      <DotGrid tone="dark" />
+      <Container>
+        <div className="relative flex flex-col items-center text-center">
+          <BadgeGreen style={{ marginBottom: 28 }}>
+            Bizak Partner Network
+          </BadgeGreen>
+
+          <Heading
+            level={2}
+            tone="dark"
+            className="max-w-[820px]"
+            style={{ marginBottom: 28 }}
+          >
+            Find a certified Bizak partner{" "}
+            <Heading.Muted>near you.</Heading.Muted>
+          </Heading>
+
+          <p
+            className="max-w-[620px] text-[15px] leading-[1.7] text-white/72"
+            style={{ marginBottom: 36 }}
+          >
+            Vetted implementation firms across the region. Every partner is
+            exam-certified, renewed annually, and listed by country so you can
+            reach the team closest to you.
           </p>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-x-10 gap-y-3 text-[13px] text-bz-text-muted">
-            <div className="flex items-center gap-2"><Globe className="size-4 text-bz-sage" /> Across South Asia</div>
-            <div className="flex items-center gap-2"><Sparkles className="size-4 text-bz-sage" /> Vetted &amp; renewed annually</div>
-            <div className="flex items-center gap-2"><Award className="size-4 text-bz-sage" /> 4-tier program</div>
-          </div>
+          <PillGroup>
+            <Pill
+              variant="accent"
+              withArrowUpRight
+              href="https://system.bizakerp.com/account/self-register"
+            >
+              Get Started
+            </Pill>
+            <Pill variant="ghostDark" withArrow href="/contact">
+              Request Demo
+            </Pill>
+          </PillGroup>
+
+          {detectedCountry && (
+            <div className="mt-10 inline-flex items-center gap-2.5 rounded-bz-pill border border-white/10 bg-white/[0.04] px-4 py-2 text-[12.5px] text-white/72">
+              <span
+                aria-hidden
+                className="size-1.5 rounded-bz-pill bg-bz-fire"
+              />
+              <span>
+                Showing partners for{" "}
+                <span className="font-medium text-bz-fire">
+                  {detectedCountry.flag} {detectedCountry.name}
+                </span>
+              </span>
+            </div>
+          )}
         </div>
       </Container>
     </Section>
   );
 }
 
-function DirectorySection() {
-  const [region, setRegion] = useState("All");
-  const [industry, setIndustry] = useState<string | null>(null);
-  const [tier, setTier] = useState<Tier | null>(null);
-  const [query, setQuery] = useState("");
+// ════════════════════════════════════════════════════════════════════════════
+// [01] DIRECTORY  location filters + partner list
+// ════════════════════════════════════════════════════════════════════════════
 
-  const filtered = PARTNERS.filter((p) => {
-    if (region !== "All" && p.region !== region) return false;
-    if (industry && !p.industries.includes(industry)) return false;
-    if (tier && p.tier !== tier) return false;
-    if (query && !`${p.name} ${p.city} ${p.bio}`.toLowerCase().includes(query.toLowerCase())) return false;
-    return true;
-  });
+function DirectorySection({ detected }: { detected: string | null }) {
+  const orderedCountries = useMemo(
+    () => orderCountries(COUNTRIES, detected),
+    [detected],
+  );
+
+  // Choose initial filter: detected country if listed, else "ALL".
+  const initial = useMemo<string>(() => {
+    if (detected && COUNTRIES.some((c) => c.code === detected)) return detected;
+    return "ALL";
+  }, [detected]);
+
+  const [filter, setFilter] = useState<string>(initial);
+  const [userTouched, setUserTouched] = useState(false);
+
+  // If detection resolves *after* first render (no cache), update the
+  // selection but only if the user hasn't manually picked something.
+  useEffect(() => {
+    if (userTouched) return;
+    if (!detected) return;
+    if (COUNTRIES.some((c) => c.code === detected)) {
+      setFilter(detected);
+    }
+  }, [detected, userTouched]);
+
+  const handleSelect = (code: string) => {
+    setUserTouched(true);
+    setFilter(code);
+  };
+
+  const filtered = useMemo(
+    () =>
+      filter === "ALL"
+        ? PARTNERS
+        : PARTNERS.filter((p) => p.code === filter),
+    [filter],
+  );
+
+  const selectedName =
+    filter === "ALL"
+      ? "across all locations"
+      : `in ${orderedCountries.find((c) => c.code === filter)?.name ?? filter}`;
 
   return (
-    <Section tone="white">
-      <Container width="narrow">
-        <div className="rounded-bz-xl border border-bz-border bg-bz-surface p-5 md:p-6 mb-10 shadow-[0_4px_16px_rgba(0,0,0,0.03)]">
-          <div className="flex items-center gap-3 mb-5">
-            <Search className="size-5 text-bz-text-muted shrink-0" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by firm name, city, or specialty…"
-              className="flex-1 bg-transparent text-[15px] text-bz-text placeholder:text-bz-text-muted/70 focus:outline-none"
-            />
-          </div>
+    <Section tone="a">
+      <Container>
+        <SectionHead
+          index="01"
+          label="Directory"
+          title={
+            <>
+              Browse partners <Heading.Muted>by location.</Heading.Muted>
+            </>
+          }
+          description="Every partner listed is exam-certified by the Bizak Architect Academy and renewed annually. Filter by country to find the team closest to you."
+          titleMaxWidth={680}
+        />
 
-          <div className="border-t border-bz-border pt-5 flex flex-col gap-4">
-            <FilterRow label="Region">
-              {REGIONS.map((r) => (
-                <Chip key={r} active={region === r} onClick={() => setRegion(r)}>{r}</Chip>
-              ))}
-            </FilterRow>
-
-            <FilterRow label="Industry">
-              <Chip active={industry === null} onClick={() => setIndustry(null)}>All</Chip>
-              {INDUSTRIES.map(({ Icon, name }) => (
-                <Chip
-                  key={name}
-                  active={industry === name}
-                  onClick={() => setIndustry((p) => (p === name ? null : name))}
-                >
-                  <Icon className="size-3.5" /> {name}
-                </Chip>
-              ))}
-            </FilterRow>
-
-            <FilterRow label="Tier">
-              <Chip active={tier === null} onClick={() => setTier(null)}>All</Chip>
-              {TIERS.map((t) => (
-                <Chip
-                  key={t}
-                  active={tier === t}
-                  onClick={() => setTier((p) => (p === t ? null : t))}
-                >
-                  {t}
-                </Chip>
-              ))}
-            </FilterRow>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between mb-6">
-          <div className="text-[13px] text-bz-text-muted">
-            <span className="font-bold text-bz-text tabular-nums">{filtered.length}</span> partners match
-          </div>
-          <a href="/partners" className="text-[13px] font-bold text-bz-sage hover:underline">
-            Become a partner →
-          </a>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filtered.map((p) => (
-            <Card key={p.name} tone="light" pad="md" hover="lift">
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="size-11 rounded-md bg-bz-sage/15 text-bz-sage font-bold text-[16px] flex items-center justify-center">
-                    {p.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
-                  </div>
-                  <div>
-                    <div className="text-[16px] font-bold leading-tight">{p.name}</div>
-                    <div className="text-[12px] text-bz-text-muted flex items-center gap-1.5 mt-0.5">
-                      <MapPin className="size-3" /> {p.city} · {p.region}
-                    </div>
-                  </div>
-                </div>
-                <PillBadge tone={TIER_PILL[p.tier]}>{p.tier}</PillBadge>
-              </div>
-
-              <p className="text-[13.5px] text-bz-text-muted leading-[1.6] mb-4">{p.bio}</p>
-
-              <div className="flex flex-wrap gap-1.5 mb-4">
-                {p.industries.map((i) => (
-                  <span
-                    key={i}
-                    className="px-2.5 py-1 rounded-bz-pill border border-bz-border bg-bz-bg text-[11px] font-semibold text-bz-text-muted"
-                  >
-                    {i}
-                  </span>
-                ))}
-              </div>
-
-              <div className="flex items-center justify-between pt-3 border-t border-bz-border text-[12px] text-bz-text-muted">
-                <div className="flex gap-4">
-                  <span><span className="font-bold tabular-nums text-bz-text">{p.consultants}</span> consultants</span>
-                  <span>Est. {p.founded}</span>
-                </div>
-                <a href="#" className="font-bold text-bz-sage hover:underline">Contact →</a>
-              </div>
-            </Card>
+        {/* Location filter chips */}
+        <div
+          role="group"
+          aria-label="Filter partners by country"
+          className="mb-7 flex flex-wrap gap-2"
+        >
+          <FilterChip
+            active={filter === "ALL"}
+            onClick={() => handleSelect("ALL")}
+          >
+            <Globe size={13} strokeWidth={1.8} />
+            All locations
+          </FilterChip>
+          {orderedCountries.map((c) => (
+            <FilterChip
+              key={c.code}
+              active={filter === c.code}
+              autoSuggested={!userTouched && c.code === detected}
+              onClick={() => handleSelect(c.code)}
+            >
+              <span className="text-[13px] leading-none">{c.flag}</span>
+              {c.name}
+            </FilterChip>
           ))}
         </div>
 
-        {filtered.length === 0 && (
-          <div className="rounded-bz-xl border border-dashed border-bz-border p-10 text-center">
-            <p className="text-[14px] text-bz-text-muted">
-              No partners match these filters yet. Try widening the search, or
-              <a className="text-bz-sage font-bold underline ml-1" href="/contact">talk to our partner team</a>.
-            </p>
+        {/* Result count */}
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <p className="text-[13px] text-bz-text-muted">
+            <span className="font-medium text-bz-text tabular-nums">
+              {filtered.length}
+            </span>{" "}
+            certified partner{filtered.length === 1 ? "" : "s"} {selectedName}
+          </p>
+        </div>
+
+        {/* Partner cards */}
+        {filtered.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            {filtered.map((p) => (
+              <PartnerCard key={p.name} partner={p} />
+            ))}
           </div>
+        ) : (
+          <EmptyState
+            country={
+              orderedCountries.find((c) => c.code === filter)?.name ??
+              "your country"
+            }
+          />
         )}
       </Container>
     </Section>
   );
 }
 
-function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-wrap items-center gap-3">
-      <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-bz-text-muted w-16 shrink-0">
-        {label}
-      </span>
-      <div className="flex flex-wrap gap-2">{children}</div>
-    </div>
-  );
-}
+// ── Filter chip ─────────────────────────────────────────────────────────────
 
-function Chip({
+function FilterChip({
   active,
+  autoSuggested,
   onClick,
   children,
 }: {
   active?: boolean;
+  autoSuggested?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
 }) {
@@ -283,84 +351,198 @@ function Chip({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-bz-pill border text-[12.5px] font-semibold transition-colors duration-150 ${
+      aria-pressed={active}
+      className={cn(
+        "inline-flex h-9 items-center gap-2 rounded-bz-pill border px-3.5 text-[13px] font-medium transition-colors",
         active
-          ? "bg-bz-sage text-white border-bz-sage"
-          : "bg-bz-surface text-bz-text-muted border-bz-border hover:border-bz-sage/40 hover:bg-bz-bg"
-      }`}
+          ? "border-bz-olive bg-bz-olive text-bz-paper"
+          : "border-bz-line bg-bz-surface text-bz-text-muted hover:border-bz-olive/40 hover:bg-bz-paper-warm hover:text-bz-text",
+      )}
     >
       {children}
+      {autoSuggested && !active && (
+        <span
+          aria-hidden
+          className="ml-0.5 inline-flex size-1.5 rounded-bz-pill bg-bz-leaf-deep"
+        />
+      )}
     </button>
   );
 }
 
-function TierExplainerSection() {
-  return (
-    <Section tone="light">
-      <Container width="narrow">
-        <SectionHeading
-          eyebrow="Understanding the tiers"
-          title="What the badge means."
-          description="Tiers reflect both certification depth and delivered customer health not just sales volume. The bar to renew is the same as the bar to qualify."
-          maxWidth={680}
-          className="mb-12"
-        />
+// ── Partner card ────────────────────────────────────────────────────────────
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[
-            { tier: "Authorized", desc: "Foundational certification. Smaller engagements, prebuilt configuration kits." },
-            { tier: "Silver",     desc: "Multiple certified consultants, demonstrated CSAT, regional coverage." },
-            { tier: "Gold",       desc: "Architect-tier team, multi-entity capability, audited delivery health." },
-            { tier: "Platinum",   desc: "Top-of-program. Strategic accounts, complex rollouts, co-product roadmap input." },
-          ].map((t, i) => (
-            <Card key={t.tier} tone={i >= 2 ? "soft" : "light"} pad="md" hover="lift">
-              <PillBadge tone={i >= 2 ? "accent" : i === 1 ? "sage" : "neutral"} className="mb-4">
-                {t.tier}
-              </PillBadge>
-              <p className="text-[13.5px] text-bz-text-muted leading-[1.65]">{t.desc}</p>
-            </Card>
-          ))}
+function PartnerCard({ partner }: { partner: Partner }) {
+  return (
+    <article className="overflow-hidden rounded-bz-2xl border border-bz-line bg-bz-surface">
+      <div className="flex flex-col gap-6 p-5 sm:flex-row sm:items-start sm:gap-7 sm:p-7">
+        {/* Logo */}
+        <div className="flex w-full shrink-0 justify-center sm:w-auto sm:justify-start">
+          <div className="size-[120px] overflow-hidden rounded-bz-xl border border-bz-line bg-bz-paper-warm sm:size-[140px]">
+            <img
+              src={partner.logo}
+              alt={`${partner.name} logo`}
+              className="size-full object-contain p-3"
+              loading="lazy"
+            />
+          </div>
         </div>
-      </Container>
-    </Section>
+
+        {/* Body */}
+        <div className="flex flex-1 flex-col gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-[18px] font-medium leading-tight tracking-tight text-bz-text sm:text-[20px]">
+                {partner.name}
+              </h3>
+              {partner.legalName && (
+                <p className="mt-1 text-[12.5px] text-bz-text-soft">
+                  {partner.legalName}
+                </p>
+              )}
+              <p className="mt-1.5 flex items-center gap-1.5 text-[13px] text-bz-text-muted">
+                <span aria-hidden className="text-[13px] leading-none">
+                  {partner.flag}
+                </span>
+                {partner.city}, {partner.country}
+              </p>
+            </div>
+            <StatusChip variant="posted">
+              <span className="inline-flex items-center gap-1">
+                <BadgeCheck size={12} strokeWidth={2.2} /> Certified
+              </span>
+            </StatusChip>
+          </div>
+
+          <p className="text-[13.5px] leading-[1.7] text-bz-text-muted">
+            {partner.description}
+          </p>
+
+          <p className="flex items-start gap-2 text-[12px] leading-[1.55] text-bz-text-soft">
+            <MapPin
+              size={12}
+              strokeWidth={1.7}
+              className="mt-[2px] shrink-0"
+            />
+            <span>{partner.address}</span>
+          </p>
+
+          <div className="mt-1 flex flex-wrap gap-x-6 gap-y-4 border-t border-bz-line-soft pt-5">
+            <ContactLink
+              icon={Phone}
+              label="Phone"
+              value={partner.phone}
+              href={`tel:${partner.phone.replace(/[^\d+]/g, "")}`}
+            />
+            <ContactLink
+              icon={Mail}
+              label="Email"
+              value={partner.email}
+              href={`mailto:${partner.email}`}
+            />
+            {partner.website && (
+              <ContactLink
+                icon={Globe}
+                label="Website"
+                value={partner.website}
+                href={`https://${partner.website.replace(/^https?:\/\//, "")}`}
+                external
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </article>
   );
 }
 
-function ClosingCta() {
+function ContactLink({
+  icon: Icon,
+  label,
+  value,
+  href,
+  external,
+}: {
+  icon: React.ComponentType<{
+    size?: number;
+    strokeWidth?: number;
+    className?: string;
+  }>;
+  label: string;
+  value: string;
+  href: string;
+  external?: boolean;
+}) {
   return (
-    <Section tone="dark" pad="default">
-      <Container width="narrow">
-        <SectionHeading
-          title={<>Don't see the right fit?</>}
-          description="Our partner team can match you with a firm based on your industry, geography, and timeline usually within 24 hours."
-          tone="light"
-          align="center"
-          maxWidth={620}
-        />
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Button variant="accent" size="lg" href="/contact" withArrow>
-            Get a Match
-          </Button>
-          <Button variant="ghostDark" size="lg" href="/partners">
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      className="group flex min-w-[180px] flex-1 items-start gap-3 text-left"
+    >
+      <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-bz-md bg-bz-paper-warm text-bz-olive transition-colors group-hover:bg-bz-fire-mid">
+        <Icon size={14} strokeWidth={1.7} />
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="text-[10.5px] font-medium uppercase tracking-[0.1em] text-bz-text-soft">
+          {label}
+        </div>
+        <div className="mt-0.5 truncate text-[13px] font-medium text-bz-text transition-colors group-hover:text-bz-olive">
+          {value}
+          {external && (
+            <ArrowUpRight
+              size={11}
+              strokeWidth={1.8}
+              className="ml-1 inline-block opacity-60"
+            />
+          )}
+        </div>
+      </div>
+    </a>
+  );
+}
+
+// ── Empty state ─────────────────────────────────────────────────────────────
+
+function EmptyState({ country }: { country: string }) {
+  return (
+    <div className="rounded-bz-2xl border border-dashed border-bz-line bg-bz-surface p-8 text-center sm:p-12">
+      <h3 className="text-[18px] font-medium tracking-tight text-bz-text">
+        No certified partners in {country} yet.
+      </h3>
+      <p className="mx-auto mt-3 max-w-[480px] text-[13.5px] leading-[1.65] text-bz-text-muted">
+        We're actively expanding. While we onboard a local partner, our team
+        can match you with a nearby firm or guide you through a direct
+        rollout.
+      </p>
+      <div className="mt-6 flex justify-center">
+        <PillGroup>
+          <Pill variant="dark" withArrow href="/contact">
+            Talk to Sales
+          </Pill>
+          <Pill variant="light" withArrow href="/partners">
             Become a Partner
-          </Button>
-        </div>
-      </Container>
-    </Section>
+          </Pill>
+        </PillGroup>
+      </div>
+    </div>
   );
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// PAGE
+// ════════════════════════════════════════════════════════════════════════════
 
 export function FindAPartnerPage() {
+  const detected = useDetectedCountry();
+  const detectedCountry = detected
+    ? COUNTRIES.find((c) => c.code === detected) ?? null
+    : null;
+
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <main>
-        <HeroSection />
-        <DirectorySection />
-        <TierExplainerSection />
-        <ClosingCta />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <HeroSection detectedCountry={detectedCountry} />
+      <DirectorySection detected={detected} />
+    </main>
   );
 }
