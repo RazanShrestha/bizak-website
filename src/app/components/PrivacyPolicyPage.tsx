@@ -132,7 +132,7 @@ const SECTIONS: LegalSectionData[] = [
     blocks: [
       {
         kind: "p",
-        text: "Bizak hosts customer production data in Amazon Web Services (AWS) data centres located in India. This supports data-residency expectations for our Asia-focused customers.",
+        text: "Bizak hosts customer production data on Datalaya cloud infrastructure, operated by Dish Media Network Ltd. from a data centre in Kathmandu, Nepal. This keeps Bizak customer data resident within Nepal, supporting data-sovereignty expectations for Nepal-based businesses.",
       },
       {
         kind: "p",
@@ -151,7 +151,7 @@ const SECTIONS: LegalSectionData[] = [
       {
         kind: "ul",
         items: [
-          "Amazon Web Services (AWS): cloud infrastructure, hosting, storage, networking, and logging.",
+          "Datalaya, operated by Dish Media Network Ltd.: cloud infrastructure, hosting, storage, networking, and logging from a Kathmandu data centre.",
         ],
       },
       {
@@ -259,7 +259,7 @@ export function PrivacyPolicyPage() {
       <LegalHero
         badge="Legal & Trust"
         title="Privacy Policy"
-        summary="How Bizak collects, uses, stores, and protects information across our website and the Bizak ERP platform. The short version: your business data belongs to you, it is hosted in AWS, and it is never used to train AI models."
+        summary="How Bizak collects, uses, stores, and protects information across our website and the Bizak ERP platform. The short version: your business data belongs to you, it is hosted in Nepal on Datalaya, and it is never used to train AI models."
         meta="Last updated May 16, 2026"
       />
       <LegalDoc sections={SECTIONS} />

@@ -29,10 +29,10 @@ import { cn } from "./ui/utils";
 
 // Data-residency facts shown beside the infrastructure copy.
 const RESIDENCY = [
-  { label: "Cloud provider", value: "Amazon Web Services (AWS)" },
-  { label: "Hosting region", value: "India" },
-  { label: "Production data", value: "India-resident" },
-  { label: "Core subprocessor", value: "AWS infrastructure" },
+  { label: "Cloud provider", value: "Datalaya (Dish Media Network)" },
+  { label: "Hosting region", value: "Kathmandu, Nepal" },
+  { label: "Production data", value: "Nepal-resident" },
+  { label: "Core subprocessor", value: "Datalaya infrastructure" },
 ];
 
 // The platform controls behind every record.
@@ -112,7 +112,7 @@ function InfrastructureSection() {
           label="Infrastructure"
           title={
             <>
-              Hosted in India,{" "}
+              Hosted in Nepal,{" "}
               <Heading.Muted>built to scale securely.</Heading.Muted>
             </>
           }
@@ -120,10 +120,12 @@ function InfrastructureSection() {
         <div className="grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
           <div className="flex max-w-[560px] flex-col gap-4">
             <p className="m-0 text-[15px] leading-[1.7] text-bz-text-muted">
-              Bizak hosts customer production data in Amazon Web Services (AWS)
-              data centres located in India. This supports data-residency
-              expectations for our Asia-focused customers, and lets Bizak scale
-              securely as demand grows.
+              Bizak hosts customer production data on Datalaya cloud
+              infrastructure, operated by Dish Media Network Ltd. from a data
+              centre in Kathmandu, Nepal. This keeps Bizak customer data
+              resident within Nepal, supporting data-sovereignty expectations
+              for Nepali businesses and aligning Bizak's hosting with
+              prevailing Nepali law.
             </p>
             <p className="m-0 text-[15px] leading-[1.7] text-bz-text-muted">
               Authorized Bizak personnel may access customer data from other
@@ -310,9 +312,9 @@ export function SecurityPage() {
       <LegalHero
         badge="Legal & Trust"
         title="Security & Trust"
-        summary="Bizak is built to run critical finance and operations data with security and reliability in mind: India-hosted infrastructure, tenant-aware access controls, encryption, and operational safeguards for your business data."
+        summary="Bizak is built to run critical finance and operations data with security and reliability in mind: Nepal-hosted infrastructure on Datalaya, tenant-aware access controls, encryption, and operational safeguards for your business data."
         chips={[
-          "India-hosted",
+          "Nepal-hosted",
           "Tenant isolation",
           "TLS encryption",
           "No AI training",

@@ -66,7 +66,7 @@ const CONNECTOR_ABBRS = [
   { abbr: "STR", sub: "Payments" }, { abbr: "SHO", sub: "Commerce" },
   { abbr: "QBO", sub: "Ledger"   }, { abbr: "SAL", sub: "CRM"      },
   { abbr: "BNK", sub: "Banking"  }, { abbr: "PAY", sub: "Payroll"  },
-  { abbr: "SAP", sub: "ERP"      }, { abbr: "AWS", sub: "Storage"  },
+  { abbr: "SAP", sub: "ERP"      }, { abbr: "DBX", sub: "Storage"  },
 ];
 
 const ACTIVE_CONNECTIONS = [
