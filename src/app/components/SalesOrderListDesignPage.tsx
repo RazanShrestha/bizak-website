@@ -9,17 +9,6 @@ import {
   ChevronRight,
   ChevronUp,
   ChevronsUpDown,
-  ChevronsLeft,
-  // Sidebar modules
-  LayoutDashboard,
-  ShoppingCart,
-  ShoppingBag,
-  Boxes,
-  Factory,
-  Wallet,
-  Users,
-  BarChart3,
-  Settings,
   // Page toolbar
   Plus,
   Filter,
@@ -35,8 +24,10 @@ import {
   FileText,
   CalendarRange,
   MapPin,
+  Users,
   Building2,
 } from "lucide-react";
+import { Sidebar } from "./DesignSidebar";
 
 // ════════════════════════════════════════════════════════════════════════════
 // MOCK DATA every list in the page lives at the top so the layout below
@@ -45,43 +36,6 @@ import {
 
 const TOTAL_RECORDS = 152;
 const PAGE_SIZE = 20;
-
-const SIDEBAR_GROUPS = [
-  {
-    section: "Workspace",
-    items: [
-      { icon: LayoutDashboard, label: "Dashboard" },
-    ],
-  },
-  {
-    section: "Operations",
-    items: [
-      {
-        icon: ShoppingCart,
-        label: "Sales & CRM",
-        open: true,
-        children: [
-          { label: "Quotation" },
-          { label: "Sales Order", active: true, count: 152 },
-          { label: "Sales Invoice" },
-          { label: "Customers" },
-          { label: "Returns" },
-        ],
-      },
-      { icon: ShoppingBag, label: "Purchasing" },
-      { icon: Boxes,       label: "Inventory"  },
-      { icon: Factory,     label: "Manufacturing" },
-    ],
-  },
-  {
-    section: "Back office",
-    items: [
-      { icon: Wallet,    label: "Finance"   },
-      { icon: Users,     label: "HR"        },
-      { icon: BarChart3, label: "Reports"   },
-    ],
-  },
-] as const;
 
 export const ORDERS = [
   {
@@ -323,152 +277,10 @@ function SparkArea({ last, prior }: { last: number[]; prior: number[] }) {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// SIDEBAR full-height olive nav with module groups
-// ════════════════════════════════════════════════════════════════════════════
-
-function Sidebar() {
-  return (
-    <aside className="hidden h-full w-[252px] shrink-0 flex-col bg-bz-olive text-bz-text-on-dark md:flex">
-      {/* Brand */}
-      <div className="flex h-14 items-center gap-2.5 border-b border-white/[0.06] px-5">
-        <span className="flex size-7 items-center justify-center rounded-bz-sm bg-bz-fire text-[13px] font-bold text-bz-olive">
-          B
-        </span>
-        <span className="text-[15px] font-semibold tracking-tight text-bz-text-on-dark">
-          Bizak<sup className="ml-0.5 text-[8px] opacity-60">®</sup>
-        </span>
-        <button className="ml-auto flex size-7 items-center justify-center rounded-bz-sm text-white/45 hover:bg-white/[0.06]">
-          <ChevronsLeft size={13} />
-        </button>
-      </div>
-
-      {/* Subsidiary switcher */}
-      <div className="px-3 py-3">
-        <button className="flex w-full items-center gap-2.5 rounded-bz-md border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-left">
-          <Building2 size={13} className="text-bz-fire" />
-          <div className="min-w-0 flex-1">
-            <p className="text-[11px] text-white/55 leading-none">Subsidiary</p>
-            <p className="mt-1 truncate text-[12.5px] font-medium text-bz-text-on-dark">
-              NP-01 · Bizak Nepal
-            </p>
-          </div>
-          <ChevronDown size={12} className="text-white/45" />
-        </button>
-      </div>
-
-      {/* Nav groups */}
-      <nav className="flex-1 overflow-y-auto px-3 pb-4">
-        {SIDEBAR_GROUPS.map((g) => (
-          <div key={g.section} className="mt-4 first:mt-1">
-            <p className="mb-1.5 px-2.5 text-[9.5px] font-bold uppercase tracking-[0.14em] text-white/35">
-              {g.section}
-            </p>
-            <div className="flex flex-col gap-0.5">
-              {g.items.map((item) => (
-                <SidebarItem key={item.label} item={item} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </nav>
-
-      {/* Footer / settings */}
-      <div className="border-t border-white/[0.06] p-3">
-        <div className="flex items-center gap-2.5 rounded-bz-md px-2.5 py-2 hover:bg-white/[0.04]">
-          <Settings size={13} className="text-white/55" />
-          <span className="flex-1 text-[12.5px] text-white/75">Settings</span>
-        </div>
-        <div className="mt-1.5 flex items-center gap-2.5 px-2.5 py-2">
-          <span className="flex size-7 items-center justify-center rounded-bz-pill bg-bz-fire/30 text-[10.5px] font-semibold text-bz-text-on-dark">
-            MS
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[12px] font-medium text-bz-text-on-dark">
-              Manas Singh
-            </p>
-            <p className="text-[10px] text-white/45">Operations · Admin</p>
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-type SidebarItemModel = {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  label: string;
-  open?: boolean;
-  children?: ReadonlyArray<{ label: string; active?: boolean; count?: number }>;
-};
-
-function SidebarItem({ item }: { item: SidebarItemModel | (typeof SIDEBAR_GROUPS[number]["items"][number]) }) {
-  const Icon = item.icon;
-  const hasChildren = "children" in item && item.children;
-  const isOpen = "open" in item && item.open;
-  const groupActive = hasChildren && item.children?.some((c) => "active" in c && c.active);
-
-  return (
-    <div>
-      <button
-        className={`flex w-full items-center gap-2.5 rounded-bz-md px-2.5 py-2 text-left ${
-          groupActive ? "bg-white/[0.04]" : "hover:bg-white/[0.04]"
-        }`}
-      >
-        <Icon size={13} className={groupActive ? "text-bz-fire" : "text-white/55"} />
-        <span
-          className={`flex-1 text-[12.5px] ${
-            groupActive ? "font-semibold text-bz-text-on-dark" : "text-white/75"
-          }`}
-        >
-          {item.label}
-        </span>
-        {hasChildren && (
-          <ChevronDown
-            size={11}
-            className={`text-white/45 transition-transform ${isOpen ? "" : "-rotate-90"}`}
-          />
-        )}
-      </button>
-
-      {hasChildren && isOpen && (
-        <div className="ml-3 mt-0.5 flex flex-col gap-0.5 border-l border-white/[0.08] pl-3">
-          {item.children!.map((c) => (
-            <button
-              key={c.label}
-              className={`flex w-full items-center gap-2 rounded-bz-md px-2.5 py-1.5 text-left ${
-                c.active ? "bg-bz-fire/[0.12]" : "hover:bg-white/[0.04]"
-              }`}
-            >
-              <span
-                className={`size-1 rounded-bz-pill ${
-                  c.active ? "bg-bz-fire" : "bg-white/25"
-                }`}
-              />
-              <span
-                className={`flex-1 text-[11.5px] ${
-                  c.active ? "font-semibold text-bz-text-on-dark" : "text-white/65"
-                }`}
-              >
-                {c.label}
-              </span>
-              {c.count !== undefined && (
-                <span className={`text-[10px] tabular-nums ${c.active ? "text-bz-fire" : "text-white/35"}`}>
-                  {c.count}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ════════════════════════════════════════════════════════════════════════════
 // TOP BAR breadcrumb · global search · quick-create · bell · help
 // ════════════════════════════════════════════════════════════════════════════
 
-function TopBar({ breadcrumb }: { breadcrumb: React.ReactNode }) {
+export function TopBar({ breadcrumb }: { breadcrumb: React.ReactNode }) {
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 border-b border-bz-line bg-bz-paper px-4 md:px-6">
       {/* Breadcrumb */}

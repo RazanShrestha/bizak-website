@@ -73,6 +73,7 @@ import { PoliciesAndAgreementsPage } from "./components/PoliciesAndAgreementsPag
 import { SalesOrderListDesignPage } from "./components/SalesOrderListDesignPage";
 import { SalesOrderDetailDesignPage } from "./components/SalesOrderDetailDesignPage";
 import { SalesOrderFormDesignPage } from "./components/SalesOrderFormDesignPage";
+import { CustomFieldsBuilderPage } from "./components/CustomFieldsBuilder";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -961,6 +962,14 @@ function SalesOrderEditDesignPageLayout() {
   );
 }
 
+function CustomFieldsBuilderPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <CustomFieldsBuilderPage />
+    </div>
+  );
+}
+
 
 
  
@@ -1126,6 +1135,7 @@ export const router = createBrowserRouter([
       { path: "design/sales-order-list/new",        Component: SalesOrderCreateDesignPageLayout  },
       { path: "design/sales-order-list/:id",        Component: SalesOrderDetailDesignPageLayout  },
       { path: "design/sales-order-list/:id/edit",   Component: SalesOrderEditDesignPageLayout    },
+      { path: "design/custom-fields",               Component: CustomFieldsBuilderPageLayout     },
       {
         path: "blog",
         Component: () => <Outlet />,
