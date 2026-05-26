@@ -20,7 +20,8 @@ import {
 } from "../bz";
 import { cn } from "../ui/utils";
 import anchorpointLogo from "../../../assets/partners/anchorpoint.jpeg";
-import croweLogo from "../../../assets/partners/crowe.svg";
+// import croweLogo from "../../../assets/partners/crowe.svg";
+import taxoryLogo from "../../../assets/partners/taxory.jpeg";
 
 // ════════════════════════════════════════════════════════════════════════════
 // DATA
@@ -57,29 +58,44 @@ const PARTNERS: Partner[] = [
     website: "www.anchorpoint.pro",
     logo: anchorpointLogo,
   },
+  // {
+  //   name: "Crowe Nepal",
+  //   legalName: "B.K Agrawal & Co.",
+  //   description:
+  //     "An audit, tax, and advisory services firm in Nepal, backed by a network of highly qualified professionals across a range of disciplines and offering a comprehensive set of solutions to clients of every size.",
+  //   country: "Nepal",
+  //   code: "NP",
+  //   flag: "🇳🇵",
+  //   city: "Kathmandu",
+  //   address:
+  //     "Saraswati Vatika 122 Pannahiti Marg, Sifal, Ward No. 7, PO Box: 3761, Kathmandu, Nepal",
+  //   phone: "+977-1-4481865",
+  //   email: "info@crowe.com.np",
+  //   website: "www.crowe.com/np",
+  //   logo: croweLogo,
+  // },
   {
-    name: "Crowe Nepal",
-    legalName: "B.K Agrawal & Co.",
+    name: "Taxory Accounting And Bookkeeping",
     description:
-      "An audit, tax, and advisory services firm in Nepal, backed by a network of highly qualified professionals across a range of disciplines and offering a comprehensive set of solutions to clients of every size.",
-    country: "Nepal",
-    code: "NP",
-    flag: "🇳🇵",
-    city: "Kathmandu",
-    address:
-      "Saraswati Vatika 122 Pannahiti Marg, Sifal, Ward No. 7, PO Box: 3761, Kathmandu, Nepal",
-    phone: "+977-1-4481865",
-    email: "info@crowe.com.np",
-    website: "www.crowe.com/np",
-    logo: croweLogo,
+      "Taxory provides reliable tax and accounting services designed to simplify your financial management. With a focus on accuracy, transparency, and compliance, we help businesses make clear and confident financial decisions. From bookkeeping to tax filing, Taxory delivers trusted support every step of the way.",
+    country: "United Arab Emirates",
+    code: "AE",
+    flag: "🇦🇪",
+    city: "Dubai",
+    address: "Dubai, United Arab Emirates",
+    phone: "+971-502380435",
+    email: "bijay@taxoryuae.com",
+    website: "taxoryuae.com",
+    logo: taxoryLogo,
   },
 ];
 
 type CountryEntry = { code: string; name: string; flag: string };
 
 const COUNTRIES: CountryEntry[] = [
+  { code: "AE", name: "UAE",        flag: "🇦🇪" },
   { code: "PK", name: "Pakistan",   flag: "🇵🇰" },
-  { code: "NP", name: "Nepal",      flag: "🇳🇵" },
+  // { code: "NP", name: "Nepal",      flag: "🇳🇵" },
   { code: "IN", name: "India",      flag: "🇮🇳" },
   { code: "BD", name: "Bangladesh", flag: "🇧🇩" },
   { code: "LK", name: "Sri Lanka",  flag: "🇱🇰" },
