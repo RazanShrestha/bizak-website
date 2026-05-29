@@ -74,6 +74,8 @@ import { SalesOrderListDesignPage } from "./components/SalesOrderListDesignPage"
 import { SalesOrderDetailDesignPage } from "./components/SalesOrderDetailDesignPage";
 import { SalesOrderFormDesignPage } from "./components/SalesOrderFormDesignPage";
 import { CustomFieldsBuilderPage } from "./components/CustomFieldsBuilder";
+import { TrialBalanceDesignPage } from "./components/TrialBalanceDesignPage";
+import { BalanceSheetDesignPage, BalanceSheetDetailDesignPage } from "./components/BalanceSheetDesignPage";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -970,6 +972,30 @@ function CustomFieldsBuilderPageLayout() {
   );
 }
 
+function TrialBalanceDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <TrialBalanceDesignPage />
+    </div>
+  );
+}
+
+function BalanceSheetDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <BalanceSheetDesignPage />
+    </div>
+  );
+}
+
+function BalanceSheetDetailDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <BalanceSheetDetailDesignPage />
+    </div>
+  );
+}
+
 
 
  
@@ -1136,6 +1162,9 @@ export const router = createBrowserRouter([
       { path: "design/sales-order-list/:id",        Component: SalesOrderDetailDesignPageLayout  },
       { path: "design/sales-order-list/:id/edit",   Component: SalesOrderEditDesignPageLayout    },
       { path: "design/custom-fields",               Component: CustomFieldsBuilderPageLayout     },
+      { path: "design/trial-balance",               Component: TrialBalanceDesignPageLayout      },
+      { path: "design/balance-sheet",               Component: BalanceSheetDesignPageLayout      },
+      { path: "design/balance-sheet/detail",        Component: BalanceSheetDetailDesignPageLayout },
       {
         path: "blog",
         Component: () => <Outlet />,

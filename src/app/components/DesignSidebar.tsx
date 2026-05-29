@@ -60,7 +60,17 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
     items: [
       { icon: Wallet,    label: "Finance"   },
       { icon: Users,     label: "HR"        },
-      { icon: BarChart3, label: "Reports"   },
+      {
+        icon: BarChart3,
+        label: "Reports",
+        children: [
+          { label: "Trial Balance", href: "/design/trial-balance" },
+          { label: "Balance Sheet", href: "/design/balance-sheet" },
+          { label: "Profit & Loss" },
+          { label: "General Ledger" },
+          { label: "Aging Summary" },
+        ],
+      },
     ],
   },
   {

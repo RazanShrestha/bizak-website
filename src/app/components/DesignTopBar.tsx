@@ -5,26 +5,25 @@ import { Search, Plus, HelpCircle, Bell, ChevronDown } from "lucide-react";
 // TOP BAR  breadcrumb · global search · quick-create · bell · help
 // ════════════════════════════════════════════════════════════════════════════
 
-export function TopBar({ breadcrumb }: { breadcrumb: React.ReactNode }) {
+export function TopBar({
+  breadcrumb,
+  tone = "paper",
+}: {
+  breadcrumb: React.ReactNode;
+  tone?: "paper" | "section";
+}) {
   return (
-    <header className="flex h-14 shrink-0 items-center gap-3 border-b border-bz-line bg-bz-paper px-4 md:px-6">
+    <header
+      className={`flex h-14 shrink-0 items-center gap-3 border-b border-bz-line px-4 md:px-6 ${
+        tone === "section" ? "bg-bz-section-b" : "bg-bz-paper"
+      }`}
+    >
       {/* Breadcrumb */}
       <nav className="flex min-w-0 items-center gap-1.5 text-[12px]">
         {breadcrumb}
       </nav>
 
-      {/* Global search */}
-      <div className="ml-auto hidden h-9 min-w-0 max-w-[360px] flex-1 items-center gap-2 rounded-bz-md border border-bz-line bg-bz-surface px-3 lg:flex">
-        <Search size={13} className="shrink-0 text-bz-text-muted" />
-        <span className="truncate text-[12px] text-bz-text-muted">
-          Search across orders, customers, invoices…
-        </span>
-        <span className="ml-auto inline-flex items-center rounded-bz-sm border border-bz-line bg-bz-paper-warm px-1.5 text-[10px] font-semibold text-bz-text-muted">
-          ⌘K
-        </span>
-      </div>
-
-      <div className="ml-auto flex items-center gap-1 lg:ml-3">
+      <div className="ml-auto flex items-center gap-1">
         <button className="flex size-9 items-center justify-center rounded-bz-md text-bz-text-muted hover:bg-bz-paper-warm">
           <Plus size={14} />
         </button>
