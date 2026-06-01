@@ -22,6 +22,7 @@ import { cn } from "../ui/utils";
 import anchorpointLogo from "../../../assets/partners/anchorpoint.jpeg";
 // import croweLogo from "../../../assets/partners/crowe.svg";
 import taxoryLogo from "../../../assets/partners/taxory.jpeg";
+import finexLogo from "../../../assets/partners/finex.jpeg";
 
 // ════════════════════════════════════════════════════════════════════════════
 // DATA
@@ -88,6 +89,19 @@ const PARTNERS: Partner[] = [
     website: "taxoryuae.com",
     logo: taxoryLogo,
   },
+  {
+    name: "Finex Innovative Pvt. Ltd.",
+    description:
+      "Finex Innovative Private Limited is a Nepal-based professional services company providing accounting, business consultancy, business process outsourcing, and AI-enabled support services to businesses in Nepal and abroad.",
+    country: "Japan",
+    code: "JP",
+    flag: "🇯🇵",
+    city: "Tokyo",
+    address: "Tokyo, Japan",
+    phone: "+81-90-8084-4989",
+    email: "cachandramani@yahoo.com",
+    logo: finexLogo,
+  },
 ];
 
 type CountryEntry = { code: string; name: string; flag: string };
@@ -95,6 +109,7 @@ type CountryEntry = { code: string; name: string; flag: string };
 const COUNTRIES: CountryEntry[] = [
   { code: "AE", name: "UAE",        flag: "🇦🇪" },
   { code: "PK", name: "Pakistan",   flag: "🇵🇰" },
+  { code: "JP", name: "Japan",      flag: "🇯🇵" },
   // { code: "NP", name: "Nepal",      flag: "🇳🇵" },
   { code: "IN", name: "India",      flag: "🇮🇳" },
   { code: "BD", name: "Bangladesh", flag: "🇧🇩" },
