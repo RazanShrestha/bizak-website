@@ -76,6 +76,7 @@ import { SalesOrderFormDesignPage } from "./components/SalesOrderFormDesignPage"
 import { CustomFieldsBuilderPage } from "./components/CustomFieldsBuilder";
 import { TrialBalanceDesignPage } from "./components/TrialBalanceDesignPage";
 import { BalanceSheetDesignPage, BalanceSheetDetailDesignPage } from "./components/BalanceSheetDesignPage";
+import { RolePermissionDesignPage } from "./components/RolePermissionDesignPage";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -988,6 +989,14 @@ function BalanceSheetDesignPageLayout() {
   );
 }
 
+function RolePermissionDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <RolePermissionDesignPage />
+    </div>
+  );
+}
+
 function BalanceSheetDetailDesignPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -1165,6 +1174,7 @@ export const router = createBrowserRouter([
       { path: "design/trial-balance",               Component: TrialBalanceDesignPageLayout      },
       { path: "design/balance-sheet",               Component: BalanceSheetDesignPageLayout      },
       { path: "design/balance-sheet/detail",        Component: BalanceSheetDetailDesignPageLayout },
+      { path: "design/roles",                       Component: RolePermissionDesignPageLayout    },
       {
         path: "blog",
         Component: () => <Outlet />,

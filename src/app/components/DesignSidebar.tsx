@@ -14,6 +14,7 @@ import {
   Sparkles,
   Settings,
   Building2,
+  ShieldCheck,
 } from "lucide-react";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -77,6 +78,20 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
     section: "Customize",
     items: [
       { icon: Sparkles, label: "Custom Form", href: "/design/custom-fields" },
+    ],
+  },
+  {
+    section: "Administration",
+    items: [
+      {
+        icon: ShieldCheck,
+        label: "Access Control",
+        children: [
+          { label: "Roles & Permissions", href: "/design/roles" },
+          { label: "Users" },
+          { label: "Audit Log" },
+        ],
+      },
     ],
   },
 ];
