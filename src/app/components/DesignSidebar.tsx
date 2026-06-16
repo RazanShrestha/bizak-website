@@ -15,6 +15,21 @@ import {
   Settings,
   Building2,
   ShieldCheck,
+  Hash,
+  CreditCard,
+  LayoutGrid,
+  MapPin,
+  DatabaseZap,
+  LifeBuoy,
+  Repeat,
+  UserPlus,
+  TrendingUp,
+  ArrowUpCircle,
+  Library,
+  ScanLine,
+  PlayCircle,
+  SlidersHorizontal,
+  Workflow,
 } from "lucide-react";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -35,7 +50,7 @@ type SidebarGroupModel = { section: string; items: SidebarItemModel[] };
 const SIDEBAR_GROUPS: SidebarGroupModel[] = [
   {
     section: "Workspace",
-    items: [{ icon: LayoutDashboard, label: "Dashboard" }],
+    items: [{ icon: LayoutDashboard, label: "Dashboard", href: "/design/dashboard" }],
   },
   {
     section: "Operations",
@@ -46,20 +61,65 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
         children: [
           { label: "Quotation" },
           { label: "Sales Order", href: "/design/sales-order-list", count: 152 },
+          { label: "Order Record", href: "/design/sales-order-record" },
+          { label: "Order Register", href: "/design/sales-order-register" },
           { label: "Sales Invoice" },
           { label: "Customers" },
           { label: "Returns" },
         ],
       },
       { icon: ShoppingBag, label: "Purchasing" },
-      { icon: Boxes,       label: "Inventory"  },
+      { icon: MapPin, label: "Route Mapping", href: "/design/party-route-mapping" },
+      {
+        icon: Boxes,
+        label: "Inventory",
+        children: [
+          { label: "Items", href: "/design/item/new" },
+          { label: "Item Groups" },
+          { label: "Stock Levels" },
+          { label: "Adjustments" },
+        ],
+      },
       { icon: Factory,     label: "Manufacturing" },
+    ],
+  },
+  {
+    section: "Point of Sale",
+    items: [
+      { icon: ScanLine, label: "Terminal", href: "/design/pos-terminal" },
+      { icon: PlayCircle, label: "Start Session", href: "/design/pos-session" },
+      { icon: SlidersHorizontal, label: "Setup", href: "/design/pos-setup" },
+    ],
+  },
+  {
+    section: "Subscriptions",
+    items: [
+      { icon: Repeat, label: "Customer Subscriptions", href: "/design/customer-subscriptions" },
+      { icon: UserPlus, label: "Subscribe a Party", href: "/design/subscribe-party" },
+      { icon: TrendingUp, label: "Revenue", href: "/design/subscription-revenue" },
+      { icon: ArrowUpCircle, label: "Upgrade Plan", href: "/design/plan-upgrade" },
+    ],
+  },
+  {
+    section: "Support",
+    items: [
+      { icon: LifeBuoy, label: "Tickets", href: "/design/support-tickets" },
     ],
   },
   {
     section: "Back office",
     items: [
-      { icon: Wallet,    label: "Finance"   },
+      {
+        icon: Wallet,
+        label: "Finance",
+        children: [
+          { label: "Bank Reconciliation", href: "/design/bank-reconciliation" },
+          { label: "Statement Import", href: "/design/bank-import" },
+          { label: "Journal Entry" },
+          { label: "Payments" },
+          { label: "Chart of Accounts" },
+        ],
+      },
       { icon: Users,     label: "HR"        },
       {
         icon: BarChart3,
@@ -78,11 +138,15 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
     section: "Customize",
     items: [
       { icon: Sparkles, label: "Custom Form", href: "/design/custom-fields" },
+      { icon: LayoutGrid, label: "Dashboard Sections", href: "/design/dashboard-attributes" },
     ],
   },
   {
     section: "Administration",
     items: [
+      { icon: Building2, label: "Companies", href: "/design/companies" },
+      { icon: Library, label: "Master Records", href: "/design/master-record" },
+      { icon: DatabaseZap, label: "Data Import", href: "/design/data-imports" },
       {
         icon: ShieldCheck,
         label: "Access Control",
@@ -90,6 +154,25 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
           { label: "Roles & Permissions", href: "/design/roles" },
           { label: "Users" },
           { label: "Audit Log" },
+        ],
+      },
+      { icon: Workflow, label: "Workflow", href: "/design/workflow" },
+      {
+        icon: CreditCard,
+        label: "Subscription Plans",
+        children: [
+          { label: "New Plan", href: "/design/subscription-plan/new" },
+          { label: "Edit: Pro tier", href: "/design/subscription-plan/PLAN-PRO/edit" },
+        ],
+      },
+      {
+        icon: Hash,
+        label: "Setup",
+        children: [
+          { label: "Global Defaults", href: "/design/preferences" },
+          { label: "Auto Number", href: "/design/auto-number" },
+          { label: "Number Series" },
+          { label: "Company Profile" },
         ],
       },
     ],

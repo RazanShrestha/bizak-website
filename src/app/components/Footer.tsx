@@ -46,7 +46,6 @@ const COLS: { heading: string; links: { label: string; href: string }[] }[] = [
       { label: "Manufacturing", href: "/ManufacturingProduct" },
       { label: "Projects & Job Costing", href: "/ProjectAndCosting" },
       { label: "Dashboards & Reporting", href: "/DashboardAndReporting" },
-      { label: "Workflow Automation", href: "/workflow" },
       { label: "Integrations", href: "/Integrations" },
       { label: "Multi-company", href: "/MulticompanyAndBranches" },
       { label: "Document Management", href: "/DocumentManagement" },

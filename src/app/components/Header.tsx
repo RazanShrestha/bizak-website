@@ -15,7 +15,6 @@ import {
   Factory,
   FolderKanban,
   BarChart3,
-  Zap,
   Plug,
   Building2,
   Truck,
@@ -119,7 +118,6 @@ const megaMenus: Record<string, MegaMenuData> = {
         heading: "Capabilities",
         items: [
           { icon: <BarChart3 size={16} />, title: "Dashboards & Reporting", description: "Real-time insights", href: "/DashboardAndReporting" },
-          { icon: <Zap size={16} />, title: "Workflow Automation", description: "Automate approvals", href: "/workflow" },
           { icon: <Plug size={16} />, title: "Integrations", description: "Banks, ecommerce, APIs", href: "/Integrations" },
           { icon: <Building2 size={16} />, title: "Multi-company", description: "Multiple entities, one place", href: "/MulticompanyAndBranches" },
           { icon: <FileText size={16} />, title: "Document Management", description: "Files, contracts, archives", href: "/DocumentManagement" },

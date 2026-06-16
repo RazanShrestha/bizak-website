@@ -33,7 +33,6 @@ import { CaseStudiesPage } from "./components/CaseStudiesPage";
 import { CaseStudyPage } from "./components/CaseStudyPage";
 import { getCaseStudy } from "./components/caseStudyData";
 
-import { WorkflowPage } from "./components/WorkflowPage";
 import { FinancialManagementPage } from "./components/FinancialManagement";
 import { SalesAndCrmPage } from "./components/SalesCrm";
 import { InventoryAndWarehousePage } from "./components/InventoryAndWarehouse";
@@ -71,12 +70,36 @@ import { CookiePolicyPage } from "./components/CookiePolicyPage";
 import { SecurityPage } from "./components/SecurityPage";
 import { PoliciesAndAgreementsPage } from "./components/PoliciesAndAgreementsPage";
 import { SalesOrderListDesignPage } from "./components/SalesOrderListDesignPage";
+import { SalesOrderRegisterDesignPage } from "./components/SalesOrderRegisterDesignPage";
+import { SupportTicketListDesignPage } from "./components/SupportTicketListDesignPage";
 import { SalesOrderDetailDesignPage } from "./components/SalesOrderDetailDesignPage";
+import { SalesOrderRecordDesignPage } from "./components/SalesOrderRecordDesignPage";
 import { SalesOrderFormDesignPage } from "./components/SalesOrderFormDesignPage";
 import { CustomFieldsBuilderPage } from "./components/CustomFieldsBuilder";
 import { TrialBalanceDesignPage } from "./components/TrialBalanceDesignPage";
 import { BalanceSheetDesignPage, BalanceSheetDetailDesignPage } from "./components/BalanceSheetDesignPage";
 import { RolePermissionDesignPage } from "./components/RolePermissionDesignPage";
+import { AutoNumberDesignPage } from "./components/AutoNumberDesignPage";
+import { ItemFormDesignPage } from "./components/ItemFormDesignPage";
+import { BankReconciliationDesignPage } from "./components/BankReconciliationDesignPage";
+import { BankStatementImportDesignPage } from "./components/BankStatementImportDesignPage";
+import { SubscriptionPlanFormDesignPage } from "./components/SubscriptionPlanFormDesignPage";
+import { PreferencesDesignPage } from "./components/PreferencesDesignPage";
+import { MetricCardConfigDesignPage } from "./components/MetricCardConfigDesignPage";
+import { DashboardAttributesDesignPage } from "./components/DashboardAttributesDesignPage";
+import { CompanyDetailDesignPage, CompanyListDesignPage } from "./components/CompanyDetailDesignPage";
+import { PartyRouteMappingDesignPage } from "./components/PartyRouteMappingDesignPage";
+import { DataImportHistoryDesignPage } from "./components/DataImportHistoryDesignPage";
+import { BulkDataImportDesignPage } from "./components/BulkDataImportDesignPage";
+import { CustomerSubscriptionsDesignPage } from "./components/CustomerSubscriptionsDesignPage";
+import { SubscribePartyDesignPage } from "./components/SubscribePartyDesignPage";
+import { PlanUpgradeDesignPage } from "./components/PlanUpgradeDesignPage";
+import { SubscriptionRevenueDesignPage } from "./components/SubscriptionRevenueDesignPage";
+import { MasterRecordFormDesignPage } from "./components/MasterRecordFormDesignPage";
+import { PosTerminalDesignPage } from "./components/PosTerminalDesignPage";
+import { PosSetupDesignPage } from "./components/PosSetupDesignPage";
+import { PosSessionStartDesignPage } from "./components/PosSessionStartDesignPage";
+import { WorkflowSetupDesignPage } from "./components/WorkflowSetupDesignPage";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -450,27 +473,6 @@ function ProjectAndCostingPageLayout() {
     </div>
   );
 }
-
-
-function WorkFlowAutomationPageLayout() {
-  return (
-    <div className="bz-page" style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Header />
-      <WorkflowPage />
-      <Footer
-        cta={{
-          title: "Automate every approval.",
-          titleMuted: "Routed, escalated, and logged automatically.",
-          description:
-            "Bizak routes every request, escalates stalled approvals, and logs every decision.",
-          primaryLabel: "Start free trial",
-          secondaryLabel: "Book a demo",
-        }}
-      />
-    </div>
-  );
-}
-
 
 
 function IntegrationsPageLayout() {
@@ -941,10 +943,34 @@ function SalesOrderListDesignPageLayout() {
   );
 }
 
+function SalesOrderRegisterDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SalesOrderRegisterDesignPage />
+    </div>
+  );
+}
+
+function SupportTicketListDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SupportTicketListDesignPage />
+    </div>
+  );
+}
+
 function SalesOrderDetailDesignPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <SalesOrderDetailDesignPage />
+    </div>
+  );
+}
+
+function SalesOrderRecordDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SalesOrderRecordDesignPage />
     </div>
   );
 }
@@ -1001,6 +1027,198 @@ function BalanceSheetDetailDesignPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <BalanceSheetDetailDesignPage />
+    </div>
+  );
+}
+
+function AutoNumberDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <AutoNumberDesignPage />
+    </div>
+  );
+}
+
+function ItemCreateDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <ItemFormDesignPage mode="create" />
+    </div>
+  );
+}
+
+function ItemEditDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <ItemFormDesignPage mode="edit" />
+    </div>
+  );
+}
+
+function BankReconciliationDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <BankReconciliationDesignPage />
+    </div>
+  );
+}
+
+function BankStatementImportDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <BankStatementImportDesignPage />
+    </div>
+  );
+}
+
+function SubscriptionPlanCreateDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SubscriptionPlanFormDesignPage mode="create" />
+    </div>
+  );
+}
+
+function SubscriptionPlanEditDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SubscriptionPlanFormDesignPage mode="edit" />
+    </div>
+  );
+}
+
+function PreferencesDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <PreferencesDesignPage />
+    </div>
+  );
+}
+
+function MetricCardConfigDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <MetricCardConfigDesignPage />
+    </div>
+  );
+}
+
+function DashboardAttributesDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <DashboardAttributesDesignPage />
+    </div>
+  );
+}
+
+function CompanyListDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <CompanyListDesignPage />
+    </div>
+  );
+}
+
+function CompanyDetailDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <CompanyDetailDesignPage />
+    </div>
+  );
+}
+
+function PartyRouteMappingDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <PartyRouteMappingDesignPage />
+    </div>
+  );
+}
+
+function DataImportHistoryDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <DataImportHistoryDesignPage />
+    </div>
+  );
+}
+
+function BulkDataImportDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <BulkDataImportDesignPage />
+    </div>
+  );
+}
+
+function CustomerSubscriptionsDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <CustomerSubscriptionsDesignPage />
+    </div>
+  );
+}
+
+function SubscribePartyDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SubscribePartyDesignPage />
+    </div>
+  );
+}
+
+function PlanUpgradeDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <PlanUpgradeDesignPage />
+    </div>
+  );
+}
+
+function SubscriptionRevenueDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <SubscriptionRevenueDesignPage />
+    </div>
+  );
+}
+
+function MasterRecordFormDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <MasterRecordFormDesignPage />
+    </div>
+  );
+}
+
+function PosTerminalDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <PosTerminalDesignPage />
+    </div>
+  );
+}
+
+function PosSetupDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <PosSetupDesignPage />
+    </div>
+  );
+}
+
+function PosSessionStartDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <PosSessionStartDesignPage />
+    </div>
+  );
+}
+
+function WorkflowSetupDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <WorkflowSetupDesignPage />
     </div>
   );
 }
@@ -1124,7 +1342,6 @@ export const router = createBrowserRouter([
       { path: "partners/events/enroll/:slug",             Component: PartnerEventEnrollPage     },
       { path: "case-studies",   Component: CaseStudiesPageLayout },
       { path: "case-studies/:slug", Component: CaseStudyPageLayout },
-      { path: "workflow",      Component: WorkFlowAutomationPageLayout },
       { path: "FinancialManagement", Component: FinancialManagementPageLayout },
       { path: "SalesCrm", Component: SalesAndCrmPageLayout },
       { path: "InventoryAndWarehouse", Component: InventoryAndWarehousePageLayout },
@@ -1167,14 +1384,41 @@ export const router = createBrowserRouter([
       { path: "security",  Component: SecurityPageLayout },
       { path: "policies",  Component: PoliciesAndAgreementsPageLayout },
       { path: "design/sales-order-list",            Component: SalesOrderListDesignPageLayout    },
+      { path: "design/sales-order-register",        Component: SalesOrderRegisterDesignPageLayout },
       { path: "design/sales-order-list/new",        Component: SalesOrderCreateDesignPageLayout  },
       { path: "design/sales-order-list/:id",        Component: SalesOrderDetailDesignPageLayout  },
       { path: "design/sales-order-list/:id/edit",   Component: SalesOrderEditDesignPageLayout    },
+      { path: "design/sales-order-record",          Component: SalesOrderRecordDesignPageLayout  },
+      { path: "design/support-tickets",             Component: SupportTicketListDesignPageLayout },
       { path: "design/custom-fields",               Component: CustomFieldsBuilderPageLayout     },
       { path: "design/trial-balance",               Component: TrialBalanceDesignPageLayout      },
       { path: "design/balance-sheet",               Component: BalanceSheetDesignPageLayout      },
       { path: "design/balance-sheet/detail",        Component: BalanceSheetDetailDesignPageLayout },
       { path: "design/roles",                       Component: RolePermissionDesignPageLayout    },
+      { path: "design/auto-number",                 Component: AutoNumberDesignPageLayout        },
+      { path: "design/item/new",                    Component: ItemCreateDesignPageLayout        },
+      { path: "design/item/:id/edit",               Component: ItemEditDesignPageLayout          },
+      { path: "design/bank-reconciliation",         Component: BankReconciliationDesignPageLayout   },
+      { path: "design/bank-import",                 Component: BankStatementImportDesignPageLayout  },
+      { path: "design/subscription-plan/new",       Component: SubscriptionPlanCreateDesignPageLayout },
+      { path: "design/subscription-plan/:id/edit",  Component: SubscriptionPlanEditDesignPageLayout },
+      { path: "design/preferences",                 Component: PreferencesDesignPageLayout       },
+      { path: "design/dashboard",                   Component: MetricCardConfigDesignPageLayout  },
+      { path: "design/dashboard-attributes",        Component: DashboardAttributesDesignPageLayout },
+      { path: "design/companies",                   Component: CompanyListDesignPageLayout       },
+      { path: "design/companies/:id",               Component: CompanyDetailDesignPageLayout     },
+      { path: "design/party-route-mapping",         Component: PartyRouteMappingDesignPageLayout },
+      { path: "design/data-imports",                Component: DataImportHistoryDesignPageLayout },
+      { path: "design/data-imports/new",            Component: BulkDataImportDesignPageLayout    },
+      { path: "design/customer-subscriptions",      Component: CustomerSubscriptionsDesignPageLayout },
+      { path: "design/subscribe-party",             Component: SubscribePartyDesignPageLayout    },
+      { path: "design/plan-upgrade",                Component: PlanUpgradeDesignPageLayout       },
+      { path: "design/subscription-revenue",        Component: SubscriptionRevenueDesignPageLayout },
+      { path: "design/master-record",               Component: MasterRecordFormDesignPageLayout },
+      { path: "design/pos-terminal",                Component: PosTerminalDesignPageLayout       },
+      { path: "design/pos-setup",                   Component: PosSetupDesignPageLayout          },
+      { path: "design/pos-session",                 Component: PosSessionStartDesignPageLayout   },
+      { path: "design/workflow",                    Component: WorkflowSetupDesignPageLayout     },
       {
         path: "blog",
         Component: () => <Outlet />,
