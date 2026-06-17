@@ -72,6 +72,7 @@ import { PoliciesAndAgreementsPage } from "./components/PoliciesAndAgreementsPag
 import { SalesOrderListDesignPage } from "./components/SalesOrderListDesignPage";
 import { SalesOrderRegisterDesignPage } from "./components/SalesOrderRegisterDesignPage";
 import { SupportTicketListDesignPage } from "./components/SupportTicketListDesignPage";
+import { CreateSupportTicketDesignPage } from "./components/CreateSupportTicketDesignPage";
 import { SalesOrderDetailDesignPage } from "./components/SalesOrderDetailDesignPage";
 import { SalesOrderRecordDesignPage } from "./components/SalesOrderRecordDesignPage";
 import { SalesOrderFormDesignPage } from "./components/SalesOrderFormDesignPage";
@@ -100,6 +101,7 @@ import { PosTerminalDesignPage } from "./components/PosTerminalDesignPage";
 import { PosSetupDesignPage } from "./components/PosSetupDesignPage";
 import { PosSessionStartDesignPage } from "./components/PosSessionStartDesignPage";
 import { WorkflowSetupDesignPage } from "./components/WorkflowSetupDesignPage";
+import { CalendarDialogDesignPage } from "./components/CalendarDialogDesignPage";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -959,6 +961,14 @@ function SupportTicketListDesignPageLayout() {
   );
 }
 
+function CreateSupportTicketDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <CreateSupportTicketDesignPage />
+    </div>
+  );
+}
+
 function SalesOrderDetailDesignPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -1223,6 +1233,14 @@ function WorkflowSetupDesignPageLayout() {
   );
 }
 
+function CalendarDialogDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <CalendarDialogDesignPage />
+    </div>
+  );
+}
+
 
 
  
@@ -1390,6 +1408,7 @@ export const router = createBrowserRouter([
       { path: "design/sales-order-list/:id/edit",   Component: SalesOrderEditDesignPageLayout    },
       { path: "design/sales-order-record",          Component: SalesOrderRecordDesignPageLayout  },
       { path: "design/support-tickets",             Component: SupportTicketListDesignPageLayout },
+      { path: "design/support-tickets/new",         Component: CreateSupportTicketDesignPageLayout },
       { path: "design/custom-fields",               Component: CustomFieldsBuilderPageLayout     },
       { path: "design/trial-balance",               Component: TrialBalanceDesignPageLayout      },
       { path: "design/balance-sheet",               Component: BalanceSheetDesignPageLayout      },
@@ -1419,6 +1438,7 @@ export const router = createBrowserRouter([
       { path: "design/pos-setup",                   Component: PosSetupDesignPageLayout          },
       { path: "design/pos-session",                 Component: PosSessionStartDesignPageLayout   },
       { path: "design/workflow",                    Component: WorkflowSetupDesignPageLayout     },
+      { path: "design/calendar",                    Component: CalendarDialogDesignPageLayout    },
       {
         path: "blog",
         Component: () => <Outlet />,

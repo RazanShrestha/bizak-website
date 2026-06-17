@@ -626,39 +626,211 @@ function PickerDropdown({
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// FACET GROUP  multi-select toggle chips (one lifecycle axis)
+// SCOPE-PANEL BUILDING BLOCKS  (grouped sections · quick-range presets · a
+// portal calendar date field · status-dot lifecycle chip rows)
 // ════════════════════════════════════════════════════════════════════════════
 
-function FacetGroup({
-  label, icon: Icon, options, selected, onChange,
+// lifecycle facet value → tone dot (uses the page's status-chip palette)
+const FACET_TONE: Record<string, Tone> = {
+  "Pending approval": "pending",
+  Approved: "positive",
+  "Not delivered": "pending",
+  "Partially delivered": "partial",
+  Delivered: "positive",
+  "Not invoiced": "pending",
+  "Partially invoiced": "partial",
+  Invoiced: "positive",
+};
+
+function FilterGroup({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div className="mb-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.13em] text-bz-text-soft">{label}</h3>
+        {hint && <span className="text-[10.5px] text-bz-text-muted">{hint}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function LifecycleRow({
+  icon: Icon, label, options, selected, onChange,
 }: {
-  label: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
+  label: string;
   options: string[];
   selected: string[];
   onChange: (next: string[]) => void;
 }) {
   const toggle = (v: string) => onChange(selected.includes(v) ? selected.filter((x) => x !== v) : [...selected, v]);
   return (
-    <div>
-      <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-        <Icon size={11} /> {label}
-      </p>
+    <div className="rounded-bz-md border border-bz-line-soft bg-bz-paper-warm/30 p-2.5">
+      <div className="mb-2 flex items-center gap-1.5">
+        <Icon size={11} className="text-bz-text-muted" />
+        <span className="text-[11px] font-medium text-bz-text">{label}</span>
+        <span className="ml-auto">
+          {selected.length > 0 ? (
+            <button onClick={() => onChange([])} className="text-[10px] font-medium text-bz-text-muted hover:text-bz-text">Clear</button>
+          ) : (
+            <span className="text-[10px] text-bz-text-soft">Any</span>
+          )}
+        </span>
+      </div>
       <div className="flex flex-wrap gap-1.5">
         {options.map((o) => {
           const on = selected.includes(o);
+          const tone = FACET_TONE[o] ?? "neutral";
           return (
             <button
               key={o}
               onClick={() => toggle(o)}
               aria-pressed={on}
               className={cn(
-                "inline-flex items-center gap-1 rounded-bz-pill border px-2.5 py-1 text-[11.5px] font-medium transition-colors",
-                on ? "border-bz-olive bg-bz-fire/[0.18] text-bz-text" : "border-bz-line bg-bz-surface text-bz-text-muted hover:bg-bz-paper-warm",
+                "inline-flex items-center gap-1.5 rounded-bz-pill border px-2.5 py-1 text-[11.5px] font-medium transition-colors",
+                on ? "border-bz-fire bg-bz-fire/[0.16] text-bz-text" : "border-bz-line-soft bg-bz-surface text-bz-text-muted hover:border-bz-line hover:text-bz-text",
               )}
             >
-              {on && <Check size={11} className="text-bz-leaf-deep" />}
+              <span className={cn("size-1.5 shrink-0 rounded-bz-pill", DOT_BG[tone])} />
               {o}
+              {on && <Check size={11} className="text-bz-text" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── relative-range presets ──
+const CAL_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const DOW = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const pad2 = (n: number) => String(n).padStart(2, "0");
+const isoOf = (d: Date) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+const addD = (d: Date, n: number) => { const c = new Date(d); c.setDate(c.getDate() + n); return c; };
+function parseDate(iso: string | null): Date | null {
+  if (!iso) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!m) return null;
+  const d = new Date(+m[1], +m[2] - 1, +m[3]);
+  return isNaN(d.getTime()) ? null : d;
+}
+const TODAY_D = new Date();
+const TODAY_ISO_D = isoOf(TODAY_D);
+
+const QUICK_RANGES = [
+  { key: "7d", label: "Last 7 days" },
+  { key: "30d", label: "Last 30 days" },
+  { key: "90d", label: "Last 90 days" },
+  { key: "month", label: "This month" },
+  { key: "quarter", label: "This quarter" },
+  { key: "year", label: "This year" },
+] as const;
+function quickRange(key: string): { from: string; to: string } {
+  const y = TODAY_D.getFullYear();
+  const m = TODAY_D.getMonth();
+  const end = TODAY_ISO_D;
+  switch (key) {
+    case "7d": return { from: isoOf(addD(TODAY_D, -6)), to: end };
+    case "30d": return { from: isoOf(addD(TODAY_D, -29)), to: end };
+    case "90d": return { from: isoOf(addD(TODAY_D, -89)), to: end };
+    case "month": return { from: isoOf(new Date(y, m, 1)), to: isoOf(new Date(y, m + 1, 0)) };
+    case "quarter": { const q = Math.floor(m / 3); return { from: isoOf(new Date(y, q * 3, 1)), to: isoOf(new Date(y, q * 3 + 3, 0)) }; }
+    case "year": return { from: isoOf(new Date(y, 0, 1)), to: isoOf(new Date(y, 11, 31)) };
+    default: return { from: end, to: end };
+  }
+}
+
+// ── a date bound: button + portal calendar (replaces the native date input) ──
+function DateField({
+  label, value, onChange, onClear, min, max,
+}: {
+  label: string;
+  value: string | null;
+  onChange: (iso: string) => void;
+  onClear: () => void;
+  min?: string | null;
+  max?: string | null;
+}) {
+  const btnRef = React.useRef<HTMLButtonElement>(null);
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [open, setOpen] = React.useState(false);
+  const pos = useAnchoredPos(open, btnRef);
+  React.useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => { const t = e.target as Node; if (ref.current && !ref.current.contains(t) && btnRef.current && !btnRef.current.contains(t)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDown); document.removeEventListener("keydown", onKey); };
+  }, [open]);
+  return (
+    <div>
+      <p className="mb-1 text-[9.5px] uppercase tracking-[0.06em] text-bz-text-soft">{label}</p>
+      <button
+        ref={btnRef}
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          "flex h-9 w-full items-center gap-2 rounded-bz-md border px-2.5 text-left transition-colors",
+          open ? "border-bz-text bg-bz-surface" : value ? "border-bz-line bg-bz-surface hover:border-bz-text" : "border-bz-line-soft bg-bz-surface hover:border-bz-line",
+        )}
+      >
+        <Calendar size={13} className="shrink-0 text-bz-text-muted" />
+        <span className={cn("min-w-0 flex-1 truncate text-[12px]", NUM, value ? "text-bz-text" : "text-bz-text-soft")}>{value ? fmtAD(value) : "Any"}</span>
+        {value ? (
+          <span role="button" aria-label={`Clear ${label}`} onClick={(e) => { e.stopPropagation(); onClear(); }} className="flex size-4 shrink-0 items-center justify-center rounded-bz-sm text-bz-text-muted hover:bg-bz-paper-warm hover:text-bz-text"><X size={11} /></span>
+        ) : (
+          <ChevronDown size={13} className={cn("shrink-0 text-bz-text-muted transition-transform", open && "rotate-180")} />
+        )}
+      </button>
+      {open && pos && createPortal(
+        <div ref={ref} style={{ position: "fixed", top: pos.top, left: Math.max(8, Math.min(pos.left, window.innerWidth - 270)) }} className="z-[70] w-[256px] overflow-hidden rounded-bz-md border border-bz-line bg-bz-surface p-2.5 shadow-[0_18px_44px_-20px_rgba(15,20,17,0.22)]">
+          <MiniCalendar valueISO={value} min={min ?? null} max={max ?? null} onPick={(iso) => { onChange(iso); setOpen(false); }} />
+        </div>,
+        document.body,
+      )}
+    </div>
+  );
+}
+
+function MiniCalendar({ valueISO, onPick, min, max }: { valueISO: string | null; onPick: (iso: string) => void; min: string | null; max: string | null }) {
+  const sel = parseDate(valueISO);
+  const init = sel ?? new Date();
+  const [view, setView] = React.useState({ y: init.getFullYear(), m: init.getMonth() });
+  const startDow = new Date(view.y, view.m, 1).getDay();
+  const days = new Date(view.y, view.m + 1, 0).getDate();
+  const cells: (number | null)[] = [];
+  for (let i = 0; i < startDow; i++) cells.push(null);
+  for (let d = 1; d <= days; d++) cells.push(d);
+  const shift = (n: number) => setView((v) => { const d = new Date(v.y, v.m + n, 1); return { y: d.getFullYear(), m: d.getMonth() }; });
+  return (
+    <div>
+      <div className="mb-1.5 flex items-center justify-between">
+        <button onClick={() => shift(-1)} className="flex size-7 items-center justify-center rounded-bz-sm text-bz-text-muted hover:bg-bz-paper-warm" aria-label="Previous month"><ChevronRight size={14} className="rotate-180" /></button>
+        <span className="text-[12px] font-semibold text-bz-text">{CAL_MONTHS[view.m]} {view.y}</span>
+        <button onClick={() => shift(1)} className="flex size-7 items-center justify-center rounded-bz-sm text-bz-text-muted hover:bg-bz-paper-warm" aria-label="Next month"><ChevronRight size={14} /></button>
+      </div>
+      <div className="grid grid-cols-7 gap-0.5">
+        {DOW.map((d) => <span key={d} className="flex h-6 items-center justify-center text-[9.5px] font-semibold uppercase text-bz-text-soft">{d}</span>)}
+        {cells.map((d, i) => {
+          if (d == null) return <span key={i} />;
+          const iso = `${view.y}-${pad2(view.m + 1)}-${pad2(d)}`;
+          const isSel = !!sel && sel.getFullYear() === view.y && sel.getMonth() === view.m && sel.getDate() === d;
+          const isToday = iso === TODAY_ISO_D;
+          const disabled = (min !== null && iso < min) || (max !== null && iso > max);
+          return (
+            <button
+              key={i}
+              disabled={disabled}
+              onClick={() => onPick(iso)}
+              className={cn(
+                "flex h-7 items-center justify-center rounded-bz-sm text-[12px] transition-colors",
+                NUM,
+                disabled ? "cursor-not-allowed text-bz-text-soft/50" : isSel ? "bg-bz-fire font-semibold text-bz-olive" : isToday ? "bg-bz-paper-warm font-semibold text-bz-text" : "text-bz-text hover:bg-bz-paper-warm",
+              )}
+            >
+              {d}
             </button>
           );
         })}
@@ -686,85 +858,81 @@ function ScopePanel({
   onApply: () => void;
   onReset: () => void;
 }) {
+  const scopeDims = (draft.subsidiary ? 1 : 0) + (draft.location ? 1 : 0) + (draft.party ? 1 : 0) + (draft.dateFrom || draft.dateTo ? 1 : 0);
+  const lifeDims = (draft.approval.length ? 1 : 0) + (draft.fulfilment.length ? 1 : 0) + (draft.invoicing.length ? 1 : 0);
+  const preview = React.useMemo(() => ORDERS.reduce((n, o) => n + (matchScope(o, draft) ? 1 : 0), 0), [draft]);
+  const activePreset = QUICK_RANGES.find((r) => { const { from, to } = quickRange(r.key); return draft.dateFrom === from && draft.dateTo === to; })?.key ?? null;
+  const setQuick = (key: string) => {
+    if (activePreset === key) { patch({ dateFrom: null, dateTo: null }); return; }
+    const { from, to } = quickRange(key);
+    patch({ dateFrom: from, dateTo: to });
+  };
+
   return (
     <div className="flex h-full flex-col">
-      <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-4 py-4">
-        {multiEntity && (
-          <div>
-            <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-              <Building2 size={11} /> Subsidiary
-            </p>
-            <EntityPicker
-              kind="Subsidiary" icon={Building2} value={draft.subsidiary} source={subSource()}
-              onPick={setSubsidiary} placeholder="All entities" labels={labels} registerLabels={registerLabels}
-            />
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-              <MapPin size={11} /> Location
-            </p>
-            <EntityPicker
-              kind="Location" icon={MapPin} value={draft.location} source={locSource(draft.subsidiary)}
-              onPick={(id) => patch({ location: id })} placeholder="All locations" labels={labels} registerLabels={registerLabels}
-            />
-          </div>
-          <div>
-            <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-              <Users size={11} /> Customer
-            </p>
-            <EntityPicker
-              kind="Customer" icon={Users} value={draft.party} source={partySource(draft.subsidiary)}
-              onPick={(id) => patch({ party: id })} placeholder="All customers" labels={labels} registerLabels={registerLabels}
-            />
-          </div>
+      <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-4 py-4">
+        {/* staged breakdown — scope vs lifecycle */}
+        <div className="flex items-center gap-2 rounded-bz-md border border-bz-line-soft bg-bz-paper-warm/40 px-3 py-2">
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">Staged</span>
+          <span className={cn("ml-auto text-[11px] text-bz-text-muted", NUM)}>{scopeDims} scope · {lifeDims} lifecycle</span>
         </div>
 
-        <div>
-          <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-bz-text-soft">
-            <Calendar size={11} /> Transaction date
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <p className="mb-1 text-[9.5px] uppercase tracking-[0.06em] text-bz-text-soft">From</p>
-              <input
-                type="date" value={draft.dateFrom ?? ""} onChange={(e) => patch({ dateFrom: e.target.value || null })}
-                className={cn("h-9 w-full rounded-bz-md border border-bz-line bg-bz-paper-warm px-2.5 text-[12px] text-bz-text outline-none focus:border-bz-text", NUM)}
-              />
-            </div>
-            <div>
-              <p className="mb-1 text-[9.5px] uppercase tracking-[0.06em] text-bz-text-soft">To</p>
-              <input
-                type="date" value={draft.dateTo ?? ""} onChange={(e) => patch({ dateTo: e.target.value || null })}
-                className={cn("h-9 w-full rounded-bz-md border border-bz-line bg-bz-paper-warm px-2.5 text-[12px] text-bz-text outline-none focus:border-bz-text", NUM)}
-              />
-            </div>
+        {/* Scope — cascading server-backed entity pickers */}
+        <FilterGroup label="Scope" hint="Which part of the business">
+          <div className="space-y-3">
+            {multiEntity && (
+              <EntityPicker kind="Subsidiary" icon={Building2} value={draft.subsidiary} source={subSource()} onPick={setSubsidiary} placeholder="All entities" labels={labels} registerLabels={registerLabels} />
+            )}
+            <EntityPicker kind="Location" icon={MapPin} value={draft.location} source={locSource(draft.subsidiary)} onPick={(id) => patch({ location: id })} placeholder="All locations" labels={labels} registerLabels={registerLabels} />
+            <EntityPicker kind="Customer" icon={Users} value={draft.party} source={partySource(draft.subsidiary)} onPick={(id) => patch({ party: id })} placeholder="All customers" labels={labels} registerLabels={registerLabels} />
           </div>
-        </div>
+          {multiEntity && draft.subsidiary && <p className="mt-2 text-[10px] text-bz-text-soft">Location &amp; customer options scoped to {labels[draft.subsidiary] ?? subLabel(draft.subsidiary)}.</p>}
+        </FilterGroup>
 
-        <div className="h-px bg-bz-line-soft" />
+        {/* Timeframe — quick presets + two independently-clearable bounds */}
+        <FilterGroup label="Timeframe" hint="Transaction-date window">
+          <div className="flex flex-wrap gap-1.5">
+            {QUICK_RANGES.map((r) => {
+              const on = activePreset === r.key;
+              return (
+                <button key={r.key} type="button" aria-pressed={on} onClick={() => setQuick(r.key)} className={cn("rounded-bz-pill border px-2.5 py-1 text-[11.5px] font-medium transition-colors", on ? "border-bz-fire bg-bz-fire/[0.16] text-bz-text" : "border-bz-line-soft bg-bz-surface text-bz-text-muted hover:border-bz-line hover:text-bz-text")}>{r.label}</button>
+              );
+            })}
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <DateField label="From" value={draft.dateFrom} max={draft.dateTo} onChange={(iso) => patch({ dateFrom: iso })} onClear={() => patch({ dateFrom: null })} />
+            <DateField label="To" value={draft.dateTo} min={draft.dateFrom} onChange={(iso) => patch({ dateTo: iso })} onClear={() => patch({ dateTo: null })} />
+          </div>
+        </FilterGroup>
 
-        <FacetGroup label="Approval" icon={Check} options={APPROVAL_OPTS} selected={draft.approval} onChange={(v) => patch({ approval: v })} />
-        <FacetGroup label="Fulfilment" icon={MapPin} options={FULFILMENT_OPTS} selected={draft.fulfilment} onChange={(v) => patch({ fulfilment: v })} />
-        <FacetGroup label="Invoicing" icon={FileText} options={INVOICING_OPTS} selected={draft.invoicing} onChange={(v) => patch({ invoicing: v })} />
+        {/* Lifecycle — three multi-select axes */}
+        <FilterGroup label="Lifecycle" hint="Match any selected state">
+          <div className="space-y-2.5">
+            <LifecycleRow icon={Check} label="Approval" options={APPROVAL_OPTS} selected={draft.approval} onChange={(v) => patch({ approval: v })} />
+            <LifecycleRow icon={MapPin} label="Fulfilment" options={FULFILMENT_OPTS} selected={draft.fulfilment} onChange={(v) => patch({ fulfilment: v })} />
+            <LifecycleRow icon={FileText} label="Invoicing" options={INVOICING_OPTS} selected={draft.invoicing} onChange={(v) => patch({ invoicing: v })} />
+          </div>
+        </FilterGroup>
       </div>
 
-      <div className="flex items-center justify-between gap-2 border-t border-bz-line-soft bg-bz-paper-warm px-4 py-3">
-        <button onClick={onReset} disabled={count === 0} className={cn("inline-flex items-center gap-1.5 text-[12px] font-medium text-bz-text-muted hover:text-bz-text disabled:opacity-40", NUM)}>
-          <RotateCcw size={12} /> Clear all{count > 0 ? ` · ${count}` : ""}
+      {/* footer — reset · preview · apply */}
+      <div className="flex items-center gap-2 border-t border-bz-line-soft bg-bz-paper-warm px-4 py-3">
+        <button onClick={onReset} disabled={count === 0} className="inline-flex items-center gap-1.5 text-[12px] font-medium text-bz-text-muted hover:text-bz-text disabled:opacity-40">
+          <RotateCcw size={12} /> Reset
         </button>
-        <button
-          onClick={onApply}
-          disabled={!dirty}
-          className={cn(
-            "inline-flex h-9 items-center gap-1.5 rounded-bz-md px-3.5 text-[12px] font-semibold transition-colors disabled:cursor-default",
-            dirty ? "bg-bz-deep text-bz-text-on-dark hover:opacity-95" : "border border-bz-line bg-bz-surface text-bz-text-soft",
-          )}
-        >
-          {dirty ? <><Check size={13} /> Apply scope</> : <>Scope applied</>}
-        </button>
+        <div className="ml-auto flex items-center gap-2.5">
+          <span className={cn("text-[11px] text-bz-text-muted", NUM)}>≈ <b className="font-semibold text-bz-text">{preview}</b></span>
+          <button
+            onClick={onApply}
+            disabled={!dirty}
+            className={cn(
+              "inline-flex h-9 items-center gap-1.5 rounded-bz-md px-3.5 text-[12px] font-semibold transition-colors disabled:cursor-default",
+              dirty ? "bg-bz-deep text-bz-text-on-dark hover:opacity-95" : "border border-bz-line bg-bz-surface text-bz-text-soft",
+            )}
+          >
+            {dirty ? <><Check size={13} /> Apply scope</> : <>Applied</>}
+          </button>
+        </div>
       </div>
     </div>
   );

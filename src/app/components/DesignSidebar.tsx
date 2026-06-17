@@ -21,6 +21,7 @@ import {
   MapPin,
   DatabaseZap,
   LifeBuoy,
+  TicketPlus,
   Repeat,
   UserPlus,
   TrendingUp,
@@ -30,6 +31,7 @@ import {
   PlayCircle,
   SlidersHorizontal,
   Workflow,
+  CalendarClock,
 } from "lucide-react";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -50,7 +52,10 @@ type SidebarGroupModel = { section: string; items: SidebarItemModel[] };
 const SIDEBAR_GROUPS: SidebarGroupModel[] = [
   {
     section: "Workspace",
-    items: [{ icon: LayoutDashboard, label: "Dashboard", href: "/design/dashboard" }],
+    items: [
+      { icon: LayoutDashboard, label: "Dashboard", href: "/design/dashboard" },
+      { icon: CalendarClock, label: "My Schedule", href: "/design/calendar" },
+    ],
   },
   {
     section: "Operations",
@@ -104,6 +109,7 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
     section: "Support",
     items: [
       { icon: LifeBuoy, label: "Tickets", href: "/design/support-tickets" },
+      { icon: TicketPlus, label: "New Ticket", href: "/design/support-tickets/new" },
     ],
   },
   {
