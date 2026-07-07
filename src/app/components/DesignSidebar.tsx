@@ -79,7 +79,8 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
         icon: Boxes,
         label: "Inventory",
         children: [
-          { label: "Items", href: "/design/item/new" },
+          { label: "Items", href: "/design/item/IT-2042" },
+          { label: "New Item", href: "/design/item/new" },
           { label: "Item Groups" },
           { label: "Stock Levels" },
           { label: "Adjustments" },

@@ -82,6 +82,7 @@ import { BalanceSheetDesignPage, BalanceSheetDetailDesignPage } from "./componen
 import { RolePermissionDesignPage } from "./components/RolePermissionDesignPage";
 import { AutoNumberDesignPage } from "./components/AutoNumberDesignPage";
 import { ItemFormDesignPage } from "./components/ItemFormDesignPage";
+import { ItemDetailDesignPage } from "./components/ItemDetailDesignPage";
 import { BankReconciliationDesignPage } from "./components/BankReconciliationDesignPage";
 import { BankStatementImportDesignPage } from "./components/BankStatementImportDesignPage";
 import { SubscriptionPlanFormDesignPage } from "./components/SubscriptionPlanFormDesignPage";
@@ -1057,6 +1058,14 @@ function ItemCreateDesignPageLayout() {
   );
 }
 
+function ItemDetailDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <ItemDetailDesignPage />
+    </div>
+  );
+}
+
 function ItemEditDesignPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -1416,6 +1425,7 @@ export const router = createBrowserRouter([
       { path: "design/roles",                       Component: RolePermissionDesignPageLayout    },
       { path: "design/auto-number",                 Component: AutoNumberDesignPageLayout        },
       { path: "design/item/new",                    Component: ItemCreateDesignPageLayout        },
+      { path: "design/item/:id",                    Component: ItemDetailDesignPageLayout        },
       { path: "design/item/:id/edit",               Component: ItemEditDesignPageLayout          },
       { path: "design/bank-reconciliation",         Component: BankReconciliationDesignPageLayout   },
       { path: "design/bank-import",                 Component: BankStatementImportDesignPageLayout  },
