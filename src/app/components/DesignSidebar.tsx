@@ -32,6 +32,9 @@ import {
   SlidersHorizontal,
   Workflow,
   CalendarClock,
+  FolderArchive,
+  Rocket,
+  KeyRound,
 } from "lucide-react";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -55,6 +58,7 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
     items: [
       { icon: LayoutDashboard, label: "Dashboard", href: "/design/dashboard" },
       { icon: CalendarClock, label: "My Schedule", href: "/design/calendar" },
+      { icon: FolderArchive, label: "File Cabinet", href: "/design/file-cabinet" },
     ],
   },
   {
@@ -151,6 +155,16 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
   {
     section: "Administration",
     items: [
+      {
+        icon: KeyRound,
+        label: "Sign In & Sign Up",
+        children: [
+          { label: "Sign in", href: "/design/sign-in" },
+          { label: "Create account", href: "/design/sign-up" },
+          { label: "Forgot password", href: "/design/forgot-password" },
+        ],
+      },
+      { icon: Rocket, label: "Onboarding", href: "/design/onboarding" },
       { icon: Building2, label: "Companies", href: "/design/companies" },
       { icon: Library, label: "Master Records", href: "/design/master-record" },
       { icon: DatabaseZap, label: "Data Import", href: "/design/data-imports" },
@@ -159,6 +173,7 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
         label: "Access Control",
         children: [
           { label: "Roles & Permissions", href: "/design/roles" },
+          { label: "Tenant Selection", href: "/design/tenant-selection" },
           { label: "Users" },
           { label: "Audit Log" },
         ],

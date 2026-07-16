@@ -103,6 +103,10 @@ import { PosSetupDesignPage } from "./components/PosSetupDesignPage";
 import { PosSessionStartDesignPage } from "./components/PosSessionStartDesignPage";
 import { WorkflowSetupDesignPage } from "./components/WorkflowSetupDesignPage";
 import { CalendarDialogDesignPage } from "./components/CalendarDialogDesignPage";
+import { TenantRoleSelectionDesignPage } from "./components/TenantRoleSelectionDesignPage";
+import { FileCabinetDesignPage } from "./components/FileCabinetDesignPage";
+import { OnboardingJourneyDesignPage } from "./components/OnboardingJourneyDesignPage";
+import { AuthDesignPage } from "./components/AuthDesignPage";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -1250,6 +1254,54 @@ function CalendarDialogDesignPageLayout() {
   );
 }
 
+function TenantRoleSelectionDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <TenantRoleSelectionDesignPage />
+    </div>
+  );
+}
+
+function FileCabinetDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <FileCabinetDesignPage />
+    </div>
+  );
+}
+
+function OnboardingJourneyDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <OnboardingJourneyDesignPage />
+    </div>
+  );
+}
+
+function SignInDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <AuthDesignPage mode="signin" />
+    </div>
+  );
+}
+
+function SignUpDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <AuthDesignPage mode="signup" />
+    </div>
+  );
+}
+
+function ForgotPasswordDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <AuthDesignPage mode="recover" />
+    </div>
+  );
+}
+
 
 
  
@@ -1449,6 +1501,12 @@ export const router = createBrowserRouter([
       { path: "design/pos-session",                 Component: PosSessionStartDesignPageLayout   },
       { path: "design/workflow",                    Component: WorkflowSetupDesignPageLayout     },
       { path: "design/calendar",                    Component: CalendarDialogDesignPageLayout    },
+      { path: "design/tenant-selection",            Component: TenantRoleSelectionDesignPageLayout },
+      { path: "design/file-cabinet",                Component: FileCabinetDesignPageLayout       },
+      { path: "design/onboarding",                  Component: OnboardingJourneyDesignPageLayout },
+      { path: "design/sign-in",                     Component: SignInDesignPageLayout            },
+      { path: "design/sign-up",                     Component: SignUpDesignPageLayout            },
+      { path: "design/forgot-password",             Component: ForgotPasswordDesignPageLayout    },
       {
         path: "blog",
         Component: () => <Outlet />,
