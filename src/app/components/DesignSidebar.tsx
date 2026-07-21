@@ -19,7 +19,6 @@ import {
   CreditCard,
   LayoutGrid,
   MapPin,
-  DatabaseZap,
   LifeBuoy,
   TicketPlus,
   Repeat,
@@ -157,17 +156,25 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
     items: [
       {
         icon: KeyRound,
-        label: "Sign In & Sign Up",
+        label: "Auth — Split",
         children: [
           { label: "Sign in", href: "/design/sign-in" },
           { label: "Create account", href: "/design/sign-up" },
           { label: "Forgot password", href: "/design/forgot-password" },
         ],
       },
+      {
+        icon: Sparkles,
+        label: "Auth — Spotlight",
+        children: [
+          { label: "Sign in", href: "/design/sign-in-alt" },
+          { label: "Create account", href: "/design/sign-up-alt" },
+          { label: "Forgot password", href: "/design/forgot-password-alt" },
+        ],
+      },
       { icon: Rocket, label: "Onboarding", href: "/design/onboarding" },
       { icon: Building2, label: "Companies", href: "/design/companies" },
       { icon: Library, label: "Master Records", href: "/design/master-record" },
-      { icon: DatabaseZap, label: "Data Import", href: "/design/data-imports" },
       {
         icon: ShieldCheck,
         label: "Access Control",

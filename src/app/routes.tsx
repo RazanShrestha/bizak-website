@@ -91,8 +91,6 @@ import { MetricCardConfigDesignPage } from "./components/MetricCardConfigDesignP
 import { DashboardAttributesDesignPage } from "./components/DashboardAttributesDesignPage";
 import { CompanyDetailDesignPage, CompanyListDesignPage } from "./components/CompanyDetailDesignPage";
 import { PartyRouteMappingDesignPage } from "./components/PartyRouteMappingDesignPage";
-import { DataImportHistoryDesignPage } from "./components/DataImportHistoryDesignPage";
-import { BulkDataImportDesignPage } from "./components/BulkDataImportDesignPage";
 import { CustomerSubscriptionsDesignPage } from "./components/CustomerSubscriptionsDesignPage";
 import { SubscribePartyDesignPage } from "./components/SubscribePartyDesignPage";
 import { PlanUpgradeDesignPage } from "./components/PlanUpgradeDesignPage";
@@ -107,6 +105,7 @@ import { TenantRoleSelectionDesignPage } from "./components/TenantRoleSelectionD
 import { FileCabinetDesignPage } from "./components/FileCabinetDesignPage";
 import { OnboardingJourneyDesignPage } from "./components/OnboardingJourneyDesignPage";
 import { AuthDesignPage } from "./components/AuthDesignPage";
+import { AuthSpotlightDesignPage } from "./components/AuthSpotlightDesignPage";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -1158,21 +1157,6 @@ function PartyRouteMappingDesignPageLayout() {
   );
 }
 
-function DataImportHistoryDesignPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <DataImportHistoryDesignPage />
-    </div>
-  );
-}
-
-function BulkDataImportDesignPageLayout() {
-  return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <BulkDataImportDesignPage />
-    </div>
-  );
-}
 
 function CustomerSubscriptionsDesignPageLayout() {
   return (
@@ -1298,6 +1282,30 @@ function ForgotPasswordDesignPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <AuthDesignPage mode="recover" />
+    </div>
+  );
+}
+
+function SignInSpotlightDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <AuthSpotlightDesignPage mode="signin" />
+    </div>
+  );
+}
+
+function SignUpSpotlightDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <AuthSpotlightDesignPage mode="signup" />
+    </div>
+  );
+}
+
+function ForgotPasswordSpotlightDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <AuthSpotlightDesignPage mode="recover" />
     </div>
   );
 }
@@ -1489,8 +1497,6 @@ export const router = createBrowserRouter([
       { path: "design/companies",                   Component: CompanyListDesignPageLayout       },
       { path: "design/companies/:id",               Component: CompanyDetailDesignPageLayout     },
       { path: "design/party-route-mapping",         Component: PartyRouteMappingDesignPageLayout },
-      { path: "design/data-imports",                Component: DataImportHistoryDesignPageLayout },
-      { path: "design/data-imports/new",            Component: BulkDataImportDesignPageLayout    },
       { path: "design/customer-subscriptions",      Component: CustomerSubscriptionsDesignPageLayout },
       { path: "design/subscribe-party",             Component: SubscribePartyDesignPageLayout    },
       { path: "design/plan-upgrade",                Component: PlanUpgradeDesignPageLayout       },
@@ -1507,6 +1513,9 @@ export const router = createBrowserRouter([
       { path: "design/sign-in",                     Component: SignInDesignPageLayout            },
       { path: "design/sign-up",                     Component: SignUpDesignPageLayout            },
       { path: "design/forgot-password",             Component: ForgotPasswordDesignPageLayout    },
+      { path: "design/sign-in-alt",                 Component: SignInSpotlightDesignPageLayout   },
+      { path: "design/sign-up-alt",                 Component: SignUpSpotlightDesignPageLayout   },
+      { path: "design/forgot-password-alt",         Component: ForgotPasswordSpotlightDesignPageLayout },
       {
         path: "blog",
         Component: () => <Outlet />,

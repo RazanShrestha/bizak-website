@@ -1291,9 +1291,9 @@ export function BankStatementImportDesignPage() {
 
   const finish = () => {
     if (incomingAccount) navigate(`/design/bank-reconciliation?account=${account}&imported=${IMPORT_JOB.imported}`);
-    else navigate("/design/data-imports");
+    else navigate("/design");
   };
-  const close = () => navigate(incomingAccount ? "/design/bank-reconciliation" : "/design/data-imports");
+  const close = () => navigate(incomingAccount ? "/design/bank-reconciliation" : "/design");
 
   const curIdx = PHASE_IDX[phase];
   const stepText = `Step ${curIdx + 1} of ${PHASES.length}`;
@@ -1306,7 +1306,7 @@ export function BankStatementImportDesignPage() {
   const primaryDisabled = phase === "preview" ? !canImport : false;
   const onPrimary = phase === "source" ? parse : phase === "mapping" ? saveMapping : startImport;
 
-  const finishLabel = incomingAccount ? "Open reconciliation" : "View import history";
+  const finishLabel = incomingAccount ? "Open reconciliation" : "Done";
 
   return (
     <AppShell
