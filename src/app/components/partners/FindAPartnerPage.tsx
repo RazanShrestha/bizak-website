@@ -19,6 +19,7 @@ import {
   StatusChip,
 } from "../bz";
 import { cn } from "../ui/utils";
+import { useDetectedCountry } from "../../lib/geo/useDetectedCountry";
 import anchorpointLogo from "../../../assets/partners/anchorpoint.jpeg";
 // import croweLogo from "../../../assets/partners/crowe.svg";
 import taxoryLogo from "../../../assets/partners/taxory.jpeg";
@@ -115,55 +116,6 @@ const COUNTRIES: CountryEntry[] = [
   { code: "BD", name: "Bangladesh", flag: "🇧🇩" },
   { code: "LK", name: "Sri Lanka",  flag: "🇱🇰" },
 ];
-
-// ════════════════════════════════════════════════════════════════════════════
-// GEOLOCATION  detect user country once and cache for the session.
-// Uses https://api.country.is/ free, no API key, returns { ip, country }.
-// Falls back silently to null if the request fails or is blocked.
-// ════════════════════════════════════════════════════════════════════════════
-
-function useDetectedCountry(): string | null {
-  const [country, setCountry] = useState<string | null>(() => {
-    try {
-      return sessionStorage.getItem("bz_detected_country");
-    } catch {
-      return null;
-    }
-  });
-
-  useEffect(() => {
-    if (country) return;
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4000);
-        const res = await fetch("https://api.country.is/", {
-          signal: controller.signal,
-        });
-        clearTimeout(timeoutId);
-        if (!res.ok) return;
-        const data: { country?: string } = await res.json();
-        if (cancelled || !data?.country) return;
-        setCountry(data.country);
-        try {
-          sessionStorage.setItem("bz_detected_country", data.country);
-        } catch {
-          /* sessionStorage unavailable acceptable */
-        }
-      } catch {
-        /* network failure / timeout / blocked silent fallback */
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [country]);
-
-  return country;
-}
 
 // Reorder the country list so the detected country sits first.
 // If detection is null or not in the list, return the canonical order.

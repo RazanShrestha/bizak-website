@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ChangeEvent, FormEvent, ReactNode } from "react";
+import { useSearchParams } from "react-router";
+import { toast } from "sonner";
 import { CheckCircle2, Handshake, LifeBuoy, MessagesSquare } from "lucide-react";
+import { submitContactUs, PublicFormType } from "../lib/api/contactUs";
+import { useDetectedCountryName } from "../lib/geo/useDetectedCountry";
+import { COUNTRY_NAMES } from "../lib/geo/countries";
 import {
   Accordion,
   BadgeGreen,
@@ -62,6 +67,25 @@ const SIZES = [
   "26-100 employees",
   "101-500 employees",
   "500+ employees",
+] as const;
+
+// No anonymous industry lookup exists on the backend (the /api/industry endpoint is
+// JWT-gated), so this is the static source for the Industry selector.
+const INDUSTRIES = [
+  "Retail & E-commerce",
+  "Manufacturing",
+  "Wholesale & Distribution",
+  "Construction & Real Estate",
+  "Professional Services",
+  "Technology & Software",
+  "Healthcare & Pharma",
+  "Education",
+  "Hospitality & Food",
+  "Financial Services",
+  "Logistics & Transport",
+  "Agriculture",
+  "Non-profit",
+  "Other",
 ] as const;
 
 const FAQS = [
@@ -278,19 +302,70 @@ function MessageForm() {
     email: "",
     company: "",
     size: SIZES[0] as string,
+    phone: "",
+    country: "",
+    industry: "",
     topic: "Sales",
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [params] = useSearchParams();
+  // Country isn't a field on this form; detect it (IP geolocation) so the enquiry
+  // still carries a location. Resolves in the background, cached for the session.
+  const detectedCountry = useDetectedCountryName();
 
   const set =
     (k: keyof typeof form) =>
     (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
       setForm((p) => ({ ...p, [k]: e.target.value }));
 
-  const handleSubmit = (e: FormEvent) => {
+  // Pre-select the detected country once it resolves, unless the visitor already picked one.
+  useEffect(() => {
+    if (detectedCountry) {
+      setForm((p) => (p.country ? p : { ...p, country: detectedCountry }));
+    }
+  }, [detectedCountry]);
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (submitting) return;
+
+    // Route the enquiry to the right backend form-type. A careers applicant arrives
+    // from the careers page as /contact?type=careers&role=<role>; a partnership enquiry
+    // (topic or ?type=partner) maps to Make-a-Partner; everything else is Contact Us.
+    const typeParam = (params.get("type") || "").toLowerCase();
+    const role = params.get("role") || "";
+    const isCareers = typeParam === "careers";
+    const isPartner = typeParam === "partner" || form.topic === "Partnership";
+    const requereFrom = isCareers
+      ? PublicFormType.Careers
+      : isPartner
+        ? PublicFormType.MakePartner
+        : PublicFormType.ContactUs;
+
+    setSubmitting(true);
+    const result = await submitContactUs({
+      name: form.name,
+      email: form.email,
+      message: form.message,
+      requereFrom,
+      company: form.company,
+      companySize: form.size,
+      phoneNumber: form.phone,
+      country: form.country,
+      industry: form.industry,
+      subjectType: isCareers ? "Careers" : form.topic,
+      subject: isCareers
+        ? role
+          ? `Career enquiry: ${role}`
+          : "Career enquiry"
+        : `${form.topic} enquiry from ${form.name}`,
+    });
+    setSubmitting(false);
+
+    if (result.ok) setSubmitted(true);
+    else toast.error(result.message);
   };
 
   return (
@@ -360,6 +435,43 @@ function MessageForm() {
             </Field>
           </div>
 
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Field label="Phone">
+              <input
+                type="tel"
+                value={form.phone}
+                onChange={set("phone")}
+                placeholder="+977 98…"
+                className={inputClass}
+              />
+            </Field>
+            <Field label="Country">
+              <select
+                value={form.country}
+                onChange={set("country")}
+                className={inputClass}
+              >
+                <option value="">Select country</option>
+                {COUNTRY_NAMES.map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            </Field>
+          </div>
+
+          <Field label="Industry">
+            <select
+              value={form.industry}
+              onChange={set("industry")}
+              className={inputClass}
+            >
+              <option value="">Select industry</option>
+              {INDUSTRIES.map((i) => (
+                <option key={i}>{i}</option>
+              ))}
+            </select>
+          </Field>
+
           {/* Inquiry topic segmented icon selector */}
           <div className="flex flex-col gap-2">
             <span className="text-[12.5px] font-medium text-bz-text">
@@ -407,9 +519,10 @@ function MessageForm() {
             variant="dark"
             withArrow
             type="submit"
+            disabled={submitting}
             className="mt-1 w-full justify-center"
           >
-            Send message
+            {submitting ? "Sending…" : "Send message"}
           </Pill>
 
           <p className="text-[12px] leading-[1.6] text-bz-text-muted">

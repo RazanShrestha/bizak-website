@@ -368,7 +368,7 @@ function LifeAtBizakSection() {
 function RoleRow({ job }: { job: Job }) {
   return (
     <a
-      href="/contact"
+      href={`/contact?type=careers&role=${encodeURIComponent(job.title)}`}
       className="group flex items-center justify-between gap-4 rounded-bz-lg border border-bz-line-soft bg-bz-surface px-5 py-4 transition-colors duration-150 hover:border-bz-line"
     >
       <div className="min-w-0">

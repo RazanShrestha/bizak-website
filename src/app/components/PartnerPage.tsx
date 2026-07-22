@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent, ReactNode } from "react";
+import { toast } from "sonner";
 import { CheckCircle2, Handshake, Plug, UserCheck } from "lucide-react";
+import { submitContactUs, PublicFormType } from "../lib/api/contactUs";
 import {
   Accordion,
   BadgeGreen,
@@ -308,18 +310,39 @@ function ApplicationForm() {
     org: "",
     email: "",
     region: REGIONS[0] as string,
+    phone: "",
     focus: "Reseller",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const set =
     (k: keyof typeof form) =>
     (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
       setForm((p) => ({ ...p, [k]: e.target.value }));
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (submitting) return;
+
+    setSubmitting(true);
+    // The partner form has no free-text message field, but the backend requires one —
+    // synthesise it from the application details so the enquiry is legible in the admin.
+    const result = await submitContactUs({
+      name: form.name,
+      email: form.email,
+      requereFrom: PublicFormType.MakePartner,
+      company: form.org,
+      country: form.region,
+      phoneNumber: form.phone,
+      subjectType: form.focus, // Reseller / Consultant / Technology
+      subject: `${form.focus} partner application`,
+      message: `Partner application — ${form.focus} partner.\nOrganization: ${form.org}\nRegion: ${form.region}`,
+    });
+    setSubmitting(false);
+
+    if (result.ok) setSubmitted(true);
+    else toast.error(result.message);
   };
 
   return (
@@ -390,6 +413,16 @@ function ApplicationForm() {
             </Field>
           </div>
 
+          <Field label="Phone">
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={set("phone")}
+              placeholder="+977 98…"
+              className={inputClass}
+            />
+          </Field>
+
           {/* Partnership focus segmented icon selector */}
           <div className="flex flex-col gap-2">
             <span className="text-[12.5px] font-medium text-bz-text">
@@ -427,9 +460,10 @@ function ApplicationForm() {
             variant="dark"
             withArrow
             type="submit"
+            disabled={submitting}
             className="mt-1 w-full justify-center"
           >
-            Submit application
+            {submitting ? "Submitting…" : "Submit application"}
           </Pill>
 
           <p className="text-[12px] leading-[1.6] text-bz-text-muted">
