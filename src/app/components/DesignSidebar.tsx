@@ -34,6 +34,7 @@ import {
   FolderArchive,
   Rocket,
   KeyRound,
+  DatabaseZap,
 } from "lucide-react";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -173,6 +174,7 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
         ],
       },
       { icon: Rocket, label: "Onboarding", href: "/design/onboarding" },
+      { icon: DatabaseZap, label: "Import Data", href: "/design/data-imports" },
       { icon: Building2, label: "Companies", href: "/design/companies" },
       { icon: Library, label: "Master Records", href: "/design/master-record" },
       {

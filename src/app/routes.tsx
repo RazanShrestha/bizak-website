@@ -106,6 +106,7 @@ import { FileCabinetDesignPage } from "./components/FileCabinetDesignPage";
 import { OnboardingJourneyDesignPage } from "./components/OnboardingJourneyDesignPage";
 import { AuthDesignPage } from "./components/AuthDesignPage";
 import { AuthSpotlightDesignPage } from "./components/AuthSpotlightDesignPage";
+import { BulkDataImportDesignPage } from "./components/BulkDataImportDesignPage";
 import { BackToTop } from "./components/bz";
 
 // ─── Root passthrough (lets each page own its full layout) ────────────────────
@@ -1310,6 +1311,14 @@ function ForgotPasswordSpotlightDesignPageLayout() {
   );
 }
 
+function BulkDataImportDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <BulkDataImportDesignPage />
+    </div>
+  );
+}
+
 
 
  
@@ -1516,6 +1525,7 @@ export const router = createBrowserRouter([
       { path: "design/sign-in-alt",                 Component: SignInSpotlightDesignPageLayout   },
       { path: "design/sign-up-alt",                 Component: SignUpSpotlightDesignPageLayout   },
       { path: "design/forgot-password-alt",         Component: ForgotPasswordSpotlightDesignPageLayout },
+      { path: "design/data-imports",                Component: BulkDataImportDesignPageLayout    },
       {
         path: "blog",
         Component: () => <Outlet />,
