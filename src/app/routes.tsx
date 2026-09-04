@@ -100,6 +100,8 @@ import { SubscriptionPlanFormDesignPage } from "./components/SubscriptionPlanFor
 import { PreferencesDesignPage } from "./components/PreferencesDesignPage";
 import { MetricCardConfigDesignPage } from "./components/MetricCardConfigDesignPage";
 import { DashboardAttributesDesignPage } from "./components/DashboardAttributesDesignPage";
+import { DashboardLibraryDesignPage } from "./components/DashboardLibraryDesignPage";
+import { DashboardStudioDesignPage } from "./components/DashboardStudioDesignPage";
 import { CompanyDetailDesignPage, CompanyListDesignPage } from "./components/CompanyDetailDesignPage";
 import { PartyRouteMappingDesignPage } from "./components/PartyRouteMappingDesignPage";
 import { CustomerSubscriptionsDesignPage } from "./components/CustomerSubscriptionsDesignPage";
@@ -1227,6 +1229,22 @@ function MetricCardConfigDesignPageLayout() {
   );
 }
 
+function DashboardLibraryDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <DashboardLibraryDesignPage />
+    </div>
+  );
+}
+
+function DashboardStudioDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <DashboardStudioDesignPage />
+    </div>
+  );
+}
+
 function DashboardAttributesDesignPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -1616,6 +1634,8 @@ export const router = createBrowserRouter([
       { path: "design/preferences",                 Component: PreferencesDesignPageLayout       },
       { path: "design/dashboard",                   Component: MetricCardConfigDesignPageLayout  },
       { path: "design/dashboard-attributes",        Component: DashboardAttributesDesignPageLayout },
+      { path: "design/dashboards",                  Component: DashboardLibraryDesignPageLayout },
+      { path: "design/dashboards/studio",           Component: DashboardStudioDesignPageLayout   },
       { path: "design/companies",                   Component: CompanyListDesignPageLayout       },
       { path: "design/companies/:id",               Component: CompanyDetailDesignPageLayout     },
       { path: "design/party-route-mapping",         Component: PartyRouteMappingDesignPageLayout },

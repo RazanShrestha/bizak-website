@@ -43,6 +43,7 @@ import {
   SquareKanban,
   FolderKanban,
   CircleUser,
+  Blocks,
 } from "lucide-react";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -65,6 +66,15 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
     section: "Workspace",
     items: [
       { icon: LayoutDashboard, label: "Dashboard", href: "/design/dashboard" },
+      {
+        icon: Blocks,
+        label: "Dynamic Dashboards",
+        href: "/design/dashboards",
+        children: [
+          { label: "My boards", href: "/design/dashboards" },
+          { label: "Board studio", href: "/design/dashboards/studio" },
+        ],
+      },
       { icon: CalendarClock, label: "My Schedule", href: "/design/calendar" },
       { icon: FolderArchive, label: "File Cabinet", href: "/design/file-cabinet" },
     ],
