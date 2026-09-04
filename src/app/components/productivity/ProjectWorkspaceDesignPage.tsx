@@ -86,6 +86,8 @@ import {
   fmtH,
   fmtHShort,
   entryLockReason,
+  canRemoveEntry,
+  useAttendanceSource,
   isBlocked,
   openBlockers,
   isDone,
@@ -178,6 +180,7 @@ export function ProjectWorkspaceDesignPage() {
   const [expanded, setExpanded] = React.useState<string[]>(["T-11", "T-20"]);
   const [preview, setPreview] = React.useState<Preview>(hasSeed ? "ready" : "empty");
   const { toast, push, dismiss } = useToast();
+  const attendanceSource = useAttendanceSource();
 
   useDocumentTitle(`${project.name} · Bizak`);
 
@@ -192,8 +195,8 @@ export function ProjectWorkspaceDesignPage() {
       setEntries((prev) => {
         const e = prev.find((x) => x.id === id);
         if (!e) return prev;
-        if (e.status !== "open") {
-          push("error", entryLockReason(e) ?? "That entry cannot be removed.");
+        if (!canRemoveEntry(e, attendanceSource)) {
+          push("error", entryLockReason(e, attendanceSource) ?? "That entry cannot be removed.");
           return prev;
         }
         push("success", `${fmtH(e.hours)}h removed. Every total above it has been recalculated.`);

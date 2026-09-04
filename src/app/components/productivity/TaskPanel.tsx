@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router";
 import {
   X,
   Calendar,
@@ -10,6 +11,7 @@ import {
   Paperclip,
   Send,
   Clock3,
+  ArrowUpRight,
   ChevronDown,
   ChevronRight,
   Layers,
@@ -46,6 +48,9 @@ import {
   billableEligible,
   canRemoveEntry,
   entryLockReason,
+  useAttendanceSource,
+  setAttendanceSource,
+  AttendanceSource as AttendanceSourceType,
   ENTRY_STATUS_LABEL,
   entriesFor,
   loggedOn,
@@ -215,6 +220,9 @@ export function TaskPanel({
   const overrun = estimate !== null && logged > estimate;
   const myEntries = entriesFor(entries, task.id);
   const billing = billableEligible(task.projectId);
+  // In timesheet mode the hours below decide pay, so this panel reads them only.
+  const source = useAttendanceSource();
+  const readOnlyHours = source === "timesheet";
   const unestimatedKids = kids.filter((k) => k.estimatedHours == null).length;
 
   const depCandidates = tasks.filter(
@@ -521,9 +529,15 @@ export function TaskPanel({
           <Block
             title="Time"
             right={
-              <button type="button" className={GHOST_BTN_SM} onClick={() => setLogging((v) => !v)}>
-                <Clock3 size={11} /> Log time
-              </button>
+              readOnlyHours ? (
+                <Link to="/design/timesheet/entry" className={GHOST_BTN_SM}>
+                  <Clock3 size={11} /> Open timesheet <ArrowUpRight size={11} />
+                </Link>
+              ) : (
+                <button type="button" className={GHOST_BTN_SM} onClick={() => setLogging((v) => !v)}>
+                  <Clock3 size={11} /> Log time
+                </button>
+              )
             }
           >
             <div className="grid grid-cols-2 gap-4">
@@ -634,7 +648,7 @@ export function TaskPanel({
                         {e.status !== "open" && (
                           <span
                             className="shrink-0 rounded-bz-sm bg-bz-paper-warm px-1.5 py-0.5 text-[10px] font-medium text-bz-text-muted"
-                            title={entryLockReason(e) ?? undefined}
+                            title={entryLockReason(e, source) ?? undefined}
                           >
                             {ENTRY_STATUS_LABEL[e.status]}
                           </span>
@@ -648,7 +662,7 @@ export function TaskPanel({
                           {fmtH(e.hours)}
                         </span>
                         <span className="flex w-4 shrink-0 justify-end">
-                          {canRemoveEntry(e) ? (
+                          {canRemoveEntry(e, source) ? (
                             <button
                               type="button"
                               onClick={() => onDeleteEntry(e.id)}
@@ -661,7 +675,7 @@ export function TaskPanel({
                           ) : (
                             // The reason travels with the icon — a control that
                             // cannot say why it is disabled is just a dead end.
-                            <span title={entryLockReason(e) ?? undefined} className="text-bz-line">
+                            <span title={entryLockReason(e, source) ?? undefined} className="text-bz-line">
                               <Lock size={10} />
                             </span>
                           )}
@@ -673,7 +687,7 @@ export function TaskPanel({
               </>
             )}
 
-            {logging && (
+            {logging && !readOnlyHours && (
               <LogTimeForm
                 taskId={task.id}
                 projectId={task.projectId}
@@ -688,13 +702,29 @@ export function TaskPanel({
               />
             )}
 
-            <p className="mt-3 border-t border-bz-line-soft pt-2.5 text-[10.5px] leading-relaxed text-bz-text-soft">
-              Logged hours are never typed onto a task — they are the sum of the timesheet lines booked
-              against it. Logging here writes one such line; the timesheet screen is where a whole week
-              is filed. An <strong className="font-semibold text-bz-text-muted">open</strong> line can
-              still be removed; once it is approved it feeds costing, and once invoiced the customer has
-              been charged for it.
-            </p>
+            <div className="mt-3 border-t border-bz-line-soft pt-2.5">
+              <p className="text-[10.5px] leading-relaxed text-bz-text-soft">
+                Logged hours are never typed onto a task — they are the sum of the timesheet lines
+                booked against it.{" "}
+                {readOnlyHours ? (
+                  <>
+                    This tenant runs <strong className="font-semibold text-bz-text-muted">timesheet</strong>{" "}
+                    attendance: nobody punches, so these hours are what the attendance run reads and what
+                    payroll pays. They are entered and corrected on the timesheet, where the period lock
+                    and approvals live — never from a task.
+                  </>
+                ) : (
+                  <>
+                    This tenant runs <strong className="font-semibold text-bz-text-muted">punch</strong>{" "}
+                    attendance, so the timesheet costs and bills work but does not decide pay — logging one
+                    line from here is safe. An <strong className="font-semibold text-bz-text-muted">open</strong>{" "}
+                    line can still be removed; once approved it feeds costing, and once invoiced the
+                    customer has been charged for it.
+                  </>
+                )}
+              </p>
+              <ModeSwitch source={source} />
+            </div>
           </Block>
 
           {/* Subtasks */}
@@ -938,6 +968,28 @@ function Block({
       </div>
       {children}
     </section>
+  );
+}
+
+/**
+ * A demo affordance, not a product control — GLOBAL_DEFAULTS.ATTENDANCE_SOURCE
+ * is a tenant setting on the Preference screen. It sits here because here is
+ * where its consequence is visible.
+ */
+function ModeSwitch({ source }: { source: AttendanceSourceType }) {
+  return (
+    <p className="mt-2 text-[10.5px] text-bz-text-soft">
+      <span className="rounded-bz-sm bg-bz-paper-warm px-1.5 py-0.5 font-medium text-bz-text-muted">
+        ATTENDANCE_SOURCE = {source === "timesheet" ? "Timesheet" : "Attendance"}
+      </span>{" "}
+      <button
+        type="button"
+        onClick={() => setAttendanceSource(source === "timesheet" ? "attendance" : "timesheet")}
+        className="font-medium text-bz-text-muted underline underline-offset-2 hover:text-bz-text"
+      >
+        switch to {source === "timesheet" ? "punch" : "timesheet"} attendance
+      </button>
+    </p>
   );
 }
 

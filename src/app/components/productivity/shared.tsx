@@ -365,15 +365,84 @@ export const ENTRY_STATUS_LABEL: Record<EntryStatus, string> = {
   invoiced: "Invoiced",
 };
 
+// ════════════════════════════════════════════════════════════════════════════
+// ATTENDANCE SOURCE  (GLOBAL_DEFAULTS.ATTENDANCE_SOURCE)
+//
+// Which half of the HR product the tenant bought into — and it changes what a
+// timesheet hour IS:
+//
+//   attendance  people punch in and out; punches decide pay. The timesheet is
+//               a costing and billing tool, so typing an hour here is cheap.
+//   timesheet   nobody punches; the typed hours ARE the record of the day, and
+//               the attendance run reads them instead of the punch table. From
+//               that point an hour decides somebody's PAY.
+//
+// So the same control cannot be offered in both. Under `timesheet` hours are
+// entered and corrected on the timesheet screen, where the period lock, the
+// approval and the payroll consume all live; the task panel reads them only.
+// ════════════════════════════════════════════════════════════════════════════
+
+export type AttendanceSource = "attendance" | "timesheet";
+
+const SOURCE_KEY = "bz.attendanceSource";
+
+function readSource(): AttendanceSource {
+  try {
+    return localStorage.getItem(SOURCE_KEY) === "timesheet" ? "timesheet" : "attendance";
+  } catch {
+    return "attendance";
+  }
+}
+
+let currentSource: AttendanceSource = readSource();
+const sourceListeners = new Set<() => void>();
+
+export function setAttendanceSource(v: AttendanceSource) {
+  currentSource = v;
+  try {
+    localStorage.setItem(SOURCE_KEY, v);
+  } catch {
+    /* a private window just keeps it for this session */
+  }
+  sourceListeners.forEach((l) => l());
+}
+
+/** Tenant-wide, so every surface reads the same value and re-renders together. */
+export function useAttendanceSource(): AttendanceSource {
+  return React.useSyncExternalStore(
+    (cb) => {
+      sourceListeners.add(cb);
+      return () => sourceListeners.delete(cb);
+    },
+    () => currentSource,
+    () => "attendance" as AttendanceSource,
+  );
+}
+
 /** Why a line cannot be removed — phrased for the person looking at it. */
-export function entryLockReason(e: TimeEntry): string | null {
+export function entryLockReason(e: TimeEntry, source: AttendanceSource): string | null {
+  if (source === "timesheet")
+    return e.status === "invoiced"
+      ? "Invoiced, and these hours decide pay. Corrections happen on the timesheet."
+      : "Hours decide pay in this tenant, so they are entered and corrected on the timesheet — where the period lock and approvals are.";
   if (e.status === "open") return null;
   if (e.status === "invoiced")
     return "Invoiced — the customer has already been billed for this hour. Credit the invoice instead.";
   return "Approved — it is counted in project costing. Reopen the timesheet period to change it.";
 }
 
-export const canRemoveEntry = (e: TimeEntry) => e.status === "open";
+/**
+ * An hour can be removed from here only when removing it is cheap: still open,
+ * and not the thing that pays somebody.
+ */
+export const canRemoveEntry = (e: TimeEntry, source: AttendanceSource) =>
+  source === "attendance" && e.status === "open";
+
+/** What "approved" costs, which is not the same in the two modes. */
+export const approvedMeans = (source: AttendanceSource) =>
+  source === "timesheet"
+    ? "counted in project costing and in what payroll paid for the period"
+    : "counted in project costing";
 
 // ── The two billing rules, stated once so no screen can forget one ─────────
 

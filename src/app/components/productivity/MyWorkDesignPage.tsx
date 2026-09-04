@@ -61,6 +61,8 @@ import {
   weekdayOf,
   daysBetween,
   entryLockReason,
+  canRemoveEntry,
+  useAttendanceSource,
   NUM,
   CARD,
   LABEL,
@@ -126,6 +128,7 @@ export function MyWorkDesignPage() {
   const [drag, setDrag] = React.useState<string | null>(null);
   const [overBucket, setOverBucket] = React.useState<BucketId | null>(null);
   const { toast, push, dismiss } = useToast();
+  const attendanceSource = useAttendanceSource();
 
   useDocumentTitle("My Work · Bizak");
 
@@ -243,8 +246,8 @@ export function MyWorkDesignPage() {
                 setEntries((prev) => {
                   const e = prev.find((x) => x.id === id);
                   if (!e) return prev;
-                  if (e.status !== "open") {
-                    push("error", entryLockReason(e) ?? "That entry cannot be removed.");
+                  if (!canRemoveEntry(e, attendanceSource)) {
+                    push("error", entryLockReason(e, attendanceSource) ?? "That entry cannot be removed.");
                     return prev;
                   }
                   push("success", "Entry removed. Every total above it has been recalculated.");
