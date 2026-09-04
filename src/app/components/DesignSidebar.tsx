@@ -35,6 +35,14 @@ import {
   Rocket,
   KeyRound,
   DatabaseZap,
+  ClipboardList,
+  Clock3,
+  FolderTree,
+  Receipt,
+  Scale,
+  SquareKanban,
+  FolderKanban,
+  CircleUser,
 } from "lucide-react";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -59,6 +67,23 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
       { icon: LayoutDashboard, label: "Dashboard", href: "/design/dashboard" },
       { icon: CalendarClock, label: "My Schedule", href: "/design/calendar" },
       { icon: FolderArchive, label: "File Cabinet", href: "/design/file-cabinet" },
+    ],
+  },
+  {
+    section: "Productivity",
+    items: [
+      { icon: CircleUser, label: "My Work", href: "/design/work" },
+      {
+        icon: FolderKanban,
+        label: "Projects",
+        href: "/design/work/projects",
+        children: [
+          { label: "All projects", href: "/design/work/projects" },
+          { label: "Everest Retail — ERP Rollout", href: "/design/work/project/PRJ-014", count: 22 },
+          { label: "Himalayan Java — POS", href: "/design/work/project/PRJ-021" },
+          { label: "Sagarmatha Bank (empty)", href: "/design/work/project/PRJ-027" },
+        ],
+      },
     ],
   },
   {
@@ -118,6 +143,25 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
     ],
   },
   {
+    section: "Time & Billing",
+    items: [
+      {
+        icon: Clock3,
+        label: "Timesheets",
+        href: "/design/timesheet",
+        children: [
+          { label: "My Timesheets", href: "/design/timesheet/mine" },
+          { label: "Enter Hours", href: "/design/timesheet/entry" },
+          { label: "Approvals", href: "/design/timesheet/approvals", count: 6 },
+          { label: "Register", href: "/design/timesheet/register" },
+        ],
+      },
+      { icon: FolderTree, label: "Project Cost", href: "/design/timesheet/project-cost" },
+      { icon: Receipt, label: "Unbilled Time", href: "/design/timesheet/unbilled" },
+      { icon: Scale, label: "Presence Check", href: "/design/timesheet/reconciliation" },
+    ],
+  },
+  {
     section: "Back office",
     items: [
       {
@@ -148,6 +192,7 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
   {
     section: "Customize",
     items: [
+      { icon: ClipboardList, label: "Form Builder", href: "/design/form-builder" },
       { icon: Sparkles, label: "Custom Form", href: "/design/custom-fields" },
       { icon: LayoutGrid, label: "Dashboard Sections", href: "/design/dashboard-attributes" },
     ],

@@ -77,9 +77,20 @@ import { SalesOrderDetailDesignPage } from "./components/SalesOrderDetailDesignP
 import { SalesOrderRecordDesignPage } from "./components/SalesOrderRecordDesignPage";
 import { SalesOrderFormDesignPage } from "./components/SalesOrderFormDesignPage";
 import { CustomFieldsBuilderPage } from "./components/CustomFieldsBuilder";
+import { FormBuilderDesignPage } from "./components/FormBuilderDesignPage";
 import { TrialBalanceDesignPage } from "./components/TrialBalanceDesignPage";
 import { BalanceSheetDesignPage, BalanceSheetDetailDesignPage } from "./components/BalanceSheetDesignPage";
 import { RolePermissionDesignPage } from "./components/RolePermissionDesignPage";
+import { TimesheetRecordDesignPage } from "./components/timesheet/TimesheetRecordDesignPage";
+import { TimesheetEntryDesignPage } from "./components/timesheet/TimesheetEntryDesignPage";
+import { TimesheetApprovalsDesignPage } from "./components/timesheet/TimesheetApprovalsDesignPage";
+import { TimesheetRegisterDesignPage } from "./components/timesheet/TimesheetRegisterDesignPage";
+import { ProjectCostRollupDesignPage } from "./components/timesheet/ProjectCostRollupDesignPage";
+import { UnbilledTimeDesignPage } from "./components/timesheet/UnbilledTimeDesignPage";
+import { PresenceReconciliationDesignPage } from "./components/timesheet/PresenceReconciliationDesignPage";
+import { MyWorkDesignPage } from "./components/productivity/MyWorkDesignPage";
+import { ProjectPortfolioDesignPage } from "./components/productivity/ProjectPortfolioDesignPage";
+import { ProjectWorkspaceDesignPage } from "./components/productivity/ProjectWorkspaceDesignPage";
 import { AutoNumberDesignPage } from "./components/AutoNumberDesignPage";
 import { ItemFormDesignPage } from "./components/ItemFormDesignPage";
 import { ItemDetailDesignPage } from "./components/ItemDetailDesignPage";
@@ -1014,6 +1025,14 @@ function CustomFieldsBuilderPageLayout() {
   );
 }
 
+function FormBuilderDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <FormBuilderDesignPage />
+    </div>
+  );
+}
+
 function TrialBalanceDesignPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -1026,6 +1045,88 @@ function BalanceSheetDesignPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <BalanceSheetDesignPage />
+    </div>
+  );
+}
+
+// ── Productivity module (My Work · Portfolio · Project workspace) ───────
+function MyWorkDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <MyWorkDesignPage />
+    </div>
+  );
+}
+
+function ProjectPortfolioDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <ProjectPortfolioDesignPage />
+    </div>
+  );
+}
+
+function ProjectWorkspaceDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <ProjectWorkspaceDesignPage />
+    </div>
+  );
+}
+
+// ── Timesheet module (7 surfaces of one flow) ──────────────────────────────
+function TimesheetRecordDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <TimesheetRecordDesignPage />
+    </div>
+  );
+}
+
+function TimesheetEntryDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <TimesheetEntryDesignPage />
+    </div>
+  );
+}
+
+function TimesheetApprovalsDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <TimesheetApprovalsDesignPage />
+    </div>
+  );
+}
+
+function TimesheetRegisterDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <TimesheetRegisterDesignPage />
+    </div>
+  );
+}
+
+function ProjectCostRollupDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <ProjectCostRollupDesignPage />
+    </div>
+  );
+}
+
+function UnbilledTimeDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <UnbilledTimeDesignPage />
+    </div>
+  );
+}
+
+function PresenceReconciliationDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <PresenceReconciliationDesignPage />
     </div>
   );
 }
@@ -1488,10 +1589,22 @@ export const router = createBrowserRouter([
       { path: "design/support-tickets",             Component: SupportTicketListDesignPageLayout },
       { path: "design/support-tickets/new",         Component: CreateSupportTicketDesignPageLayout },
       { path: "design/custom-fields",               Component: CustomFieldsBuilderPageLayout     },
+      { path: "design/form-builder",                Component: FormBuilderDesignPageLayout       },
       { path: "design/trial-balance",               Component: TrialBalanceDesignPageLayout      },
       { path: "design/balance-sheet",               Component: BalanceSheetDesignPageLayout      },
       { path: "design/balance-sheet/detail",        Component: BalanceSheetDetailDesignPageLayout },
       { path: "design/roles",                       Component: RolePermissionDesignPageLayout    },
+      { path: "design/work",                        Component: MyWorkDesignPageLayout            },
+      { path: "design/work/projects",               Component: ProjectPortfolioDesignPageLayout  },
+      { path: "design/work/project/:id",            Component: ProjectWorkspaceDesignPageLayout  },
+      { path: "design/timesheet",                   Component: TimesheetRecordDesignPageLayout   },
+      { path: "design/timesheet/mine",              Component: TimesheetRecordDesignPageLayout   },
+      { path: "design/timesheet/entry",             Component: TimesheetEntryDesignPageLayout    },
+      { path: "design/timesheet/approvals",         Component: TimesheetApprovalsDesignPageLayout },
+      { path: "design/timesheet/register",          Component: TimesheetRegisterDesignPageLayout },
+      { path: "design/timesheet/project-cost",      Component: ProjectCostRollupDesignPageLayout },
+      { path: "design/timesheet/unbilled",          Component: UnbilledTimeDesignPageLayout      },
+      { path: "design/timesheet/reconciliation",    Component: PresenceReconciliationDesignPageLayout },
       { path: "design/auto-number",                 Component: AutoNumberDesignPageLayout        },
       { path: "design/item/new",                    Component: ItemCreateDesignPageLayout        },
       { path: "design/item/:id",                    Component: ItemDetailDesignPageLayout        },
