@@ -14,6 +14,9 @@ import {
   ArrowRight,
   Flame,
   MoveVertical,
+  Clock3,
+  ArrowUpRight,
+  AlertTriangle,
 } from "lucide-react";
 import { AppShell } from "../SalesOrderListDesignPage";
 import { cn } from "../ui/utils";
@@ -63,6 +66,14 @@ import {
   entryLockReason,
   canRemoveEntry,
   useAttendanceSource,
+  unfilledDays,
+  periodFiled,
+  isWorkingDay,
+  hoursOnDay,
+  currentPeriodDays,
+  EXPECTED_HOURS_PER_DAY,
+  BLOCK_PAYROLL_ON_MISSING,
+  fmtH,
   NUM,
   CARD,
   LABEL,
@@ -70,6 +81,7 @@ import {
   GHOST_BTN_SM,
   DANGER_BG,
   DANGER_TEXT,
+  DANGER_DOT,
 } from "./shared";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -226,6 +238,22 @@ export function MyWorkDesignPage() {
     [tasks],
   );
 
+  // In timesheet mode an unfilled working day is not untidiness — it is a day
+  // payroll has no hours for. Only surfaced in that mode: under punch
+  // attendance the punches already answer "was this person at work".
+  const timesheetPay = attendanceSource === "timesheet";
+  const gap = React.useMemo(
+    () => ({
+      missing: unfilledDays(entries, ME.id),
+      ...periodFiled(entries, ME.id),
+      // per-day totals, so the strip can show what WAS filed too
+      hours: Object.fromEntries(
+        currentPeriodDays().map((d) => [d, hoursOnDay(entries, ME.id, d)]),
+      ) as Record<string, number>,
+    }),
+    [entries],
+  );
+
   const nFilters = projectFilter.length + priorityFilter.length + (q ? 1 : 0) + (showDone ? 1 : 0);
   const openTask = openTaskId ? tasks.find((t) => t.id === openTaskId) : null;
   const empty = mine.length === 0;
@@ -380,6 +408,8 @@ export function MyWorkDesignPage() {
             setOverBucket(null);
           }}
         >
+          {timesheetPay && gap.missing.length > 0 && <TimesheetGap gap={gap} />}
+
           {empty ? (
             <div className={CARD}>
               <EmptyBlock
@@ -581,6 +611,82 @@ export function MyWorkDesignPage() {
 }
 
 // ── Atoms ───────────────────────────────────────────────────────────────────
+
+/**
+ * The unfilled-day warning. It states the consequence rather than nagging: with
+ * TIMESHEET_BLOCK_PAYROLL_ON_MISSING on, an empty working day stops the payroll
+ * run outright, so this is the last cheap moment to fix it.
+ */
+function TimesheetGap({
+  gap,
+}: {
+  gap: { missing: string[]; filed: number; expected: number; days: string[]; hours: Record<string, number> };
+}) {
+  const short = gap.expected - gap.filed;
+  return (
+    <section
+      className={cn(CARD, "overflow-hidden")}
+      style={{ borderColor: DANGER_DOT }}
+    >
+      <header
+        className="flex flex-wrap items-center gap-2 px-3.5 py-2.5"
+        style={{ background: DANGER_BG }}
+      >
+        <AlertTriangle size={13} style={{ color: DANGER_TEXT }} />
+        <h2 className="text-[12.5px] font-semibold" style={{ color: DANGER_TEXT }}>
+          {gap.missing.length} working {gap.missing.length === 1 ? "day" : "days"} unfilled this period
+        </h2>
+        <span className={cn("text-[11px]", NUM)} style={{ color: DANGER_TEXT }}>
+          {fmtH(gap.filed)} of {fmtH(gap.expected)}h filed
+        </span>
+        <Link to="/design/timesheet/entry" className={cn(GHOST_BTN_SM, "ml-auto")}>
+          <Clock3 size={11} /> Fill timesheet <ArrowUpRight size={11} />
+        </Link>
+      </header>
+
+      <div className="flex flex-wrap items-center gap-1.5 px-3.5 py-3">
+        {gap.days.map((d) => {
+          const off = !isWorkingDay(d);
+          const missing = gap.missing.includes(d);
+          return (
+            <span
+              key={d}
+              title={off ? "Weekend" : missing ? "No hours filed" : "Filed"}
+              className={cn(
+                "inline-flex min-w-[64px] flex-col items-center rounded-bz-md border px-2 py-1.5",
+                off
+                  ? "border-bz-line-soft bg-bz-paper-warm text-bz-text-soft"
+                  : missing
+                    ? "border-transparent"
+                    : "border-bz-line-soft bg-bz-surface text-bz-text",
+              )}
+              style={missing && !off ? { background: DANGER_BG, color: DANGER_TEXT } : undefined}
+            >
+              <span className="text-[10px] font-medium">{weekdayOf(d)}</span>
+              <span className={cn("text-[11.5px] font-semibold", NUM)}>
+                {off ? "—" : missing ? "0" : fmtH(gap.hours[d] ?? 0)}
+              </span>
+            </span>
+          );
+        })}
+      </div>
+
+      <p className="border-t border-bz-line-soft px-3.5 py-2.5 text-[11px] leading-relaxed text-bz-text-muted">
+        This tenant reads worked hours from the timesheet, not from punches, so a day with no hours is a
+        day payroll cannot pay for.{" "}
+        {BLOCK_PAYROLL_ON_MISSING ? (
+          <strong className="font-semibold" style={{ color: DANGER_TEXT }}>
+            The payroll run is blocked until these are filed
+          </strong>
+        ) : (
+          <>The payroll run will warn and proceed</>
+        )}{" "}
+        <span className="text-bz-text-soft">(TIMESHEET_BLOCK_PAYROLL_ON_MISSING)</span>. Short by{" "}
+        <span className={NUM}>{fmtH(short)}h</span>.
+      </p>
+    </section>
+  );
+}
 
 function Counter({
   label,

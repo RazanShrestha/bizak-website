@@ -348,21 +348,17 @@ export type TimeEntry = {
   /** Null for internal time. Required only when `billable` — see `activityRequired`. */
   activityId: string | null;
   billable: boolean;
-  /**
-   * Where the line is in the timesheet lifecycle. Only an OPEN line can be
-   * changed or removed: once a period is approved it feeds project costing, and
-   * once it is invoiced the customer has been charged for it. Deleting either
-   * would silently change a number somebody has already acted on.
-   */
-  status: EntryStatus;
-};
 
-export type EntryStatus = "open" | "approved" | "invoiced";
-
-export const ENTRY_STATUS_LABEL: Record<EntryStatus, string> = {
-  open: "Open",
-  approved: "Approved",
-  invoiced: "Invoiced",
+  // Three INDEPENDENT facts, because they are three independent columns and two
+  // unrelated consumers. A line can be paid to the employee and not yet invoiced
+  // to the customer, or the reverse. Folding them into one status would force a
+  // ranking between billing and payroll that does not exist.
+  /** The timesheet period was approved — it now feeds project costing. */
+  approved: boolean;
+  /** INVOICED_DETAIL_ID is set — the customer has been billed for this hour. */
+  invoiced: boolean;
+  /** PAYROLL_REF_ID is stamped — payroll has already paid for this hour. */
+  paid: boolean;
 };
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -419,24 +415,36 @@ export function useAttendanceSource(): AttendanceSource {
   );
 }
 
+/**
+ * The strongest thing that has happened to this line, for the chip. Ordered by
+ * how hard it is to undo: you can reopen a period, you can credit an invoice,
+ * you cannot un-pay a salary.
+ */
+export function entryStatusChip(e: TimeEntry): string | null {
+  if (e.paid) return "Paid";
+  if (e.invoiced) return "Invoiced";
+  if (e.approved) return "Approved";
+  return null;
+}
+
 /** Why a line cannot be removed — phrased for the person looking at it. */
 export function entryLockReason(e: TimeEntry, source: AttendanceSource): string | null {
-  if (source === "timesheet")
-    return e.status === "invoiced"
-      ? "Invoiced, and these hours decide pay. Corrections happen on the timesheet."
-      : "Hours decide pay in this tenant, so they are entered and corrected on the timesheet — where the period lock and approvals are.";
-  if (e.status === "open") return null;
-  if (e.status === "invoiced")
+  if (e.paid)
+    return "Paid — payroll has already consumed these hours (PAYROLL_REF_ID is stamped). Release the payroll period before touching them.";
+  if (e.invoiced)
     return "Invoiced — the customer has already been billed for this hour. Credit the invoice instead.";
-  return "Approved — it is counted in project costing. Reopen the timesheet period to change it.";
+  if (e.approved) return `Approved — ${approvedMeans(source)}. Reopen the timesheet period to change it.`;
+  if (source === "timesheet")
+    return "Hours decide pay in this tenant, so they are entered and corrected on the timesheet — where the period lock and approvals are.";
+  return null;
 }
 
 /**
- * An hour can be removed from here only when removing it is cheap: still open,
- * and not the thing that pays somebody.
+ * An hour can be removed from here only when removing it is cheap: nothing has
+ * consumed it, and it is not the thing that pays somebody.
  */
 export const canRemoveEntry = (e: TimeEntry, source: AttendanceSource) =>
-  source === "attendance" && e.status === "open";
+  entryLockReason(e, source) === null;
 
 /** What "approved" costs, which is not the same in the two modes. */
 export const approvedMeans = (source: AttendanceSource) =>
@@ -821,9 +829,12 @@ function expandTime(): TimeEntry[] {
         activityId: r.activityId,
         // Seeded lines follow the same rule as typed ones.
         billable: seedBillable,
-        // Age stands in for the real lifecycle: a month-old billable line has
-        // been invoiced, a week-old one approved, this week's is still open.
-        status: age > 28 && seedBillable ? "invoiced" : age > 7 ? "approved" : "open",
+        // Age stands in for the real lifecycle. The three run on their own
+        // clocks: approval is weekly, invoicing follows the billing run, payroll
+        // closes a month behind — so an old line can be paid but not yet billed.
+        approved: age > 7,
+        invoiced: age > 28 && seedBillable,
+        paid: age > 35,
       });
       remaining -= hours;
       day = addDays(day, -1);
@@ -938,6 +949,45 @@ export function unestimatedTasks(tasks: Task[], projectId: string) {
 
 export const fmtH = (n: number) => n.toFixed(2);
 export const fmtHShort = (n: number) => (n === 0 ? "—" : String(Number(n.toFixed(2))));
+
+// ── The working calendar (onboarding default: Sun–Fri, 8h) ────────────────
+
+export const EXPECTED_HOURS_PER_DAY = 8;
+export const isWorkingDay = (iso: string) => weekdayOf(iso) !== "Sat";
+
+/**
+ * TIMESHEET_BLOCK_PAYROLL_ON_MISSING. When true the payroll run refuses to
+ * proceed while a working day is unfilled, rather than warning and paying
+ * anyway. Modelled as on so the stronger consequence is visible.
+ */
+export const BLOCK_PAYROLL_ON_MISSING = true;
+
+/** The current weekly period (TIMESHEET_PERIOD_TYPE = Weekly, week starts Sunday). */
+export function currentPeriodDays(today = TODAY): string[] {
+  const back = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(weekdayOf(today));
+  const start = addDays(today, -back);
+  return Array.from({ length: 7 }, (_, i) => addDays(start, i));
+}
+
+export const hoursOnDay = (entries: TimeEntry[], personId: string, iso: string) =>
+  entries.reduce((s, e) => (e.personId === personId && e.date === iso ? s + e.hours : s), 0);
+
+/**
+ * Working days in the period, up to today, that carry no hours at all. In
+ * timesheet mode these are not untidiness — they are somebody's missing pay.
+ */
+export function unfilledDays(entries: TimeEntry[], personId: string, today = TODAY) {
+  return currentPeriodDays(today).filter(
+    (d) => isWorkingDay(d) && d <= today && hoursOnDay(entries, personId, d) === 0,
+  );
+}
+
+export function periodFiled(entries: TimeEntry[], personId: string, today = TODAY) {
+  const days = currentPeriodDays(today).filter((d) => d <= today);
+  const filed = days.reduce((s, d) => s + hoursOnDay(entries, personId, d), 0);
+  const expected = days.filter(isWorkingDay).length * EXPECTED_HOURS_PER_DAY;
+  return { filed, expected, days };
+}
 
 export function overdueCount(tasks: Task[], projectId?: string) {
   return tasks.filter(

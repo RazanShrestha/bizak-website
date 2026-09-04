@@ -51,7 +51,7 @@ import {
   useAttendanceSource,
   setAttendanceSource,
   AttendanceSource as AttendanceSourceType,
-  ENTRY_STATUS_LABEL,
+  entryStatusChip,
   entriesFor,
   loggedOn,
   loggedRollup,
@@ -645,12 +645,12 @@ export function TaskPanel({
                         >
                           {e.activityId ? activityById(e.activityId)?.name : "Internal time"}
                         </span>
-                        {e.status !== "open" && (
+                        {entryStatusChip(e) && (
                           <span
                             className="shrink-0 rounded-bz-sm bg-bz-paper-warm px-1.5 py-0.5 text-[10px] font-medium text-bz-text-muted"
                             title={entryLockReason(e, source) ?? undefined}
                           >
-                            {ENTRY_STATUS_LABEL[e.status]}
+                            {entryStatusChip(e)}
                           </span>
                         )}
                         {e.billable && (
@@ -1035,7 +1035,9 @@ function LogTimeForm({
           hours: Math.round(n * 4) / 4,
           activityId: activityId || null,
           billable,
-          status: "open",
+          approved: false,
+          invoiced: false,
+          paid: false,
         });
       }}
     >
