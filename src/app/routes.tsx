@@ -81,6 +81,7 @@ import { FormBuilderDesignPage } from "./components/FormBuilderDesignPage";
 import { TrialBalanceDesignPage } from "./components/TrialBalanceDesignPage";
 import { BalanceSheetDesignPage, BalanceSheetDetailDesignPage } from "./components/BalanceSheetDesignPage";
 import { RolePermissionDesignPage } from "./components/RolePermissionDesignPage";
+import { DataScopeMatrixDesignPage } from "./components/DataScopeMatrixDesignPage";
 import { TimesheetRecordDesignPage } from "./components/timesheet/TimesheetRecordDesignPage";
 import { TimesheetEntryDesignPage } from "./components/timesheet/TimesheetEntryDesignPage";
 import { TimesheetApprovalsDesignPage } from "./components/timesheet/TimesheetApprovalsDesignPage";
@@ -1133,6 +1134,14 @@ function PresenceReconciliationDesignPageLayout() {
   );
 }
 
+function DataScopeMatrixDesignPageLayout() {
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <DataScopeMatrixDesignPage />
+    </div>
+  );
+}
+
 function RolePermissionDesignPageLayout() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -1612,6 +1621,7 @@ export const router = createBrowserRouter([
       { path: "design/balance-sheet",               Component: BalanceSheetDesignPageLayout      },
       { path: "design/balance-sheet/detail",        Component: BalanceSheetDetailDesignPageLayout },
       { path: "design/roles",                       Component: RolePermissionDesignPageLayout    },
+      { path: "design/data-scope",                  Component: DataScopeMatrixDesignPageLayout   },
       { path: "design/work",                        Component: MyWorkDesignPageLayout            },
       { path: "design/work/projects",               Component: ProjectPortfolioDesignPageLayout  },
       { path: "design/work/project/:id",            Component: ProjectWorkspaceDesignPageLayout  },

@@ -237,6 +237,7 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
         label: "Access Control",
         children: [
           { label: "Roles & Permissions", href: "/design/roles" },
+          { label: "Data Scope Matrix", href: "/design/data-scope" },
           { label: "Tenant Selection", href: "/design/tenant-selection" },
           { label: "Users" },
           { label: "Audit Log" },
