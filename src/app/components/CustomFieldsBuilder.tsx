@@ -886,7 +886,10 @@ function Popover({
         onClose();
       }
     }
-    function onScroll() {
+    function onScroll(e: Event) {
+      // ignore scrolls that originate inside the floating surface itself
+      const t = e.target as Node | null;
+      if (t && ref.current && (ref.current === t || ref.current.contains(t))) return;
       onClose();
     }
     function onKey(e: KeyboardEvent) {

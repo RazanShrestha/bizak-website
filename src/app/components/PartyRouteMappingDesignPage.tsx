@@ -660,7 +660,12 @@ function OverflowMenu({ onReset, onClearParties }: { onReset: () => void; onClea
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
-    const onScroll = () => setOpen(false);
+    const onScroll = (e: Event) => {
+      // ignore scrolls that originate inside the floating surface itself
+      const t = e.target as Node | null;
+      if (t && menuRef.current && (menuRef.current === t || menuRef.current.contains(t))) return;
+      setOpen(false);
+    };
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
     window.addEventListener("scroll", onScroll, true);

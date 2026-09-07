@@ -1557,13 +1557,19 @@ function Popover({
         onClose();
       }
     };
+    // ignore scrolls that originate inside the floating surface itself
+    const onScroll = (e: Event) => {
+      const t = e.target as Node | null;
+      if (t && ref.current && (ref.current === t || ref.current.contains(t))) return;
+      onClose();
+    };
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
-    window.addEventListener("scroll", onClose, true);
+    window.addEventListener("scroll", onScroll, true);
     return () => {
       document.removeEventListener("mousedown", onDown);
       document.removeEventListener("keydown", onKey);
-      window.removeEventListener("scroll", onClose, true);
+      window.removeEventListener("scroll", onScroll, true);
     };
   }, [open, onClose, anchorRef]);
 

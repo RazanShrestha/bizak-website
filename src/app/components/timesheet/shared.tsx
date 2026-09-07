@@ -242,13 +242,19 @@ export function Explain({
       close();
     };
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+    // ignore scrolls that originate inside the floating surface itself
+    const onScroll = (e: Event) => {
+      const t = e.target as Node | null;
+      if (t && panel.current && (panel.current === t || panel.current.contains(t))) return;
+      close();
+    };
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
-    window.addEventListener("scroll", close, true);
+    window.addEventListener("scroll", onScroll, true);
     return () => {
       document.removeEventListener("mousedown", onDown);
       document.removeEventListener("keydown", onKey);
-      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("scroll", onScroll, true);
     };
   }, [open]);
 

@@ -276,7 +276,12 @@ function useAnchoredPanel(
       if (panelRef.current && !panelRef.current.contains(t) && anchorRef.current && !anchorRef.current.contains(t)) onClose();
     };
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    const onScroll = () => onClose();
+    const onScroll = (e: Event) => {
+      // ignore scrolls that originate inside the floating surface itself
+      const t = e.target as Node | null;
+      if (t && panelRef.current && (panelRef.current === t || panelRef.current.contains(t))) return;
+      onClose();
+    };
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
     window.addEventListener("scroll", onScroll, true);

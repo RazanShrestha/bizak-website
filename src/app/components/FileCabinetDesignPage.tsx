@@ -516,7 +516,12 @@ function AnchoredMenu({
       const t = e.target as HTMLElement;
       if (ref.current && !ref.current.contains(t) && anchorRef.current && !anchorRef.current.contains(t)) onClose();
     };
-    const onScroll = () => onClose();
+    const onScroll = (e: Event) => {
+      // ignore scrolls that originate inside the floating surface itself
+      const t = e.target as Node | null;
+      if (t && ref.current && (ref.current === t || ref.current.contains(t))) return;
+      onClose();
+    };
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("mousedown", onDown);
     window.addEventListener("scroll", onScroll, true);
