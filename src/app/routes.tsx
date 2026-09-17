@@ -92,6 +92,12 @@ import { PresenceReconciliationDesignPage } from "./components/timesheet/Presenc
 import { MyWorkDesignPage } from "./components/productivity/MyWorkDesignPage";
 import { ProjectPortfolioDesignPage } from "./components/productivity/ProjectPortfolioDesignPage";
 import { ProjectWorkspaceDesignPage } from "./components/productivity/ProjectWorkspaceDesignPage";
+import { OrderDeskDesignPage } from "./components/sales/OrderDeskDesignPage";
+import { EstimatesDesk } from "./components/sales/EstimatesDesk";
+import { DeliveriesDesk } from "./components/sales/DeliveriesDesk";
+import { InvoicesDesk } from "./components/sales/InvoicesDesk";
+import { ReceiptsDesk, ReturnsDesk } from "./components/sales/ReceiptsDesk";
+import { ScheduledJobsDesignPage } from "./components/scheduler/ScheduledJobsDesignPage";
 import { AutoNumberDesignPage } from "./components/AutoNumberDesignPage";
 import { ItemFormDesignPage } from "./components/ItemFormDesignPage";
 import { ItemDetailDesignPage } from "./components/ItemDetailDesignPage";
@@ -1613,6 +1619,20 @@ export const router = createBrowserRouter([
       { path: "design/sales-order-list/:id",        Component: SalesOrderDetailDesignPageLayout  },
       { path: "design/sales-order-list/:id/edit",   Component: SalesOrderEditDesignPageLayout    },
       { path: "design/sales-order-record",          Component: SalesOrderRecordDesignPageLayout  },
+      // Sales orders on the app's bzw layer — one desk, the record opens beside the queue.
+      { path: "design/sales/orders",                Component: OrderDeskDesignPage               },
+      { path: "design/sales/orders/:no",            Component: OrderDeskDesignPage               },
+      { path: "design/sales/estimates",             Component: EstimatesDesk                     },
+      { path: "design/sales/estimates/:no",         Component: EstimatesDesk                     },
+      { path: "design/sales/deliveries",            Component: DeliveriesDesk                    },
+      { path: "design/sales/deliveries/:no",        Component: DeliveriesDesk                    },
+      { path: "design/sales/invoices",              Component: InvoicesDesk                      },
+      { path: "design/sales/invoices/:no",          Component: InvoicesDesk                      },
+      { path: "design/sales/receipts",              Component: ReceiptsDesk                      },
+      { path: "design/sales/receipts/:no",          Component: ReceiptsDesk                      },
+      { path: "design/sales/returns",               Component: ReturnsDesk                       },
+      { path: "design/sales/returns/:no",           Component: ReturnsDesk                       },
+      { path: "design/scheduled-jobs",              Component: ScheduledJobsDesignPage           },
       { path: "design/support-tickets",             Component: SupportTicketListDesignPageLayout },
       { path: "design/support-tickets/new",         Component: CreateSupportTicketDesignPageLayout },
       { path: "design/custom-fields",               Component: CustomFieldsBuilderPageLayout     },

@@ -44,6 +44,7 @@ import {
   FolderKanban,
   CircleUser,
   Blocks,
+  AlarmClock,
 } from "lucide-react";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -104,6 +105,7 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
         label: "Sales & CRM",
         children: [
           { label: "Quotation" },
+          { label: "Order Desk (bzw)", href: "/design/sales/orders" },
           { label: "Sales Order", href: "/design/sales-order-list", count: 152 },
           { label: "Order Record", href: "/design/sales-order-record" },
           { label: "Order Register", href: "/design/sales-order-register" },
@@ -244,6 +246,7 @@ const SIDEBAR_GROUPS: SidebarGroupModel[] = [
         ],
       },
       { icon: Workflow, label: "Workflow", href: "/design/workflow" },
+      { icon: AlarmClock, label: "Scheduled Jobs (bzw)", href: "/design/scheduled-jobs" },
       {
         icon: CreditCard,
         label: "Subscription Plans",

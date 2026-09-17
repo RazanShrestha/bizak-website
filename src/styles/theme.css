@@ -135,6 +135,62 @@
   --bz-shadow-card:  0 1px 2px rgba(15, 20, 17, 0.04);
   --bz-shadow-lift:  0 8px 32px rgba(15, 20, 17, 0.06);
   --bz-shadow-deep:  0 20px 60px -15px rgba(15, 20, 17, 0.18);
+
+  /* ── Product layer (bzw) ─────────────────────────────────────────────
+     The app's own semantic tones and role surfaces, copied from
+     bizak-app `_variables.scss` so the product design pages render the
+     app's CURRENT bzw layer, not the older mockup literals. Role tokens
+     (`--bz-primary`, `--bz-raised`, `--bz-rail`, `--bz-well`) exist
+     because dark mode swaps what those surfaces ARE, not just their
+     shade — see `.bzw-dark` below.
+     ───────────────────────────────────────────────────────────────── */
+  --bz-red:          #9A2E29;
+  --bz-red-soft:     #FBE5E2;
+  --bz-red-mark:     #C0413A;
+  --bz-amber:        #D97706;
+  --bz-amber-soft:   #FEF3C7;
+  --bz-positive:     #88A64C;
+  --bz-pos-deep:     #4F7A28;
+  --bz-primary:      var(--bz-deep);
+  --bz-primary-ink:  var(--bz-text-on-dark);
+  --bz-raised:       var(--bz-deep);
+  --bz-rail:         var(--bz-olive);
+  --bz-well:         color-mix(in srgb, var(--bz-paper-warm) 60%, transparent);
+  --bz-shadow-panel: 0 18px 44px -20px rgba(15, 20, 17, 0.22);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PRODUCT DARK MODE — mirrors bizak-app `_bzw-dark.scss` (neutral grey,
+   locked 2026-09-14). Re-points tokens for the subtree; atoms need no dark
+   rules. Lime and the olive family are deliberately NOT re-pointed.
+   ───────────────────────────────────────────────────────────────────────── */
+.bzw-dark {
+  color-scheme: dark;
+  --bz-section-b:    #101011;
+  --bz-paper:        #161617;
+  --bz-surface:      #1F1F21;
+  --bz-paper-warm:   #29292C;
+  --bz-border-soft:  #222224;
+  --bz-line:         #3B3B3F;
+  --bz-line-soft:    #2D2D30;
+  --bz-text:         #E8E8E6;
+  --bz-text-heading: #F4F4F2;
+  --bz-text-muted:   #A8A8A5;
+  --bz-text-soft:    #85857F;
+  --bz-leaf:         #34462A;
+  --bz-red:          #F08A80;
+  --bz-red-soft:     #3B2220;
+  --bz-red-mark:     #F08A80;
+  --bz-amber:        #F3A83B;
+  --bz-amber-soft:   #3A2D16;
+  --bz-positive:     #9DBB62;
+  --bz-pos-deep:     #9DBB62;
+  --bz-primary:      var(--bz-fire);
+  --bz-primary-ink:  var(--bz-olive);
+  --bz-raised:       #313134;
+  --bz-rail:         #09090A;
+  --bz-well:         #0B0B0C;
+  --bz-shadow-panel: 0 18px 44px -18px rgba(0, 0, 0, 0.7);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -226,6 +282,18 @@
   --color-bz-fire-mid:       var(--bz-fire-mid);
   --color-bz-leaf:           var(--bz-leaf);
   --color-bz-leaf-deep:      var(--bz-leaf-deep);
+  --color-bz-red:            var(--bz-red);
+  --color-bz-red-soft:       var(--bz-red-soft);
+  --color-bz-red-mark:       var(--bz-red-mark);
+  --color-bz-amber:          var(--bz-amber);
+  --color-bz-amber-soft:     var(--bz-amber-soft);
+  --color-bz-positive:       var(--bz-positive);
+  --color-bz-pos-deep:       var(--bz-pos-deep);
+  --color-bz-primary:        var(--bz-primary);
+  --color-bz-primary-ink:    var(--bz-primary-ink);
+  --color-bz-raised:         var(--bz-raised);
+  --color-bz-rail:           var(--bz-rail);
+  --color-bz-well:           var(--bz-well);
 
   /* Brand colors legacy aliases (deprecated; kept for un-migrated pages) */
   --color-bz-accent:         var(--bz-accent);
@@ -341,6 +409,15 @@
   label  { font-size: var(--text-base); font-weight: var(--font-weight-medium); line-height: 1.5; }
   button { font-size: var(--text-base); font-weight: var(--font-weight-medium); line-height: 1.5; }
   input  { font-size: var(--text-base); font-weight: var(--font-weight-normal); line-height: 1.5; }
+
+  /* Product frames (bzw design pages) type every control explicitly, as the app does.
+     The marketing defaults above would otherwise make every untyped control 15px/500. */
+  .bzw-frame :where(button, label, input, textarea, select, h1, h2, h3, h4) {
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+  }
 }
 
 /* Honour reduced-motion preference */
