@@ -783,7 +783,7 @@ export function Dialog({
   if (!open) return null;
   return (
     <Portal>
-      <div className="fixed inset-0 z-[1060] flex items-center justify-center p-4">
+      <div data-bzw-dialog className="fixed inset-0 z-[1060] flex items-center justify-center p-4">
         <div className="absolute inset-0 bg-bz-olive-dark/25" onClick={onClose} />
         <div className={cn(PANEL, "relative flex max-h-[calc(100vh-48px)] w-full flex-col", size === "sm" ? "max-w-[380px]" : size === "wide" ? "max-w-[620px]" : "max-w-[460px]")}>
           <div className="flex items-start gap-2 border-b border-bz-line-soft px-4 py-3">

@@ -97,6 +97,8 @@ import { EstimatesDesk } from "./components/sales/EstimatesDesk";
 import { DeliveriesDesk } from "./components/sales/DeliveriesDesk";
 import { InvoicesDesk } from "./components/sales/InvoicesDesk";
 import { ReceiptsDesk, ReturnsDesk } from "./components/sales/ReceiptsDesk";
+import { PrintPage } from "./components/sales/print";
+import { ItemReceiptsDesk } from "./components/purchase/ItemReceiptsDesk";
 import { ScheduledJobsDesignPage } from "./components/scheduler/ScheduledJobsDesignPage";
 import { AutoNumberDesignPage } from "./components/AutoNumberDesignPage";
 import { ItemFormDesignPage } from "./components/ItemFormDesignPage";
@@ -1632,6 +1634,9 @@ export const router = createBrowserRouter([
       { path: "design/sales/receipts/:no",          Component: ReceiptsDesk                      },
       { path: "design/sales/returns",               Component: ReturnsDesk                       },
       { path: "design/sales/returns/:no",           Component: ReturnsDesk                       },
+      { path: "design/sales/print/:no",             Component: PrintPage                         },
+      { path: "design/purchase/item-receipts",      Component: ItemReceiptsDesk                  },
+      { path: "design/purchase/item-receipts/:no",  Component: ItemReceiptsDesk                  },
       { path: "design/scheduled-jobs",              Component: ScheduledJobsDesignPage           },
       { path: "design/support-tickets",             Component: SupportTicketListDesignPageLayout },
       { path: "design/support-tickets/new",         Component: CreateSupportTicketDesignPageLayout },

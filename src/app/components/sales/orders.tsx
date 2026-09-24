@@ -38,8 +38,12 @@ export type Customer = {
   pan: string;
   address: string;
   termId: string;
-  currency: "NPR" | "USD";
+  currency: string;
   priceLevel: string;
+  /** Customer tax code — wins over the item's (an exporter is zero-rated). */
+  taxCode?: TaxCode;
+  repId?: string;
+  isProspect?: boolean;
 };
 
 export const CUSTOMERS: Customer[] = [
@@ -50,7 +54,8 @@ export const CUSTOMERS: Customer[] = [
   { id: "C-1088", code: "C-1088", name: "Pokhara Hardware House", pan: "301774620", address: "Chipledhunga, Pokhara", termId: "T30", currency: "NPR", priceLevel: "Dealer" },
   { id: "C-1093", code: "C-1093", name: "Nepal Telecom", pan: "500046287", address: "Bhadrakali Plaza, Kathmandu", termId: "T45", currency: "NPR", priceLevel: "Standard" },
   { id: "C-1101", code: "C-1101", name: "Lumbini Agro Traders", pan: "303310985", address: "Butwal-8, Rupandehi", termId: "T15", currency: "NPR", priceLevel: "Dealer" },
-  { id: "C-2003", code: "C-2003", name: "Kailash Exports (India)", pan: "—", address: "Siliguri, West Bengal", termId: "T30", currency: "USD", priceLevel: "Standard" },
+  { id: "C-2003", code: "C-2003", name: "Kailash Exports (India)", pan: "—", address: "Siliguri, West Bengal", termId: "T30", currency: "USD", priceLevel: "Standard", taxCode: "ZERO" },
+  { id: "P-0310", code: "P-0310", name: "Annapurna Resorts (prospect)", pan: "—", address: "Ghandruk, Kaski", termId: "T15", currency: "NPR", priceLevel: "Retail", isProspect: true },
 ];
 export const customerById = (id: string | null | undefined) => CUSTOMERS.find((c) => c.id === id);
 
@@ -72,9 +77,11 @@ export const LOCATIONS: Location[] = [
 ];
 export const locationById = (id: string) => LOCATIONS.find((l) => l.id === id);
 
-export type TaxCode = "VAT13" | "EXEMPT";
-export const TAX_RATE: Record<TaxCode, number> = { VAT13: 0.13, EXEMPT: 0 };
-export const TAX_LABEL: Record<TaxCode, string> = { VAT13: "VAT 13%", EXEMPT: "Exempt" };
+/** The tenant's tax master. Totals are shown PER CODE, never as one fixed "VAT 13%". */
+export type TaxCode = "VAT13" | "EXEMPT" | "ZERO";
+export const TAX_RATE: Record<TaxCode, number> = { VAT13: 0.13, EXEMPT: 0, ZERO: 0 };
+export const TAX_LABEL: Record<TaxCode, string> = { VAT13: "VAT 13%", EXEMPT: "Exempt", ZERO: "Zero-rated (export)" };
+export const TAX_CODES = (Object.keys(TAX_RATE) as TaxCode[]).map((id) => ({ id, label: TAX_LABEL[id], rate: TAX_RATE[id] }));
 
 export type Item = {
   id: string;
@@ -83,26 +90,39 @@ export type Item = {
   unit: string;
   rate: number;
   tax: TaxCode;
+  hs: string;
+  /** Stock cost per base unit — what a delivery moves to COGS. */
+  cost: number;
+  /** Alternate units and how many base units each holds. */
+  units?: { code: string; factor: number }[];
   /** Lot-tracked items need lots picked on delivery. */
   lotTracked?: boolean;
+  /** Serial-tracked items need one serial per unit. */
+  serialTracked?: boolean;
   /** needs: on-hand by location — the transfer-order line already reads quantity_on_hand. */
   onHand: Record<string, number>;
 };
 
 export const ITEMS: Item[] = [
-  { id: "I-01", code: "ICP-A220", name: "Industrial Coupling A-220", unit: "pcs", rate: 18_500, tax: "VAT13", onHand: { "L-KTM": 42, "L-PKR": 6, "L-BTW": 0 } },
-  { id: "I-02", code: "HP7-2026", name: "Hydraulic Pump HP-7", unit: "pcs", rate: 142_000, tax: "VAT13", lotTracked: true, onHand: { "L-KTM": 3, "L-PKR": 1, "L-BTW": 0 } },
-  { id: "I-03", code: "MPS-006", name: "Mounting Plate Set", unit: "pkg", rate: 11_200, tax: "VAT13", onHand: { "L-KTM": 120, "L-PKR": 18, "L-BTW": 40 } },
-  { id: "I-04", code: "SVC-INS", name: "Service & Installation", unit: "hrs", rate: 3_800, tax: "EXEMPT", onHand: {} },
-  { id: "I-05", code: "NDL-70G", name: "Instant Noodles 70g", unit: "ctn", rate: 1_440, tax: "VAT13", lotTracked: true, onHand: { "L-KTM": 860, "L-PKR": 210, "L-BTW": 390 } },
-  { id: "I-06", code: "CFE-ARB1", name: "Arabica Beans 1kg", unit: "bag", rate: 2_950, tax: "VAT13", lotTracked: true, onHand: { "L-KTM": 74, "L-PKR": 0, "L-BTW": 0 } },
-  { id: "I-07", code: "PVC-110", name: "PVC Pipe 110mm × 6m", unit: "len", rate: 2_180, tax: "VAT13", onHand: { "L-KTM": 510, "L-PKR": 260, "L-BTW": 140 } },
-  { id: "I-08", code: "CEM-OPC", name: "OPC Cement 50kg", unit: "bag", rate: 865, tax: "VAT13", onHand: { "L-KTM": 2_400, "L-PKR": 900, "L-BTW": 1_750 } },
-  { id: "I-09", code: "RTR-AX6", name: "Wi-Fi 6 Router AX6", unit: "pcs", rate: 9_900, tax: "VAT13", onHand: { "L-KTM": 64, "L-PKR": 0, "L-BTW": 0 } },
-  { id: "I-10", code: "UREA-50", name: "Urea Fertiliser 50kg", unit: "bag", rate: 1_120, tax: "EXEMPT", onHand: { "L-KTM": 0, "L-PKR": 0, "L-BTW": 3_200 } },
-  { id: "I-11", code: "SPR-KIT", name: "Pump Seal Spare Kit", unit: "kit", rate: 6_400, tax: "VAT13", onHand: { "L-KTM": 25, "L-PKR": 4, "L-BTW": 0 } },
-  { id: "I-12", code: "FBR-24C", name: "Fibre Patch Cable 24-core", unit: "pcs", rate: 4_350, tax: "VAT13", onHand: { "L-KTM": 90, "L-PKR": 0, "L-BTW": 0 } },
+  { id: "I-01", code: "ICP-A220", name: "Industrial Coupling A-220", unit: "pcs", rate: 18_500, cost: 12_900, hs: "8483.60", tax: "VAT13", units: [{ code: "box", factor: 6 }], onHand: { "L-KTM": 42, "L-PKR": 6, "L-BTW": 0 } },
+  { id: "I-02", code: "HP7-2026", name: "Hydraulic Pump HP-7", unit: "pcs", rate: 142_000, cost: 104_000, hs: "8413.70", tax: "VAT13", lotTracked: true, onHand: { "L-KTM": 3, "L-PKR": 1, "L-BTW": 0 } },
+  { id: "I-03", code: "MPS-006", name: "Mounting Plate Set", unit: "pkg", rate: 11_200, cost: 7_400, hs: "7326.90", tax: "VAT13", onHand: { "L-KTM": 120, "L-PKR": 18, "L-BTW": 40 } },
+  { id: "I-04", code: "SVC-INS", name: "Service & Installation", unit: "hrs", rate: 3_800, cost: 0, hs: "9987.00", tax: "EXEMPT", onHand: {} },
+  { id: "I-05", code: "NDL-70G", name: "Instant Noodles 70g", unit: "ctn", rate: 1_440, cost: 1_080, hs: "1902.30", tax: "VAT13", lotTracked: true, units: [{ code: "pkt", factor: 1 / 30 }], onHand: { "L-KTM": 860, "L-PKR": 210, "L-BTW": 390 } },
+  { id: "I-06", code: "CFE-ARB1", name: "Arabica Beans 1kg", unit: "bag", rate: 2_950, cost: 2_100, hs: "0901.11", tax: "VAT13", lotTracked: true, onHand: { "L-KTM": 74, "L-PKR": 0, "L-BTW": 0 } },
+  { id: "I-07", code: "PVC-110", name: "PVC Pipe 110mm × 6m", unit: "len", rate: 2_180, cost: 1_610, hs: "3917.23", tax: "VAT13", units: [{ code: "bundle", factor: 10 }], onHand: { "L-KTM": 510, "L-PKR": 260, "L-BTW": 140 } },
+  { id: "I-08", code: "CEM-OPC", name: "OPC Cement 50kg", unit: "bag", rate: 865, cost: 690, hs: "2523.29", tax: "VAT13", units: [{ code: "ton", factor: 20 }], onHand: { "L-KTM": 2_400, "L-PKR": 900, "L-BTW": 1_750 } },
+  { id: "I-09", code: "RTR-AX6", name: "Wi-Fi 6 Router AX6", unit: "pcs", rate: 9_900, cost: 7_150, hs: "8517.62", tax: "VAT13", serialTracked: true, onHand: { "L-KTM": 64, "L-PKR": 0, "L-BTW": 0 } },
+  { id: "I-10", code: "UREA-50", name: "Urea Fertiliser 50kg", unit: "bag", rate: 1_120, cost: 980, hs: "3102.10", tax: "EXEMPT", onHand: { "L-KTM": 0, "L-PKR": 0, "L-BTW": 3_200 } },
+  { id: "I-11", code: "SPR-KIT", name: "Pump Seal Spare Kit", unit: "kit", rate: 6_400, cost: 4_300, hs: "8484.90", tax: "VAT13", onHand: { "L-KTM": 25, "L-PKR": 4, "L-BTW": 0 } },
+  { id: "I-12", code: "FBR-24C", name: "Fibre Patch Cable 24-core", unit: "pcs", rate: 4_350, cost: 3_050, hs: "8544.70", tax: "VAT13", onHand: { "L-KTM": 90, "L-PKR": 0, "L-BTW": 0 } },
+  // Batch AND serial: a production run, with every unit in it numbered.
+  { id: "I-13", code: "SIN-5K", name: "Solar Inverter 5kVA", unit: "pcs", rate: 168_000, cost: 121_000, hs: "8504.40", tax: "VAT13", lotTracked: true, serialTracked: true, onHand: { "L-KTM": 8, "L-PKR": 2, "L-BTW": 0 } },
+  { id: "I-14", code: "SEM-3P", name: "Smart Energy Meter 3-phase", unit: "pcs", rate: 24_500, cost: 17_800, hs: "9028.30", tax: "VAT13", lotTracked: true, serialTracked: true, units: [{ code: "box", factor: 10 }], onHand: { "L-KTM": 60, "L-PKR": 25, "L-BTW": 0 } },
 ];
+
+/** Every unit a line can be sold in: the base unit first, then the alternates. */
+export const unitsOf = (it: Item) => [{ code: it.unit, factor: 1 }, ...(it.units ?? [])];
 export const itemById = (id: string) => ITEMS.find((i) => i.id === id);
 
 /** Lots on hand for a lot-tracked item — what the fulfil sheet picks from. */
@@ -119,7 +139,31 @@ export const LOTS: Record<string, { lot: string; expiry: string | null; qty: num
     { lot: "ARB-2607", expiry: "2027-01-15", qty: 30 },
     { lot: "ARB-2608", expiry: "2027-02-28", qty: 44 },
   ],
+  "I-13": [
+    { lot: "SIN-2607", expiry: null, qty: 5 },
+    { lot: "SIN-2608", expiry: null, qty: 3 },
+  ],
+  "I-14": [
+    { lot: "SEM-2605", expiry: null, qty: 35 },
+    { lot: "SEM-2607", expiry: null, qty: 25 },
+  ],
 };
+
+/** MastSerialNumber: the units in stock, each optionally inside a batch. */
+export type StockSerial = { serial: string; batch?: string; locationId: string };
+
+const run = (prefix: string, from: number, n: number, locationId: string, batch?: string): StockSerial[] =>
+  Array.from({ length: n }, (_, i) => ({ serial: `${prefix}${String(from + i).padStart(4, "0")}`, batch, locationId }));
+
+/** What a serial-tracked item has on the shelf — what a delivery picks from. */
+export const SERIALS_ON_HAND: Record<string, StockSerial[]> = {
+  "I-09": run("RTR-AX6-", 1201, 14, "L-KTM"),
+  "I-13": [...run("SIN-5K-", 101, 5, "L-KTM", "SIN-2607"), ...run("SIN-5K-", 201, 3, "L-KTM", "SIN-2608"), ...run("SIN-5K-", 301, 2, "L-PKR", "SIN-2607")],
+  "I-14": [...run("SEM-3P-", 1, 35, "L-KTM", "SEM-2605"), ...run("SEM-3P-", 501, 25, "L-KTM", "SEM-2607"), ...run("SEM-3P-", 901, 25, "L-PKR", "SEM-2605")],
+};
+
+export const serialsOnHand = (itemId: string, locationId: string, batch?: string) =>
+  (SERIALS_ON_HAND[itemId] ?? []).filter((s) => s.locationId === locationId && (batch === undefined || s.batch === batch));
 
 // ── The order ───────────────────────────────────────────────────────────────
 
@@ -130,7 +174,15 @@ export type OrderLine = {
   qty: number;
   rate: number;
   discountPct: number;
+  /** Discount as an amount (NRs). Mutually exclusive with discountPct. */
+  discountAmt?: number;
   tax: TaxCode;
+  /** Sold in this unit (base unit when absent). */
+  unit?: string;
+  /** Price level that set the rate; typing a rate clears it. */
+  priceLevel?: string;
+  /** Tenant line fields (Custom Form). */
+  custom?: Record<string, string>;
   /** ORDER_DETAIL.FULFILL_QTY — approved deliveries only. */
   delivered: number;
   /** ORDER_DETAIL.BILLED_QTY — approved invoices only. */
@@ -155,6 +207,27 @@ export type ChildDoc = {
   /** CHALLAN.DRIVER / TRUCK_NO. */
   driver?: string;
   truck?: string;
+  memo?: string;
+  /** Where this document is billed (invoice) or delivered (challan), when it isn't the customer's default. */
+  address?: string;
+  /** Sent back by the approver — still pending, counts for nothing. */
+  rejected?: { reason: string; byId: string; on: string };
+  cancelled?: { reason: string; on: string };
+  /** Invoice: bill discount (Rs), applied on gross (reduces the taxable base) or on net. */
+  billDiscount?: number;
+  billOnNet?: boolean;
+  /** Invoice: TDS the customer withholds. */
+  tdsCode?: string;
+  /** Invoice: payment taken when it was saved (a cash sale). */
+  paidAtSave?: { methodId: string; fields: Record<string, string>; amount: number; depositTo: string };
+  /** Delivery: batches and serials captured on the way out. */
+  batches?: { lineId: string; batch: string; mfg: string | null; expiry: string | null; qty: number }[];
+  /** One entry per line, or per BATCH on a line the item tracks both ways. */
+  serials?: { lineId: string; batch?: string; serials: string[] }[];
+  custom?: Record<string, string>;
+  attachments?: Attachment[];
+  comments?: Comment[];
+  audit?: AuditRow[];
 };
 
 export type Approval =
@@ -163,12 +236,17 @@ export type Approval =
   | { state: "approved"; byId: string; on: string }
   | { state: "rejected"; byId: string; on: string; reason: string };
 
-export type Comment = { id: string; authorId: string; when: string; body: string };
+/** A user note (USER_NOTE): a memo, optionally with a title and a direction. */
+export type Comment = { id: string; authorId: string; when: string; body: string; title?: string; direction?: "Inbound" | "Outbound" };
+export type Attachment = { name: string; size: string; byId?: string; on?: string };
+export type AuditRow = { when: string; whoId: string; field: string; from: string; to: string };
 export type HistoryEvent = { id: string; whoId: string; when: string; what: string };
 
 export type Order = {
   id: string;
   no: string;
+  /** A container for an invoice raised with no order — never listed as an order. */
+  direct?: boolean;
   customerId: string;
   date: string;
   expected: string | null;
@@ -176,8 +254,15 @@ export type Order = {
   repId: string | null;
   termId: string;
   customerPo: string | null;
-  currency: "NPR" | "USD";
+  currency: string;
   exchangeRate: number;
+  subsidiaryId: string;
+  /** SALES_ORDER.DUE_DATE — from the payment term. */
+  due: string | null;
+  billingAddress: string;
+  custom: Record<string, string>;
+  created: { byId: string; on: string };
+  audit: AuditRow[];
   memo: string;
   source: { kind: "Estimate" | "Sales order"; no: string } | null;
   approval: Approval;
@@ -186,7 +271,7 @@ export type Order = {
   lines: OrderLine[];
   docs: ChildDoc[];
   dims: { department?: string; class?: string; project?: string; partner?: string };
-  attachments: { name: string; size: string }[];
+  attachments: Attachment[];
   comments: Comment[];
   history: HistoryEvent[];
   /** ORDER.BOOKING_AMOUNT / DOWN_PAYMENT_AMOUNT — only shown when non-zero. */
@@ -197,20 +282,40 @@ export type Order = {
 // Mirrors OrderServiceImpl.ApplyOrderSummaryAsync: an order has no header
 // discount, discount is per line, and tax is charged on the post-discount gross.
 
-export function lineGross(l: Pick<OrderLine, "qty" | "rate" | "discountPct">) {
-  return l.qty * l.rate * (1 - (l.discountPct || 0) / 100);
-}
-export const lineDiscount = (l: Pick<OrderLine, "qty" | "rate" | "discountPct">) => l.qty * l.rate - lineGross(l);
-export const lineTax = (l: Pick<OrderLine, "qty" | "rate" | "discountPct" | "tax">) => lineGross(l) * TAX_RATE[l.tax];
-export const lineNet = (l: Pick<OrderLine, "qty" | "rate" | "discountPct" | "tax">) => lineGross(l) + lineTax(l);
+type LineMath = Pick<OrderLine, "qty" | "rate" | "discountPct" | "tax"> & { discountAmt?: number };
 
-export function totalsOf(lines: Pick<OrderLine, "qty" | "rate" | "discountPct" | "tax">[]) {
+export function lineGross(l: Omit<LineMath, "tax">) {
+  const base = l.qty * l.rate;
+  if (l.discountAmt) return Math.max(0, base - l.discountAmt);
+  return base * (1 - (l.discountPct || 0) / 100);
+}
+export const lineDiscount = (l: Omit<LineMath, "tax">) => l.qty * l.rate - lineGross(l);
+export const lineTax = (l: LineMath) => lineGross(l) * TAX_RATE[l.tax];
+export const lineNet = (l: LineMath) => lineGross(l) + lineTax(l);
+
+/**
+ * Document totals. `billDiscount` (invoice only) comes off the taxable base
+ * proportionally when `onNet` is false ("On gross"), or off the total when true.
+ * `tds` is withheld by the customer: it reduces what is RECEIVABLE, not the sale.
+ */
+export function totalsOf(lines: LineMath[], opts: { billDiscount?: number; onNet?: boolean; tdsRate?: number } = {}) {
   const subtotal = lines.reduce((s, l) => s + l.qty * l.rate, 0);
   const discount = lines.reduce((s, l) => s + lineDiscount(l), 0);
-  const tax = lines.reduce((s, l) => s + lineTax(l), 0);
-  const taxable = lines.filter((l) => TAX_RATE[l.tax] > 0).reduce((s, l) => s + lineGross(l), 0);
-  const total = subtotal - discount + tax;
-  return { subtotal, discount, tax, taxable, total };
+  const gross = subtotal - discount;
+  const bill = Math.min(opts.billDiscount ?? 0, gross);
+  const share = gross > 0 && !opts.onNet ? (gross - bill) / gross : 1;
+  const byTax = (Object.keys(TAX_RATE) as TaxCode[])
+    .map((code) => {
+      const g = lines.filter((l) => l.tax === code).reduce((s, l) => s + lineGross(l), 0) * share;
+      return { code, label: TAX_LABEL[code], base: g, tax: g * TAX_RATE[code] };
+    })
+    .filter((x) => x.base > 0);
+  const tax = byTax.reduce((s, x) => s + x.tax, 0);
+  const taxable = byTax.filter((x) => TAX_RATE[x.code] > 0).reduce((s, x) => s + x.base, 0);
+  // On gross: tax is charged on the discounted base. On net: tax on the full base, discount after tax.
+  const total = gross - bill + tax;
+  const tds = opts.tdsRate ? (gross - bill) * opts.tdsRate : 0;
+  return { subtotal, discount, bill, gross, tax, taxable, byTax, total, tds, receivable: total - tds };
 }
 
 export const orderTotal = (o: Order) => totalsOf(o.lines).total;
@@ -232,6 +337,13 @@ export function progressOf(o: Order) {
     pendingDeliveries: o.docs.filter((d) => d.kind === "delivery" && d.state === "pending").length,
     pendingInvoices: o.docs.filter((d) => d.kind === "invoice" && d.state === "pending").length,
   };
+}
+
+/** Units of this line already on a document of `kind` that is awaiting approval (never the one being edited). */
+export function pendingOn(o: Order, l: OrderLine, kind: "delivery" | "invoice", except?: string) {
+  return o.docs
+    .filter((d) => d.kind === kind && d.state === "pending" && !d.cancelled && d.no !== except)
+    .reduce((s, d) => s + d.lines.filter((x) => x.lineId === l.id).reduce((a, x) => a + x.qty, 0), 0);
 }
 
 export const remainingToDeliver = (l: OrderLine) => Math.max(0, l.qty - l.delivered);
@@ -421,9 +533,9 @@ export function useKeys(map: Record<string, (e: KeyboardEvent) => void>, enabled
 // ════════════════════════════════════════════════════════════════════════════
 
 let lineSeq = 0;
-const L = (itemId: string, qty: number, delivered = 0, invoiced = 0, discountPct = 0, rate?: number): OrderLine => {
+const L = (itemId: string, qty: number, delivered = 0, invoiced = 0, discountPct = 0, rate?: number, extra: Partial<OrderLine> = {}): OrderLine => {
   const it = itemById(itemId)!;
-  return { id: `LN-${++lineSeq}`, itemId, qty, rate: rate ?? it.rate, discountPct, tax: it.tax, delivered, invoiced };
+  return { id: `LN-${++lineSeq}`, itemId, qty, rate: rate ?? it.rate, discountPct, tax: it.tax, unit: it.unit, delivered, invoiced, custom: {}, ...extra };
 };
 
 const approved = (byId: string, on: string): Approval => ({ state: "approved", byId, on });
@@ -435,15 +547,23 @@ function order(x: Partial<Order> & Pick<Order, "no" | "customerId" | "date" | "l
     ...d,
     lines: d.lines.map((y) => (y.lineId.startsWith("#") ? { ...y, lineId: x.lines[Number(y.lineId.slice(1))].id } : y)),
   }));
+  const loc = x.locationId ?? "L-KTM";
+  const term = TERMS.find((t) => t.id === (x.termId ?? c.termId));
   return {
     id: x.no,
     expected: null,
-    locationId: "L-KTM",
+    locationId: loc,
     repId: "EMP-104",
     termId: c.termId,
     customerPo: null,
     currency: c.currency,
     exchangeRate: c.currency === "USD" ? 133.42 : 1,
+    subsidiaryId: loc === "L-PKR" ? "NP-02" : "NP-01",
+    due: addDays(x.date, term?.days ?? 0),
+    billingAddress: c.address,
+    custom: { channel: "Field sales" },
+    created: { byId: x.repId ?? "EMP-104", on: x.date },
+    audit: [],
     memo: "",
     source: null,
     approval: approved("EMP-101", x.date),
@@ -493,7 +613,8 @@ export const SEED_ORDERS: Order[] = [
   order({
     no: "SO-1050", customerId: "C-2003", date: "2026-09-01", expected: "2026-09-25", repId: "EMP-104",
     approval: { state: "pending", stateName: "Finance check", approverId: "EMP-118", since: "2026-09-01" },
-    lines: [L("I-06", 120, 0, 0, 0, 22.5)],
+    lines: [L("I-06", 120, 0, 0, 0, 22.5, { tax: "ZERO" })],
+    custom: { channel: "Distributor", instructions: "FOB Kakarbhitta" },
     memo: "Export — invoice in USD, LC pending from buyer's bank.",
     history: [{ id: "h1", whoId: "EMP-104", when: "Sep 1, 10:02", what: "sent it to Finance check" }],
   }),
@@ -501,8 +622,8 @@ export const SEED_ORDERS: Order[] = [
   // ── To deliver ───────────────────────────────────────────────────────────
   order({
     no: "SO-1049", customerId: "C-1044", date: "2026-08-30", expected: "2026-09-02", repId: "EMP-126",
-    lines: [L("I-05", 60), L("I-06", 12)],
-    memo: "Booked during visit.",
+    lines: [L("I-05", 60), L("I-06", 12), L("I-13", 4)],
+    memo: "Booked during visit — inverters for the new outlet.",
     approval: approved("EMP-101", "2026-08-30"),
     history: [
       { id: "h1", whoId: "EMP-126", when: "Aug 30, 14:20", what: "created the order" },
@@ -520,16 +641,34 @@ export const SEED_ORDERS: Order[] = [
     advance: 20_000,
   }),
 
+  order({
+    no: "SO-1053", customerId: "C-1061", date: "2026-09-03", expected: "2026-09-09", repId: "EMP-121",
+    customerPo: "ERL/PO/2083-042",
+    lines: [L("I-14", 12), L("I-13", 2)],
+    memo: "Meters and inverters for the Lazimpat fit-out — serials go to the facilities team.",
+    history: [{ id: "h1", whoId: "EMP-101", when: "Sep 3, 10:05", what: "approved it" }],
+  }),
+
   // ── Partly delivered ─────────────────────────────────────────────────────
   order({
     no: "SO-1047", customerId: "C-1029", date: "2026-08-24", expected: "2026-09-01", repId: "EMP-104",
     customerPo: "AMF-PO-7781",
     source: { kind: "Estimate", no: "EST-0412" },
-    lines: [L("I-01", 12, 6, 0), L("I-02", 4, 4, 4), L("I-03", 30, 0, 0, 0, 11_200), L("I-04", 30, 0, 0)],
+    lines: [
+      L("I-01", 12, 6, 0, 0, undefined, { priceLevel: "Wholesale", rate: 17_575, custom: { rack: "B-04" } }),
+      L("I-02", 4, 4, 4, 0, undefined, { custom: { batchRef: "HP7-2608" } }),
+      L("I-03", 30, 0, 0, 0, 11_200, { discountAmt: 8_000 }),
+      L("I-04", 30, 0, 0),
+    ],
     dims: { department: "Industrial", class: "Capital goods" },
+    custom: { channel: "Field sales", instructions: "Unload at gate 3, forklift on site" },
     attachments: [
-      { name: "AMF-PO-7781.pdf", size: "188 KB" },
-      { name: "site-drawing-rev2.png", size: "1.2 MB" },
+      { name: "AMF-PO-7781.pdf", size: "188 KB", byId: "EMP-104", on: "Aug 24, 10:12" },
+      { name: "site-drawing-rev2.png", size: "1.2 MB", byId: "EMP-104", on: "Aug 24, 10:14" },
+    ],
+    audit: [
+      { when: "Aug 26, 09:40", whoId: "EMP-104", field: "Expected delivery", from: "Aug 30", to: "Sep 1" },
+      { when: "Aug 24, 11:02", whoId: "EMP-104", field: "Mounting Plate Set · discount", from: "—", to: "NPR 8,000.00" },
     ],
     docs: [
       { id: "D1", kind: "delivery", no: "DN-0301", date: "2026-08-28", state: "approved", byId: "EMP-112", locationId: "L-KTM", driver: "Ram Bahadur", truck: "Ba 3 Kha 2291", lines: [{ lineId: "#1", qty: 4 }, { lineId: "#0", qty: 6 }] },
@@ -554,7 +693,7 @@ export const SEED_ORDERS: Order[] = [
     lines: [L("I-09", 25, 10, 10), L("I-12", 40, 40, 40)],
     docs: [
       { id: "D1", kind: "delivery", no: "DN-0294", date: "2026-08-25", state: "approved", byId: "EMP-112", lines: [{ lineId: "#0", qty: 10 }, { lineId: "#1", qty: 40 }] },
-      { id: "D2", kind: "invoice", no: "INV-8831", date: "2026-08-25", due: "2026-09-24", state: "approved", byId: "EMP-118", lines: [{ lineId: "#0", qty: 10 }, { lineId: "#1", qty: 40 }] },
+      { id: "D2", kind: "invoice", no: "INV-8831", date: "2026-08-25", due: "2026-09-24", state: "approved", byId: "EMP-118", billDiscount: 5_000, lines: [{ lineId: "#0", qty: 10 }, { lineId: "#1", qty: 40 }] },
     ],
   }),
 
@@ -587,7 +726,7 @@ export const SEED_ORDERS: Order[] = [
     lines: [L("I-03", 60, 60, 60), L("I-01", 8, 8, 8)],
     docs: [
       { id: "D1", kind: "delivery", no: "DN-0280", date: "2026-08-17", state: "approved", byId: "EMP-112", locationId: "L-KTM", lines: [{ lineId: "#0", qty: 60 }, { lineId: "#1", qty: 8 }] },
-      { id: "D2", kind: "invoice", no: "INV-8809", date: "2026-08-17", due: "2026-09-16", state: "approved", byId: "EMP-118", lines: [{ lineId: "#0", qty: 60 }, { lineId: "#1", qty: 8 }] },
+      { id: "D2", kind: "invoice", no: "INV-8809", date: "2026-08-17", due: "2026-09-16", state: "approved", byId: "EMP-118", tdsCode: "TDS-SVC", lines: [{ lineId: "#0", qty: 60 }, { lineId: "#1", qty: 8 }] },
     ],
   }),
   order({
@@ -609,6 +748,18 @@ export const SEED_ORDERS: Order[] = [
       { id: "D2", kind: "invoice", no: "INV-8795", date: "2026-08-12", due: "2026-09-11", state: "approved", byId: "EMP-118", lines: [{ lineId: "#0", qty: 14 }, { lineId: "#1", qty: 6 }] },
     ],
     history: [{ id: "h1", whoId: "EMP-104", when: "Aug 20, 11:00", what: "closed the order — customer dropped the last 6 couplings" }],
+  }),
+  // ── A counter sale: invoiced with no order, paid in cash at save ─────────
+  order({
+    no: "DIR-INV-8848", direct: true, customerId: "C-1044", date: "2026-09-02", repId: "EMP-126",
+    lines: [L("I-05", 25, 25, 25, 0, undefined, { priceLevel: "Retail", rate: 1_512 }), L("I-07", 6, 6, 6)],
+    docs: [
+      {
+        id: "D1", kind: "invoice", no: "INV-8848", date: "2026-09-02", due: "2026-09-17", state: "approved", byId: "EMP-126",
+        paidAtSave: { methodId: "CASH", fields: {}, amount: 57_494.4, depositTo: "Cash in hand · Kathmandu" },
+        lines: [{ lineId: "#0", qty: 25 }, { lineId: "#1", qty: 6 }],
+      },
+    ],
   }),
   order({
     no: "SO-1038", customerId: "C-1044", date: "2026-08-06",

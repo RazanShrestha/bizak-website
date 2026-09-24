@@ -193,6 +193,25 @@
   --bz-shadow-panel: 0 18px 44px -18px rgba(0, 0, 0, 0.7);
 }
 
+/* Paper is always paper: a printed page keeps the light tokens inside a dark page. */
+.bzw-light {
+  color-scheme: light;
+  --bz-section-b:    #efefe9;
+  --bz-paper:        #FCFCF7;
+  --bz-surface:      #FFFFFF;
+  --bz-paper-warm:   #F4F5EF;
+  --bz-line:         #D8D9D3;
+  --bz-line-soft:    #E5E5E0;
+  --bz-text:         #1A1D19;
+  --bz-text-heading: #2D332B;
+  --bz-text-muted:   #5A6053;
+  --bz-text-soft:    #707064;
+  --bz-leaf:         #DBE9B8;
+  --bz-red:          #9A2E29;
+  --bz-red-soft:     #FBE5E2;
+  --bz-red-mark:     #C0413A;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    SHADCN/UI COMPATIBILITY LAYER
    Variables consumed by `components/ui/*`. Mapped onto Bizak tokens where

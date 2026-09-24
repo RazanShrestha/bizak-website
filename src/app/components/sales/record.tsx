@@ -1,16 +1,27 @@
 import * as React from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Maximize2, Minimize2, MoreHorizontal, Printer, Send, X } from "lucide-react";
+import { useNavigate } from "react-router";
+import { ArrowDownLeft, ArrowLeft, ArrowUpRight, ChevronLeft, ChevronRight, Maximize2, Minimize2, MoreHorizontal, Printer, X } from "lucide-react";
 import { cn } from "../ui/utils";
-import { Avatar, BTN, ICON_BTN, LABEL, NUM, Popover, Segmented } from "./bzw";
-import { Amount, Comment, HistoryEvent, ME, OrderLine, fmtQty, itemById, lineNet, personById } from "./orders";
+import { Avatar, ICON_BTN, LABEL, NUM, Popover, Segmented, ToastMsg } from "./bzw";
+import { Amount, AuditRow, Attachment, Comment, HistoryEvent, Order, OrderLine, TAX_LABEL, fmtQty, itemById, lineDiscount, lineGross, lineNet, lineTax, personById, totalsOf } from "./orders";
+import { DIMENSIONS, LINE_FIELDS, subsidiaryById, tdsById } from "./master";
+import { Cell, CellGrid, Dual, FilesSection, GLRow, GLSection, RelatedSection, SystemSection, customFieldCells } from "./parts";
+import { hrefFor, relatedFor, useSales } from "./flow";
+import { PrintPreview } from "./print";
 
 // ════════════════════════════════════════════════════════════════════════════
 // RECORD — the one panel every sales document opens in
 //
 // The order panel set the grammar; every other document reuses it so a reader
-// who has learned one record has learned all six: the same head (number ·
-// state · walk · print · more · close), the customer and the money on one
-// line, the NEXT STEP first, then blocks in one scroll, then the conversation.
+// who has learned one record has learned all six:
+//
+//   head      number · status · walk · print · full page · ⋯ · close
+//             who and how much on one line, the facts that matter beneath
+//   next step what the document is waiting for, and the one button that does it
+//   blocks    lines + totals, then the details grid — one scroll, no tabs
+//   sections  Related records · Files · GL impact · System information, each a
+//             quiet collapsed line until it is wanted
+//   activity  notes and history, with the note composer as the panel's foot
 // ════════════════════════════════════════════════════════════════════════════
 
 export type ShellCtx = {
@@ -21,6 +32,7 @@ export type ShellCtx = {
   onNext: () => void;
   onToggleFull: () => void;
   onClose: () => void;
+  show: (kind: ToastMsg["kind"], text: string, action?: ToastMsg["action"], duration?: number) => void;
 };
 
 export function RecordShell({
@@ -32,7 +44,7 @@ export function RecordShell({
   meta,
   menu,
   back,
-  onPrint,
+  printNo,
   children,
   foot,
 }: {
@@ -44,16 +56,29 @@ export function RecordShell({
   meta?: React.ReactNode[];
   menu?: (close: () => void) => React.ReactNode;
   back?: { label: string; onClick: () => void };
-  onPrint?: () => void;
+  /** The record to print; the print button, ⌘P and the preview come with it. */
+  printNo?: string;
   children: React.ReactNode;
   foot?: React.ReactNode;
 }) {
   const moreRef = React.useRef<HTMLButtonElement>(null);
   const [moreOpen, setMoreOpen] = React.useState(false);
+  const [printing, setPrinting] = React.useState(false);
   const bodyRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
     bodyRef.current?.scrollTo({ top: 0 });
   }, [no]);
+  React.useEffect(() => {
+    if (!printNo || back) return;
+    const on = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "p") {
+        e.preventDefault();
+        setPrinting(true);
+      }
+    };
+    window.addEventListener("keydown", on);
+    return () => window.removeEventListener("keydown", on);
+  }, [printNo, back]);
 
   return (
     <section className={cn("flex h-full min-h-0 flex-col bg-bz-surface", ctx.docked && !ctx.full && "border-l border-bz-line", !ctx.docked && "shadow-[var(--bz-shadow-panel)]")}>
@@ -66,7 +91,7 @@ export function RecordShell({
           ) : (
             <span className={cn("whitespace-nowrap text-[11px] font-semibold text-bz-text-soft", NUM)}>{no}</span>
           )}
-          {!back && chips}
+          {!back && <span className="flex min-w-0 items-center gap-1.5 overflow-hidden">{chips}</span>}
           <div className="ml-auto flex shrink-0 items-center gap-0.5">
             {ctx.position && !back && (
               <>
@@ -81,8 +106,8 @@ export function RecordShell({
                 </button>
               </>
             )}
-            {onPrint && !back && (
-              <button type="button" className={cn(ICON_BTN, "hidden sm:inline-flex")} onClick={onPrint} title="Print">
+            {printNo && !back && (
+              <button type="button" className={cn(ICON_BTN, "hidden sm:inline-flex")} onClick={() => setPrinting(true)} title="Print (⌘P)">
                 <Printer size={14} />
               </button>
             )}
@@ -102,7 +127,7 @@ export function RecordShell({
           </div>
         </div>
         {menu && (
-          <Popover open={moreOpen} anchor={moreRef.current} onClose={() => setMoreOpen(false)} align="right" width={230}>
+          <Popover open={moreOpen} anchor={moreRef.current} onClose={() => setMoreOpen(false)} align="right" width={240}>
             {menu(() => setMoreOpen(false))}
           </Popover>
         )}
@@ -110,7 +135,7 @@ export function RecordShell({
           <h2 className="m-0 min-w-0 flex-1 text-[17px] font-semibold leading-snug tracking-tight text-bz-text">{title}</h2>
           {amount && <div className="shrink-0 text-right text-[17px] font-semibold tracking-tight text-bz-text">{amount}</div>}
         </div>
-        {meta && meta.length > 0 && (
+        {meta && meta.filter(Boolean).length > 0 && (
           <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11.5px] text-bz-text-muted">
             {meta.filter(Boolean).map((m, i) => (
               <React.Fragment key={i}>
@@ -125,7 +150,18 @@ export function RecordShell({
         {children}
       </div>
       {foot}
+      {printNo && <PrintPreview no={printNo} open={printing} onClose={() => setPrinting(false)} onToast={(t) => ctx.show("success", t)} />}
     </section>
+  );
+}
+
+/** A customer name that opens the customer's 360 — the app's customer record. */
+export function CustomerTitle({ name, onOpen }: { name: string; onOpen: () => void }) {
+  return (
+    <button type="button" onClick={onOpen} className="group inline text-left hover:underline hover:underline-offset-4" title="Open customer">
+      {name}
+      <ArrowUpRight size={13} className="ml-1 inline align-[-1px] text-bz-text-soft opacity-0 transition-opacity group-hover:opacity-100" />
+    </button>
   );
 }
 
@@ -172,40 +208,97 @@ export function StepCard({
   );
 }
 
-/** Lines of any document: name · qty · rate · net, collapsing on a phone. */
-export function LinesTable({ rows, extraHead, qtyLabel = "Qty" }: { rows: { line: OrderLine; qty: number; sub?: React.ReactNode }[]; extraHead?: React.ReactNode; qtyLabel?: string }) {
+export function Block({ title, count, right, children }: { title: string; count?: number; right?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <section className="border-b border-bz-line-soft px-5 py-4">
+      <div className="mb-2.5 flex items-center gap-2">
+        <h3 className="m-0 text-[12px] font-semibold text-bz-text">{title}</h3>
+        {count !== undefined && <span className={cn("text-[11px] text-bz-text-soft", NUM)}>{count}</span>}
+        {right && <div className="ml-auto flex items-center gap-1.5">{right}</div>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+// ── Lines ───────────────────────────────────────────────────────────────────
+
+/**
+ * Lines of any document. The row carries what is scanned — item, quantity in
+ * its unit, rate, discount, net; a click opens the rest of the line (price
+ * level, gross, tax code and amount, HS code, description, the tenant's line
+ * fields) instead of widening the table past the panel.
+ */
+export function LinesTable({
+  rows,
+  qtyLabel = "Qty",
+}: {
+  rows: { line: OrderLine; qty: number; sub?: React.ReactNode; detail?: React.ReactNode }[];
+  qtyLabel?: string;
+}) {
+  const [open, setOpen] = React.useState<number | null>(null);
+  const cols = "grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,1fr)_76px_96px_64px_112px]";
   return (
     <div className="overflow-hidden rounded-bz-md border border-bz-line-soft">
-      <div className={cn("hidden grid-cols-[minmax(0,1fr)_72px_100px_116px] items-center gap-3 border-b border-bz-line bg-bz-paper-warm px-3 py-1.5 sm:grid", LABEL)}>
-        <span>Item {extraHead}</span>
+      <div className={cn("hidden items-center gap-3 border-b border-bz-line bg-bz-paper-warm px-3 py-1.5 sm:grid", cols, LABEL)}>
+        <span className="pl-[17px]">Item</span>
         <span className="text-right">{qtyLabel}</span>
         <span className="text-right">Rate</span>
+        <span className="text-right">Disc</span>
         <span className="text-right">Net</span>
       </div>
-      {rows.map(({ line, qty, sub }, i) => {
+      {rows.map(({ line, qty, sub, detail }, i) => {
         const it = itemById(line.itemId)!;
+        const scaled = { ...line, qty, discountAmt: line.discountAmt ? (line.discountAmt * qty) / line.qty : undefined };
+        const isOpen = open === i;
+        const unit = line.unit ?? it.unit;
         return (
-          <div key={`${line.id}-${i}`} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-bz-line-soft px-3 py-2 last:border-0 sm:grid-cols-[minmax(0,1fr)_72px_100px_116px]">
-            <span className="min-w-0">
-              <span className="block truncate text-[12.5px] text-bz-text">{it.name}</span>
-              <span className={cn("block truncate text-[10.5px] text-bz-text-soft", NUM)}>
-                {it.code}
-                {line.discountPct > 0 && ` · ${line.discountPct}% off`}
-                {sub && <> · {sub}</>}
+          <div key={`${line.id}-${i}`} className="border-b border-bz-line-soft last:border-0">
+            <button type="button" onClick={() => setOpen(isOpen ? null : i)} className={cn("grid w-full items-start gap-3 px-3 py-2 text-left transition-colors hover:bg-bz-paper-warm", cols, isOpen && "bg-bz-paper-warm")}>
+              <span className="min-w-0">
+                <span className="flex items-center gap-1.5">
+                  <ChevronRight size={11} className={cn("shrink-0 text-bz-text-soft transition-transform", isOpen && "rotate-90")} />
+                  <span className="truncate text-[12.5px] text-bz-text">{it.name}</span>
+                </span>
+                <span className={cn("ml-[17px] block truncate text-[10.5px] text-bz-text-soft", NUM)}>
+                  {it.code}
+                  {line.tax !== "VAT13" && ` · ${TAX_LABEL[line.tax]}`}
+                  {sub && <> · {sub}</>}
+                </span>
               </span>
-            </span>
-            <span className={cn("hidden text-right text-[12.5px] text-bz-text sm:block", NUM)}>
-              {fmtQty(qty)} <span className="text-[10.5px] text-bz-text-soft">{it.unit}</span>
-            </span>
-            <span className="hidden text-right text-[12.5px] text-bz-text sm:block">
-              <Amount value={line.rate} />
-            </span>
-            <span className="text-right text-[12.5px] font-semibold text-bz-text">
-              <Amount value={lineNet({ ...line, qty })} />
-              <span className={cn("block text-[10.5px] font-normal text-bz-text-soft sm:hidden", NUM)}>
-                {fmtQty(qty)} {it.unit} × <Amount value={line.rate} className="text-bz-text-soft" />
+              <span className={cn("hidden text-right text-[12.5px] text-bz-text sm:block", NUM)}>
+                {fmtQty(qty)} <span className="text-[10.5px] text-bz-text-soft">{unit}</span>
               </span>
-            </span>
+              <span className="hidden text-right text-[12.5px] text-bz-text sm:block">
+                <Amount value={line.rate} />
+              </span>
+              <span className={cn("hidden text-right text-[12px] sm:block", NUM, lineDiscount(scaled) ? "text-bz-text" : "text-bz-text-soft")}>
+                {line.discountAmt ? <Amount value={lineDiscount(scaled)} /> : line.discountPct ? `${line.discountPct}%` : "—"}
+              </span>
+              <span className="text-right text-[12.5px] font-semibold text-bz-text">
+                <Amount value={lineGross(scaled)} />
+                <span className={cn("block text-[10.5px] font-normal text-bz-text-soft sm:hidden", NUM)}>
+                  {fmtQty(qty)} {unit} × <Amount value={line.rate} className="text-bz-text-soft" />
+                </span>
+              </span>
+            </button>
+            {detail && <div className="px-3 pb-2 pl-[29px]">{detail}</div>}
+            {isOpen && (
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2 bg-bz-paper px-3 pb-3 pl-[29px] pt-2 text-[11.5px] sm:grid-cols-4">
+                <KV label="Unit" value={unit === it.unit ? unit : `${unit} (${fmtQty(it.units?.find((u) => u.code === unit)?.factor ?? 1)} ${it.unit})`} />
+                <KV label="Price level" value={line.priceLevel ?? "Custom rate"} />
+                <KV label="Gross" value={<Amount value={qty * line.rate} />} />
+                <KV label="Discount" value={lineDiscount(scaled) ? <><Amount value={lineDiscount(scaled)} />{line.discountPct ? <span className="text-bz-text-soft"> ({line.discountPct}%)</span> : null}</> : "—"} />
+                <KV label="Tax code" value={TAX_LABEL[line.tax]} />
+                <KV label="Tax amount" value={<Amount value={lineTax(scaled)} />} />
+                <KV label="Net with tax" value={<Amount value={lineNet(scaled)} />} />
+                <KV label="HS code" value={<span className={NUM}>{it.hs}</span>} />
+                {LINE_FIELDS.map((f) => (
+                  <KV key={f.key} label={f.label} value={line.custom?.[f.key] || <span className="text-bz-text-soft">—</span>} />
+                ))}
+                {line.description && <KV label="Description" value={line.description} className="col-span-full" />}
+              </div>
+            )}
           </div>
         );
       })}
@@ -213,10 +306,23 @@ export function LinesTable({ rows, extraHead, qtyLabel = "Qty" }: { rows: { line
   );
 }
 
-/** Label / figure pairs, right-aligned, the last one the total. */
-export function MoneyList({ rows, className }: { rows: { label: React.ReactNode; value: React.ReactNode; strong?: boolean; danger?: boolean; soft?: boolean }[]; className?: string }) {
+export function KV({ label, value, className }: { label: string; value: React.ReactNode; className?: string }) {
   return (
-    <dl className={cn("ml-auto mt-3 grid w-full max-w-[320px] grid-cols-[1fr_auto] gap-x-6 gap-y-1 text-[12px]", className)}>
+    <div className={cn("min-w-0", className)}>
+      <p className={cn(LABEL, "m-0 mb-0.5")}>{label}</p>
+      <p className="m-0 truncate text-bz-text">{value}</p>
+    </div>
+  );
+}
+
+// ── Money ───────────────────────────────────────────────────────────────────
+
+type MoneyRow = { label: React.ReactNode; value: React.ReactNode; strong?: boolean; danger?: boolean; soft?: boolean };
+
+/** Label / figure pairs, right-aligned; a `strong` row carries a rule above it. */
+export function MoneyList({ rows, className }: { rows: MoneyRow[]; className?: string }) {
+  return (
+    <dl className={cn("ml-auto mt-3 grid w-full max-w-[340px] grid-cols-[1fr_auto] gap-x-6 gap-y-1 text-[12px]", className)}>
       {rows.map((r, i) => (
         <React.Fragment key={i}>
           <dt className={cn(r.strong ? "mt-1 border-t border-bz-line-soft pt-2 text-[12.5px] font-semibold text-bz-text" : r.soft ? "text-bz-text-soft" : "text-bz-text-muted")}>{r.label}</dt>
@@ -227,13 +333,140 @@ export function MoneyList({ rows, className }: { rows: { label: React.ReactNode;
   );
 }
 
-/** Comments and history interleaved; the composer is the panel's foot. */
+/** The totals every priced document shows: per tax code, bill discount, TDS, and the NPR figure for a foreign currency. */
+export function totalsRows(t: ReturnType<typeof totalsOf>, o: { currency: string; exchangeRate: number; tdsCode?: string | null; totalLabel?: string }): MoneyRow[] {
+  return [
+    { label: "Subtotal", value: <Amount value={t.subtotal} /> },
+    ...(t.discount > 0 ? [{ label: "Line discounts", value: <>−<Amount value={t.discount} /></> }] : []),
+    ...(t.bill > 0 ? [{ label: "Bill discount", value: <>−<Amount value={t.bill} /></> }] : []),
+    ...t.byTax.map((x) => ({
+      label: <>{x.label} <span className="text-bz-text-soft">on <Amount value={x.base} className="text-bz-text-soft" /></span></>,
+      value: <Amount value={x.tax} />,
+    })),
+    { label: o.totalLabel ?? "Total", value: <Amount value={t.total} currency={o.currency} />, strong: true },
+    ...(o.currency !== "NPR" ? [{ label: <>at {o.exchangeRate}</>, value: <>≈ <Amount value={t.total * o.exchangeRate} currency="NPR" /></>, soft: true }] : []),
+    ...(t.tds > 0 ? [{ label: `TDS · ${tdsById(o.tdsCode)?.name ?? ""}`, value: <>−<Amount value={t.tds} /></> }, { label: "Receivable", value: <Amount value={t.receivable} currency={o.currency} /> }] : []),
+  ];
+}
+
+// ── Details ─────────────────────────────────────────────────────────────────
+
+/**
+ * The header facts every document shares, in one grid: subsidiary, dates (AD
+ * with BS), currency and rate, the tenant's custom fields, classification and
+ * memo. `lead` cells go first — whatever is particular to the document.
+ */
+export function DetailsBlock({
+  lead,
+  subsidiaryId,
+  dates,
+  currency,
+  exchangeRate,
+  custom,
+  dims,
+  memo,
+  right,
+}: {
+  lead?: React.ReactNode;
+  subsidiaryId: string;
+  dates: [string, string | null | undefined][];
+  currency?: string;
+  exchangeRate?: number;
+  custom?: Record<string, string>;
+  dims?: Order["dims"];
+  memo?: string;
+  right?: React.ReactNode;
+}) {
+  const sub = subsidiaryById(subsidiaryId);
+  const setDims = DIMENSIONS.filter((d) => dims?.[d.key]);
+  return (
+    <Block title="Details" right={right}>
+      <CellGrid>
+        {lead}
+        <Cell label="Subsidiary">
+          {sub.name}
+          <span className={cn("block text-[10.5px] text-bz-text-soft", NUM)}>PAN {sub.pan}</span>
+        </Cell>
+        {currency && (
+          <Cell label="Currency">
+            {currency}
+            {currency !== "NPR" && <span className={cn("ml-1 text-bz-text-soft", NUM)}>@ {exchangeRate}</span>}
+          </Cell>
+        )}
+        {dates.map(([label, iso]) => (
+          <Cell key={label} label={label}>
+            <Dual iso={iso} />
+          </Cell>
+        ))}
+        {custom && customFieldCells(custom)}
+        {setDims.map((d) => (
+          <Cell key={d.key} label={d.label}>
+            {dims![d.key]}
+          </Cell>
+        ))}
+        {memo && (
+          <Cell label="Memo" wide>
+            <span className="whitespace-pre-wrap leading-relaxed">{memo}</span>
+          </Cell>
+        )}
+      </CellGrid>
+    </Block>
+  );
+}
+
+// ── Sections at the foot ────────────────────────────────────────────────────
+
+export function RecordSections({
+  no,
+  files,
+  onAttach,
+  onToast,
+  created,
+  history,
+  audit,
+  gl,
+}: {
+  no: string;
+  files: Attachment[];
+  onAttach: () => void;
+  onToast: (t: string) => void;
+  created: { byId: string; on: string };
+  history: HistoryEvent[];
+  audit: AuditRow[];
+  /** Omitted for documents that never post (orders, estimates). */
+  gl?: GLRow[];
+}) {
+  const data = useSales();
+  const navigate = useNavigate();
+  const related = React.useMemo(() => relatedFor(no, data), [no, data]);
+  return (
+    <div className="border-b border-bz-line-soft">
+      <RelatedSection rows={related} onOpen={(n) => (n.startsWith("OPP-") ? onToast(`${n} opens in CRM`) : navigate(hrefFor(n)))} />
+      <FilesSection files={files} onAdd={onAttach} onToast={onToast} />
+      {gl && <GLSection rows={gl} />}
+      <SystemSection created={created} history={history} audit={audit} />
+    </div>
+  );
+}
+
+// ── Activity ────────────────────────────────────────────────────────────────
+
+const MONTH: Record<string, number> = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
+const whenKey = (w: string) => {
+  const m = /^(\w{3}) (\d+), (\d+):(\d+)/.exec(w);
+  if (!m) return 99_99_99_99;
+  return MONTH[m[1]] * 1_000_000 + Number(m[2]) * 10_000 + Number(m[3]) * 100 + Number(m[4]);
+};
+
+/** Notes (with their title and direction, when they have one) and history, interleaved by time. */
 export function ActivityList({ comments, history }: { comments: Comment[]; history: HistoryEvent[] }) {
-  const [show, setShow] = React.useState<"all" | "comments" | "history">("all");
+  const [show, setShow] = React.useState<"all" | "notes" | "history">("all");
   const items = [
-    ...comments.map((c) => ({ kind: "c" as const, key: c.id, when: c.when, who: c.authorId, body: c.body })),
-    ...history.map((h) => ({ kind: "h" as const, key: h.id, when: h.when, who: h.whoId, body: h.what })),
-  ].filter((x) => show === "all" || (show === "comments" ? x.kind === "c" : x.kind === "h"));
+    ...comments.map((c) => ({ kind: "c" as const, key: c.id, when: c.when, who: c.authorId, body: c.body, title: c.title, direction: c.direction })),
+    ...history.map((h) => ({ kind: "h" as const, key: h.id, when: h.when, who: h.whoId, body: h.what, title: undefined, direction: undefined })),
+  ]
+    .filter((x) => show === "all" || (show === "notes" ? x.kind === "c" : x.kind === "h"))
+    .sort((a, b) => whenKey(a.when) - whenKey(b.when));
   return (
     <section className="px-5 py-4">
       <div className="mb-2.5 flex items-center gap-2">
@@ -245,23 +478,29 @@ export function ActivityList({ comments, history }: { comments: Comment[]; histo
             onChange={setShow}
             options={[
               { value: "all", label: "All" },
-              { value: "comments", label: "Comments", count: comments.length },
+              { value: "notes", label: "Notes", count: comments.length },
               { value: "history", label: "History" },
             ]}
           />
         </div>
       </div>
-      {items.length === 0 && <p className="m-0 text-[11.5px] text-bz-text-soft">Nothing yet.</p>}
+      {items.length === 0 && <p className="m-0 text-[11.5px] text-bz-text-soft">{show === "notes" ? "No notes yet." : "Nothing yet."}</p>}
       <ol className="m-0 flex list-none flex-col gap-3 p-0">
         {items.map((x) =>
           x.kind === "c" ? (
             <li key={x.key} className="flex gap-2.5">
               <Avatar person={personById(x.who)} size={22} />
               <div className="min-w-0 flex-1">
-                <p className="m-0 text-[11.5px]">
+                <p className="m-0 flex flex-wrap items-center gap-x-2 text-[11.5px]">
                   <span className="font-semibold text-bz-text">{personById(x.who)?.name}</span>
-                  <span className={cn("ml-2 text-bz-text-soft", NUM)}>{x.when}</span>
+                  {x.direction && (
+                    <span className="inline-flex items-center gap-0.5 text-[10.5px] text-bz-text-muted" title={x.direction === "Inbound" ? "From the customer" : "To the customer"}>
+                      {x.direction === "Inbound" ? <ArrowDownLeft size={11} /> : <ArrowUpRight size={11} />} {x.direction}
+                    </span>
+                  )}
+                  <span className={cn("text-bz-text-soft", NUM)}>{x.when}</span>
                 </p>
+                {x.title && <p className="m-0 mt-0.5 text-[12px] font-semibold text-bz-text">{x.title}</p>}
                 <p className="m-0 mt-0.5 whitespace-pre-wrap text-[12px] leading-relaxed text-bz-text">{x.body}</p>
               </div>
             </li>
@@ -277,29 +516,5 @@ export function ActivityList({ comments, history }: { comments: Comment[]; histo
         )}
       </ol>
     </section>
-  );
-}
-
-export function CommentFoot({ onSend }: { onSend: (body: string) => void }) {
-  const [body, setBody] = React.useState("");
-  const send = () => {
-    if (!body.trim()) return;
-    onSend(body.trim());
-    setBody("");
-  };
-  return (
-    <div className="flex shrink-0 items-center gap-2 border-t border-bz-line-soft bg-bz-paper px-5 py-2.5">
-      <Avatar person={ME} size={24} />
-      <input
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), send())}
-        placeholder="Comment… @ to mention"
-        className="h-8 min-w-0 flex-1 rounded-bz-md border border-bz-line bg-bz-surface px-3 text-[12px] text-bz-text outline-none placeholder:text-bz-text-soft hover:border-bz-text-soft focus:border-bz-text-muted"
-      />
-      <button type="button" onClick={send} disabled={!body.trim()} className={cn(BTN, "h-8 px-3")}>
-        <Send size={12} /> Send
-      </button>
-    </div>
   );
 }
