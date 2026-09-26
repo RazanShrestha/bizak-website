@@ -50,7 +50,7 @@ const RAIL: { icon: React.ComponentType<{ size?: number }>; label: string; href?
   { icon: Receipt, label: "Invoices" },
   { icon: Users, label: "Customers" },
   { icon: ShoppingBag, label: "Purchasing" },
-  { icon: Boxes, label: "Inventory" },
+  { icon: Boxes, label: "Inventory", href: "/design/masters/items" },
   { icon: Landmark, label: "Accounts" },
   { icon: BarChart3, label: "Reports" },
 ];
@@ -91,18 +91,21 @@ export function AppFrame({ title, titleAside, rail, children }: { title: string;
       >
         {/* ── Rail ─────────────────────────────────────────────────────── */}
         <nav className={cn("hidden w-[58px] shrink-0 flex-col items-center bg-bz-rail py-3 md:flex", dark && "border-r border-bz-line-soft")}>
-          <span className="mb-4 flex size-8 items-center justify-center rounded-bz-md text-[15px] font-bold text-bz-text-on-dark">b</span>
-          <button type="button" className="mb-3 flex h-7 w-10 items-center justify-center rounded-bz-md border border-white/10 text-white/60 hover:text-white" aria-label="Search">
+          <span className="mb-4 flex size-8 shrink-0 items-center justify-center rounded-bz-md text-[15px] font-bold text-bz-text-on-dark [@media(max-height:760px)]:mb-2">b</span>
+          <button type="button" className="mb-3 flex h-7 w-10 shrink-0 items-center [@media(max-height:760px)]:mb-2 justify-center rounded-bz-md border border-white/10 text-white/60 hover:text-white focus-visible:outline-2 focus-visible:outline-bz-fire" aria-label="Search" title="Search">
             <Search size={13} />
           </button>
-          <div className="flex flex-1 flex-col items-center gap-1 overflow-y-auto">
+          {/* A short window (≤ 760px) tightens the rail — 32px tiles, 2px apart — so its entries fit without a
+              scrollbar across the icons; if they still don't, the list scrolls with the bar hidden. Taller
+              windows are untouched. (Masters design review §16.2 #7.) */}
+          <div className="flex min-h-0 flex-1 flex-col items-center gap-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [@media(max-height:760px)]:gap-0.5">
             {RAIL.map((r) => {
               const Icon = r.icon;
               const body = (
                 <span
                   title={r.label}
                   className={cn(
-                    "flex size-9 items-center justify-center rounded-bz-md transition-colors",
+                    "flex size-9 items-center justify-center rounded-bz-md transition-colors [@media(max-height:760px)]:size-8",
                     (rail ? r.label === rail : r.active) ? "bg-white/[0.08] text-bz-fire" : "text-white/55 hover:bg-white/[0.06] hover:text-white",
                   )}
                 >
@@ -118,9 +121,15 @@ export function AppFrame({ title, titleAside, rail, children }: { title: string;
               );
             })}
           </div>
-          <span title="Settings" className={cn("mt-2 flex size-9 items-center justify-center rounded-bz-md", rail === "Settings" ? "bg-white/[0.08] text-bz-fire" : "text-white/55")}>
+          {/* Setup's masters hub lives behind this glyph (masters spec §2.2). */}
+          <Link
+            to="/design/masters/currencies"
+            aria-label="Settings"
+            title="Settings"
+            className={cn("mt-2 flex size-9 shrink-0 items-center justify-center rounded-bz-md transition-colors [@media(max-height:760px)]:size-8", rail === "Settings" ? "bg-white/[0.08] text-bz-fire" : "text-white/55 hover:bg-white/[0.06] hover:text-white")}
+          >
             <Settings size={16} />
-          </span>
+          </Link>
           <span className="mt-2">
             <Avatar person={ME} size={28} />
           </span>
@@ -140,10 +149,10 @@ export function AppFrame({ title, titleAside, rail, children }: { title: string;
               >
                 {dark ? <Sun size={15} /> : <Moon size={15} />}
               </button>
-              <button type="button" className="hidden size-8 items-center justify-center rounded-bz-md text-bz-text-muted hover:bg-bz-paper-warm sm:flex" aria-label="Help">
+              <button type="button" className="hidden size-8 items-center justify-center rounded-bz-md text-bz-text-muted hover:bg-bz-paper-warm focus-visible:outline-2 focus-visible:outline-bz-fire sm:flex" aria-label="Help" title="Help">
                 <CircleHelp size={15} />
               </button>
-              <button type="button" className="relative flex size-8 items-center justify-center rounded-bz-md text-bz-text-muted hover:bg-bz-paper-warm" aria-label="Notifications">
+              <button type="button" className="relative flex size-8 items-center justify-center rounded-bz-md text-bz-text-muted hover:bg-bz-paper-warm focus-visible:outline-2 focus-visible:outline-bz-fire" aria-label="Notifications" title="Notifications">
                 <Bell size={15} />
                 <span className="absolute right-2 top-1.5 size-1.5 rounded-bz-pill bg-bz-fire" />
               </button>

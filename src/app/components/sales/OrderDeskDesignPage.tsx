@@ -38,7 +38,9 @@ import {
 import { SUBSIDIARIES, subsidiaryById } from "./master";
 import { ordersStore, useStore } from "./store";
 import { SalesNav, addChildDoc, approveOrder, deleteOrder, ev, estimatesStore, orderedQty, updateOrder } from "./flow";
-import { ComposerResult, OrderComposer } from "./OrderComposer";
+import { ComposerResult, OrderComposer, itemSeedKey, readItemSeed } from "./OrderComposer";
+// A new document started from an item (masters spec 3.6 / 5, B-F1) is dated on the masters' clock.
+import { MASTERS_TODAY } from "../masters/seed/currencies";
 import { DateCell, DocDesk, ExpandLines, PanelCtx } from "./DocDesk";
 import { OrderPanel } from "./OrderPanel";
 import { pendingOn, unitsLabel } from "./FulfilSheet";
@@ -211,9 +213,12 @@ export function OrderDeskDesignPage() {
         />
       );
     }
+    const itemSeed = src ? null : readItemSeed(search);
     return (
       <OrderComposer
-        key={src ? `copy-${src.no}` : "new"}
+        key={src ? `copy-${src.no}` : `new${itemSeedKey(itemSeed)}`}
+        today={src ? undefined : MASTERS_TODAY}
+        itemSeed={itemSeed}
         noun="order"
         title={src ? `Copy of ${src.no}` : "New sales order"}
         source={src ? { no: src.no, label: "Copied from" } : undefined}

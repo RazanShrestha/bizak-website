@@ -29,7 +29,9 @@ import {
   updateOrder,
   useSales,
 } from "./flow";
-import { ComposerResult, OrderComposer } from "./OrderComposer";
+import { ComposerResult, OrderComposer, itemSeedKey, readItemSeed } from "./OrderComposer";
+// A new document started from an item (masters spec 3.6 / 5, B-F1) is dated on the masters' clock.
+import { MASTERS_TODAY } from "../masters/seed/currencies";
 import { ReceiptSheet, ReturnSheet } from "./MoneySheets";
 import { glInvoice } from "./gl";
 
@@ -114,9 +116,12 @@ export function InvoicesDesk() {
   const composeNew = (ctx: PanelCtx) => {
     const copy = search.get("copy");
     const src = copy ? invoices.find((v) => v.doc.no === copy) : undefined;
+    const itemSeed = src ? null : readItemSeed(search);
     return (
       <OrderComposer
-        key={src ? `copy-${src.doc.no}` : "new"}
+        key={src ? `copy-${src.doc.no}` : `new${itemSeedKey(itemSeed)}`}
+        today={src ? undefined : MASTERS_TODAY}
+        itemSeed={itemSeed}
         noun="invoice"
         title={src ? `Copy of ${src.doc.no}` : "New invoice · no order"}
         source={src ? { no: src.doc.no, label: "Copied from" } : undefined}

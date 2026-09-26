@@ -31,7 +31,9 @@ import {
   updateEstimate,
   useSales,
 } from "./flow";
-import { ComposerResult, OrderComposer } from "./OrderComposer";
+import { ComposerResult, OrderComposer, itemSeedKey, readItemSeed } from "./OrderComposer";
+// A new document started from an item (masters spec 3.6 / 5, B-F1) is dated on the masters' clock.
+import { MASTERS_TODAY } from "../masters/seed/currencies";
 
 // ════════════════════════════════════════════════════════════════════════════
 // ESTIMATES — the start of the flow
@@ -83,9 +85,12 @@ export function EstimatesDesk() {
   const composeNew = (ctx: PanelCtx) => {
     const copy = search.get("copy");
     const src = copy ? estimates.find((e) => e.no === copy) : undefined;
+    const itemSeed = src ? null : readItemSeed(search);
     return (
       <OrderComposer
-        key={src ? `copy-${src.no}` : "new"}
+        key={src ? `copy-${src.no}` : `new${itemSeedKey(itemSeed)}`}
+        today={src ? undefined : MASTERS_TODAY}
+        itemSeed={itemSeed}
         noun="estimate"
         title={src ? `Copy of ${src.no}` : "New estimate"}
         source={src ? { no: src.no, label: "Copied from" } : undefined}

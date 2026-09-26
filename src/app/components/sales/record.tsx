@@ -47,6 +47,8 @@ export function RecordShell({
   printNo,
   children,
   foot,
+  image,
+  onFullPage,
 }: {
   ctx: ShellCtx;
   no: string;
@@ -60,6 +62,10 @@ export function RecordShell({
   printNo?: string;
   children: React.ReactNode;
   foot?: React.ReactNode;
+  /** A master's picture tile, left of the title (masters spec §3.2). */
+  image?: React.ReactNode;
+  /** A master's record page: ⤢ navigates to it (at every width) instead of widening the panel. */
+  onFullPage?: () => void;
 }) {
   const moreRef = React.useRef<HTMLButtonElement>(null);
   const [moreOpen, setMoreOpen] = React.useState(false);
@@ -111,7 +117,11 @@ export function RecordShell({
                 <Printer size={14} />
               </button>
             )}
-            {ctx.docked && (
+            {onFullPage ? (
+              <button type="button" className={ICON_BTN} onClick={onFullPage} title="Open the full page (⇧↵)" aria-label="Open the full page">
+                <Maximize2 size={14} />
+              </button>
+            ) : ctx.docked && (
               <button type="button" className={cn(ICON_BTN, "hidden md:inline-flex")} onClick={ctx.onToggleFull} title={ctx.full ? "Back beside the list" : "Full page"}>
                 {ctx.full ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
               </button>
@@ -132,6 +142,7 @@ export function RecordShell({
           </Popover>
         )}
         <div className="mt-2 flex items-start gap-3">
+          {image && <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-bz-md border border-bz-line-soft bg-bz-paper-warm text-bz-text-soft">{image}</span>}
           <h2 className="m-0 min-w-0 flex-1 text-[17px] font-semibold leading-snug tracking-tight text-bz-text">{title}</h2>
           {amount && <div className="shrink-0 text-right text-[17px] font-semibold tracking-tight text-bz-text">{amount}</div>}
         </div>

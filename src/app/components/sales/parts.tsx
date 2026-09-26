@@ -57,7 +57,7 @@ export function Section({
       <div className="flex min-h-11 items-center gap-2">
         <button type="button" onClick={() => setOpen((v) => !v)} className="flex min-w-0 flex-1 items-center gap-2 py-3 text-left" aria-expanded={open}>
           {open ? <ChevronDown size={13} className="shrink-0 text-bz-text-soft" /> : <ChevronRight size={13} className="shrink-0 text-bz-text-soft" />}
-          <h3 className="m-0 text-[12px] font-semibold text-bz-text">{title}</h3>
+          <h3 className="m-0 shrink-0 whitespace-nowrap text-[12px] font-semibold text-bz-text">{title}</h3>
           {count !== undefined && <span className={cn("text-[11px] text-bz-text-soft", NUM)}>{count}</span>}
           {!open && summary && <span className="min-w-0 truncate text-[11px] text-bz-text-soft">{summary}</span>}
         </button>
@@ -693,10 +693,12 @@ export function useLifecycle(no: string) {
 
 const fileIcon = (name: string) => (/\.(png|jpe?g|gif|webp)$/i.test(name) ? FileImage : /\.(xlsx?|csv)$/i.test(name) ? FileSpreadsheet : FileText);
 
-export function FilesSection({ files, onAdd, onRemove, onToast }: { files: Attachment[]; onAdd: () => void; onRemove?: (name: string) => void; onToast: (t: string) => void }) {
+/** `bare`: the list, drop zone and preview only — a host that draws its own section head (a master's record page). */
+export function FilesSection({ files, onAdd, onRemove, onToast, bare }: { files: Attachment[]; onAdd: () => void; onRemove?: (name: string) => void; onToast: (t: string) => void; bare?: boolean }) {
   const [preview, setPreview] = React.useState<Attachment | null>(null);
+  const Wrap = bare ? BareSection : Section;
   return (
-    <Section
+    <Wrap
       title="Files"
       count={files.length}
       summary={files.length ? files.map((f) => f.name).join(", ") : "None"}
@@ -723,7 +725,7 @@ export function FilesSection({ files, onAdd, onRemove, onToast }: { files: Attac
                 </button>
                 <span className={cn("hidden text-[10.5px] text-bz-text-soft sm:inline", NUM)}>
                   {f.size}
-                  {f.byId && <> · {personById(f.byId)?.name.split(" ")[0]}</>}
+                  {f.byId && <> · {personById(f.byId)?.name.split(" ")[0] ?? f.byId}</>}
                   {f.on && <> · {f.on}</>}
                 </span>
                 <span className="flex items-center opacity-100 md:opacity-0 md:group-hover:opacity-100">
@@ -765,12 +767,16 @@ export function FilesSection({ files, onAdd, onRemove, onToast }: { files: Attac
           {preview && React.createElement(fileIcon(preview.name), { size: 32 })}
           <span className="text-[11.5px]">
             {preview?.size}
-            {preview?.byId && ` · uploaded by ${personById(preview.byId)?.name}`}
+            {preview?.byId && ` · uploaded by ${personById(preview.byId)?.name ?? preview.byId}`}
           </span>
         </div>
       </Dialog>
-    </Section>
+    </Wrap>
   );
+}
+
+function BareSection({ children }: { children: React.ReactNode; title: string; count?: number; summary?: React.ReactNode; right?: React.ReactNode; defaultOpen?: boolean }) {
+  return <>{children}</>;
 }
 
 // ── Related records ─────────────────────────────────────────────────────────

@@ -149,6 +149,9 @@
   --bz-red-mark:     #C0413A;
   --bz-amber:        #D97706;
   --bz-amber-soft:   #FEF3C7;
+  /* Amber as TEXT ("14d ago", "not a code"): --bz-amber is a glyph tone and reads 3.1:1 on paper;
+     this ink is 4.9:1. Angular twin to add: $bz-amber-ink / $bz-dark-amber-ink (masters review §16). */
+  --bz-amber-ink:    #B45309;
   --bz-positive:     #88A64C;
   --bz-pos-deep:     #4F7A28;
   --bz-primary:      var(--bz-deep);
@@ -176,13 +179,14 @@
   --bz-text:         #E8E8E6;
   --bz-text-heading: #F4F4F2;
   --bz-text-muted:   #A8A8A5;
-  --bz-text-soft:    #85857F;
+  --bz-text-soft:    #95958F;   /* raised from #85857F: 4.8:1 on paper-warm, 5.4:1 on surface (WCAG AA) */
   --bz-leaf:         #34462A;
   --bz-red:          #F08A80;
   --bz-red-soft:     #3B2220;
   --bz-red-mark:     #F08A80;
   --bz-amber:        #F3A83B;
   --bz-amber-soft:   #3A2D16;
+  --bz-amber-ink:    #F3A83B;
   --bz-positive:     #9DBB62;
   --bz-pos-deep:     #9DBB62;
   --bz-primary:      var(--bz-fire);
@@ -306,6 +310,7 @@
   --color-bz-red-mark:       var(--bz-red-mark);
   --color-bz-amber:          var(--bz-amber);
   --color-bz-amber-soft:     var(--bz-amber-soft);
+  --color-bz-amber-ink:      var(--bz-amber-ink);
   --color-bz-positive:       var(--bz-positive);
   --color-bz-pos-deep:       var(--bz-pos-deep);
   --color-bz-primary:        var(--bz-primary);

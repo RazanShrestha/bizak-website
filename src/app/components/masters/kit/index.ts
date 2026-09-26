@@ -1,0 +1,21 @@
+// The masters kit (spec §6.3) — import from here: `import { Grid, RecordPage, … } from "../kit"`.
+export { Grid, useStagedRows } from "./Grid";
+export type { CellValue, GhostRefusal, GridColumn, GridGroup, GridHandle, GridMode, GridProps, GridRowBase, GridTree, RowState, StagedRows } from "./Grid";
+export { Facts, PageField, goToField, RecordPage, RecordSection, RelatedBlock, SaveDock, SectionNav, useUnsavedGuard } from "./RecordPage";
+export type { Fact, PageSection, SectionMark, StagedChange } from "./RecordPage";
+export { InlineField } from "./InlineField";
+export type { InlineValue } from "./InlineField";
+export { MasterSheet, SheetContext } from "./MasterSheet";
+export type { SheetMode } from "./MasterSheet";
+export { MasterTable, MastersHub, usageBands } from "./MastersHub";
+export type { MasterKindConfig, MasterPick, MasterRow } from "./MastersHub";
+export { CopyText, EditTrigger, Failed, LINK, LOCKED_BY_MOVEMENT, LineOffer, Lock, Retry, Source, Usage } from "./marks";
+export type { SourceProps, UsageCount } from "./marks";
+export { DateField, DatedRates, OUTLIER_PCT, RatePop, outlierNote, useDatedRates } from "./RatePop";
+export type { DatedRate } from "./RatePop";
+export { AskFirst } from "./AskFirst";
+export { AmountPop } from "./AmountPop";
+export type { AskFirstResult } from "./AskFirst";
+export { MAC, fmtDay, fmtDayMonth, fmtRate, inverseOf, isIsoDay, mod, parseNum, pctChange, stepDate } from "./util";
+export { VariantPicker } from "./VariantPicker";
+export type { PickableVariant } from "./VariantPicker";

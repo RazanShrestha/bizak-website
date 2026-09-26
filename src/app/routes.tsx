@@ -100,6 +100,9 @@ import { ReceiptsDesk, ReturnsDesk } from "./components/sales/ReceiptsDesk";
 import { PrintPage } from "./components/sales/print";
 import { ItemReceiptsDesk } from "./components/purchase/ItemReceiptsDesk";
 import { ScheduledJobsDesignPage } from "./components/scheduler/ScheduledJobsDesignPage";
+import { MastersKitPage } from "./components/masters/MastersKitPage";
+import { MastersHubPage } from "./components/masters/hub/MastersHubPage";
+import { ItemsDesk } from "./components/masters/items/ItemsDesk";
 import { AutoNumberDesignPage } from "./components/AutoNumberDesignPage";
 import { ItemFormDesignPage } from "./components/ItemFormDesignPage";
 import { ItemDetailDesignPage } from "./components/ItemDetailDesignPage";
@@ -1638,6 +1641,20 @@ export const router = createBrowserRouter([
       { path: "design/purchase/item-receipts",      Component: ItemReceiptsDesk                  },
       { path: "design/purchase/item-receipts/:no",  Component: ItemReceiptsDesk                  },
       { path: "design/scheduled-jobs",              Component: ScheduledJobsDesignPage           },
+      // Masters kit bench (masters spec §9.4 WP0). Declared before any `design/masters/:kind` route.
+      { path: "design/masters/kit",                 Component: MastersKitPage                    },
+      { path: "design/masters/_kit",                Component: MastersKitPage                    },
+      // Item desk (masters spec §3, §9.1, WP1): list, create sheet, peek and record page — one component,
+      // so the list keeps its state while a record opens. Declared before `design/masters/:kind`.
+      { path: "design/masters/items",               Component: ItemsDesk                         },
+      { path: "design/masters/items/new",           Component: ItemsDesk                         },
+      { path: "design/masters/items/:no",           Component: ItemsDesk                         },
+      { path: "design/masters/items/:no/page",      Component: ItemsDesk                         },
+      // Masters hub (masters spec §2, §4, WP2): every tier-2/3 master, one component for all its URLs.
+      // Static paths (`kit`, the item desk's `items`) outrank `:kind` whatever their order.
+      { path: "design/masters",                     Component: MastersHubPage                    },
+      { path: "design/masters/:kind",               Component: MastersHubPage                    },
+      { path: "design/masters/:kind/:no",           Component: MastersHubPage                    },
       { path: "design/support-tickets",             Component: SupportTicketListDesignPageLayout },
       { path: "design/support-tickets/new",         Component: CreateSupportTicketDesignPageLayout },
       { path: "design/custom-fields",               Component: CustomFieldsBuilderPageLayout     },

@@ -36,9 +36,25 @@ import {
   totalsOf,
   unitsOf,
 } from "./orders";
-import { Avatar, BTN, Dialog, DocLink, GHOST, GHOST_SM, ICON_BTN, INPUT, INPUT_SM, Kbd, LABEL, NUM, PANEL, Popover, Portal, Refusal, Segmented, Select, Switch, TEXTAREA } from "./bzw";
-import { BILL_DISCOUNT_BASES, CURRENCIES, DEPOSIT_LEDGERS, DIMENSIONS, HEADER_FIELDS, LINE_FIELDS, PAYMENT_METHODS, PRICE_LEVELS, SUBSIDIARIES, TDS_CODES, bsDate, levelRate, methodById, subsidiaryById, tdsById } from "./master";
+import { Avatar, BTN, Dialog, DocLink, GHOST, GHOST_SM, ICON_BTN, INPUT, INPUT_SM, Kbd, LABEL, NUM, PANEL, Popover, Portal, Refusal, Segmented, Select, Switch, TEXTAREA, ToastHost, useToast } from "./bzw";
+import { BILL_DISCOUNT_BASES, DEPOSIT_LEDGERS, DIMENSIONS, HEADER_FIELDS, LINE_FIELDS, PAYMENT_METHODS, PRICE_LEVELS, SUBSIDIARIES, TDS_CODES, bsDate, levelRate, methodById, subsidiaryById, tdsById } from "./master";
 import { AddressField, AdvancedSearch, AmountInput, ChipFace, ChipRow, ConfirmDialog, CustomFieldInput, DateChip, Sep, TermChip } from "./parts";
+import { useStore } from "./store";
+// The transaction -> master jump (masters spec section 5): the item and currency masters open from this composer.
+import { EditTrigger, LINK, LineOffer, MAC, RatePop, VariantPicker, fmtDayMonth, fmtRate } from "../masters/kit";
+import { ItemJumpSheet } from "../masters/jump/ItemJumpSheet";
+import { CurrencyJump } from "../masters/jump/CurrencyJump";
+import { documentBase, documentCurrencies, ensureSalesItem, lineUnitOf, masterCurrencyOf, syncSalesItems } from "../masters/jump/bridge";
+import { afterEdit, offerFor, offerWords } from "../masters/jump/offers";
+import type { LineOfferState } from "../masters/jump/offers";
+import { useItemSavedElsewhere } from "../masters/jump/channel";
+import { MASTERS_TODAY, currencyStore, latestRate, rateEffectiveOn, rateUnit } from "../masters/seed/currencies";
+import { attributeById, itemsStore } from "../masters/seed/items";
+import type { Item as MasterItem } from "../masters/seed/items";
+import { FIELD_LABEL, baseCode as masterBaseCode, effRate, getItem, isTemplate, restoreItem, unitName } from "../masters/items/model";
+import { ItemCreateSheet } from "../masters/items/ItemCreateSheet";
+import { pickableVariants } from "../masters/items/actions";
+import { saveRate, restore as restoreCurrencies, snapshot as currencySnapshot } from "../masters/hub/currencyActions";
 
 // ════════════════════════════════════════════════════════════════════════════
 // COMPOSER — orders, estimates and invoices are written in ONE surface
@@ -164,6 +180,49 @@ export type ComposerResult = {
 
 export const ESTIMATE_STATUS_OPTIONS = ["In discussion", "Identified decision maker", "Proposal", "In negotiation", "Purchasing"];
 
+/**
+ * B-F1 — a document started from an item's quick action (New order / invoice / estimate):
+ * `?item=&qty=&unit=&cust=`, read by the desks on `.../new` and applied on arrival (trap 30).
+ * `unit` is the master's unit id; `cust` a customer id. A template opens the variant picker first.
+ */
+export type ItemSeed = { itemId: string; qty?: number; unit?: string; customerId?: string };
+export function readItemSeed(search: URLSearchParams): ItemSeed | null {
+  const itemId = search.get("item");
+  if (!itemId) return null;
+  const q = Number(search.get("qty"));
+  return { itemId, qty: q > 0 ? q : undefined, unit: search.get("unit") ?? undefined, customerId: search.get("cust") ?? undefined };
+}
+export const itemSeedKey = (s: ItemSeed | null) => (s ? `seed-${s.itemId}-${s.qty ?? ""}-${s.unit ?? ""}-${s.customerId ?? ""}` : "");
+
+/** Mockup switches for the jump, read off the composer's URL: ?perm=read|none, ?savefail=1, ?conflict=1. */
+function readJumpFlags() {
+  const p = new URLSearchParams(window.location.search);
+  const perm = p.get("perm");
+  return { none: perm === "none", readOnly: perm === "read", failFirst: p.get("savefail") === "1", conflictFirst: p.get("conflict") === "1" };
+}
+
+type Jump = { kind: "item"; lineKey: string; returnTo: HTMLElement | null } | { kind: "currency"; returnTo: HTMLElement | null };
+type FxOffer = { kind: "date" | "new"; date: string; rate: number };
+
+/** D-1: the rate a document of this subsidiary, currency and date takes — 1 on its base, 0 (blank, required) when no row is dated on or before it. */
+function prefillRate(subsidiaryId: string, code: string, date: string) {
+  const st = currencyStore.get();
+  const b = documentBase(st, subsidiaryId);
+  if (code === b.code) return 1;
+  const c = masterCurrencyOf(st, code);
+  return (c && b.base ? rateEffectiveOn(st, c.id, b.base.id, date)?.rate : undefined) ?? 0;
+}
+
+/** The line an item seed fills: the composer's own pricing (the item price or the customer's level). */
+function seedDraft(s: ItemSeed, c: Customer | undefined): Draft | null {
+  const it = ensureSalesItem(s.itemId);
+  if (!it) return null;
+  const level = c?.priceLevel && c.priceLevel !== "Standard" ? c.priceLevel : undefined;
+  const unit = lineUnitOf(it, s.unit);
+  const factor = unitsOf(it).find((u) => u.code === unit)?.factor ?? 1;
+  return { ...blank(), itemId: it.id, unit, qty: s.qty ?? 1, rate: Math.round(levelRate(it.rate, level) * factor * 100) / 100, priceLevel: level, tax: c?.taxCode ?? it.tax };
+}
+
 export function OrderComposer({
   noun,
   title,
@@ -178,6 +237,8 @@ export function OrderComposer({
   orders,
   onCancel,
   onSave,
+  today,
+  itemSeed,
 }: {
   noun: ComposerNoun;
   title: string;
@@ -198,34 +259,61 @@ export function OrderComposer({
   orders: Order[];
   onCancel: (draftKept: boolean) => void;
   onSave: (r: ComposerResult) => void;
+  /** The composer's clock - a new document is dated on it (default: the sales mockup's). */
+  today?: string;
+  /** A new document started from an item (B-F1). */
+  itemSeed?: ItemSeed | null;
 }) {
+  const clock = today ?? TODAY;
+  // Seeded from an item: the customer's defaults, as picking the customer would set them.
+  const seedCust = !seed.customerId && itemSeed?.customerId ? customerById(itemSeed.customerId) : undefined;
   const [subsidiaryId, setSubsidiaryId] = React.useState(seed.subsidiaryId ?? "NP-01");
-  const [customerId, setCustomerId] = React.useState<string | null>(seed.customerId ?? null);
+  const [customerId, setCustomerId] = React.useState<string | null>(seed.customerId ?? seedCust?.id ?? null);
   /** Empty means "whatever the customer record says" — an override is only ever stored when it differs. */
   const [billTo, setBillTo] = React.useState(seed.billingAddress ?? "");
-  const [date, setDate] = React.useState(seed.date ?? TODAY);
+  const [date, setDate] = React.useState(seed.date ?? clock);
   const [locationId, setLocationId] = React.useState(seed.locationId ?? "L-KTM");
-  const [expected, setExpected] = React.useState<string>(seed.expected ?? addDays(TODAY, 7));
-  const [validTill, setValidTill] = React.useState<string>(seed.validTill ?? addDays(TODAY, 15));
+  const [expected, setExpected] = React.useState<string>(seed.expected ?? addDays(clock, 7));
+  const [validTill, setValidTill] = React.useState<string>(seed.validTill ?? addDays(clock, 15));
   const [status, setStatus] = React.useState(seed.status ?? "In discussion");
   const [probability, setProbability] = React.useState(seed.probability ?? 50);
-  const [termId, setTermId] = React.useState(seed.termId ?? "T30");
+  const [termId, setTermId] = React.useState(seed.termId ?? seedCust?.termId ?? "T30");
   const [due, setDue] = React.useState<string | null>(seed.due ?? null);
   const [dueTouched, setDueTouched] = React.useState(!!seed.due);
-  const [repId, setRepId] = React.useState<string | null>(seed.repId ?? ME.id);
+  const [repId, setRepId] = React.useState<string | null>(seed.repId ?? seedCust?.repId ?? ME.id);
   const [customerPo, setCustomerPo] = React.useState(seed.customerPo ?? "");
-  const [currency, setCurrency] = React.useState(seed.currency ?? "NPR");
-  const [rate, setRate] = React.useState(seed.exchangeRate ?? 1);
+  const [currency, setCurrency] = React.useState(seed.currency ?? seedCust?.currency ?? "NPR");
+  // D-1: a NEW document takes the rate effective on its date; none -> blank and required. A seeded rate
+  // (an edit, a copy, an estimate) is the document's own.
+  const [rate, setRate] = React.useState(() => seed.exchangeRate ?? prefillRate(seed.subsidiaryId ?? "NP-01", seed.currency ?? seedCust?.currency ?? "NPR", seed.date ?? clock));
+  const [rateSource, setRateSource] = React.useState<"prefill" | "typed" | "seed">(seed.exchangeRate !== undefined ? "seed" : "prefill");
+  const [fxOffer, setFxOffer] = React.useState<FxOffer | null>(null);
   const [memo, setMemo] = React.useState(seed.memo ?? "");
   const [dims, setDims] = React.useState<Order["dims"]>(seed.dims ?? {});
   const [custom, setCustom] = React.useState<Record<string, string>>(seed.custom ?? { channel: "Field sales" });
   const [files, setFiles] = React.useState<Attachment[]>(seed.attachments ?? []);
   const [notes, setNotes] = React.useState<Comment[]>([]);
-  const [lines, setLines] = React.useState<Draft[]>(() =>
-    billing
-      ? billing.lines.map((b) => ({ ...fromLine(b.line, true), qty: b.qty, bill: b }))
-      : [...(seed.lines?.map((l) => fromLine(l, !!editing)) ?? []), blank()],
-  );
+  const [lines, setLines] = React.useState<Draft[]>(() => {
+    if (billing) return billing.lines.map((b) => ({ ...fromLine(b.line, true), qty: b.qty, bill: b }));
+    syncSalesItems();
+    const seeded = itemSeed ? seedDraft(itemSeed, seedCust ?? customerById(seed.customerId ?? null)) : null;
+    return [...(seed.lines?.map((l) => fromLine(l, !!editing)) ?? []), ...(seeded ? [seeded] : []), blank()];
+  });
+  // A template can't be a line: the variant picker comes first (spec 3.6) - for the seed and for "Create and use".
+  const [varPick, setVarPick] = React.useState<{ templateId: string; lineKey: string | null; qty?: number; unit?: string } | null>(() => {
+    const m = itemSeed ? getItem(itemSeed.itemId) : null;
+    return m && isTemplate(m) ? { templateId: m.id, lineKey: null, qty: itemSeed?.qty, unit: itemSeed?.unit } : null;
+  });
+  const [jump, setJump] = React.useState<Jump | null>(null);
+  const [creating, setCreating] = React.useState<{ lineKey: string; name: string } | null>(null);
+  const [offers, setOffers] = React.useState<Record<string, LineOfferState>>({});
+  const [addingRate, setAddingRate] = React.useState(false);
+  const addRateRef = React.useRef<HTMLButtonElement>(null);
+  const fxRef = React.useRef<HTMLInputElement>(null);
+  const jumpFlags = React.useMemo(readJumpFlags, []);
+  const { toast, show, dismiss } = useToast();
+  const cst = useStore(currencyStore);
+  useStore(itemsStore);
   /** Billing mode: bill what is ordered, not only what has left the warehouse. */
   const [undelivered, setUndelivered] = React.useState(false);
   const capOf = (l: Draft) => (l.bill ? (undelivered ? l.bill.all : l.bill.ready) : Infinity);
@@ -269,8 +357,7 @@ export function OrderComposer({
     setCustomerId(c.id);
     setBillTo("");
     setTermId(c.termId);
-    setCurrency(c.currency);
-    setRate(CURRENCIES.find((x) => x.code === c.currency)?.rate ?? 1);
+    setCurrencyTo(c.currency);
     if (c.repId) setRepId(c.repId);
     setLines((ls) => ls.map((l) => (l.itemId ? { ...l, tax: c.taxCode ?? itemById(l.itemId)!.tax } : l)));
     window.setTimeout(() => itemRefs.current[lines[0]?.key]?.focus(), 0);
@@ -278,6 +365,14 @@ export function OrderComposer({
 
   const patch = (key: string, p: Partial<Draft>) => {
     touch();
+    setOffers((o) => {
+      const n = afterEdit(o[key], p);
+      if (n === o[key]) return o;
+      const x = { ...o };
+      if (n) x[key] = n;
+      else delete x[key];
+      return x;
+    });
     setLines((ls) => {
       const next = ls.map((l) => (l.key === key ? { ...l, ...p } : l));
       if (!billing && next[next.length - 1].itemId) next.push(blank());
@@ -286,16 +381,144 @@ export function OrderComposer({
   };
   const removeLine = (key: string) => {
     touch();
+    setOffers((o) => {
+      if (!o[key]) return o;
+      const x = { ...o };
+      delete x[key];
+      return x;
+    });
     setLines((ls) => {
       const next = ls.filter((l) => l.key !== key);
       return next.length && !next[next.length - 1].itemId ? next : [...next, blank()];
     });
   };
-  const fillItem = (key: string, itemId: string) => {
+  const fillItem = (key: string, itemId: string, o: { qty?: number; unit?: string } = {}) => {
     const it = itemById(itemId)!;
     const level = customer?.priceLevel && customer.priceLevel !== "Standard" ? customer.priceLevel : undefined;
-    patch(key, { itemId, unit: it.unit, qty: 1, rate: levelRate(it.rate, level), priceLevel: level, tax: customer?.taxCode ?? it.tax, discountPct: 0, discountAmt: 0 });
+    // A seed names the master's unit id (`?unit=`); the line shows it the way the item's units read.
+    const unit = o.unit ? lineUnitOf(it, o.unit) : it.unit;
+    const factor = unitsOf(it).find((u) => u.code === unit)?.factor ?? 1;
+    patch(key, { itemId, unit, qty: o.qty ?? 1, rate: Math.round(levelRate(it.rate, level) * factor * 100) / 100, priceLevel: level, tax: customer?.taxCode ?? it.tax, discountPct: 0, discountAmt: 0 });
   };
+
+  // ── Currency: the base is the document subsidiary's (B-F6); a new document's rate is the one effective on its date (D-1) ──
+  const docBase = documentBase(cst, subsidiaryId);
+  const foreign = currency !== docBase.code;
+  const curRow = masterCurrencyOf(cst, currency);
+  const effRow = foreign && curRow && docBase.base ? rateEffectiveOn(cst, curRow.id, docBase.base.id, date) : null;
+  const isNewDoc = !editing && !billing;
+  const [fxRaw, setFxRaw] = React.useState<string | null>(null);
+  function setCurrencyTo(code: string) {
+    setCurrency(code);
+    setRate(prefillRate(subsidiaryId, code, date));
+    setRateSource("prefill");
+    setFxOffer(null);
+  }
+  const onSubsidiary = (v: string) => {
+    touch();
+    setSubsidiaryId(v);
+    setRate(prefillRate(v, currency, date));
+    setRateSource("prefill");
+    setFxOffer(null);
+  };
+  /** Re-dating re-prefills a rate nobody typed; a typed one is kept and the new date's rate is OFFERED. */
+  const onDate = (v: string) => {
+    touch();
+    setDate(v);
+    if (!foreign || !isNewDoc) return;
+    const r = prefillRate(subsidiaryId, currency, v);
+    if (rateSource === "prefill") {
+      setRate(r);
+      setFxOffer(null);
+    } else if (r > 0 && Math.abs(r - rate) > 0.000001) setFxOffer({ kind: "date", date: v, rate: r });
+    else setFxOffer(null);
+  };
+  // A rate row added or changed for this very pair and date (the sheet, the popover): a blank rate takes it;
+  // a different one is offered. A saved document keeps its stored rate (R9).
+  const effKey = effRow ? `${effRow.id}:${effRow.rate}` : "none";
+  const pairKey = `${currency}|${docBase.base?.id ?? ""}|${date}`;
+  const seenFx = React.useRef({ pairKey, effKey });
+  React.useEffect(() => {
+    const prev = seenFx.current;
+    seenFx.current = { pairKey, effKey };
+    if (prev.pairKey !== pairKey || prev.effKey === effKey || !isNewDoc || !foreign || !effRow) return;
+    if (!(rate > 0)) {
+      setRate(effRow.rate);
+      setRateSource("prefill");
+      setFxOffer(null);
+    } else if (Math.abs(effRow.rate - rate) > 0.000001) setFxOffer({ kind: "new", date, rate: effRow.rate });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pairKey, effKey]);
+
+  // ── Line offers: a master saved after a line quoted it — offered, never written (spec 5.2) ──
+  const lockedLine = (l: Draft) => !!l.bill || l.delivered > 0 || l.invoiced > 0;
+  const sellOf = (id: string | null) => {
+    const m = id ? getItem(id) : null;
+    return m ? effRate(itemsStore.get(), m, "sales_rate").value : 0;
+  };
+  const makeOffers = (itemId: string, fields: Partial<MasterItem>): string[] => {
+    const master = getItem(itemId);
+    if (!master) return [];
+    const made: Record<string, LineOfferState> = {};
+    lines.forEach((l) => {
+      if (l.itemId !== itemId) return;
+      const parts = offerFor({ key: l.key, itemId: l.itemId, qty: l.qty, unit: l.unit, rate: l.rate, priceLevel: l.priceLevel, tax: l.tax, locked: lockedLine(l) }, master, fields, customer?.taxCode, sellOf(itemId));
+      if (parts) made[l.key] = { itemId, parts };
+    });
+    if (Object.keys(made).length)
+      setOffers((o) => {
+        const n = { ...o };
+        Object.entries(made).forEach(([k, v]) => (n[k] = o[k]?.itemId === itemId ? { itemId, parts: { ...o[k].parts, ...v.parts } } : v));
+        return n;
+      });
+    return Object.keys(made);
+  };
+  const dropItemOffers = (itemId: string) => setOffers((o) => Object.fromEntries(Object.entries(o).filter(([, v]) => v.itemId !== itemId)));
+  const dropOffer = (key: string) =>
+    setOffers((o) => {
+      const x = { ...o };
+      delete x[key];
+      return x;
+    });
+  const acceptOffer = (key: string) => {
+    const o = offers[key];
+    if (!o) return;
+    const p: Partial<Draft> = {};
+    if (o.parts.rate) p.rate = o.parts.rate.to;
+    if (o.parts.tax) p.tax = o.parts.tax.to;
+    if (o.parts.unit) {
+      p.unit = o.parts.unit.to;
+      p.rate = o.parts.unit.rate;
+    }
+    patch(key, p);
+    dropOffer(key);
+    window.setTimeout(() => qtyRefs.current[key]?.focus(), 0);
+  };
+  // A save made on the item page in ANOTHER tab comes back the same way (B-F7).
+  useItemSavedElsewhere((m) => {
+    if (!lines.some((l) => l.itemId === m.id)) return;
+    const keys = makeOffers(m.id, m.fields);
+    if (keys.length) show("info", `${getItem(m.id)?.name ?? "An item"} was saved in another tab`);
+  });
+
+  // ── The jump: the master's own sheet over the document; focus comes back where it left ──
+  const openItemJump = (lineKey: string, anchor: HTMLElement | null) => setJump({ kind: "item", lineKey, returnTo: anchor ?? (document.activeElement as HTMLElement | null) });
+  const closeJump = (focusOfferOn?: string | null) => {
+    const back = jump?.returnTo ?? null;
+    setJump(null);
+    window.setTimeout(() => {
+      const offerBtn = focusOfferOn ? document.querySelector<HTMLElement>(`[data-line-offer="${focusOfferOn}"] button`) : null;
+      (offerBtn ?? (back?.isConnected ? back : null))?.focus();
+    }, 0);
+  };
+
+  // Seeded with a customer: the next empty thing is the next line (spec 3.6).
+  React.useEffect(() => {
+    if (!itemSeed || !customerId || varPick) return;
+    const t = window.setTimeout(() => itemRefs.current[lines[lines.length - 1].key]?.focus(), 80);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const scanCode = (code: string) => {
     const it = ITEMS.find((i) => i.code.toLowerCase() === code.trim().toLowerCase());
     if (!it) return setRefusal(`No item has the barcode “${code}”.`);
@@ -311,6 +534,7 @@ export function OrderComposer({
   const missing: { label: string; focus: () => void }[] = [];
   if (!customer) missing.push({ label: "a customer", focus: () => customerRef.current?.focus() });
   if (filled.length === 0) missing.push({ label: "at least one line", focus: () => itemRefs.current[lines[0].key]?.focus() });
+  if (foreign && !(rate > 0)) missing.push({ label: "an exchange rate", focus: () => fxRef.current?.focus() });
   filled.forEach((l, i) => {
     if (!(l.qty >= 0.00001)) missing.push({ label: `a quantity on line ${i + 1}`, focus: () => qtyRefs.current[l.key]?.focus() });
     if (!(l.rate > 0)) missing.push({ label: `a rate on line ${i + 1}`, focus: () => qtyRefs.current[l.key]?.focus() });
@@ -354,7 +578,7 @@ export function OrderComposer({
       due: noun === "estimate" ? null : dueShown,
       customerPo: customerPo.trim() || null,
       currency,
-      exchangeRate: currency === "NPR" ? 1 : rate,
+      exchangeRate: foreign ? rate : 1,
       memo,
       dims,
       custom,
@@ -386,6 +610,8 @@ export function OrderComposer({
   React.useEffect(() => {
     const on = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && (e.key === "Enter" || e.key.toLowerCase() === "s")) {
+        // A master sheet or a dialog over the document owns its own commit keys while it is up.
+        if (document.querySelector("[data-bzw-sheet], [data-bzw-dialog]")) return;
         e.preventDefault();
         save();
       }
@@ -416,7 +642,7 @@ export function OrderComposer({
             value={subsidiaryId}
             disabled={lockSubsidiary}
             title={lockSubsidiary ? "Fixed once the document exists" : "Subsidiary"}
-            onChange={(v) => (v !== subsidiaryId && filled.length ? setSwitchTo(v) : (touch(), setSubsidiaryId(v)))}
+            onChange={(v) => (v !== subsidiaryId && filled.length ? setSwitchTo(v) : onSubsidiary(v))}
             width={260}
             options={SUBSIDIARIES.map((s) => ({ value: s.id, label: s.name, hint: `${s.id} · ${s.address}` }))}
           >
@@ -470,7 +696,7 @@ export function OrderComposer({
           {/* ── 2 · Terms, as one line ───────────────────────────────── */}
           <ChipRow>
             <TermChip label="Date">
-              <DateChip value={date} max={TODAY} onChange={(v) => (touch(), setDate(v))} />
+              <DateChip value={date} max={clock} onChange={onDate} />
             </TermChip>
             {noun === "estimate" && (
               <>
@@ -540,24 +766,69 @@ export function OrderComposer({
             )}
             <Sep />
             <TermChip label="Currency">
-              <Select trigger="plain" value={currency} onChange={(v) => (touch(), setCurrency(v), setRate(CURRENCIES.find((c) => c.code === v)?.rate ?? 1))} width={220} options={CURRENCIES.map((c) => ({ value: c.code, label: c.code, hint: c.name }))}>
+              <Select
+                trigger="plain"
+                value={currency}
+                onChange={(v) => (touch(), setCurrencyTo(v))}
+                width={220}
+                options={documentCurrencies(cst, docBase.code).map((c) => ({ value: c.code, label: c.code, hint: c.code === docBase.code ? `${c.name} · base` : c.name }))}
+              >
                 <ChipFace>{currency}</ChipFace>
               </Select>
-              {currency !== "NPR" && (
+              {!jumpFlags.none && curRow && <EditTrigger label="Edit currency" onEdit={(el) => setJump({ kind: "currency", returnTo: el })} />}
+              {foreign && (
                 <label className="inline-flex items-center gap-0.5 text-bz-text-soft">
                   @
                   <input
+                    ref={fxRef}
                     inputMode="decimal"
                     aria-label="Exchange rate"
-                    value={rate}
-                    onFocus={(e) => e.currentTarget.select()}
-                    onChange={(e) => (touch(), setRate(Number(e.target.value.replace(/[^\d.]/g, "")) || 0))}
-                    className={cn("h-7 w-[64px] rounded-bz-sm border border-transparent bg-transparent px-1.5 text-[12px] font-medium text-bz-text outline-none hover:bg-bz-paper-warm focus:border-bz-line focus:bg-bz-surface", NUM, tried && !(rate > 0) && "border-bz-red-mark")}
+                    placeholder="rate"
+                    // The typed text only while the caret is in it; a rate set from outside (Use, a prefill) always shows.
+                    value={fxRaw !== null && typeof document !== "undefined" && document.activeElement === fxRef.current ? fxRaw : rate > 0 ? fmtRate(rate) : ""}
+                    title={docBase.base ? `1 ${currency} in ${rateUnit(docBase.base)}` : undefined}
+                    onFocus={(e) => {
+                      setFxRaw(rate > 0 ? String(rate) : "");
+                      const el = e.currentTarget;
+                      window.setTimeout(() => el.select(), 0);
+                    }}
+                    onBlur={() => setFxRaw(null)}
+                    onChange={(e) => {
+                      const t = e.target.value.replace(/[^\d.]/g, "");
+                      touch();
+                      setFxRaw(t);
+                      setRate(Number(t) || 0);
+                      setRateSource("typed");
+                      setFxOffer(null);
+                    }}
+                    className={cn("h-7 w-[64px] rounded-bz-sm border border-transparent bg-transparent px-1.5 text-[12px] font-medium text-bz-text outline-none placeholder:font-normal placeholder:text-bz-text-soft hover:bg-bz-paper-warm focus:border-bz-line focus:bg-bz-surface", NUM, tried && !(rate > 0) && "border-bz-red-mark")}
                   />
                 </label>
               )}
+              {foreign && isNewDoc && !(rate > 0) && !effRow && curRow && docBase.base && !jumpFlags.none && !jumpFlags.readOnly && (
+                <button ref={addRateRef} type="button" className={cn(LINK, "ml-1 text-[11.5px]")} onClick={() => setAddingRate(true)}>
+                  Add rate for {fmtDayMonth(date)}
+                </button>
+              )}
+              {foreign && rateSource === "prefill" && effRow && rate > 0 && Math.abs(effRow.rate - rate) < 0.000001 && (
+                <span className={cn("ml-1 text-[11px] text-bz-text-soft", NUM)} title={`The rate effective on ${fmtDayMonth(date)}: the newest one dated on or before it`}>
+                  · {fmtDayMonth(effRow.date)} rate
+                </span>
+              )}
             </TermChip>
           </ChipRow>
+          {fxOffer && (
+            <LineOffer
+              className="mt-2"
+              text={
+                fxOffer.kind === "date"
+                  ? `The rate on ${fmtDayMonth(fxOffer.date)} is ${fmtRate(fxOffer.rate)}.`
+                  : `${fxOffer.date === clock ? "Today's rate" : `The rate on ${fmtDayMonth(fxOffer.date)}`} is now ${fmtRate(fxOffer.rate)} (this ${noun} has ${fmtRate(rate)}).`
+              }
+              use={{ label: `Use ${fmtRate(fxOffer.rate)}`, onClick: () => (touch(), setRate(fxOffer.rate), setRateSource("prefill"), setFxOffer(null)) }}
+              keep={{ label: `Keep ${fmtRate(rate)}`, onClick: () => setFxOffer(null) }}
+            />
+          )}
 
           {/* ── 3 · Lines ────────────────────────────────────────────── */}
           <div className="mt-5">
@@ -587,6 +858,15 @@ export function OrderComposer({
                   onPickItem={(id) => (fillItem(l.key, id), window.setTimeout(() => qtyRefs.current[l.key]?.focus(), 0))}
                   onAdvanced={() => setSearch("item")}
                   onRemove={() => removeLine(l.key)}
+                  lineKey={l.key}
+                  jump={jumpFlags.none || !l.itemId ? undefined : (el) => openItemJump(l.key, el)}
+                  archived={!!(l.itemId && getItem(l.itemId)?.archived)}
+                  offer={
+                    offers[l.key]
+                      ? { ...offerWords(l, offers[l.key].parts, sellOf(l.itemId)), onUse: () => acceptOffer(l.key), onKeep: () => dropOffer(l.key) }
+                      : undefined
+                  }
+                  onCreate={jumpFlags.none || jumpFlags.readOnly ? undefined : (q) => setCreating({ lineKey: l.key, name: q })}
                   onNext={() => {
                     const nextKey = lines[i + 1]?.key;
                     window.setTimeout(() => (nextKey ? itemRefs.current[nextKey] : itemRefs.current[lines[lines.length - 1].key])?.focus(), 0);
@@ -702,9 +982,9 @@ export function OrderComposer({
                 <dd className="m-0 mt-1 border-t border-bz-line-soft pt-2 text-right text-[14px] font-semibold text-bz-text">
                   <Amount value={totals.total} currency={currency} />
                 </dd>
-                {currency !== "NPR" && (
+                {foreign && rate > 0 && (
                   <dd className="col-span-2 m-0 text-right text-[10.5px] text-bz-text-soft">
-                    ≈ <Amount value={totals.total * rate} currency="NPR" /> at {rate}
+                    ≈ <Amount value={totals.total * rate} currency={docBase.code} /> at {rate}
                   </dd>
                 )}
                 {noun === "invoice" && (
@@ -857,12 +1137,119 @@ export function OrderComposer({
         confirm="Switch and clear lines"
         onClose={() => setSwitchTo(null)}
         onConfirm={() => {
-          touch();
-          setSubsidiaryId(switchTo!);
+          onSubsidiary(switchTo!);
           setLines([blank()]);
+          setOffers({});
           setSwitchTo(null);
         }}
       />
+
+      {/* ── The jump (masters spec 5) ─────────────────────────────────── */}
+      {jump?.kind === "item" &&
+        (() => {
+          const l = lines.find((x) => x.key === jump.lineKey);
+          if (!l?.itemId) return null;
+          const itemId = l.itemId;
+          return (
+            <ItemJumpSheet
+              itemId={itemId}
+              line={{ no: lines.indexOf(l) + 1, qty: l.qty, unit: l.unit, rate: l.rate, tax: l.tax, priceLevel: l.priceLevel, locked: lockedLine(l) }}
+              noun={noun}
+              customer={customer}
+              locationId={locationId}
+              org={docBase.org}
+              flags={jumpFlags}
+              onClose={() => closeJump()}
+              onSaved={(fields, before) => {
+                const keys = makeOffers(itemId, fields);
+                const changed = Object.keys(fields) as (keyof MasterItem)[];
+                show("success", changed.length === 1 ? `${FIELD_LABEL[changed[0]] ?? "Item"} saved` : "Item saved", { label: "Undo", run: () => (restoreItem(before), dropItemOffers(itemId)) }, 8000);
+                closeJump(keys.includes(jump.lineKey) ? jump.lineKey : null);
+              }}
+              onOpenPage={(section) => window.open(`/design/masters/items/${itemId}/page?org=${docBase.org}#${section}`, "_blank")}
+            />
+          );
+        })()}
+      {jump?.kind === "currency" && curRow && (
+        <CurrencyJump
+          fx={{ cur: curRow, base: docBase.base ?? null, subsidiary: subsidiaryById(subsidiaryId).name, date, rate: foreign ? rate : 1, source: rateSource, stored: !isNewDoc }}
+          noun={noun}
+          today={MASTERS_TODAY}
+          readOnly={jumpFlags.readOnly}
+          show={show}
+          onUse={(r) => (touch(), setRate(r), setRateSource("prefill"), setFxOffer(null))}
+          onClose={() => closeJump()}
+        />
+      )}
+      {varPick &&
+        (() => {
+          const tpl = getItem(varPick.templateId);
+          if (!tpl) return null;
+          return (
+            <VariantPicker
+              open
+              template={{ name: tpl.name, code: tpl.code, image: tpl.image }}
+              axes={(tpl.axes ?? []).map((a) => attributeById(a.attribute_id)?.name ?? a.attribute_id)}
+              variants={pickableVariants(itemsStore.get(), tpl, docBase.org)}
+              currency={masterBaseCode(docBase.org)}
+              unit={unitName(tpl.unit_id)}
+              onPick={(vid) => {
+                const key = varPick.lineKey ?? lines[lines.length - 1].key;
+                ensureSalesItem(vid);
+                fillItem(key, vid, { qty: varPick.qty, unit: varPick.unit });
+                setVarPick(null);
+                window.setTimeout(() => qtyRefs.current[key]?.focus(), 0);
+              }}
+              onClose={() => setVarPick(null)}
+            />
+          );
+        })()}
+      {creating && (
+        <ItemCreateSheet
+          org={docBase.org}
+          show={show}
+          onClose={() => {
+            const k = creating.lineKey;
+            setCreating(null);
+            window.setTimeout(() => itemRefs.current[k]?.focus(), 0);
+          }}
+          use={{
+            name: creating.name,
+            onCreated: (id) => {
+              const key = creating.lineKey;
+              setCreating(null);
+              const m = getItem(id);
+              if (m && isTemplate(m)) return setVarPick({ templateId: id, lineKey: key });
+              ensureSalesItem(id);
+              fillItem(key, id);
+              // Called after the create request, outside a React event: wait for the line to render.
+              window.setTimeout(() => qtyRefs.current[key]?.focus(), 60);
+            },
+          }}
+        />
+      )}
+      {curRow && docBase.base && (
+        <RatePop
+          open={addingRate}
+          anchor={addRateRef.current}
+          onClose={() => setAddingRate(false)}
+          from={rateUnit(curRow)}
+          to={rateUnit(docBase.base)}
+          last={(() => {
+            const r = latestRate(cst, curRow.id, docBase.base!.id);
+            return r ? { rate: r.rate, date: r.date } : null;
+          })()}
+          today={MASTERS_TODAY}
+          date={date}
+          onSave={(r) => {
+            const before = currencySnapshot();
+            const err = saveRate({ from: curRow.id, to: docBase.base!.id, date: r.date, rate: r.rate });
+            if (!err) show("success", `${currency} rate saved`, { label: "Undo", run: () => restoreCurrencies(before) }, 8000);
+            return err;
+          }}
+        />
+      )}
+      <ToastHost toast={toast} onDismiss={dismiss} />
     </section>
   );
 }
@@ -1067,6 +1454,11 @@ function LineRow({
   onAdvanced,
   onRemove,
   onNext,
+  lineKey,
+  jump,
+  archived,
+  offer,
+  onCreate,
 }: {
   n: number;
   line: Draft;
@@ -1081,6 +1473,13 @@ function LineRow({
   onAdvanced: () => void;
   onRemove: () => void;
   onNext: () => void;
+  lineKey: string;
+  /** Open the item's master sheet (spec 5.2); absent without the right to read items. */
+  jump?: (anchor: HTMLElement | null) => void;
+  /** The item was archived after the line took it: the line keeps it. */
+  archived?: boolean;
+  offer?: { text: string; use: string; keep: string; onUse: () => void; onKeep: () => void };
+  onCreate?: (name: string) => void;
 }) {
   const it = line.itemId ? itemById(line.itemId) : undefined;
   const bill = line.bill;
@@ -1099,7 +1498,23 @@ function LineRow({
       <div className="grid grid-cols-[24px_minmax(0,1fr)] items-center gap-2 px-2 py-1.5 md:grid-cols-[24px_minmax(0,1fr)_132px_104px_92px_104px_112px_52px]">
         <span className={cn("text-center text-[11px] text-bz-text-soft", NUM)}>{isGhost ? <Plus size={12} className="mx-auto" /> : n}</span>
 
-        <ItemPicker value={it} inputRef={itemRef} locationId={locationId} placeholder={isGhost ? "Add an item — name or code" : "Item"} disabled={locked} onPick={(i) => onPickItem(i.id)} onAdvanced={onAdvanced} />
+        <span className="flex min-w-0 items-center gap-0.5">
+          <span className="min-w-0 flex-1">
+            <ItemPicker
+              value={it}
+              inputRef={itemRef}
+              locationId={locationId}
+              placeholder={isGhost ? "Add an item — name or code" : "Item"}
+              disabled={locked}
+              onPick={(i) => onPickItem(i.id)}
+              onAdvanced={onAdvanced}
+              onJump={jump && it ? () => jump(null) : undefined}
+              onCreate={onCreate}
+            />
+          </span>
+          {/* The item's own record, not this line — so the pencil stays on a locked line too. */}
+          {jump && it && <EditTrigger reveal label={`Edit item (${MAC ? "⌥↵" : "Alt ↵"})`} onEdit={(el) => jump(el)} />}
+        </span>
 
         {!isGhost && it && (
           <>
@@ -1208,11 +1623,12 @@ function LineRow({
           </>
         )}
       </div>
-      {!isGhost && it && (short || locked || line.priceLevel || line.discMode === "amt") && !expanded && (
+      {!isGhost && it && (short || locked || line.priceLevel || line.discMode === "amt" || archived) && !expanded && (
         <p className={cn("m-0 px-2 pb-1.5 pl-[42px] text-[10.5px]", over ? "text-bz-red" : "text-bz-text-soft", NUM)}>
           {[
             bill && `${fmtQty(bill.delivered)} delivered · ${fmtQty(bill.billed)} billed · ${fmtQty(cap)} can be billed now`,
             !bill && locked && `${fmtQty(line.delivered)} delivered · ${fmtQty(line.invoiced)} invoiced`,
+            archived && <span key="a" className="text-bz-amber">Archived — hidden from pickers; this line keeps it</span>,
             line.priceLevel && `${line.priceLevel} price`,
             short && <span key="s" className="text-bz-amber">{fmtQty(onHand ?? 0)} {it.unit} on hand at {locationById(locationId)?.name}</span>,
           ]
@@ -1224,6 +1640,11 @@ function LineRow({
               </React.Fragment>
             ))}
         </p>
+      )}
+      {offer && (
+        <div data-line-offer={lineKey} className="px-2 pb-2 pl-[42px]">
+          <LineOffer text={offer.text} use={{ label: offer.use, onClick: offer.onUse }} keep={{ label: offer.keep, onClick: offer.onKeep }} />
+        </div>
       )}
       {expanded && !isGhost && it && (
         <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 border-t border-dashed border-bz-line-soft bg-bz-paper px-3 py-3 pl-[42px] md:grid-cols-6">
@@ -1279,6 +1700,8 @@ function ItemPicker({
   disabled,
   onPick,
   onAdvanced,
+  onJump,
+  onCreate,
 }: {
   value: ReturnType<typeof itemById>;
   inputRef: (el: HTMLInputElement | null) => void;
@@ -1287,13 +1710,17 @@ function ItemPicker({
   disabled?: boolean;
   onPick: (i: NonNullable<ReturnType<typeof itemById>>) => void;
   onAdvanced: () => void;
+  onJump?: () => void;
+  onCreate?: (name: string) => void;
 }) {
   const [q, setQ] = React.useState("");
   const [focus, setFocus] = React.useState(false);
   const [hi, setHi] = React.useState(0);
   const el = React.useRef<HTMLInputElement | null>(null);
   const [rect, setRect] = React.useState<DOMRect | null>(null);
-  const shown = focus ? (q ? ITEMS.filter((i) => `${i.name} ${i.code} ${i.hs}`.toLowerCase().includes(q.toLowerCase())) : ITEMS).slice(0, 7) : [];
+  // Archived items leave the pickers (documents keep them).
+  const live = ITEMS.filter((i) => !getItem(i.id)?.archived);
+  const shown = focus ? (q ? live.filter((i) => `${i.name} ${i.code} ${i.hs}`.toLowerCase().includes(q.toLowerCase())) : live).slice(0, 7) : [];
 
   React.useLayoutEffect(() => {
     if (focus && el.current) setRect(el.current.getBoundingClientRect());
@@ -1320,6 +1747,13 @@ function ItemPicker({
         onBlur={() => window.setTimeout(() => (setFocus(false), setQ("")), 150)}
         onChange={(e) => (setQ(e.target.value), setHi(0))}
         onKeyDown={(e) => {
+          // ⌥↵ on the item cell opens the item's sheet (spec 7, composer line).
+          if (e.key === "Enter" && e.altKey && onJump) {
+            e.preventDefault();
+            onJump();
+            e.currentTarget.blur();
+            return;
+          }
           if (e.key === "ArrowDown") (e.preventDefault(), setHi((h) => Math.min(h + 1, shown.length - 1)));
           if (e.key === "ArrowUp") (e.preventDefault(), setHi((h) => Math.max(h - 1, 0)));
           if (e.key === "Enter" && shown[hi]) (e.preventDefault(), pick(shown[hi]));
@@ -1361,9 +1795,21 @@ function ItemPicker({
               );
             })}
             <div className="mt-1 flex items-center border-t border-bz-line-soft px-1 pt-1">
-              <button type="button" onMouseDown={(e) => e.preventDefault()} className="flex items-center gap-2 rounded-bz-sm px-2 py-1.5 text-[12px] text-bz-text-muted hover:bg-bz-paper-warm">
-                <Plus size={12} /> New item
-              </button>
+              {onCreate && (
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    const name = q.trim();
+                    setFocus(false);
+                    setQ("");
+                    onCreate(name);
+                  }}
+                  className="flex min-w-0 items-center gap-2 rounded-bz-sm px-2 py-1.5 text-[12px] text-bz-text-muted hover:bg-bz-paper-warm"
+                >
+                  <Plus size={12} className="shrink-0" /> <span className="truncate">New item{q.trim() && <> “{q.trim()}”</>}</span>
+                </button>
+              )}
               <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => (setFocus(false), onAdvanced())} className="ml-auto flex items-center gap-1.5 rounded-bz-sm px-2 py-1.5 text-[12px] text-bz-text-muted hover:bg-bz-paper-warm">
                 <Search size={11} /> Advanced search
               </button>

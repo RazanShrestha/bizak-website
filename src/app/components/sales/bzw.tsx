@@ -325,11 +325,13 @@ export function Clear({ label = "Clear all", onClear }: { label?: string; onClea
   );
 }
 
-export function Checkbox({ on, mixed, onChange, label }: { on: boolean; mixed?: boolean; onChange: (v: boolean) => void; label?: string }) {
+/** `tabIndex` lets a host that owns one Tab stop (the masters grid) keep the box out of the Tab order. */
+export function Checkbox({ on, mixed, onChange, label, tabIndex }: { on: boolean; mixed?: boolean; onChange: (v: boolean) => void; label?: string; tabIndex?: number }) {
   return (
     <button
       type="button"
       role="checkbox"
+      tabIndex={tabIndex}
       aria-checked={mixed ? "mixed" : on}
       aria-label={label}
       onClick={(e) => {
@@ -362,6 +364,9 @@ export function Switch({ on, onChange, label }: { on: boolean; onChange: (v: boo
 }
 
 // ── Popover (anchored, flips, stays in the frame) ───────────────────────────
+
+/** The trigger of the menu that was last closed — where a dialog opened FROM a menu item gives focus back (the item itself is gone). */
+let lastPopoverAnchor: HTMLElement | null = null;
 
 export function Popover({
   open,
@@ -404,13 +409,21 @@ export function Popover({
 
   React.useEffect(() => {
     if (!open) return;
+    // A popover can hold one (a Select inside the masters' ask-first popover). The inner one is
+    // mounted later, so it is the last panel in the portal: only the topmost answers Esc, and a
+    // scroll inside any open panel is not a scroll "outside".
+    const topmost = () => {
+      const all = document.querySelectorAll("[data-bzw-popover]");
+      return !panel.current || all[all.length - 1] === panel.current;
+    };
     const onScroll = (e: Event) => {
       const t = e.target as Node | null;
       if (t && panel.current && (panel.current === t || panel.current.contains(t))) return;
+      if (t instanceof Element && t.closest("[data-bzw-popover]")) return;
       onClose();
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && topmost()) {
         e.stopPropagation();
         onClose();
       }
@@ -425,12 +438,64 @@ export function Popover({
     };
   }, [open, onClose]);
 
+  // Focus goes back to the anchor when the panel takes it away with it (Esc, a pick, a click
+  // outside on nothing focusable) — otherwise a keyboard reader lands on <body>, at the top of the
+  // page. A pick that moves focus on purpose (a dialog, a route, an editor) is left alone: the
+  // check runs a tick later and only when nothing holds focus.
+  React.useEffect(() => {
+    if (!open) return;
+    const back = anchor;
+    return () => {
+      lastPopoverAnchor = back;
+      window.setTimeout(() => {
+        const a = document.activeElement;
+        if (back && back.isConnected && (!a || a === document.body)) back.focus({ preventScroll: true });
+      }, 0);
+    };
+  }, [open, anchor]);
+
+  // …and it goes INTO the panel as it opens, or a keyboard reader could open a menu (⋯, a Select)
+  // and never reach its items — the panel is portalled to the end of the frame, far from the
+  // trigger in the Tab order. A panel that focuses its own field (a search, the rate input) wins:
+  // this runs a tick later and only when focus is still outside. Otherwise: a field, else the
+  // picked option, else the first button that is not the panel's close.
+  React.useEffect(() => {
+    if (!open) return;
+    const t = window.setTimeout(() => {
+      const p = panel.current;
+      if (!p || p.contains(document.activeElement)) return;
+      const target =
+        p.querySelector<HTMLElement>("input:not([disabled]):not([readonly]), textarea:not([disabled])") ??
+        p.querySelector<HTMLElement>("button[data-picked]:not([disabled])") ??
+        [...p.querySelectorAll<HTMLElement>("button:not([disabled])")].find((b) => b.getAttribute("aria-label") !== "Close");
+      target?.focus({ preventScroll: true });
+    }, 0);
+    return () => window.clearTimeout(t);
+  }, [open]);
+
+  // ↑ ↓ Home End walk the panel's buttons (a menu's items, a Select's options), from a Select's search too.
+  const walkKeys = (e: React.KeyboardEvent) => {
+    if (e.defaultPrevented || !["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) return;
+    const t = e.target as HTMLElement;
+    const fromSearch = t.matches("[data-menu-search]");
+    if (t.tagName !== "BUTTON" && !fromSearch) return;
+    const list = [...(panel.current?.querySelectorAll<HTMLElement>("button:not([disabled])") ?? [])];
+    if (!list.length) return;
+    const i = fromSearch ? -1 : list.indexOf(t);
+    const next = e.key === "Home" ? 0 : e.key === "End" ? list.length - 1 : e.key === "ArrowDown" ? Math.min(list.length - 1, i + 1) : Math.max(0, i - 1);
+    if (fromSearch && e.key !== "ArrowDown") return;
+    e.preventDefault();
+    list[next].focus();
+  };
+
   if (!open || !pos) return null;
   return (
     <Portal>
       <div className="fixed inset-0 z-[1070]" onMouseDown={onClose} />
       <div
         ref={panel}
+        data-bzw-popover=""
+        onKeyDown={walkKeys}
         className={cn(PANEL, "fixed z-[1071] overflow-y-auto p-1.5 text-bz-text", className)}
         style={{ top: pos.top, left: pos.left, width, maxHeight: "calc(100vh - 16px)" }}
       >
@@ -476,7 +541,7 @@ export function MenuItem({
       title={title}
       onClick={onClick}
       className={cn(
-        "flex w-full gap-2 rounded-bz-sm px-2 py-1.5 text-left text-[12.5px] transition-colors hover:bg-bz-paper-warm disabled:cursor-not-allowed disabled:opacity-45",
+        "flex w-full gap-2 rounded-bz-sm px-2 py-1.5 text-left text-[12.5px] transition-colors hover:bg-bz-paper-warm focus-visible:bg-bz-paper-warm focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-bz-fire disabled:cursor-not-allowed disabled:opacity-45",
         hint ? "items-start" : "items-center",
         active ? "bg-bz-fire/10 font-semibold text-bz-text" : danger ? "text-bz-red" : "text-bz-text",
       )}
@@ -521,20 +586,27 @@ type SelectBase = {
   className?: string;
   disabled?: boolean;
   title?: string;
+  /** A host with a roving Tab stop (the masters grid) sets -1 on every trigger but the current one. */
+  tabIndex?: number;
+  /** Called whenever the panel closes (picked, Esc, click away) — a grid puts focus back on its cell. */
+  onClose?: () => void;
 };
 
 export function Select(
   props: SelectBase &
     ({ multiple: true; value: string[]; onChange: (v: string[]) => void } | { multiple?: false; value: string | null; onChange: (v: string) => void }),
 ) {
-  const { options, label, icon: Icon, trigger = "ghost", children, badge, width = 240, align = "left", footer, applied, className, disabled, title } = props;
+  const { options, label, icon: Icon, trigger = "ghost", children, badge, width = 240, align = "left", footer, applied, className, disabled, title, tabIndex } = props;
   const ref = React.useRef<HTMLButtonElement>(null);
   const [open, setOpen] = React.useState(false);
   const [q, setQ] = React.useState("");
   const searchable = props.searchable ?? options.length >= 8;
+  const onCloseRef = React.useRef(props.onClose);
+  onCloseRef.current = props.onClose;
   const close = React.useCallback(() => {
     setOpen(false);
     setQ("");
+    onCloseRef.current?.();
   }, []);
 
   const picked = (v: string) => (props.multiple ? props.value.includes(v) : props.value === v);
@@ -562,6 +634,7 @@ export function Select(
         type="button"
         disabled={disabled}
         title={title}
+        tabIndex={tabIndex}
         onClick={(e) => {
           e.stopPropagation();
           setOpen(true);
@@ -593,6 +666,8 @@ export function Select(
               <Search size={12} />
               <input
                 autoFocus
+                data-menu-search=""
+                aria-label={props.placeholder ?? "Search"}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder={props.placeholder ?? "Search…"}
@@ -609,9 +684,11 @@ export function Select(
                   key={o.value}
                   type="button"
                   disabled={o.disabled}
+                  data-picked={picked(o.value) ? "" : undefined}
+                  aria-pressed={props.multiple ? picked(o.value) : undefined}
                   onClick={() => choose(o.value)}
                   className={cn(
-                    "flex w-full items-center gap-2 rounded-bz-sm px-2 py-1.5 text-left text-[12.5px] text-bz-text transition-colors hover:bg-bz-paper-warm disabled:cursor-not-allowed disabled:opacity-45",
+                    "flex w-full items-center gap-2 rounded-bz-sm px-2 py-1.5 text-left text-[12.5px] text-bz-text transition-colors hover:bg-bz-paper-warm focus-visible:bg-bz-paper-warm focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-bz-fire disabled:cursor-not-allowed disabled:opacity-45",
                     picked(o.value) && "bg-bz-fire/10 font-semibold",
                   )}
                 >
@@ -689,7 +766,7 @@ export function ToastHost({ toast, onDismiss, lifted }: { toast: ToastMsg | null
   return (
     <Portal>
       <div className={cn("pointer-events-none fixed left-1/2 z-[1080] w-full max-w-[420px] -translate-x-1/2 px-4", lifted ? "bottom-[88px]" : "bottom-6")}>
-        <div className="pointer-events-auto flex items-center gap-2.5 rounded-bz-lg border border-white/10 bg-bz-raised px-3.5 py-2.5 text-bz-text-on-dark shadow-[var(--bz-shadow-panel)]">
+        <div role="status" aria-live="polite" className="pointer-events-auto flex items-center gap-2.5 rounded-bz-lg border border-white/10 bg-bz-raised px-3.5 py-2.5 text-bz-text-on-dark shadow-[var(--bz-shadow-panel)]">
           <span className={cn("size-1.5 shrink-0 rounded-bz-pill", toast.kind === "success" ? "bg-bz-fire" : toast.kind === "error" ? "bg-bz-red-mark" : "bg-bz-leaf-deep")} />
           <p className="m-0 flex-1 text-[12px]">{toast.text}</p>
           {toast.action && (
@@ -699,12 +776,12 @@ export function ToastHost({ toast, onDismiss, lifted }: { toast: ToastMsg | null
                 toast.action!.run();
                 onDismiss();
               }}
-              className="shrink-0 rounded-bz-pill border border-white/15 px-2.5 py-0.5 text-[11.5px] font-semibold hover:bg-white/10"
+              className="shrink-0 rounded-bz-pill border border-white/15 px-2.5 py-0.5 text-[11.5px] font-semibold hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bz-fire"
             >
               {toast.action.label}
             </button>
           )}
-          <button type="button" onClick={onDismiss} className="shrink-0 text-white/55 hover:text-white" aria-label="Dismiss">
+          <button type="button" onClick={onDismiss} className="flex size-6 shrink-0 items-center justify-center rounded-bz-sm text-white/55 hover:text-white focus-visible:outline-2 focus-visible:outline-bz-fire" aria-label="Dismiss" title="Dismiss">
             <X size={12} />
           </button>
         </div>
@@ -772,26 +849,70 @@ export function Dialog({
   React.useEffect(() => {
     if (!open) return;
     const on = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.stopPropagation();
-        onClose();
-      }
+      if (e.key !== "Escape") return;
+      // A cell or inline field being edited owns Escape (it cancels the edit). This listener runs in
+      // the capture phase, before the editor sees the key, so it has to step aside by itself.
+      if ((e.target as Element | null)?.closest?.("[data-bzw-editing]")) return;
+      // A menu open inside the dialog closes first; the dialog waits for the next Esc.
+      if (document.querySelector("[data-bzw-popover]")) return;
+      e.stopPropagation();
+      onClose();
     };
     window.addEventListener("keydown", on, true);
     return () => window.removeEventListener("keydown", on, true);
   }, [open, onClose]);
+
+  // A dialog takes focus as it opens (unless a field inside already took it) and gives it back to
+  // whatever opened it; Tab stays inside while it is up. Without this a keyboard reader kept
+  // tabbing through the page behind the scrim and, after closing, started again from <body>.
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const titleId = React.useId();
+  React.useEffect(() => {
+    if (!open) return;
+    const opener = document.activeElement as HTMLElement | null;
+    const t = window.setTimeout(() => {
+      const p = panelRef.current;
+      if (p && !p.contains(document.activeElement)) p.focus({ preventScroll: true });
+    }, 0);
+    return () => {
+      window.clearTimeout(t);
+      window.setTimeout(() => {
+        const a = document.activeElement;
+        const back = opener && opener !== document.body && opener.isConnected ? opener : lastPopoverAnchor?.isConnected ? lastPopoverAnchor : null;
+        if (back && (!a || a === document.body)) back.focus({ preventScroll: true });
+      }, 0);
+    };
+  }, [open]);
+  const trapTab = (e: React.KeyboardEvent) => {
+    if (e.key !== "Tab" || !panelRef.current) return;
+    const f = [...panelRef.current.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter((el) => !el.hasAttribute("disabled") && el.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0];
+    const last = f[f.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === panelRef.current)) (e.preventDefault(), last.focus());
+    else if (!e.shiftKey && document.activeElement === last) (e.preventDefault(), first.focus());
+  };
+
   if (!open) return null;
   return (
     <Portal>
       <div data-bzw-dialog className="fixed inset-0 z-[1060] flex items-center justify-center p-4">
         <div className="absolute inset-0 bg-bz-olive-dark/25" onClick={onClose} />
-        <div className={cn(PANEL, "relative flex max-h-[calc(100vh-48px)] w-full flex-col", size === "sm" ? "max-w-[380px]" : size === "wide" ? "max-w-[620px]" : "max-w-[460px]")}>
+        <div
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          tabIndex={-1}
+          onKeyDown={trapTab}
+          className={cn(PANEL, "relative flex max-h-[calc(100vh-48px)] w-full flex-col outline-none", size === "sm" ? "max-w-[380px]" : size === "wide" ? "max-w-[620px]" : "max-w-[460px]")}
+        >
           <div className="flex items-start gap-2 border-b border-bz-line-soft px-4 py-3">
             <div className="min-w-0 flex-1">
               {eyebrow && <p className={cn(LABEL, "m-0")}>{eyebrow}</p>}
-              <p className="m-0 text-[13px] font-semibold text-bz-text">{title}</p>
+              <p id={titleId} className="m-0 text-[13px] font-semibold text-bz-text">{title}</p>
             </div>
-            <button type="button" onClick={onClose} className={PLAIN_BTN} aria-label="Close">
+            <button type="button" onClick={onClose} className={PLAIN_BTN} aria-label="Close" title="Close (Esc)">
               <X size={14} />
             </button>
           </div>
@@ -805,7 +926,7 @@ export function Dialog({
 
 // ── Field (label over control) ──────────────────────────────────────────────
 
-export function Field({ label, children, className, hint, required }: { label: string; children: React.ReactNode; className?: string; hint?: React.ReactNode; required?: boolean }) {
+export function Field({ label, children, className, hint, required }: { label: React.ReactNode; children: React.ReactNode; className?: string; hint?: React.ReactNode; required?: boolean }) {
   return (
     <div className={cn("flex min-w-0 flex-col gap-1", className)}>
       <span className="text-[11.5px] font-semibold text-bz-text">
@@ -832,7 +953,7 @@ export function Empty({ title, action, icon: Icon = Inbox }: { title: string; ac
   );
 }
 
-export function SkeletonRows({ rows = 6 }: { rows?: number }) {
+export function SkeletonRows({ rows = 6, text = "Loading orders…" }: { rows?: number; text?: string }) {
   return (
     <div>
       {Array.from({ length: rows }).map((_, i) => (
@@ -844,7 +965,7 @@ export function SkeletonRows({ rows = 6 }: { rows?: number }) {
         </div>
       ))}
       <p className="flex items-center justify-center gap-2 py-3 text-[11.5px] text-bz-text-soft">
-        <Loader2 size={12} className="animate-spin" /> Loading orders…
+        <Loader2 size={12} className="animate-spin" /> {text}
       </p>
     </div>
   );

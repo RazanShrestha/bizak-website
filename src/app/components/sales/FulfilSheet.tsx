@@ -461,14 +461,15 @@ function ScanToBatch({ code, options, taken, onPick }: { code: string; options: 
 
 // ── Shared frame: scrolling body over a docked foot, ⌘↵ commits ─────────────
 
-export function SheetFrame({ children, foot, onCommit, refusal, onDismissRefusal }: { children: React.ReactNode; foot: React.ReactNode; onCommit: () => void; refusal: string | null; onDismissRefusal: () => void }) {
+/** `onCommit` gets the key event on ⌘↵, so a sheet with a second commit (⇧⌘↵ "add another") can tell them apart. */
+export function SheetFrame({ children, foot, onCommit, refusal, onDismissRefusal }: { children: React.ReactNode; foot: React.ReactNode; onCommit: (e?: KeyboardEvent) => void; refusal: string | null; onDismissRefusal: () => void }) {
   const ref = React.useRef(onCommit);
   ref.current = onCommit;
   React.useEffect(() => {
     const on = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
         e.preventDefault();
-        ref.current();
+        ref.current(e);
       }
     };
     window.addEventListener("keydown", on);
