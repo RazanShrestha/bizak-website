@@ -160,6 +160,26 @@
   --bz-rail:         var(--bz-olive);
   --bz-well:         color-mix(in srgb, var(--bz-paper-warm) 60%, transparent);
   --bz-shadow-panel: 0 18px 44px -20px rgba(15, 20, 17, 0.22);
+
+  /* ── Route identity (field sales) ───────────────────────────────────
+     Eight muted categorical hues that say WHICH route a chip, a pin or a
+     cell belongs to — never a status (that is the chip ramp) and never a
+     selection (that is lime). Assigned by a route's place in its
+     subsidiary's list. Angular twin to add: $bz-route-1…8 + dark values. */
+  --bz-route-1:      #2F7F7A;
+  --bz-route-2:      #4C5DA8;
+  --bz-route-3:      #B0573A;
+  --bz-route-4:      #86507F;
+  --bz-route-5:      #97741C;
+  --bz-route-6:      #5C7F3A;
+  --bz-route-7:      #53677A;
+  --bz-route-8:      #A8455C;
+  /* The map's ground: land, water, roads, labels. */
+  --bz-map-land:     #EEEFE8;
+  --bz-map-block:    #E3E5DC;
+  --bz-map-water:    #D5E3E6;
+  --bz-map-road:     #FFFFFF;
+  --bz-map-ring:     #F6F1DE;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -195,6 +215,19 @@
   --bz-rail:         #09090A;
   --bz-well:         #0B0B0C;
   --bz-shadow-panel: 0 18px 44px -18px rgba(0, 0, 0, 0.7);
+  --bz-route-1:      #5FB7B0;
+  --bz-route-2:      #8C9BE0;
+  --bz-route-3:      #E08A6C;
+  --bz-route-4:      #C68BBE;
+  --bz-route-5:      #D4B058;
+  --bz-route-6:      #97BD6E;
+  --bz-route-7:      #93A8BC;
+  --bz-route-8:      #E07F95;
+  --bz-map-land:     #1A1A1C;
+  --bz-map-block:    #222225;
+  --bz-map-water:    #1C2A2E;
+  --bz-map-road:     #2E2E32;
+  --bz-map-ring:     #3A3528;
 }
 
 /* Paper is always paper: a printed page keeps the light tokens inside a dark page. */

@@ -31,6 +31,7 @@ import { createStore, ordersStore, useStore } from "./store";
 import { tdsById } from "./master";
 import type { Tone } from "./bzw";
 import type { BillLine } from "./OrderComposer";
+import { FIELD_PARTIES, FIELD_RECEIPTS_TODAY } from "../sfm/seed";
 
 // ════════════════════════════════════════════════════════════════════════════
 // THE SALES FLOW — estimate → order → delivery → invoice → receipt → return
@@ -286,6 +287,16 @@ export const receiptsStore = createStore<Receipt[]>([
     amount: 294_252, allocations: [{ invoiceNo: "INV-8795", amount: 294_252 }], state: "approved", posted: true, cancelled: null, dims: {}, custom: {}, byId: "EMP-118", memo: "", sourceOrder: "SO-1039",
     ...meta("EMP-118", "2026-08-25", [{ id: "h1", whoId: "EMP-118", when: "Aug 25, 10:40", what: "recorded the transfer" }]),
   },
+  // Taken on the routes today (sfm/seed): not tagged to invoices yet, so each is an advance until back office applies it.
+  ...FIELD_RECEIPTS_TODAY.map(
+    (f): Receipt => ({
+      id: f.no, no: f.no, subsidiaryId: FIELD_PARTIES.find((p) => p.id === f.partyId)?.subsidiaryId ?? "NP-01", customerId: f.partyId, date: f.date,
+      methodId: f.method === "QR" ? "FONEPAY" : f.method, methodFields: f.method === "CHQ" ? { bank: "Nabil Bank", chequeNo: `0${f.no.slice(-3)}77`, chequeDate: f.date } : f.method === "QR" ? { txn: `FP${f.no.slice(-3)}2231` } : {},
+      depositTo: "Undeposited funds", currency: "NPR", exchangeRate: 1, amount: f.amount, allocations: [], state: "approved", posted: false, cancelled: null, dims: {}, custom: {}, byId: f.repId,
+      memo: "Taken on the route.", sourceOrder: null,
+      ...meta(f.repId, f.date, [{ id: "h1", whoId: f.repId, when: `Sep 4, ${f.time}`, what: "took the receipt during a visit" }]),
+    }),
+  ),
 ]);
 
 export const receiptApplied = (r: Receipt) => r.allocations.reduce((s, a) => s + a.amount, 0);

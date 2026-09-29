@@ -2,6 +2,8 @@ import * as React from "react";
 import { cn } from "../ui/utils";
 import { NUM, TODAY, daysBetween, fmtShort, addDays, PEOPLE, ME, personById } from "../productivity/shared";
 import type { Tone } from "./bzw";
+import { FIELD_ITEMS, FIELD_ORDERS_TODAY, FIELD_PARTIES } from "../sfm/seed";
+import { CUSTOMERS as SF_CUSTOMERS, CUSTOMER_TYPES as SF_TYPES, PRODUCTS as SF_PRODUCTS } from "../salesforce/data";
 
 // ════════════════════════════════════════════════════════════════════════════
 // SALES ORDERS · KERNEL
@@ -56,6 +58,36 @@ export const CUSTOMERS: Customer[] = [
   { id: "C-1101", code: "C-1101", name: "Lumbini Agro Traders", pan: "303310985", address: "Butwal-8, Rupandehi", termId: "T15", currency: "NPR", priceLevel: "Dealer" },
   { id: "C-2003", code: "C-2003", name: "Kailash Exports (India)", pan: "—", address: "Siliguri, West Bengal", termId: "T30", currency: "USD", priceLevel: "Standard", taxCode: "ZERO" },
   { id: "P-0310", code: "P-0310", name: "Annapurna Resorts (prospect)", pan: "—", address: "Ghandruk, Kaski", termId: "T15", currency: "NPR", priceLevel: "Retail", isProspect: true },
+  // The outlets the field reps visit (sfm/seed) — the same customer master, so an order raised from a visit
+  // opens here with its customer already known.
+  ...FIELD_PARTIES.map(
+    (p): Customer => ({
+      id: p.id,
+      code: p.code,
+      name: p.name,
+      pan: "—",
+      address: `${p.area}, ${p.subsidiaryId === "NP-02" ? "Pokhara" : "Kathmandu"}`,
+      termId: "T15",
+      currency: "NPR",
+      priceLevel: "Retail",
+      repId: p.repId ?? undefined,
+      isProspect: p.stage !== "customer" || undefined,
+    }),
+  ),
+  // The Sales Force v2 trade network (salesforce/data) — distributors, dealers, retailers… are ordinary customers.
+  ...SF_CUSTOMERS.map(
+    (c): Customer => ({
+      id: c.id,
+      code: c.code,
+      name: c.name,
+      pan: "—",
+      address: c.city,
+      termId: c.typeId === "T-RET" ? "T7" : c.typeId === "T-WHOL" || c.typeId === "T-HRC" ? "T15" : "T30",
+      currency: "NPR",
+      priceLevel: SF_TYPES.find((t) => t.id === c.typeId)?.name ?? "Standard",
+      repId: c.repId ?? undefined,
+    }),
+  ),
 ];
 export const customerById = (id: string | null | undefined) => CUSTOMERS.find((c) => c.id === id);
 
@@ -119,6 +151,10 @@ export const ITEMS: Item[] = [
   // Batch AND serial: a production run, with every unit in it numbered.
   { id: "I-13", code: "SIN-5K", name: "Solar Inverter 5kVA", unit: "pcs", rate: 168_000, cost: 121_000, hs: "8504.40", tax: "VAT13", lotTracked: true, serialTracked: true, onHand: { "L-KTM": 8, "L-PKR": 2, "L-BTW": 0 } },
   { id: "I-14", code: "SEM-3P", name: "Smart Energy Meter 3-phase", unit: "pcs", rate: 24_500, cost: 17_800, hs: "9028.30", tax: "VAT13", lotTracked: true, serialTracked: true, units: [{ code: "box", factor: 10 }], onHand: { "L-KTM": 60, "L-PKR": 25, "L-BTW": 0 } },
+  // What the field reps sell (sfm/seed).
+  ...FIELD_ITEMS.map((i): Item => ({ ...i, tax: "VAT13", onHand: { "L-KTM": 400, "L-PKR": 120, "L-BTW": 0 } })),
+  // The Sales Force v2 catalogue (salesforce/data).
+  ...SF_PRODUCTS.map((p): Item => ({ id: p.id, code: p.code, name: p.name, unit: p.unit, rate: p.listPrice, cost: p.cost, hs: "2009.89", tax: "VAT13", onHand: { "L-KTM": 900, "L-PKR": 260, "L-BTW": 180 } })),
 ];
 
 /** Every unit a line can be sold in: the base unit first, then the alternates. */
@@ -766,6 +802,20 @@ export const SEED_ORDERS: Order[] = [
     lines: [L("I-05", 40)],
     cancelled: { reason: "Duplicate of SO-1037.", on: "2026-08-06" },
   }),
+
+  // ── Taken in the field today (sfm/seed) — the Today board's productive visits point at these ──
+  ...FIELD_ORDERS_TODAY.map((f) =>
+    order({
+      no: f.no,
+      customerId: f.partyId,
+      date: f.date,
+      expected: addDays(f.date, 2),
+      locationId: FIELD_PARTIES.find((p) => p.id === f.partyId)?.subsidiaryId === "NP-02" ? "L-PKR" : "L-KTM",
+      repId: f.repId,
+      lines: f.lines.map((l) => L(l.itemId, l.qty)),
+      history: [{ id: "h1", whoId: f.repId, when: `Sep 4, ${f.time}`, what: "took the order during a visit" }],
+    }),
+  ),
 ];
 
 export const nextOrderNo = (orders: Order[]) =>

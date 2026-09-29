@@ -214,16 +214,21 @@ export function OrderDeskDesignPage() {
       );
     }
     const itemSeed = src ? null : readItemSeed(search);
+    // A field visit's "New order" (sfm): `?cust=&rep=&day=` with no item — the outlet, the rep who stood in it and
+    // the day of the visit, so the order lands on that rep-day (the SFM attribution rule).
+    const fromVisit = !src && !itemSeed && !!(search.get("cust") || search.get("rep"));
+    const visitDay = search.get("day") ?? TODAY;
+    const visitSeed = fromVisit ? { customerId: search.get("cust") ?? undefined, repId: search.get("rep") ?? undefined, date: visitDay } : {};
     return (
       <OrderComposer
-        key={src ? `copy-${src.no}` : `new${itemSeedKey(itemSeed)}`}
-        today={src ? undefined : MASTERS_TODAY}
+        key={src ? `copy-${src.no}` : `new${itemSeedKey(itemSeed)}${visitSeed.customerId ?? ""}${visitSeed.repId ?? ""}`}
+        today={src ? undefined : fromVisit ? visitDay : MASTERS_TODAY}
         itemSeed={itemSeed}
         noun="order"
         title={src ? `Copy of ${src.no}` : "New sales order"}
         source={src ? { no: src.no, label: "Copied from" } : undefined}
         draft={!src}
-        seed={src ? { ...src, date: TODAY, expected: null, due: null, customerPo: null, attachments: [], lines: src.lines.map((l, i) => ({ ...l, id: `cp-${i}`, delivered: 0, invoiced: 0 })) } : {}}
+        seed={src ? { ...src, date: TODAY, expected: null, due: null, customerPo: null, attachments: [], lines: src.lines.map((l, i) => ({ ...l, id: `cp-${i}`, delivered: 0, invoiced: 0 })) } : visitSeed}
         primaryLabel="Create order"
         orders={orders}
         onCancel={onCancel}

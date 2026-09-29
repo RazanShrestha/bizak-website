@@ -1,5 +1,6 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
+import { FIELD_REPS } from "../sfm/seed";
 import {
   Check,
   ChevronRight,
@@ -130,6 +131,8 @@ export const PEOPLE: Person[] = [
   { id: "EMP-118", name: "Sneha Maharjan", initials: "SM", team: "Finance" },
   { id: "EMP-121", name: "Rohan Gurung", initials: "RG", team: "Engineering" },
   { id: "EMP-126", name: "Nabin Karki", initials: "NK", team: "Support" },
+  // The field sales reps (sfm/seed) — employees like any other, so the sales composer's rep picker names them.
+  ...FIELD_REPS.map((r) => ({ id: r.id, name: r.name, initials: r.initials, team: "Field sales" })),
 ];
 export const ME = PEOPLE[0];
 export const personById = (id: string) => PEOPLE.find((p) => p.id === id);

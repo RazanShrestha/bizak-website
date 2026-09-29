@@ -99,6 +99,26 @@ import { InvoicesDesk } from "./components/sales/InvoicesDesk";
 import { ReceiptsDesk, ReturnsDesk } from "./components/sales/ReceiptsDesk";
 import { PrintPage } from "./components/sales/print";
 import { ItemReceiptsDesk } from "./components/purchase/ItemReceiptsDesk";
+import { TodayPage as SfmTodayPage } from "./components/sfm/TodayPage";
+import { PlanPage as SfmPlanPage } from "./components/sfm/PlanPage";
+import { RoutesDesk as SfmRoutesDesk } from "./components/sfm/RoutesDesk";
+import { PartiesDesk as SfmPartiesDesk } from "./components/sfm/PartiesDesk";
+import { VisitsDesk as SfmVisitsDesk } from "./components/sfm/VisitsDesk";
+import { PerformancePage as SfmPerformancePage } from "./components/sfm/PerformancePage";
+import { HomePage as SfHomePage } from "./components/salesforce/HomePage";
+import { ORDERS_ROUTES as SF_ORDERS_ROUTES } from "./components/salesforce/OrdersPage";
+import { SCHEMES_ROUTES as SF_SCHEMES_ROUTES } from "./components/salesforce/SchemesPage";
+import { CLAIMS_ROUTES as SF_CLAIMS_ROUTES } from "./components/salesforce/ClaimsPage";
+import { CAMPAIGNS_ROUTES as SF_CAMPAIGNS_ROUTES } from "./components/salesforce/CampaignsPage";
+import { BRANDING_ROUTES as SF_BRANDING_ROUTES } from "./components/salesforce/BrandingPage";
+import { EVENTS_ROUTES as SF_EVENTS_ROUTES } from "./components/salesforce/EventsPage";
+import { CUSTOMERS_ROUTES as SF_CUSTOMERS_ROUTES } from "./components/salesforce/CustomersPage";
+import { TERRITORIES_ROUTES as SF_TERRITORIES_ROUTES } from "./components/salesforce/TerritoriesPage";
+import { SETUP_ROUTES as SF_SETUP_ROUTES } from "./components/salesforce/SetupPage";
+import { FIELD_ROUTES as SF_FIELD_ROUTES } from "./components/salesforce/FieldPages";
+import { TEAM_ROUTES as SF_TEAM_ROUTES } from "./components/salesforce/TeamPages";
+import { INSIGHTS_ROUTES as SF_INSIGHTS_ROUTES } from "./components/salesforce/InsightsPage";
+import { DEALER_ROUTES } from "./components/dealer/routes";
 import { ScheduledJobsDesignPage } from "./components/scheduler/ScheduledJobsDesignPage";
 import { MastersKitPage } from "./components/masters/MastersKitPage";
 import { MastersHubPage } from "./components/masters/hub/MastersHubPage";
@@ -1640,6 +1660,33 @@ export const router = createBrowserRouter([
       { path: "design/sales/print/:no",             Component: PrintPage                         },
       { path: "design/purchase/item-receipts",      Component: ItemReceiptsDesk                  },
       { path: "design/purchase/item-receipts/:no",  Component: ItemReceiptsDesk                  },
+      // Field sales (SFM) — one module, six tabs; a record (day, route, visit) docks beside its list.
+      { path: "design/sfm",                         Component: SfmTodayPage                      },
+      { path: "design/sfm/today",                   Component: SfmTodayPage                      },
+      { path: "design/sfm/today/:repId",            Component: SfmTodayPage                      },
+      { path: "design/sfm/plan",                    Component: SfmPlanPage                       },
+      { path: "design/sfm/routes",                  Component: SfmRoutesDesk                     },
+      { path: "design/sfm/routes/:no",              Component: SfmRoutesDesk                     },
+      { path: "design/sfm/parties",                 Component: SfmPartiesDesk                    },
+      { path: "design/sfm/parties/:no",             Component: SfmPartiesDesk                    },
+      { path: "design/sfm/visits",                  Component: SfmVisitsDesk                     },
+      { path: "design/sfm/visits/:no",              Component: SfmVisitsDesk                     },
+      { path: "design/sfm/performance",             Component: SfmPerformancePage                },
+      // Sales force v2 — the generic SFM (company side) and the Dealer Sales Portal.
+      { path: "design/salesforce",                  Component: SfHomePage                        },
+      ...SF_ORDERS_ROUTES,
+      ...SF_SCHEMES_ROUTES,
+      ...SF_CLAIMS_ROUTES,
+      ...SF_CAMPAIGNS_ROUTES,
+      ...SF_BRANDING_ROUTES,
+      ...SF_EVENTS_ROUTES,
+      ...SF_CUSTOMERS_ROUTES,
+      ...SF_TERRITORIES_ROUTES,
+      ...SF_SETUP_ROUTES,
+      ...SF_FIELD_ROUTES,
+      ...SF_TEAM_ROUTES,
+      ...SF_INSIGHTS_ROUTES,
+      ...DEALER_ROUTES,
       { path: "design/scheduled-jobs",              Component: ScheduledJobsDesignPage           },
       // Masters kit bench (masters spec §9.4 WP0). Declared before any `design/masters/:kind` route.
       { path: "design/masters/kit",                 Component: MastersKitPage                    },

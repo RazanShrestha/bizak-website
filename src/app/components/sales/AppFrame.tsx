@@ -21,6 +21,7 @@ import {
   CircleHelp,
   Bell,
   ChevronDown,
+  Route,
 } from "lucide-react";
 import { cn } from "../ui/utils";
 import { FrameContext, Avatar } from "./bzw";
@@ -49,6 +50,7 @@ const RAIL: { icon: React.ComponentType<{ size?: number }>; label: string; href?
   { icon: Truck, label: "Deliveries" },
   { icon: Receipt, label: "Invoices" },
   { icon: Users, label: "Customers" },
+  { icon: Route, label: "Sales force", href: "/design/salesforce" },
   { icon: ShoppingBag, label: "Purchasing" },
   { icon: Boxes, label: "Inventory", href: "/design/masters/items" },
   { icon: Landmark, label: "Accounts" },
