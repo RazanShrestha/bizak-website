@@ -70,6 +70,7 @@ export function DocDesk<T>({
   rowVerb,
   renderExpand,
   bulk = [],
+  filterPlaceholder = "Subsidiary, location, status…",
   onDelete,
   newLabel,
   onNew,
@@ -101,6 +102,8 @@ export function DocDesk<T>({
   rowLabel,
   expandLabel = "lines",
   initialFilters,
+  viewTabs,
+  frame,
 }: {
   /** The frame title — "Sales", "Purchasing". */
   module?: string;
@@ -126,6 +129,8 @@ export function DocDesk<T>({
   rowVerb?: (r: T) => { label: string; icon: React.ComponentType<{ size?: number }>; run: (e?: React.MouseEvent<HTMLButtonElement>) => void } | null;
   renderExpand?: (r: T) => React.ReactNode;
   bulk?: BulkAction<T>[];
+  /** The Filter menu's search placeholder — name this desk's own filters. */
+  filterPlaceholder?: string;
   /** Deletes what it can; each skipped entry starts with the document number. */
   onDelete?: (rows: T[]) => { done: number; skipped: string[] };
   newLabel?: string;
@@ -179,6 +184,10 @@ export function DocDesk<T>({
   numberWidth?: string;
   /** Filter values a link arrived with (`?unit=` on the item desk) — applied on arrival, shown as chips. */
   initialFilters?: string[];
+  /** Replaces the view tabs — a host whose "views" are separate desks draws its own `Tabs`. */
+  viewTabs?: React.ReactNode;
+  /** A module with its own frame hosts the desk inside it; `module`, `nav` and `rail` are then unused. */
+  frame?: (body: React.ReactNode) => React.ReactNode;
   /** What a row's checkbox names when the id is not what a reader knows it by (an item's name, not its id). */
   rowLabel?: (r: T) => string;
   /** What the expand caret shows — "lines" on a document, "variants" on a template. */
@@ -217,6 +226,8 @@ export function DocDesk<T>({
   const [expanded, setExpanded] = React.useState<Set<string>>(new Set());
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
   const [bulkNote, setBulkNote] = React.useState<string | null>(null);
+  // A desk with nothing to do to a selection draws no checkboxes: a tick that leads nowhere is a dead control.
+  const selectable = bulk.length > 0 || !!onDelete;
   const [confirmDelete, setConfirmDelete] = React.useState(false);
 
   const go = (n: string | null, params?: Record<string, string>) => {
@@ -386,8 +397,8 @@ export function DocDesk<T>({
   const sort = sorts.find((s) => s.key === sortKey);
   const filterOptions: SelectOption[] = filters.map((f) => ({ value: f.value, label: f.label, group: f.group, hint: f.hint }));
 
-  return (
-    <AppFrame title={module} titleAside={nav} rail={rail}>
+  const body = (
+    <>
       <div className="flex h-full min-h-0">
         <div className={cn("min-w-0 flex-1 overflow-y-auto [scrollbar-width:thin]", docked && panelFull && "hidden")}>
           {(stats.length > 0 || picks.length > 0) && (
@@ -406,7 +417,7 @@ export function DocDesk<T>({
           <div className="sticky top-0 z-30 border-b border-bz-line bg-bz-paper">
             <div className="flex items-center px-3 md:px-5">
               <div className="min-w-0 flex-1">
-                {views.length > 1 ? <Tabs value={view} onChange={setView} tabs={views.map((v) => ({ value: v.key, label: v.label, icon: v.icon }))} /> : <div className="flex h-11 items-center px-1 text-[12.5px] font-semibold text-bz-text">{views[0].label}</div>}
+                {viewTabs ?? (views.length > 1 ? <Tabs value={view} onChange={setView} tabs={views.map((v) => ({ value: v.key, label: v.label, icon: v.icon }))} /> : <div className="flex h-11 items-center px-1 text-[12.5px] font-semibold text-bz-text">{views[0].label}</div>)}
               </div>
               <div className="flex shrink-0 items-center gap-0.5 pl-2">
                 <button ref={keysRef} type="button" className={cn(ICON_BTN, "hidden md:inline-flex")} onClick={() => setKeysOpen(true)} title="Keyboard shortcuts">
@@ -426,7 +437,7 @@ export function DocDesk<T>({
               >
                 <SearchField ref={searchRef} value={q} onChange={setQ} placeholder={searchPlaceholder} hint="/" />
               </div>
-              {filters.length > 0 && <Select multiple label="Filter" icon={SlidersHorizontal} badge={chips.length} applied={chips.length > 0} value={applied} onChange={setApplied} width={290} options={filterOptions} placeholder="Subsidiary, location, status…" />}
+              {filters.length > 0 && <Select multiple label="Filter" icon={SlidersHorizontal} badge={chips.length} applied={chips.length > 0} value={applied} onChange={setApplied} width={290} options={filterOptions} placeholder={filterPlaceholder} />}
               {showPeriod && <PeriodSelect value={period} onChange={setPeriod} />}
               {sorts.length > 0 && (
                 <>
@@ -500,7 +511,7 @@ export function DocDesk<T>({
               <div className={cn(CARD, "overflow-hidden transition-opacity duration-150", refreshing && "opacity-55")} aria-busy={refreshing || undefined}>
                 {!compact && (
                   <div className={cn("hidden items-center gap-3 border-b border-bz-line bg-bz-paper-warm px-3 py-1.5 md:grid", LABEL)} style={{ gridTemplateColumns: template }}>
-                    <span>
+                    <span className={cn(!selectable && "invisible")}>
                       <Checkbox
                         on={walk.length > 0 && walk.every((r) => selected.has(noOf(r)))}
                         mixed={walk.some((r) => selected.has(noOf(r))) && !walk.every((r) => selected.has(noOf(r)))}
@@ -528,7 +539,7 @@ export function DocDesk<T>({
                     <section key={g.key}>
                       {headed && (
                         <div className={cn("flex items-center gap-2 border-b border-bz-line-soft px-3 py-2", g.alarm && g.rows.length ? "bg-bz-red-soft" : "bg-bz-paper-warm/60")}>
-                          <Checkbox on={ids.length > 0 && nSel === ids.length} mixed={nSel > 0 && nSel < ids.length} onChange={(v) => (setBulkNote(null), setSelected((s) => { const n = new Set(s); ids.forEach((id) => (v ? n.add(id) : n.delete(id))); return n; }))} label={`Select all in ${g.label}`} />
+                          {selectable && <Checkbox on={ids.length > 0 && nSel === ids.length} mixed={nSel > 0 && nSel < ids.length} onChange={(v) => (setBulkNote(null), setSelected((s) => { const n = new Set(s); ids.forEach((id) => (v ? n.add(id) : n.delete(id))); return n; }))} label={`Select all in ${g.label}`} />}
                           <button type="button" onClick={() => toggle(setCollapsed, `${view}:${g.key}`)} className="inline-flex min-w-0 items-center gap-1.5 text-left">
                             {shut ? <ChevronRight size={13} className="text-bz-text-soft" /> : <ChevronDown size={13} className="text-bz-text-soft" />}
                             {g.icon}
@@ -564,7 +575,7 @@ export function DocDesk<T>({
                                 style={{ gridTemplateColumns: template }}
                               >
                                 {active && <span className="absolute inset-y-0 left-0 w-0.5 bg-bz-fire" />}
-                                <span className={cn(isSel ? "opacity-100" : "opacity-40 group-hover:opacity-100")}>
+                                <span className={cn(isSel ? "opacity-100" : "opacity-40 group-hover:opacity-100", !selectable && "invisible")}>
                                   <Checkbox on={isSel} onChange={(v) => (setBulkNote(null), toggle(setSelected, n, v))} label={`Select ${rowLabel?.(r) ?? n}`} />
                                 </span>
                                 <span className={cn("hidden items-center gap-1 text-[11.5px] font-medium text-bz-text-muted md:flex", NUM)}>
@@ -694,8 +705,9 @@ export function DocDesk<T>({
       />
       {renderExtra?.({ show, go })}
       <ToastHost toast={toast} onDismiss={dismiss} lifted={selected.size > 0} />
-    </AppFrame>
+    </>
   );
+  return frame ? <>{frame(body)}</> : <AppFrame title={module} titleAside={nav} rail={rail}>{body}</AppFrame>;
 }
 
 function FilterChip({ children, onRemove }: { children: React.ReactNode; onRemove: () => void }) {

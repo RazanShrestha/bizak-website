@@ -3,7 +3,6 @@ import { cn } from "../ui/utils";
 import { NUM, TODAY, daysBetween, fmtShort, addDays, PEOPLE, ME, personById } from "../productivity/shared";
 import type { Tone } from "./bzw";
 import { FIELD_ITEMS, FIELD_ORDERS_TODAY, FIELD_PARTIES } from "../sfm/seed";
-import { CUSTOMERS as SF_CUSTOMERS, CUSTOMER_TYPES as SF_TYPES, PRODUCTS as SF_PRODUCTS } from "../salesforce/data";
 
 // ════════════════════════════════════════════════════════════════════════════
 // SALES ORDERS · KERNEL
@@ -74,20 +73,6 @@ export const CUSTOMERS: Customer[] = [
       isProspect: p.stage !== "customer" || undefined,
     }),
   ),
-  // The Sales Force v2 trade network (salesforce/data) — distributors, dealers, retailers… are ordinary customers.
-  ...SF_CUSTOMERS.map(
-    (c): Customer => ({
-      id: c.id,
-      code: c.code,
-      name: c.name,
-      pan: "—",
-      address: c.city,
-      termId: c.typeId === "T-RET" ? "T7" : c.typeId === "T-WHOL" || c.typeId === "T-HRC" ? "T15" : "T30",
-      currency: "NPR",
-      priceLevel: SF_TYPES.find((t) => t.id === c.typeId)?.name ?? "Standard",
-      repId: c.repId ?? undefined,
-    }),
-  ),
 ];
 export const customerById = (id: string | null | undefined) => CUSTOMERS.find((c) => c.id === id);
 
@@ -153,8 +138,9 @@ export const ITEMS: Item[] = [
   { id: "I-14", code: "SEM-3P", name: "Smart Energy Meter 3-phase", unit: "pcs", rate: 24_500, cost: 17_800, hs: "9028.30", tax: "VAT13", lotTracked: true, serialTracked: true, units: [{ code: "box", factor: 10 }], onHand: { "L-KTM": 60, "L-PKR": 25, "L-BTW": 0 } },
   // What the field reps sell (sfm/seed).
   ...FIELD_ITEMS.map((i): Item => ({ ...i, tax: "VAT13", onHand: { "L-KTM": 400, "L-PKR": 120, "L-BTW": 0 } })),
-  // The Sales Force v2 catalogue (salesforce/data).
-  ...SF_PRODUCTS.map((p): Item => ({ id: p.id, code: p.code, name: p.name, unit: p.unit, rate: p.listPrice, cost: p.cost, hs: "2009.89", tax: "VAT13", onHand: { "L-KTM": 900, "L-PKR": 260, "L-BTW": 180 } })),
+  // The one non-stock item every agreed charge (freight, loading…) is a line of — `CHARGE_ITEM_ID` in estimate-offer.ts.
+  { id: "SF-CHARGE", code: "CHARGE", name: "Charge", unit: "", rate: 0, cost: 0, hs: "—", tax: "VAT13", onHand: {} },
+  // Sales force v2 adds its customers and products at runtime (salesforce/bridge.ts).
 ];
 
 /** Every unit a line can be sold in: the base unit first, then the alternates. */
@@ -219,6 +205,10 @@ export type OrderLine = {
   priceLevel?: string;
   /** Tenant line fields (Custom Form). */
   custom?: Record<string, string>;
+  /** A note to the customer on this line (LINE_NOTE) — apart from `description`, the item's own wording on the print. */
+  note?: string;
+  /** Free goods: this zero-rate line comes with the paid line of this id (FREE_OF_DETAIL_ID). */
+  freeOf?: string;
   /** ORDER_DETAIL.FULFILL_QTY — approved deliveries only. */
   delivered: number;
   /** ORDER_DETAIL.BILLED_QTY — approved invoices only. */

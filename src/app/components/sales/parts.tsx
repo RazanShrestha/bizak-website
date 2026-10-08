@@ -852,9 +852,14 @@ export function SystemSection({ created, history, audit }: { created: { byId: st
         <Cell label="Last modified">
           {last ? (
             <>
-              <span className="inline-flex items-center gap-1.5">
-                <Avatar person={personById(last.whoId)} size={16} /> {personById(last.whoId)?.name}
-              </span>
+              {/* The last change can be the customer's (an estimate answered on the portal): no person to show. */}
+              {last.whoId === "customer" ? (
+                "The customer"
+              ) : (
+                <span className="inline-flex items-center gap-1.5">
+                  <Avatar person={personById(last.whoId)} size={16} /> {personById(last.whoId)?.name}
+                </span>
+              )}
               <span className={cn("block text-[10.5px] text-bz-text-soft", NUM)}>{last.when}</span>
             </>
           ) : (

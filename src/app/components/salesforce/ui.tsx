@@ -31,8 +31,10 @@ export function PageIntro({ children, actions }: { children?: React.ReactNode; a
 export type Figure = { label: string; value: React.ReactNode; sub?: React.ReactNode; tone?: "danger" | "good"; onClick?: () => void; title?: string };
 /** The page's figures, calm: micro label above, the value below, hairlines between. Never tiles. */
 export function Figures({ items, className }: { items: Figure[]; className?: string }) {
+  // A divided row needs room for every figure; narrower than that it is a plain grid, so no figure wraps with a
+  // divider hanging in front of it.
   return (
-    <div className={cn("grid grid-cols-2 gap-y-5 sm:flex sm:flex-wrap sm:gap-y-4", className)}>
+    <div className={cn("grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-4 lg:flex lg:flex-wrap lg:gap-x-0 lg:gap-y-4", className)}>
       {items.map((f, i) => {
         const body = (
           <>
@@ -42,7 +44,7 @@ export function Figures({ items, className }: { items: Figure[]; className?: str
           </>
         );
         return (
-          <div key={f.label} className={cn("min-w-0 sm:pr-8", i > 0 && "sm:border-l sm:border-bz-line-soft sm:pl-8")} title={f.title}>
+          <div key={f.label} className={cn("min-w-0 lg:pr-8", i > 0 && "lg:border-l lg:border-bz-line-soft lg:pl-8")} title={f.title}>
             {f.onClick ? (
               <button type="button" onClick={f.onClick} className="block rounded-bz-sm text-left transition-opacity hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bz-fire">
                 {body}
@@ -192,8 +194,8 @@ export function ProductThumb({ product, size = 40 }: { product: Product; size?: 
     .slice(0, 2);
   return (
     <span
-      className="flex shrink-0 items-center justify-center rounded-bz-md text-[11px] font-bold tracking-wide text-white"
-      style={{ width: size, height: size, background: `linear-gradient(145deg, ${idColor(product.tone)}, color-mix(in srgb, ${idColor(product.tone)} 70%, black))`, fontSize: Math.round(size * 0.28) }}
+      className="flex shrink-0 items-center justify-center rounded-bz-md text-[11px] font-bold tracking-wide text-bz-text-on-dark"
+      style={{ width: size, height: size, background: idColor(product.tone), fontSize: Math.round(size * 0.28) }}
       aria-hidden
     >
       {initials}
@@ -204,7 +206,7 @@ export function ProductThumb({ product, size = 40 }: { product: Product; size?: 
 /** One line + one action. */
 export function EmptyNote({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-bz-lg border border-dashed border-bz-line px-6 py-10 text-center">
+    <div className="flex flex-col items-center gap-3 rounded-bz-lg border border-bz-line-soft bg-bz-surface px-6 py-10 text-center">
       <p className="m-0 text-[12.5px] text-bz-text-muted">{children}</p>
       {action}
     </div>

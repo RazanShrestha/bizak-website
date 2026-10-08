@@ -31,6 +31,7 @@ import { createStore, ordersStore, useStore } from "./store";
 import { tdsById } from "./master";
 import type { Tone } from "./bzw";
 import type { BillLine } from "./OrderComposer";
+import type { EstimateOffer } from "./estimate-offer";
 import { FIELD_PARTIES, FIELD_RECEIPTS_TODAY } from "../sfm/seed";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -85,6 +86,8 @@ export type Estimate = Meta & {
   approval: Approval;
   closed: { reason: string; on: string } | null;
   cancelled: { reason: string; on: string } | null;
+  /** The estimate as an offer the customer answers (estimate-offer.ts). Absent = never sent. */
+  offer?: EstimateOffer;
 };
 
 let seq = 900;
@@ -252,6 +255,14 @@ export type Receipt = Meta & {
   exchangeRate: number;
   amount: number;
   allocations: { invoiceNo: string; amount: number; tdsCode?: string; tds?: number }[];
+  /**
+   * The SALES ORDERS this receipt is for (CUSTOMER_PAYMENT_ORDER_DETAIL, decision #33): a reference with an amount.
+   * A receipt is only ever applied to invoices — a customer, though, pays for an order, often before it is invoiced.
+   * The tagged amount stays an advance; only that order's invoices may take it, and it is applied by editing the
+   * receipt once they exist. The untagged rest of the advance may go to any invoice. Absent on a receipt from before
+   * order references existed.
+   */
+  orders?: { orderNo: string; amount: number }[];
   state: "approved" | "pending";
   rejected?: { reason: string; byId: string; on: string };
   /** FORM_STATUS "Posted" — false while it sits in undeposited funds. */
@@ -302,6 +313,64 @@ export const receiptsStore = createStore<Receipt[]>([
 export const receiptApplied = (r: Receipt) => r.allocations.reduce((s, a) => s + a.amount, 0);
 export const receiptTds = (r: Receipt) => r.allocations.reduce((s, a) => s + (a.tds ?? 0), 0);
 export const receiptAdvance = (r: Receipt) => Math.max(0, Math.round((r.amount - receiptApplied(r)) * 100) / 100);
+
+/** A sales order a receipt can be tagged to. */
+export type ReceiptOrderTarget = { orderNo: string; date: string; total: number; /** What it can still be tagged for, not counting the receipt being edited. */ need: number; invoiced: boolean; /** Rejected or cancelled: a tag on it has to go. */ dead: boolean };
+/** An open invoice a receipt can be applied to. */
+export type ReceiptInvoiceTarget = { invoiceNo: string; /** The sales order it bills, if any. */ orderNo: string | null; date: string; due: string | null; total: number; /** What this receipt may apply: still to pay, less `reserved`. */ open: number; /** Tagged to its order on other receipts. */ reserved: number };
+/**
+ * Where a receipt's tag stands: `waiting` = the order is not invoiced yet; `invoiced` = its invoice is open, the tag
+ * can be applied; `applied` = it was; `spare` = the order needs no more money; `dead` = the order was rejected or
+ * cancelled. `spare` and `dead` have to be changed.
+ */
+export type ReceiptTagUse = { orderNo: string; amount: number; open: number; state: "waiting" | "invoiced" | "applied" | "spare" | "dead" };
+export type ReceiptUse = { lines: { invoiceNo: string; amount: number; applied: number }[]; tags: ReceiptTagUse[]; /** Advance with no order tag. */ free: number };
+/** A sales order a receipt is for, with that order's invoices only: what this receipt applied to each, and can still apply. */
+export type ReceiptOrderPot = {
+  orderNo: string;
+  amount: number;
+  /** Not applied yet. */
+  open: number;
+  state: ReceiptTagUse["state"];
+  invoices: { invoiceNo: string; applied: number; canApply: number }[];
+  /** An early-payment discount the order has earned and that is not given yet: it goes on `invoiceNo` with the next Apply. */
+  discount: { amount: number; invoiceNo: string } | null;
+};
+/**
+ * One receipt's money, pot by pot: each sales order it is for, then the money for no order (with the other invoices
+ * it went to). Every rupee of the receipt is in exactly one pot. With what can still be chosen, and the three things
+ * the office does with it — each refuses with a sentence, or returns null when done.
+ */
+export type ReceiptMoney = {
+  received: number;
+  orders: ReceiptOrderPot[];
+  loose: { amount: number; open: number; invoices: { invoiceNo: string; applied: number }[] };
+  /** Orders it can be put on, with what each still needs. */
+  orderChoices: { orderNo: string; need: number; invoiced: boolean }[];
+  /** Invoices the money for no order can go to — not those of an order the receipt is already for. */
+  invoiceChoices: { invoiceNo: string; room: number; due: string | null }[];
+  /**
+   * An early-payment discount sent with the receipt: a credit note of its own (not part of the receipt), on the
+   * bills it was earned on. `pending` until the receipt is approved — they are approved or rejected together.
+   */
+  discount: { no: string; amount: number; pending: boolean; invoices: { invoiceNo: string; amount: number }[] } | null;
+  apply: (invoiceNo: string, amount: number) => string | null;
+  unapply: (invoiceNo: string) => string | null;
+  setOrders: (orders: { orderNo: string; amount: number }[]) => string | null;
+};
+/**
+ * The customer's account, when another module keeps it. The desk settles its own invoices; for a customer whose
+ * bills live elsewhere (a Sales force customer) that module says which orders a receipt may be tagged to, which
+ * invoices it may be applied to, and where its lines stand. The desk knows the question, never the module: both
+ * answer null for a customer of the desk's own.
+ */
+export const receiptBook: {
+  targets: (customerId: string, exceptReceiptNo?: string) => { orders: ReceiptOrderTarget[]; invoices: ReceiptInvoiceTarget[] } | null;
+  use: (r: Receipt) => ReceiptUse | null;
+  /** What the office still has to do with it: change a tag whose order is gone or paid, or apply money to an invoice. */
+  todo: (r: Receipt) => "retag" | "apply" | null;
+  money: (r: Receipt) => ReceiptMoney | null;
+} = { targets: () => null, use: () => null, todo: () => null, money: () => null };
 
 // ── Credit memo (sales return) ──────────────────────────────────────────────
 
@@ -521,7 +590,6 @@ export function addReceipt(r: Omit<Receipt, "id" | "no" | "history" | "created" 
 }
 export const updateReceipt = (no: string, fn: (r: Receipt) => Receipt, what?: string) =>
   receiptsStore.set((rs) => rs.map((r) => (r.no === no ? { ...fn(r), history: what ? [...r.history, ev(what)] : fn(r).history } : r)));
-export const postReceipt = (no: string, ledger: string) => updateReceipt(no, (r) => ({ ...r, posted: true, depositTo: ledger }), `deposited it to ${ledger.split(" · ")[0]}`);
 export const approveReceipt = (no: string) => updateReceipt(no, (r) => ({ ...r, state: "approved" }), "approved it");
 export const cancelReceipt = (no: string, reason: string) => updateReceipt(no, (r) => ({ ...r, cancelled: { reason, on: TODAY } }), `cancelled it — “${reason}”`);
 export const deleteReceipt = (no: string) => receiptsStore.set((rs) => rs.filter((r) => r.no !== no));
@@ -608,7 +676,15 @@ export const rejectChildDoc = (orderNo: string, docNo: string, reason: string) =
 export const noteChildDoc = (orderNo: string, docNo: string, n: Omit<Comment, "id" | "authorId" | "when">) => updateChildDoc(orderNo, docNo, (d) => ({ ...d, comments: [...(d.comments ?? []), note(n)] }));
 export const attachChildDoc = (orderNo: string, docNo: string) => updateChildDoc(orderNo, docNo, (d) => ({ ...d, attachments: [...(d.attachments ?? []), file(`${docNo.toLowerCase()}-signed.pdf`)] }));
 
-export const replaceReceipt = (no: string, r: Partial<Receipt>) => updateReceipt(no, (x) => ({ ...x, ...r, rejected: undefined }), "edited it");
+/**
+ * An edit. Banking a receipt is one: its status follows the account it was received into (Undeposited while that is
+ * undeposited funds, Posted once it is a cash or bank account), so the history names the move when the account changed.
+ */
+export function replaceReceipt(no: string, r: Partial<Receipt>) {
+  const was = receiptsStore.get().find((x) => x.no === no)?.depositTo;
+  const moved = r.depositTo && was && r.depositTo !== was ? ` — moved from ${was.split(" · ")[0]} into ${r.depositTo.split(" · ")[0]}` : "";
+  updateReceipt(no, (x) => ({ ...x, ...r, rejected: undefined }), `edited it${moved}`);
+}
 export const rejectReceipt = (no: string, reason: string) => updateReceipt(no, (r) => ({ ...r, rejected: { reason, byId: ME.id, on: TODAY } }), `sent it back — “${reason}”`);
 export const noteReceipt = (no: string, n: Omit<Comment, "id" | "authorId" | "when">) => updateReceipt(no, (r) => ({ ...r, comments: [...r.comments, note(n)] }));
 export const attachReceipt = (no: string) => updateReceipt(no, (r) => ({ ...r, attachments: [...r.attachments, file(`${no.toLowerCase()}-slip.jpg`)] }));
@@ -682,7 +758,12 @@ export function relatedFor(no: string, data: ReturnType<typeof useSales>): Relat
   const e = estimates.find((x) => x.no === no);
   const o = orders.find((x) => x.no === no) ?? orders.find((x) => x.docs.some((d) => d.no === no));
   if (e) {
-    if (e.opportunity) rows.push({ no: e.opportunity, kind: "Opportunity", date: e.date, party: party(e.customerId), status: "Won", tone: "positive" });
+    if (e.opportunity) {
+      // The opportunity's stage follows its estimate: nobody types it.
+      const st = e.offer?.status;
+      const status = st === "accepted" ? "Won" : st === "declined" ? "Lost" : st === "changes-requested" || (st === "sent" && e.offer!.versions.length > 1) ? "In negotiation" : st === "sent" ? "Estimate sent" : "Open";
+      rows.push({ no: e.opportunity, kind: "Opportunity", date: e.date, party: party(e.customerId), status, tone: st === "accepted" ? "positive" : st === "sent" || st === "changes-requested" ? "partial" : "neutral" });
+    }
     ordersFrom(orders, e).forEach(pushOrder);
   }
   if (o) {

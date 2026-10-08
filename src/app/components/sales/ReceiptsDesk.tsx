@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { Ban, Banknote, CircleCheck, Landmark, ListTree, PackageCheck, Pencil, Printer, ShieldCheck, Trash2, Undo2, Users } from "lucide-react";
 import { cn } from "../ui/utils";
 import { Avatar, BTN, Chip, DocLink, Field, GHOST, INPUT_SM, LABEL, MenuItem, MenuSep, NUM, Dialog, Select } from "./bzw";
@@ -28,8 +28,8 @@ import {
   docStatus,
   noteCredit,
   noteReceipt,
-  postReceipt,
   receiptAdvance,
+  receiptBook,
   receiptApplied,
   receiptTds,
   refundCredit,
@@ -38,6 +38,7 @@ import {
   useSales,
 } from "./flow";
 import { ReceiptSheet, ReturnSheet } from "./MoneySheets";
+import { ReceiptMoneyView } from "./receipt-use";
 import { addReceipt as addItemReceipt, receiptsForReturn, receivedFor, receiveStage } from "../purchase/receipts";
 import { ReceiveSheet } from "../purchase/ReceiveSheet";
 import { glCredit, glReceipt } from "./gl";
@@ -46,9 +47,20 @@ import { glCredit, glReceipt } from "./gl";
 // RECEIPTS — money in, and where it went
 //
 // A receipt is read as: who paid, how, how much, which invoices it settled,
-// what TDS they withheld, and what is left over as their advance. Money that
-// went to undeposited funds waits until someone posts it to a bank — the one
-// piece of routine work this desk carries — so that is its lead group.
+// what TDS they withheld, and what is left over as their advance.
+//
+// BANKING A RECEIPT IS CHANGING ITS ACCOUNT, as in the app: a receipt's status
+// (PAYMENT_FORM.FORM_STATUS) is derived from the account it was received into —
+// "Undeposited" while that is still the undeposited-funds ledger, "Posted" once
+// it is a cash or bank account. There is no deposit action and no button for
+// one: the receipt is edited and its "Into" account changed. The record only
+// says where the money sits.
+//
+// WHERE THE MONEY GOES is chosen on the record, not the form. A receipt is only
+// ever applied to invoices; for a Sales force customer it may also say which
+// sales orders its money is for (decision #33). The record shows each order
+// with its own invoice and an Apply beside it (receipt-use.tsx); nothing is
+// applied by itself.
 // ════════════════════════════════════════════════════════════════════════════
 
 const receiptLabel = (r: Receipt) => (r.cancelled || r.rejected || r.state === "pending" ? docStatus(r) : r.posted ? { label: "Posted", tone: "positive" as const } : { label: "Undeposited", tone: "partial" as const });
@@ -56,11 +68,16 @@ const receiptLabel = (r: Receipt) => (r.cancelled || r.rejected || r.state === "
 export function ReceiptsDesk() {
   const { receipts } = useSales();
   const navigate = useNavigate();
+  const [search] = useSearchParams();
+  // A "New receipt" started from a customer elsewhere (Sales force): `new?cust=` arrives with that customer chosen.
+  const seedCustomer = customerById(search.get("cust"))?.id;
   const rows = React.useMemo(() => [...receipts].sort((a, b) => b.date.localeCompare(a.date) || b.no.localeCompare(a.no)), [receipts]);
   const live = (r: Receipt) => !r.cancelled;
   const undeposited = (r: Receipt) => live(r) && r.state === "approved" && !r.posted;
   const pending = (r: Receipt) => live(r) && r.state === "pending" && !r.rejected;
   const advance = (r: Receipt) => live(r) && r.state === "approved" && receiptAdvance(r) > 0.005;
+  // A Sales force customer's receipt the office still has to act on: apply it, or change the order it is for (decision #33).
+  const todo = (r: Receipt) => (live(r) ? receiptBook.todo(r) : null);
   const month = rows.filter((r) => live(r) && r.state === "approved" && daysBetween(r.date, TODAY) <= 30);
 
   return (
@@ -71,12 +88,13 @@ export function ReceiptsDesk() {
       rows={rows}
       noOf={(r) => r.no}
       dateOf={(r) => r.date}
-      searchText={(r) => `${r.no} ${customerById(r.customerId)?.name} ${Object.values(r.methodFields).join(" ")} ${r.allocations.map((a) => a.invoiceNo).join(" ")}`}
+      searchText={(r) => `${r.no} ${customerById(r.customerId)?.name} ${Object.values(r.methodFields).join(" ")} ${r.allocations.map((a) => a.invoiceNo).join(" ")} ${(r.orders ?? []).map((o) => o.orderNo).join(" ")}`}
       stats={[{ label: "Received · 30 days", value: <Amount value={month.reduce((s, r) => s + r.amount * r.exchangeRate, 0)} currency="NPR" /> }]}
       picks={[
-        { key: "undeposited", label: "Undeposited", value: <Amount value={rows.filter(undeposited).reduce((s, r) => s + r.amount, 0)} />, test: undeposited, title: "Cash and cheques not yet posted to a bank" },
+        { key: "undeposited", label: "Undeposited", value: <Amount value={rows.filter(undeposited).reduce((s, r) => s + r.amount, 0)} />, test: undeposited, title: "Still in undeposited funds" },
         { key: "pending", label: "Needs you", value: rows.filter(pending).length, test: pending },
         { key: "advance", label: "With advance", value: rows.filter(advance).length, test: advance, title: "Part of the money isn't applied to an invoice yet" },
+        { key: "todo", label: "To apply", value: rows.filter((r) => todo(r) !== null).length, test: (r) => todo(r) !== null, danger: rows.some((r) => todo(r) === "retag"), title: "An advance that can go to an invoice, or an order reference to change" },
       ]}
       views={[
         {
@@ -121,22 +139,21 @@ export function ReceiptsDesk() {
         { key: "state", label: "Status", width: "116px", render: (r) => { const s = receiptLabel(r); return <Chip tone={s.tone}>{s.label}</Chip>; } },
       ]}
       primary={(r) => ({ title: customerById(r.customerId)!.name, sub: <>{methodById(r.methodId).name} · {subsidiaryById(r.subsidiaryId).name}</>, subOnDesktop: true })}
-      amount={(r) => ({ value: <Amount value={r.amount} currency={r.currency !== "NPR" ? r.currency : undefined} />, sub: advance(r) ? <><Amount value={receiptAdvance(r)} className="text-bz-text-soft" /> advance</> : receiptTds(r) ? <>+ TDS <Amount value={receiptTds(r)} className="text-bz-text-soft" /></> : undefined })}
-      rowVerb={(r) => (undeposited(r) ? { label: "Deposit", icon: Landmark, run: () => navigate(`/design/sales/receipts/${r.no}`) } : null)}
+      amount={(r) => ({ value: <Amount value={r.amount} currency={r.currency !== "NPR" ? r.currency : undefined} />, sub: todo(r) === "retag" ? <span className="font-semibold text-bz-red">order to change</span> : advance(r) ? <><Amount value={receiptAdvance(r)} className="text-bz-text-soft" /> advance</> : receiptTds(r) ? <>+ TDS <Amount value={receiptTds(r)} className="text-bz-text-soft" /></> : undefined })}
+      rowVerb={(r) => (pending(r) ? { label: "Review", icon: ShieldCheck, run: () => navigate(`/design/sales/receipts/${r.no}`) } : null)}
       renderExpand={(r) => (
         <ExpandLines rows={[...r.allocations.map((a) => ({ name: a.invoiceNo, note: a.tds ? `TDS ${a.tds.toLocaleString("en-US")}` : undefined, qty: "applied", amount: <Amount value={a.amount} /> })), ...(receiptAdvance(r) > 0.005 ? [{ name: "Advance", qty: "unapplied", amount: <Amount value={receiptAdvance(r)} /> }] : [])]} />
       )}
       bulk={[
         {
-          label: "Deposit",
-          icon: Landmark,
-          title: "Posts them to Nabil Bank",
-          enabled: (rs) => rs.some(undeposited),
+          label: "Approve",
+          icon: ShieldCheck,
+          enabled: (rs) => rs.some(pending),
           run: (rs) => {
             const skipped: string[] = [];
             let done = 0;
-            rs.forEach((r) => (undeposited(r) ? (postReceipt(r.no, DEPOSIT_LEDGERS[2]), done++) : skipped.push(`${r.no} isn't undeposited`)));
-            return { done, skipped, verb: "deposited" };
+            rs.forEach((r) => (pending(r) ? (approveReceipt(r.no), done++) : skipped.push(`${r.no} isn't waiting for approval`)));
+            return { done, skipped, verb: "approved" };
           },
         },
         { label: "Print", icon: Printer, enabled: () => true, run: (rs) => ({ done: rs.length, skipped: [], verb: "sent to the printer" }) },
@@ -152,7 +169,7 @@ export function ReceiptsDesk() {
       renderNew={(ctx) => (
         <RecordShell ctx={{ ...ctx, full: false }} no="New receipt" title="Receive payment" back={{ label: "Receipts", onClick: () => ctx.go(null) }}>
           <div className="flex h-full min-h-0 flex-col">
-            <ReceiptSheet onCancel={() => ctx.go(null)} onDone={(no) => (ctx.go(no), ctx.show("success", `${no} recorded`))} />
+            <ReceiptSheet key={`new${seedCustomer ?? ""}`} seedCustomerId={seedCustomer} onCancel={() => ctx.go(null)} onDone={(no) => (ctx.go(no), ctx.show("success", `${no} recorded`))} />
           </div>
         </RecordShell>
       )}
@@ -165,10 +182,11 @@ function ReceiptPanel({ r, ctx }: { r: Receipt; ctx: PanelCtx }) {
   const navigate = useNavigate();
   const { invoices } = useSales();
   const life = useLifecycle(r.no);
-  const [bank, setBank] = React.useState(DEPOSIT_LEDGERS[2]);
   const customer = customerById(r.customerId)!;
   const method = methodById(r.methodId);
   const status = receiptLabel(r);
+  // A customer whose account another module keeps: where each line stands comes from there (decision #33).
+  const money = r.cancelled || r.rejected ? null : receiptBook.money(r);
   const adv = receiptAdvance(r);
   const tds = receiptTds(r);
   const counted = r.state === "approved" && !r.cancelled;
@@ -214,18 +232,10 @@ function ReceiptPanel({ r, ctx }: { r: Receipt; ctx: PanelCtx }) {
       <StepCard
         icon={<Landmark size={15} />}
         title={r.methodId === "CHQ" ? `Cheque ${r.methodFields.chequeNo ?? ""} not deposited` : `${method.name} not deposited`}
-        sub={r.methodId === "CHQ" && r.methodFields.chequeDate ? `Dated ${fmtShort(r.methodFields.chequeDate)} · in undeposited funds` : "In undeposited funds until it is posted to a bank."}
-        actions={
-          <>
-            <Select trigger="ghost" label={bank.split(" · ")[0]} value={bank} onChange={setBank} width={280} align="right" options={DEPOSIT_LEDGERS.filter((d) => d !== "Undeposited funds").map((b) => ({ value: b, label: b }))} />
-            <button type="button" className={cn(BTN, "h-8")} onClick={() => (postReceipt(r.no, bank), ctx.show("success", `${r.no} posted to ${bank.split(" · ")[0]}`))}>
-              Deposit
-            </button>
-          </>
-        }
+        sub={[r.methodId === "CHQ" && r.methodFields.chequeDate ? `Dated ${fmtShort(r.methodFields.chequeDate)}` : "", `In ${r.depositTo.split(" · ")[0]}`].filter(Boolean).join(" · ")}
       />
     );
-  else step = <StepCard tone="done" icon={<CircleCheck size={15} />} title={`Posted to ${r.depositTo.split(" · ")[0]}`} sub={adv > 0.005 ? <><Amount value={adv} /> is kept as {customer.name.split(" ")[0]}'s advance.</> : undefined} />;
+  else step = <StepCard tone="done" icon={<CircleCheck size={15} />} title={`Received into ${r.depositTo.split(" · ")[0]}`} sub={adv > 0.005 ? <><Amount value={adv} /> is kept as {customer.name.split(" ")[0]}'s advance.</> : undefined} />;
 
   return (
     <RecordShell
@@ -248,64 +258,66 @@ function ReceiptPanel({ r, ctx }: { r: Receipt; ctx: PanelCtx }) {
           <MenuItem icon={Pencil} kbd="E" disabled={!!r.cancelled} onClick={() => (close(), ctx.go(r.no, { do: "edit" }))}>
             Edit receipt
           </MenuItem>
-          <MenuItem icon={Landmark} disabled={!(counted && !r.posted)} onClick={() => (close(), postReceipt(r.no, bank), ctx.show("success", `${r.no} posted to ${bank.split(" · ")[0]}`))}>
-            Deposit to {bank.split(" · ")[0]}
-          </MenuItem>
           <MenuSep />
           <MenuItem icon={Ban} disabled={!!r.cancelled} onClick={() => (close(), life.open("cancel"))}>
             Cancel receipt…
           </MenuItem>
-          <MenuItem icon={Trash2} danger disabled={counted && r.posted} hint={counted && r.posted ? "Posted to a bank — cancel it instead" : undefined} onClick={() => (close(), life.open("delete"))}>
+          <MenuItem icon={Trash2} danger disabled={counted && r.posted} hint={counted && r.posted ? `Posted to ${r.depositTo.split(" · ")[0]} — cancel it instead` : undefined} onClick={() => (close(), life.open("delete"))}>
             Delete receipt…
           </MenuItem>
         </>
       )}
       foot={<NoteFoot onSend={(n) => noteReceipt(r.no, n)} />}
     >
-      {step}
-
-      <Block title="Applied to" count={r.allocations.length}>
-        {r.allocations.length === 0 ? (
-          <p className="m-0 text-[11.5px] text-bz-text-soft">Not applied to an invoice — it is all advance.</p>
-        ) : (
-          <div className="overflow-hidden rounded-bz-md border border-bz-line-soft">
-            <div className={cn("hidden grid-cols-[minmax(0,1fr)_104px_104px_104px] gap-3 border-b border-bz-line bg-bz-paper-warm px-3 py-1.5 sm:grid", LABEL)}>
-              <span>Invoice</span>
-              <span className="text-right">TDS</span>
-              <span className="text-right">Applied</span>
-              <span className="text-right">Still due</span>
-            </div>
-            {r.allocations.map((a) => {
-              const v = invoices.find((x) => x.doc.no === a.invoiceNo);
-              return (
-                <button key={a.invoiceNo} type="button" onClick={() => navigate(`/design/sales/invoices/${a.invoiceNo}`)} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-bz-line-soft px-3 py-2 text-left text-[12px] last:border-0 hover:bg-bz-paper-warm sm:grid-cols-[minmax(0,1fr)_104px_104px_104px]">
-                  <span className="min-w-0">
-                    <span className={cn("block font-medium text-bz-text", NUM)}>{a.invoiceNo}</span>
-                    <span className={cn("block truncate text-[10.5px] text-bz-text-soft", NUM)}>
-                      {v ? `${fmtShort(v.doc.date)} · of ${v.total.toLocaleString("en-US", { minimumFractionDigits: 2 })}` : ""}
-                      {a.tdsCode && ` · ${tdsById(a.tdsCode)?.name}`}
+      {money ? (
+        <ReceiptMoneyView money={money} approved={r.state === "approved"} top={step} onOrder={(no) => navigate(`/design/sales/orders/${no}`)} show={ctx.show} />
+      ) : (
+        <>
+        {step}
+        <Block title="Applied to" count={r.allocations.length}>
+          {r.allocations.length === 0 ? (
+            <p className="m-0 text-[11.5px] text-bz-text-soft">Not applied to an invoice — it is all advance.</p>
+          ) : (
+            <div className="overflow-hidden rounded-bz-md border border-bz-line-soft">
+              <div className={cn("hidden grid-cols-[minmax(0,1fr)_104px_104px_104px] gap-3 border-b border-bz-line bg-bz-paper-warm px-3 py-1.5 sm:grid", LABEL)}>
+                <span>Invoice</span>
+                <span className="text-right">TDS</span>
+                <span className="text-right">Applied</span>
+                <span className="text-right">Still due</span>
+              </div>
+              {r.allocations.map((a) => {
+                const v = invoices.find((x) => x.doc.no === a.invoiceNo);
+                return (
+                  <button key={a.invoiceNo} type="button" onClick={() => navigate(`/design/sales/invoices/${a.invoiceNo}`)} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-bz-line-soft px-3 py-2 text-left text-[12px] last:border-0 hover:bg-bz-paper-warm sm:grid-cols-[minmax(0,1fr)_104px_104px_104px]">
+                    <span className="min-w-0">
+                      <span className={cn("block font-medium text-bz-text", NUM)}>{a.invoiceNo}</span>
+                      <span className={cn("block truncate text-[10.5px] text-bz-text-soft", NUM)}>
+                        {v ? `${fmtShort(v.doc.date)} · of ${v.total.toLocaleString("en-US", { minimumFractionDigits: 2 })}` : ""}
+                        {a.tdsCode && ` · ${tdsById(a.tdsCode)?.name}`}
+                      </span>
                     </span>
-                  </span>
-                  <span className="hidden text-right text-bz-text-muted sm:block">{a.tds ? <Amount value={a.tds} /> : "—"}</span>
-                  <span className="text-right font-semibold text-bz-text">
-                    <Amount value={a.amount} />
-                  </span>
-                  <span className="hidden text-right sm:block">{v ? v.balance <= 0.005 ? <Chip tone="positive">Paid</Chip> : <Amount value={v.balance} className={v.overdueDays ? "text-bz-red" : "text-bz-text-muted"} /> : null}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-        <MoneyList
-          rows={[
-            { label: "Applied to invoices", value: <Amount value={receiptApplied(r)} /> },
-            ...(tds > 0 ? [{ label: "TDS withheld (not cash)", value: <Amount value={tds} />, soft: true }] : []),
-            ...(adv > 0.005 ? [{ label: "Kept as advance", value: <Amount value={adv} /> }] : []),
-            { label: "Amount received", value: <Amount value={r.amount} currency={r.currency} />, strong: true },
-            ...(r.currency !== "NPR" ? [{ label: `at ${r.exchangeRate}`, value: <>≈ <Amount value={r.amount * r.exchangeRate} currency="NPR" /></>, soft: true }] : []),
-          ]}
-        />
-      </Block>
+                    <span className="hidden text-right text-bz-text-muted sm:block">{a.tds ? <Amount value={a.tds} /> : "—"}</span>
+                    <span className="text-right font-semibold text-bz-text">
+                      <Amount value={a.amount} />
+                    </span>
+                    <span className="hidden text-right sm:block">{v ? v.balance <= 0.005 ? <Chip tone="positive">Paid</Chip> : <Amount value={v.balance} className={v.overdueDays ? "text-bz-red" : "text-bz-text-muted"} /> : null}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          <MoneyList
+            rows={[
+              { label: "Applied to invoices", value: <Amount value={receiptApplied(r)} /> },
+              ...(tds > 0 ? [{ label: "TDS withheld (not cash)", value: <Amount value={tds} />, soft: true }] : []),
+              ...(adv > 0.005 ? [{ label: "Kept as advance", value: <Amount value={adv} /> }] : []),
+              { label: "Amount received", value: <Amount value={r.amount} currency={r.currency} />, strong: true },
+              ...(r.currency !== "NPR" ? [{ label: `at ${r.exchangeRate}`, value: <>≈ <Amount value={r.amount * r.exchangeRate} currency="NPR" /></>, soft: true }] : []),
+            ]}
+          />
+        </Block>
+        </>
+      )}
 
       <DetailsBlock
         subsidiaryId={r.subsidiaryId}
@@ -318,7 +330,7 @@ function ReceiptPanel({ r, ctx }: { r: Receipt; ctx: PanelCtx }) {
         lead={
           <>
             <Cell label="Method">{method.name}</Cell>
-            <Cell label="Deposit to">{r.depositTo}</Cell>
+            <Cell label="Received into">{r.depositTo}</Cell>
             {method.fields.map((f) => (
               <Cell key={f.key} label={f.label}>
                 {r.methodFields[f.key] ? <span className={NUM}>{f.type === "date" ? fmtShort(r.methodFields[f.key]) : r.methodFields[f.key]}</span> : <span className="text-bz-text-soft">—</span>}

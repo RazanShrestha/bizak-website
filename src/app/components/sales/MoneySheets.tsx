@@ -4,7 +4,8 @@ import { cn } from "../ui/utils";
 import { BTN, Checkbox, GHOST, INPUT_SM, Kbd, LABEL, NUM, NumberField, Select, Switch } from "./bzw";
 import { Amount, CUSTOMERS, LOCATIONS, ME, PEOPLE, TAX_LABEL, TODAY, customerById, fmtQty, fmtShort, itemById, lineGross, locationById, personById, totalsOf } from "./orders";
 import { CURRENCIES, DEPOSIT_LEDGERS, PAYMENT_METHODS, SUBSIDIARIES, TDS_CODES, methodById, subsidiaryById, tdsById } from "./master";
-import { CreditMemo, InvoiceView, RETURN_REASONS, Receipt, addCredit, addReceipt, creditsStore, docLines, replaceCredit, replaceReceipt, useSales } from "./flow";
+import { CreditMemo, InvoiceView, RETURN_REASONS, Receipt, addCredit, addReceipt, creditsStore, docLines, receiptBook, replaceCredit, replaceReceipt, useSales } from "./flow";
+import { ReceiptMoneyNote } from "./receipt-use";
 import { AmountInput, ChipRow, DateChip, MiniLabel, MoreFields, PickChip, Sep, TermChip, TextChip } from "./parts";
 import { SheetFrame } from "./FulfilSheet";
 import { MoneyList, totalsRows } from "./record";
@@ -23,7 +24,11 @@ import { MoneyList, totalsRows } from "./record";
 //   • the amount is applied oldest-due-first while Auto apply is on, and every
 //     line stays editable; TDS the customer withheld is set PER INVOICE;
 //   • anything not applied is kept as the customer's ADVANCE — said in the
-//     foot, never silently accepted; a TDS-only receipt (amount 0) is allowed.
+//     foot, never silently accepted; a TDS-only receipt (amount 0) is allowed;
+//   • a customer whose account another module keeps (`receiptBook`, a Sales
+//     force customer): the form only takes the money in. Which sales orders
+//     it is for and which invoices it is applied to are chosen on the saved
+//     receipt, order by order (sales/receipt-use.tsx, decision #33).
 // Return
 //   • quantities are capped at what was invoiced and not already returned; the
 //     line keeps its rate, discount and tax code, so the credit is exact;
@@ -37,9 +42,9 @@ const money = (n: number) => Math.round(n * 100) / 100;
 
 type Alloc = { amount: number; tds: boolean; tdsCode: string; tdsAmount: number };
 
-export function ReceiptSheet({ customerId: fixed, invoiceNo, existing, onCancel, onDone }: { customerId?: string; invoiceNo?: string; existing?: Receipt; onCancel: () => void; onDone: (no: string) => void }) {
+export function ReceiptSheet({ customerId: fixed, seedCustomerId, invoiceNo, existing, onCancel, onDone }: { customerId?: string; /** The customer a link arrived with (`?cust=`): chosen to start with, still changeable. */ seedCustomerId?: string; invoiceNo?: string; existing?: Receipt; onCancel: () => void; onDone: (no: string) => void }) {
   const { invoices } = useSales();
-  const [customerId, setCustomerId] = React.useState<string | null>(existing?.customerId ?? fixed ?? null);
+  const [customerId, setCustomerId] = React.useState<string | null>(existing?.customerId ?? fixed ?? seedCustomerId ?? null);
   const customer = customerById(customerId);
   const [subsidiaryId, setSubsidiaryId] = React.useState(existing?.subsidiaryId ?? invoices.find((v) => v.doc.no === invoiceNo)?.order.subsidiaryId ?? "NP-01");
   const [date, setDate] = React.useState(existing?.date ?? TODAY);
@@ -54,6 +59,14 @@ export function ReceiptSheet({ customerId: fixed, invoiceNo, existing, onCancel,
   const [refusal, setRefusal] = React.useState<string | null>(null);
   const [tried, setTried] = React.useState(false);
   const method = methodById(methodId);
+
+  // The customer's account is kept elsewhere (a Sales force customer): this form only takes the money in.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const ext = React.useMemo(() => (customerId ? receiptBook.targets(customerId, existing?.no) : null), [customerId]);
+  /** A receipt from before lines existed settles the oldest invoice first; editing it leaves that alone. */
+  const legacy = !!ext && !!existing && existing.orders === undefined;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const pots = React.useMemo(() => (existing && ext && !legacy ? receiptBook.money(existing) : null), [existing?.no]);
 
   const mine = (no: string) => existing?.allocations.find((a) => a.invoiceNo === no);
   const open = React.useMemo(
@@ -97,6 +110,8 @@ export function ReceiptSheet({ customerId: fixed, invoiceNo, existing, onCancel,
     const total = open.reduce((s, v) => s + room(v), 0);
     setAmount(money(total));
     setAlloc(fill(total, {}));
+    // The other account's invoices are not this desk's: nothing is assumed about how much was paid.
+    if (receiptBook.targets(customerId)) setAmount(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerId]);
 
@@ -106,8 +121,10 @@ export function ReceiptSheet({ customerId: fixed, invoiceNo, existing, onCancel,
       return auto && ("tds" in p || "tdsCode" in p || "tdsAmount" in p) ? fill(amount, next) : next;
     });
 
-  const applied = money(Object.values(alloc).reduce((s, a) => s + (a.amount || 0), 0));
-  const tds = money(Object.values(alloc).reduce((s, a) => s + (a.tds ? a.tdsAmount : 0), 0));
+  // What is kept for orders is still advance: only what is applied to invoices comes off it.
+  const tagged = pots ? money(pots.orders.reduce((sum, p) => sum + p.open, 0)) : 0;
+  const applied = ext ? money((existing?.allocations ?? []).reduce((sum, a) => sum + a.amount, 0)) : money(Object.values(alloc).reduce((s, a) => s + (a.amount || 0), 0));
+  const tds = ext ? 0 : money(Object.values(alloc).reduce((s, a) => s + (a.tds ? a.tdsAmount : 0), 0));
   const advance = money(amount - applied);
 
   const commit = () => {
@@ -116,11 +133,12 @@ export function ReceiptSheet({ customerId: fixed, invoiceNo, existing, onCancel,
     if (!(amount > 0) && !(tds > 0)) return setRefusal("Enter the amount received, or the TDS withheld.");
     const miss = method.fields.filter((f) => f.required && !fields[f.key]).map((f) => f.label.toLowerCase());
     if (miss.length) return setRefusal(`Add the ${miss.join(" and ")}.`);
-    for (const v of open) {
+    for (const v of ext ? [] : open) {
       const a = alloc[v.doc.no];
       if (a && a.amount + (a.tds ? a.tdsAmount : 0) > room(v) + 0.005) return setRefusal(`Only ${room(v).toLocaleString("en-US", { minimumFractionDigits: 2 })} is due on ${v.doc.no}.`);
     }
-    if (applied > amount + 0.005) return setRefusal("You've applied more than was received.");
+    if (ext && !legacy && applied + tagged > amount + 0.005) return setRefusal(`${(applied + tagged).toLocaleString("en-US", { minimumFractionDigits: 2 })} of it is on orders and invoices. Take some off on the receipt first.`);
+    if (!ext && applied > amount + 0.005) return setRefusal("You've applied more than was received.");
     if (currency !== "NPR" && !(rate > 0)) return setRefusal("Enter the exchange rate.");
     const payload = {
       subsidiaryId,
@@ -132,12 +150,18 @@ export function ReceiptSheet({ customerId: fixed, invoiceNo, existing, onCancel,
       currency,
       exchangeRate: currency === "NPR" ? 1 : rate,
       amount,
-      allocations: open
-        .filter((v) => (alloc[v.doc.no]?.amount ?? 0) > 0 || alloc[v.doc.no]?.tds)
-        .map((v) => {
-          const a = alloc[v.doc.no];
-          return { invoiceNo: v.doc.no, amount: a.amount, ...(a.tds ? { tdsCode: a.tdsCode, tds: a.tdsAmount } : {}) };
-        }),
+      ...(legacy
+        ? {}
+        : ext
+          ? { allocations: existing?.allocations ?? [], orders: existing?.orders ?? [] }
+          : {
+              allocations: open
+                .filter((v) => (alloc[v.doc.no]?.amount ?? 0) > 0 || alloc[v.doc.no]?.tds)
+                .map((v) => {
+                  const a = alloc[v.doc.no];
+                  return { invoiceNo: v.doc.no, amount: a.amount, ...(a.tds ? { tdsCode: a.tdsCode, tds: a.tdsAmount } : {}) };
+                }),
+            }),
       memo,
       custom,
     };
@@ -145,7 +169,7 @@ export function ReceiptSheet({ customerId: fixed, invoiceNo, existing, onCancel,
       replaceReceipt(existing.no, { ...payload, posted: depositTo !== "Undeposited funds" });
       return onDone(existing.no);
     }
-    onDone(addReceipt({ ...payload, state: "approved", posted: depositTo !== "Undeposited funds", cancelled: null, dims: {}, byId: ME.id, sourceOrder: open[0]?.order.no ?? null, attachments: [] }));
+    onDone(addReceipt({ allocations: [], ...payload, state: "approved", posted: depositTo !== "Undeposited funds", cancelled: null, dims: {}, byId: ME.id, sourceOrder: open[0]?.order.no ?? null, attachments: [] }));
   };
 
   return (
@@ -161,6 +185,7 @@ export function ReceiptSheet({ customerId: fixed, invoiceNo, existing, onCancel,
             {advance > 0.005 && customerId && (
               <span className="ml-1.5 font-medium text-bz-text" title="Not applied to an invoice — it stays on the customer's account">
                 · <Amount value={advance} /> kept as advance
+                {tagged > 0.005 && <span className="font-normal text-bz-text-muted"> (<Amount value={tagged} /> for orders)</span>}
               </span>
             )}
           </span>
@@ -242,15 +267,21 @@ export function ReceiptSheet({ customerId: fixed, invoiceNo, existing, onCancel,
       </div>
 
       <div className="px-5 pb-5 pt-5">
-        <div className="mb-2 flex items-center gap-2">
-          <h3 className="m-0 text-[12px] font-semibold text-bz-text">Apply to invoices</h3>
-          {open.length > 0 && (
-            <label className="ml-auto inline-flex items-center gap-2 text-[11.5px] text-bz-text-muted" title="Oldest due first">
-              Auto apply <Switch on={auto} onChange={(v) => (setAuto(v), v && setAlloc((s) => fill(amount, s)))} label="Auto apply" />
-            </label>
-          )}
-        </div>
-        {!customerId ? (
+        {ext && !legacy ? (
+          <ReceiptMoneyNote money={pots} saved={!!existing} />
+        ) : (
+          <div className="mb-2 flex items-center gap-2">
+            <h3 className="m-0 text-[12px] font-semibold text-bz-text">Apply to invoices</h3>
+            {!ext && open.length > 0 && (
+              <label className="ml-auto inline-flex items-center gap-2 text-[11.5px] text-bz-text-muted" title="Oldest due first">
+                Auto apply <Switch on={auto} onChange={(v) => (setAuto(v), v && setAlloc((s) => fill(amount, s)))} label="Auto apply" />
+              </label>
+            )}
+          </div>
+        )}
+        {ext && !legacy ? null : ext ? (
+          <p className="m-0 text-[11.5px] text-bz-text-soft">Settles the oldest invoice first.</p>
+        ) : !customerId ? (
           <p className="m-0 text-[11.5px] text-bz-text-soft">Choose a customer to see what they owe.</p>
         ) : open.length === 0 ? (
           <p className="m-0 text-[11.5px] text-bz-text-soft">Nothing is due from this customer. The whole amount is kept as an advance.</p>

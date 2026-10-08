@@ -1,45 +1,184 @@
 import * as React from "react";
-import { Link, useNavigate, useParams } from "react-router";
-import { Copy, Pause, Pencil, Play, Plus, Square } from "lucide-react";
+import { Navigate, useNavigate, useParams, useSearchParams } from "react-router";
+import { Ban, CalendarClock, CircleCheck, Copy, ListTree, Pause, Pencil, Play, Table2, TriangleAlert } from "lucide-react";
 import { cn } from "../ui/utils";
-import { BTN, GHOST_SM, NUM, ToastHost, useToast } from "../sales/bzw";
+import { BTN, Chip, DocLink, GHOST_SM, MenuItem, MenuSep, Meter, NUM, Stat, Statline } from "../sales/bzw";
+import type { Tone } from "../sales/bzw";
+import type { Column, PanelCtx } from "../sales/DocDesk";
+import { Amount, useMedia } from "../sales/orders";
+import { Cell, CellGrid, ConfirmDialog, RelatedSection } from "../sales/parts";
+import { Block, RecordShell, StepCard } from "../sales/record";
 import { useStore } from "../sales/store";
-import { ConfirmDialog } from "../sales/parts";
-import { CUSTOMER_TYPES, SF_TODAY } from "./data";
-import type { Scheme, SchemeStatus } from "./data";
+import { SF_TODAY } from "./data";
+import type { Claim, Scheme, SchemeStatus } from "./data";
 import { customerById, day, evaluate, npr } from "./engine";
-import type { HistoryEvent } from "../sales/orders";
-import { campaignsStore, claimsStore, hubStore, schemesStore } from "./store";
-import { SfShell, sfPath } from "./shell";
-import { Dot, EmptyNote, Fact, Figures, List, Money, Page, PageIntro, Progress, Row, SidePanel, TextTabs, TypeMark } from "./ui";
-import { APPLIES_TEXT, PanelSection, RecordActivity, RecordNoteFoot, STATUS, addDaysIso, audienceText, logEvent, mechanicLabel, periodText, ruleText, schemeExtrasStore, stamp, territoryName } from "./schemes-kit";
-import { SchemeBuilderPage } from "./scheme-builder";
+import { STATUS_META, isFirstOrder } from "./orders-parts";
+import { logEvent } from "./records";
+import { campaignsStore, claimsStore, hubStore, schemesStore, typesStore } from "./store";
+import { FxDesk, pillTone } from "./fx-desk";
+import { SfActivity, SfNoteFoot, TypeMark, chipTone, sfPath } from "./sf";
+import { APPLIES_TEXT, MECHANICS, STATUS, addDaysIso, audienceText, mechanicLabel, periodText, ruleText, schemeExtrasStore } from "./schemes-kit";
+import { SchemeComposer } from "./scheme-builder";
 
 // ════════════════════════════════════════════════════════════════════════════
-// SCHEMES — the trade promotions the one engine applies
+// GROWTH · SCHEMES — the offers the one engine applies
 //
-// A list by lifecycle (Live · Scheduled · Draft · Ended), each row the scheme's
-// sentence and its budget burn; the panel adds who it is for, how it stacks,
-// and the hub orders it actually touched — worked out by `evaluate`, the same
-// call the Orders hub prices with, so the two can never disagree.
+// A `FxDesk` grouped by lifecycle, each row the scheme's sentence and its
+// budget burn; the record adds who it is for, how it stacks and the orders it
+// actually touched — worked out by `evaluate`, the same call the Orders desk
+// prices with, so the two can never disagree. Writing one (new, copy, edit) is
+// the composer in scheme-builder.tsx, which takes the page.
 // ════════════════════════════════════════════════════════════════════════════
 
-type Tab = "live" | "scheduled" | "draft" | "ended";
-const tabOf = (s: SchemeStatus): Tab => (s === "paused" ? "live" : s);
+const CLAIM_STATUS: Record<Claim["status"], { label: string; tone: Tone }> = {
+  submitted: { label: "Submitted", tone: "pending" },
+  approved: { label: "Approved", tone: "partial" },
+  settled: { label: "Settled", tone: "positive" },
+  rejected: { label: "Rejected", tone: "neutral" },
+};
 
 const budgetPct = (s: Scheme) => (s.budget && s.budget.total ? (s.budget.used / s.budget.total) * 100 : 0);
 const budgetText = (b: NonNullable<Scheme["budget"]>) => (b.kind === "value" ? `NPR ${npr(b.used)} of ${npr(b.total)}` : `${npr(b.used)} of ${npr(b.total)} units`);
 
-function BudgetCell({ s }: { s: Scheme }) {
-  if (!s.budget) return <span className="block w-[110px] text-[11px] font-normal text-bz-text-soft">No limit</span>;
+/** Budget used, as a thin meter and its figure. From 90% both turn red together — one fact, one colour. */
+function BudgetMark({ s }: { s: Scheme }) {
   const pct = budgetPct(s);
+  const hot = pct >= 90;
   return (
-    <span className="flex w-[110px] flex-col items-end gap-1">
-      <span className={cn("text-[11px] font-normal text-bz-text-muted", NUM)}>{Math.round(pct)}% used</span>
-      <Progress pct={pct} tone={pct >= 90 ? "danger" : pct >= 75 ? "warn" : "good"} />
+    <span className={cn("inline-flex items-center gap-2", NUM, hot && "text-bz-red")}>
+      <Meter pct={pct} thin danger={hot} className="w-10 shrink-0" />
+      {Math.round(pct)}%
     </span>
   );
 }
+
+// ── Lifecycle ───────────────────────────────────────────────────────────────
+
+function setStatus(s: Scheme, status: SchemeStatus, what: string) {
+  schemesStore.set((list) => list.map((x) => (x.id === s.id ? { ...x, status, to: status === "ended" && x.to > SF_TODAY ? SF_TODAY : x.to } : x)));
+  logEvent(s.id, what);
+}
+
+/** The state's one action — the row verb, the step card and the bulk bar all run this. `run` answers with the toast. */
+function nextStep(s: Scheme): { label: string; icon: React.ComponentType<{ size?: number }>; run: () => string } | null {
+  if (s.status === "draft") {
+    const to = s.from > SF_TODAY ? "scheduled" : "live";
+    return { label: "Publish", icon: Play, run: () => (setStatus(s, to, "made the offer live"), `${s.id} ${to === "live" ? "published" : "scheduled"}`) };
+  }
+  if (s.status === "live") return { label: "Pause", icon: Pause, run: () => (setStatus(s, "paused", "paused the offer"), `${s.id} paused`) };
+  if (s.status === "paused") return { label: "Resume", icon: Play, run: () => (setStatus(s, "live", "resumed the offer"), `${s.id} resumed`) };
+  return null;
+}
+
+const bulkStep = (label: "Pause" | "Resume", from: SchemeStatus, verb: string) => ({
+  label,
+  icon: label === "Pause" ? Pause : Play,
+  enabled: (rs: Scheme[]) => rs.some((s) => s.status === from),
+  run: (rs: Scheme[]) => {
+    const skipped: string[] = [];
+    let done = 0;
+    rs.forEach((s) => {
+      if (s.status === from) {
+        nextStep(s)?.run();
+        done++;
+      } else skipped.push(`${s.id} is ${STATUS[s.status].label.toLowerCase()}`);
+    });
+    return { done, skipped, verb };
+  },
+});
+
+// ── The desk ────────────────────────────────────────────────────────────────
+
+const is = (st: SchemeStatus) => (s: Scheme) => s.status === st;
+const nearEnd = (s: Scheme) => s.status === "live" && !!s.budget && budgetPct(s) >= 85;
+const endingSoon = (s: Scheme) => s.status === "live" && s.to >= SF_TODAY && s.to <= addDaysIso(SF_TODAY, 30);
+
+export function SchemesPage() {
+  const navigate = useNavigate();
+  const [search] = useSearchParams();
+  const schemes = useStore(schemesStore);
+  const campaigns = useStore(campaignsStore);
+  const types = useStore(typesStore);
+  // The name column never collapses: the lower-value columns leave as the list narrows.
+  const roomy = useMedia("(min-width: 1180px)");
+  const mid = useMedia("(min-width: 900px)");
+  const toast = React.useRef<PanelCtx["show"] | null>(null);
+
+  const live = schemes.filter(is("live"));
+  const spend = live.filter((s) => s.budget?.kind === "value").reduce((a, s) => a + (s.budget?.used ?? 0), 0);
+  const campaignName = (s: Scheme) => campaigns.find((c) => c.id === s.campaignId)?.name ?? "";
+
+  const columns: Column<Scheme>[] = [
+    ...(roomy ? [{ key: "for", label: "For", width: "150px", render: (s: Scheme) => audienceText(s) }] : []),
+    ...(mid ? [{ key: "period", label: "Period", width: "112px", render: (s: Scheme) => <span className={NUM}>{periodText(s.from, s.to)}</span> }] : []),
+  ];
+
+  return (
+    <FxDesk<Scheme>
+      place="schemes"
+      section="salesforce/schemes"
+      noun={["scheme", "schemes"]}
+      rows={schemes}
+      noOf={(s) => s.id}
+      showPeriod={false}
+      partyLabel="Scheme"
+      amountLabel="Budget"
+      numberWidth="76px"
+      rowLabel={(s) => s.name}
+      searchText={(s) => `${s.id} ${s.name} ${ruleText(s.mechanic)} ${mechanicLabel(s.mechanic.kind)} ${audienceText(s)} ${campaignName(s)}`}
+      searchPlaceholder="Number, name or product"
+      stats={[{ label: "Spent", value: <Amount value={spend} currency="NPR" />, title: "Used from the money budgets of live schemes" }]}
+      picks={[
+        { key: "live", label: "Live", value: live.length, test: is("live") },
+        { key: "budget", label: "Almost out of budget", value: schemes.filter(nearEnd).length, test: nearEnd, danger: schemes.some(nearEnd), title: "Live, with 85% of the budget used or more" },
+        { key: "ending", label: "Ending soon", value: schemes.filter(endingSoon).length, test: endingSoon, title: "Live, and ends within 30 days" },
+      ]}
+      views={[
+        {
+          key: "status",
+          label: "By status",
+          icon: ListTree,
+          groups: (rs) => [
+            { key: "live", label: "Live", rows: rs.filter(is("live")), empty: "Nothing live." },
+            { key: "scheduled", label: "Scheduled", rows: rs.filter(is("scheduled")) },
+            { key: "draft", label: "Draft", rows: rs.filter(is("draft")) },
+            { key: "paused", label: "Paused", rows: rs.filter(is("paused")) },
+            { key: "ended", label: "Ended", collapsed: true, rows: rs.filter(is("ended")) },
+          ],
+        },
+        { key: "register", label: "Register", icon: Table2, groups: (rs) => [{ key: "all", label: "", rows: rs }] },
+      ]}
+      filters={[
+        ...(Object.keys(STATUS) as SchemeStatus[]).map((st) => ({ value: `st:${st}`, label: STATUS[st].label, group: "Status", test: is(st) })),
+        ...MECHANICS.filter((m) => schemes.some((s) => s.mechanic.kind === m.kind)).map((m) => ({ value: `k:${m.kind}`, label: m.label, group: "Mechanic", test: (s: Scheme) => s.mechanic.kind === m.kind })),
+        ...types.map((t) => ({ value: `t:${t.id}`, label: t.plural, group: "Customer type", test: (s: Scheme) => !s.typeIds.length || s.typeIds.includes(t.id) })),
+        ...campaigns.filter((c) => schemes.some((s) => s.campaignId === c.id)).map((c) => ({ value: `c:${c.id}`, label: c.name, group: "Campaign", test: (s: Scheme) => s.campaignId === c.id })),
+      ]}
+      sorts={[
+        { key: "priority", label: "Priority", by: (s) => s.priority },
+        { key: "ends", label: "Ending first", by: (s) => s.to },
+        { key: "name", label: "Name", by: (s) => s.name.toLowerCase() },
+      ]}
+      columns={columns}
+      primary={(s) => ({ title: s.name, sub: ruleText(s.mechanic), subOnDesktop: true })}
+      status={(s) => ({ label: STATUS[s.status].label, tone: pillTone(STATUS[s.status].tone) })}
+      amount={(s) => (s.budget ? { value: <BudgetMark s={s} />, sub: budgetText(s.budget) } : { value: <span className="font-normal text-bz-text-soft">No limit</span> })}
+      rowVerb={(s) => {
+        const step = nextStep(s);
+        return step && { label: step.label, icon: step.icon, run: () => toast.current?.("success", step.run()) };
+      }}
+      bulk={[bulkStep("Pause", "live", "paused"), bulkStep("Resume", "paused", "resumed")]}
+      newLabel="New scheme"
+      onNew={() => navigate(sfPath("schemes/new"))}
+      formFull
+      renderNew={(ctx) => <SchemeComposer key={`new:${search.get("copy") ?? ""}`} ctx={ctx} />}
+      renderPanel={(s, ctx) => (ctx.mode === "edit" ? <SchemeComposer key={`edit:${s.id}`} ctx={ctx} original={s} /> : <SchemePanel key={s.id} s={s} ctx={ctx} />)}
+      renderExtra={(api) => ((toast.current = api.show), null)}
+    />
+  );
+}
+
+// ── The record ──────────────────────────────────────────────────────────────
 
 /** The hub orders a scheme applied on, priced with every scheme exactly as the hub prices them. */
 function useTouched(s: Scheme | undefined) {
@@ -50,7 +189,7 @@ function useTouched(s: Scheme | undefined) {
     return hub
       .filter((o) => o.status !== "rejected")
       .map((o) => {
-        const ev = evaluate(o.customerId, o.lines, schemes, { date: o.at.slice(0, 10) });
+        const ev = evaluate(o.customerId, o.lines, schemes, { date: o.at.slice(0, 10), firstOrder: isFirstOrder(o, hub) });
         const a = ev.applied.find((x) => x.schemeId === s.id);
         return a ? { o, total: ev.total, benefit: a.benefit, text: a.text } : null;
       })
@@ -58,275 +197,217 @@ function useTouched(s: Scheme | undefined) {
   }, [s, hub, schemes]);
 }
 
-function SchemePanel({ s, onClose }: { s: Scheme; onClose: () => void }) {
+function SchemePanel({ s, ctx }: { s: Scheme; ctx: PanelCtx }) {
   const navigate = useNavigate();
   const campaigns = useStore(campaignsStore);
   const claims = useStore(claimsStore);
+  const types = useStore(typesStore);
   const extras = useStore(schemeExtrasStore)[s.id];
   const touched = useTouched(s);
   const [ending, setEnding] = React.useState(false);
-  const { toast, show, dismiss } = useToast();
   const campaign = campaigns.find((c) => c.id === s.campaignId);
   const linkedClaims = claims.filter((c) => c.schemeId === s.id);
 
-  const setStatus = (status: SchemeStatus, what: string) => {
-    schemesStore.set((list) => list.map((x) => (x.id === s.id ? { ...x, status, to: status === "ended" && x.to > SF_TODAY ? SF_TODAY : x.to } : x)));
-    logEvent(`scheme:${s.id}`, what);
-    show("success", `${s.name} ${what.replace(/ the scheme$/, "")}.`);
-  };
-
   const touchedValue = touched.reduce((a, t) => a + t.total, 0);
   const touchedBenefit = touched.reduce((a, t) => a + t.benefit, 0);
-  const types = CUSTOMER_TYPES.filter((t) => s.typeIds.includes(t.id));
+  const forTypes = types.filter((t) => s.typeIds.includes(t.id));
+  const missingTypes = s.typeIds.length - forTypes.length;
+  const b = s.budget;
+  const left = b ? b.total - b.used : 0;
+  const figure = (n: number) => (b?.kind === "value" ? <Amount value={n} /> : `${npr(n)} units`);
 
-  return (
-    <SidePanel
-      open
-      onClose={onClose}
-      width={600}
-      eyebrow={`${s.id} · ${mechanicLabel(s.mechanic.kind)}`}
-      title={s.name}
-      meta={
-        <>
-          <Dot tone={STATUS[s.status].tone}>{STATUS[s.status].label}</Dot>
-          <span className={NUM}>{periodText(s.from, s.to)}</span>
-          {campaign && (
-            <Link to={sfPath(`campaigns/${campaign.id}`)} className="hover:text-bz-text hover:underline">
-              {campaign.name}
-            </Link>
-          )}
-        </>
-      }
-      foot={<RecordNoteFoot subject={`scheme:${s.id}`} />}
-    >
-      <div className="flex flex-wrap gap-1.5">
-        {s.status === "live" && (
-          <button type="button" className={GHOST_SM} onClick={() => setStatus("paused", "paused the scheme")}>
+  const edit = () => ctx.go(s.id, { do: "edit" });
+  const duplicate = () => ctx.go("new", { copy: s.id });
+  const step = nextStep(s);
+  const act = () => step && ctx.show("success", step.run());
+  const ends = s.to < SF_TODAY ? `Ended ${day(s.to)}` : `Ends ${day(s.to)}`;
+
+  const card =
+    s.status === "draft" ? (
+      <StepCard
+        icon={<Pencil size={15} />}
+        title="Draft"
+        sub={s.from > SF_TODAY ? `Starts ${day(s.from)}` : ends}
+        actions={
+          <button type="button" className={cn(BTN, "h-8")} onClick={act}>
+            <Play size={13} /> Publish
+          </button>
+        }
+      />
+    ) : s.status === "live" ? (
+      <StepCard
+        tone={b && left <= 0 ? "danger" : "done"}
+        icon={b && left <= 0 ? <TriangleAlert size={15} /> : <CircleCheck size={15} />}
+        title={b && left <= 0 ? "Budget used up" : "Live"}
+        sub={b && left <= 0 ? "Orders no longer get it." : ends}
+        actions={
+          <button type="button" className={GHOST_SM} onClick={act}>
             <Pause size={12} /> Pause
           </button>
-        )}
-        {s.status === "paused" && (
-          <button type="button" className={GHOST_SM} onClick={() => setStatus("live", "resumed the scheme")}>
-            <Play size={12} /> Resume
+        }
+      />
+    ) : s.status === "paused" ? (
+      <StepCard
+        icon={<Pause size={15} />}
+        title="Paused"
+        sub={ends}
+        actions={
+          <button type="button" className={cn(BTN, "h-8")} onClick={act}>
+            <Play size={13} /> Resume
           </button>
-        )}
-        {s.status !== "ended" && (
-          <button type="button" className={GHOST_SM} onClick={() => navigate(sfPath(`schemes/${s.id}/edit`))}>
+        }
+      />
+    ) : s.status === "scheduled" ? (
+      <StepCard
+        icon={<CalendarClock size={15} />}
+        title="Scheduled"
+        sub={`Starts ${day(s.from)}`}
+        actions={
+          <button type="button" className={GHOST_SM} onClick={edit}>
             <Pencil size={12} /> Edit
           </button>
-        )}
-        <button type="button" className={GHOST_SM} onClick={() => navigate(`${sfPath("schemes/new")}?copy=${s.id}`)}>
-          <Copy size={12} /> Duplicate
-        </button>
-        {s.status !== "ended" && s.status !== "draft" && (
-          <button type="button" className={GHOST_SM} onClick={() => setEnding(true)}>
-            <Square size={11} /> End
+        }
+      />
+    ) : (
+      <StepCard
+        tone="quiet"
+        icon={<Ban size={15} />}
+        title="Ended"
+        sub={day(s.to)}
+        actions={
+          <button type="button" className={GHOST_SM} onClick={duplicate}>
+            <Copy size={12} /> Duplicate
           </button>
-        )}
+        }
+      />
+    );
+
+  const related =
+    s.applies === "order"
+      ? touched.map((t) => ({ no: t.o.id, kind: "Order", date: t.o.at.slice(0, 10), party: customerById(t.o.customerId)?.name ?? "Deleted customer", status: STATUS_META[t.o.status].label, tone: chipTone(STATUS_META[t.o.status].tone) }))
+      : linkedClaims.map((c) => ({ no: c.id, kind: "Claim", date: c.raisedOn, party: customerById(c.party)?.name ?? c.party, status: CLAIM_STATUS[c.status].label, tone: CLAIM_STATUS[c.status].tone }));
+
+  return (
+    <RecordShell
+      ctx={ctx}
+      no={s.id}
+      chips={<Chip tone={chipTone(STATUS[s.status].tone)}>{STATUS[s.status].label}</Chip>}
+      title={s.name}
+      meta={[
+        <span key="k">{mechanicLabel(s.mechanic.kind)}</span>,
+        <span key="p" className={NUM}>
+          {periodText(s.from, s.to)}
+        </span>,
+        ...(campaign ? [<DocLink key="c" no={campaign.id} kind={campaign.name} onClick={() => navigate(sfPath(`campaigns/${campaign.id}`))} />] : []),
+      ]}
+      menu={(close) => (
+        <>
+          {s.status !== "ended" && (
+            <MenuItem icon={Pencil} onClick={() => (close(), edit())}>
+              Edit
+            </MenuItem>
+          )}
+          <MenuItem icon={Copy} onClick={() => (close(), duplicate())}>
+            Duplicate
+          </MenuItem>
+          {s.status !== "ended" && s.status !== "draft" && (
+            <>
+              <MenuSep />
+              <MenuItem icon={Ban} danger onClick={() => (close(), setEnding(true))}>
+                End scheme…
+              </MenuItem>
+            </>
+          )}
+        </>
+      )}
+      foot={<SfNoteFoot id={s.id} />}
+    >
+      {card}
+
+      <div className="border-b border-bz-line-soft px-5 pb-3 pt-1">
+        <Statline className="pt-3">
+          <Stat label="Budget" value={!b ? "No limit" : b.kind === "value" ? <Amount value={b.total} currency="NPR" /> : `${npr(b.total)} units`} />
+          {b && <Stat label="Used" value={<BudgetMark s={s} />} sub={figure(b.used)} />}
+          {b && <Stat label="Left" value={left <= 0 ? "None" : figure(left)} danger={left <= 0} />}
+          {touched.length > 0 && <Stat label="Orders" value={touched.length} />}
+          {touched.length > 0 && <Stat label="Order value" value={<Amount value={touchedValue} />} />}
+          {touched.length > 0 && <Stat label="Benefit given" value={<Amount value={touchedBenefit} />} />}
+        </Statline>
       </div>
 
-      <p className="m-0 mt-6 text-[13px] leading-relaxed text-bz-text">{ruleText(s.mechanic)}.</p>
-      <p className="m-0 mt-1 text-[11px] text-bz-text-soft">{APPLIES_TEXT[s.applies]}.</p>
-
-      <PanelSection title="Who it's for">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Fact label="Customer types">
-            {types.length ? (
+      <Block title="Rule">
+        <p className="m-0 mb-2.5 text-[12.5px] leading-relaxed text-bz-text">{ruleText(s.mechanic)}.</p>
+        <CellGrid>
+          <Cell label="Mechanic">
+            {mechanicLabel(s.mechanic.kind)}
+            <span className="block text-[10.5px] text-bz-text-soft">{APPLIES_TEXT[s.applies]}</span>
+          </Cell>
+          <Cell label="Period">
+            <span className={NUM}>{periodText(s.from, s.to)}</span>
+          </Cell>
+          <Cell label="Customer types">
+            {s.typeIds.length ? (
               <span className="flex flex-col gap-1">
-                {types.map((t) => (
-                  <TypeMark key={t.id} name={t.plural} color={t.color} />
+                {forTypes.map((t) => (
+                  <TypeMark key={t.id} name={t.plural} color={t.color} className="text-[12px] text-bz-text" />
                 ))}
+                {missingTypes > 0 && (
+                  <span className="text-[10.5px] text-bz-text-soft">
+                    {missingTypes} deleted type{missingTypes > 1 ? "s" : ""}
+                  </span>
+                )}
               </span>
             ) : (
               "Every type"
             )}
-          </Fact>
-          <Fact label="Tiers">{s.tiers.length ? s.tiers.map((t) => `Tier ${t}`).join(", ") : "Every tier"}</Fact>
-          <Fact label="Territories">{s.territoryIds.length ? s.territoryIds.map(territoryName).join(", ") : "Everywhere"}</Fact>
+          </Cell>
+          <Cell label="Tiers">{s.tiers.length ? s.tiers.map((t) => `Tier ${t}`).join(", ") : "Every tier"}</Cell>
+          <Cell label="Priority">
+            <span className={NUM} title="Lower is checked first">
+              {s.priority}
+            </span>
+          </Cell>
+          <Cell label="With other schemes">
+            <span title={s.exclusive ? "Schemes checked after it are skipped on that order" : "Other schemes can apply on the same order"}>{s.exclusive ? "Exclusive" : "Stacks"}</span>
+          </Cell>
+          <Cell label="Max per customer">{extras?.maxPerCustomer ? `${extras.maxPerCustomer} ${extras.maxPerCustomer === 1 ? "time" : "times"}` : "No limit"}</Cell>
+        </CellGrid>
+      </Block>
+
+      {(s.applies === "order" || s.applies === "claim") && (
+        <div className="border-b border-bz-line-soft">
+          <RelatedSection rows={related} onOpen={(no) => navigate(sfPath(`${s.applies === "claim" ? "claims" : "orders"}/${no}`))} />
         </div>
-      </PanelSection>
-
-      <PanelSection title="How it stacks">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Fact label="Priority">
-            <span className={NUM}>{s.priority}</span> <span className="text-[11px] text-bz-text-soft">lower goes first</span>
-          </Fact>
-          <Fact label="With others">{s.exclusive ? "Exclusive — later schemes are skipped" : "Stacks with other schemes"}</Fact>
-          <Fact label="Max per customer">{extras?.maxPerCustomer ? `${extras.maxPerCustomer} times` : "No limit"}</Fact>
-        </div>
-      </PanelSection>
-
-      <PanelSection title="Budget">
-        {s.budget ? (
-          <>
-            <div className="flex items-baseline justify-between gap-3 text-[12.5px]">
-              <span className={cn("text-bz-text", NUM)}>{budgetText(s.budget)}</span>
-              <span className={cn("text-[11px] text-bz-text-soft", NUM)}>{Math.round(budgetPct(s))}%</span>
-            </div>
-            <Progress pct={budgetPct(s)} tone={budgetPct(s) >= 90 ? "danger" : budgetPct(s) >= 75 ? "warn" : "good"} className="mt-2" />
-            <p className="m-0 mt-2 text-[11px] text-bz-text-soft">
-              {s.budget.used >= s.budget.total ? "Used up — the engine no longer applies it." : `${s.budget.kind === "value" ? `NPR ${npr(s.budget.total - s.budget.used)}` : `${npr(s.budget.total - s.budget.used)} units`} left. It stops by itself when used up.`}
-            </p>
-          </>
-        ) : (
-          <p className="m-0 text-[12.5px] text-bz-text-muted">No limit — runs until {day(s.to)}.</p>
-        )}
-      </PanelSection>
-
-      {s.applies === "order" ? (
-        <PanelSection title="Orders it touched" count={touched.length}>
-          {touched.length === 0 ? (
-            <p className="m-0 text-[12px] text-bz-text-muted">No order in the hub gets this scheme{s.status === "scheduled" ? ` yet — it starts ${day(s.from)}` : ""}.</p>
-          ) : (
-            <>
-              <p className={cn("m-0 mb-3 text-[12px] text-bz-text-muted", NUM)}>
-                {touched.length} {touched.length === 1 ? "order" : "orders"} worth <Money value={touchedValue} className="text-bz-text" />, giving <Money value={touchedBenefit} className="text-bz-text" /> in benefit.
-              </p>
-              <List>
-                {touched.map((t) => (
-                  <Row key={t.o.id} title={customerById(t.o.customerId)?.name ?? t.o.customerId} sub={`${t.o.id} · ${t.text}`} trail={<Money value={t.benefit} code={false} />} onClick={() => navigate(sfPath(`orders/${t.o.id}`))} />
-                ))}
-              </List>
-            </>
-          )}
-        </PanelSection>
-      ) : (
-        <PanelSection title={s.applies === "claim" ? "Claims against it" : "How it is paid"} count={s.applies === "claim" ? linkedClaims.length : undefined}>
-          {s.applies === "claim" ? (
-            linkedClaims.length ? (
-              <List>
-                {linkedClaims.map((c) => (
-                  <Row key={c.id} title={customerById(c.party)?.name ?? c.party} sub={`${c.id} · raised ${day(c.raisedOn)}`} trail={<Money value={c.amount} code={false} />} onClick={() => navigate(sfPath(`claims/${c.id}`))} />
-                ))}
-              </List>
-            ) : (
-              <p className="m-0 text-[12px] text-bz-text-muted">No claims yet.</p>
-            )
-          ) : (
-            <p className="m-0 text-[12px] text-bz-text-muted">{s.applies === "period" ? "Worked out from each customer's invoices when the period closes, then settled by credit note." : "Given on the customer receipt when the invoice is paid in time."}</p>
-          )}
-        </PanelSection>
       )}
 
-      <RecordActivity subject={`scheme:${s.id}`} seed={seedHistory(s)} />
+      <SfActivity ids={[s.id]} />
 
       <ConfirmDialog
         open={ending}
         eyebrow={s.id}
-        title="End this scheme?"
+        title={`End ${s.name}?`}
         body="New orders stop getting it today. Orders that already have it keep it."
         confirm="End scheme"
         danger
         onClose={() => setEnding(false)}
         onConfirm={() => {
           setEnding(false);
-          setStatus("ended", "ended the scheme");
+          setStatus(s, "ended", "ended the offer");
+          ctx.show("success", `${s.id} ended`);
         }}
       />
-      <ToastHost toast={toast} onDismiss={dismiss} />
-    </SidePanel>
+    </RecordShell>
   );
 }
 
-/** What the scheme's own dates say happened before this session. */
-function seedHistory(s: Scheme): HistoryEvent[] {
-  const created = s.from < SF_TODAY ? addDaysIso(s.from, -7) : addDaysIso(SF_TODAY, -3);
-  const out: HistoryEvent[] = [{ id: `${s.id}-h1`, whoId: s.owner, when: stamp(created, "10:05"), what: s.status === "draft" ? "saved it as a draft" : "created the scheme" }];
-  if (s.status !== "draft") out.push({ id: `${s.id}-h2`, whoId: "EMP-118", when: stamp(addDaysIso(created, 1), "15:40"), what: `approved it${s.budget ? ` with a budget of ${s.budget.kind === "value" ? `NPR ${npr(s.budget.total)}` : `${npr(s.budget.total)} units`}` : ""}` });
-  return out;
-}
-
-export function SchemesPage() {
-  const navigate = useNavigate();
-  const { id } = useParams();
-  const schemes = useStore(schemesStore);
-  const selected = schemes.find((s) => s.id === id);
-  const [tab, setTab] = React.useState<Tab>(() => (selected ? tabOf(selected.status) : "live"));
-
-  const counts = (t: Tab) => schemes.filter((s) => tabOf(s.status) === t).length;
-  const rows = schemes.filter((s) => tabOf(s.status) === tab).sort((a, b) => a.priority - b.priority);
-  const live = schemes.filter((s) => s.status === "live");
-  const spend = live.filter((s) => s.budget?.kind === "value").reduce((a, s) => a + (s.budget?.used ?? 0), 0);
-  const nearEnd = live.filter((s) => s.budget && budgetPct(s) >= 85);
-  const endingSoon = live.filter((s) => s.to >= SF_TODAY && s.to <= addDaysIso(SF_TODAY, 30));
-  const close = React.useCallback(() => navigate(sfPath("schemes")), [navigate]);
-
-  return (
-    <SfShell page="schemes" panel={selected ? <SchemePanel key={selected.id} s={selected} onClose={close} /> : undefined}>
-      <Page width="full">
-        <PageIntro
-          actions={
-            <Link to={sfPath("schemes/new")} className={BTN}>
-              <Plus size={13} /> New scheme
-            </Link>
-          }
-        >
-          Trade promotions the engine applies on every order, from every channel.
-        </PageIntro>
-
-        <Figures
-          items={[
-            { label: "Live", value: live.length, sub: `${schemes.filter((s) => s.status === "paused").length} paused` },
-            { label: "Spent this season", value: <Money value={spend} />, sub: "money budgets" },
-            { label: "Almost used up", value: nearEnd.length, sub: "85% of budget or more", tone: nearEnd.length ? "danger" : undefined },
-            { label: "Ending in 30 days", value: endingSoon.length, sub: endingSoon.length ? `first on ${day([...endingSoon].sort((a, b) => a.to.localeCompare(b.to))[0].to)}` : "none soon" },
-          ]}
-        />
-
-        <TextTabs<Tab>
-          className="mb-3 mt-10"
-          value={tab}
-          onChange={setTab}
-          options={[
-            { value: "live", label: "Live", count: counts("live") },
-            { value: "scheduled", label: "Scheduled", count: counts("scheduled") },
-            { value: "draft", label: "Draft", count: counts("draft") },
-            { value: "ended", label: "Ended", count: counts("ended") },
-          ]}
-        />
-
-        {rows.length === 0 ? (
-          <EmptyNote
-            action={
-              <Link to={sfPath("schemes/new")} className={GHOST_SM}>
-                New scheme
-              </Link>
-            }
-          >
-            No {tab} schemes.
-          </EmptyNote>
-        ) : (
-          <List>
-            {rows.map((s) => (
-              <Row
-                key={s.id}
-                active={s.id === id}
-                onClick={() => navigate(sfPath(`schemes/${s.id}`))}
-                title={
-                  <>
-                    {s.name}
-                    {s.status === "paused" && <Dot tone="warn" className="ml-2 align-middle">Paused</Dot>}
-                  </>
-                }
-                sub={ruleText(s.mechanic)}
-                meta={[
-                  <span key="a" className="block w-[190px] truncate">{audienceText(s)}</span>,
-                  <span key="d" className={cn("block w-[130px]", NUM)}>{periodText(s.from, s.to)}</span>,
-                ]}
-                trail={<BudgetCell s={s} />}
-              />
-            ))}
-          </List>
-        )}
-        <p className="m-0 mt-3 text-[11px] text-bz-text-soft">Checked in priority order, lowest number first.</p>
-      </Page>
-    </SfShell>
-  );
+/** The old edit address — the composer is now the record's edit mode on the desk. */
+function SchemeEditRedirect() {
+  const { no } = useParams();
+  return <Navigate to={`${sfPath(`schemes/${no}`)}?do=edit`} replace />;
 }
 
 export const SCHEMES_ROUTES = [
   { path: "design/salesforce/schemes", Component: SchemesPage },
-  { path: "design/salesforce/schemes/new", Component: SchemeBuilderPage },
-  { path: "design/salesforce/schemes/:id", Component: SchemesPage },
-  { path: "design/salesforce/schemes/:id/edit", Component: SchemeBuilderPage },
+  { path: "design/salesforce/schemes/:no", Component: SchemesPage },
+  { path: "design/salesforce/schemes/:no/edit", Component: SchemeEditRedirect },
 ];

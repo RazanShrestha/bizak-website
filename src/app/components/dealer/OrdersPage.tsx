@@ -1,67 +1,88 @@
 import * as React from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { ArrowLeft, FileText, Gift, Truck } from "lucide-react";
+import { ArrowLeft, FileText, Gift } from "lucide-react";
 import { cn } from "../ui/utils";
 import { NUM } from "../sales/bzw";
-import { day, dayTime, npr } from "../salesforce/engine";
+import { day, dayTime, isCharge, npr } from "../salesforce/engine";
+import { RecordFoot } from "../salesforce/records";
 import { Dot, EmptyNote, Fact, Flag, Money, ProductThumb, Section } from "../salesforce/ui";
-import { DealerShell } from "./shell";
-import { LIME, MiniTrack, PageHead, Pills, RecordFoot, SOFT, Tracker } from "./kit";
-import { COMPANY, addToCart, dpPath, isOpen, onTheWayLine, orderState, snapshotOf, useDealerOrders } from "./portal";
+import { DealerShell, pagesFor } from "./shell";
+import { LIME, MiniTrack, PageHead, Pills, ShopMark, SOFT, Tracker } from "./kit";
+import { useStore } from "../sales/store";
+import { orderTargets, paidFor, unapplied } from "../salesforce/receipts";
+import { ledgerStore } from "../salesforce/store";
+import { ChooseOrderDialog, PayDialog } from "./pay";
+import { addToCart, boughtLines, cap, dpPath, snapshotOf, useDealer, useDealerOrders } from "./portal";
 import type { DealerOrder } from "./portal";
 
 // ════════════════════════════════════════════════════════════════════════════
 // ORDERS — everything the dealer has ordered, and where each one is
 //
-// A dealer thinks "where is my stuff", not "what is the document state": each
-// order reads Placed → Approved → Packed → On the way → Delivered. Its detail
-// keeps the prices and offers it was placed with (the snapshot), links the
-// sales documents, and offers Reorder and Raise a claim.
+// The list is the company's Orders filtered to this dealer: each one is the
+// sales order itself, under the same number (owner decision #31). A dealer
+// thinks "where is my stuff": each order reads Placed → Approved → Delivered.
+// Past approval the steps come from the sales desk — until a delivery is made
+// there, it honestly says "Approved — <company> will deliver". The detail keeps
+// the prices and offers it was placed with (the snapshot). An order our rep took
+// at a shop this dealer serves is still the dealer's own purchase, billed to it;
+// it only carries a "For <shop>" mark (owner decision #26). An order that came
+// from an accepted estimate (decision #27) says so and shows the terms agreed
+// there; its charges read as charges and its agreed free goods as "Free".
 // ════════════════════════════════════════════════════════════════════════════
 
-type Filter = "open" | "done" | "all";
+type Filter = "open" | "done" | "all" | "shops";
 
 export function DealerOrdersPage() {
   const { id } = useParams();
-  return id ? <OrderDetail id={id} /> : <OrdersList />;
+  return <DealerShell page="orders">{id ? <OrderDetail id={id} /> : <OrdersList />}</DealerShell>;
 }
 
 function OrdersList() {
-  const orders = useDealerOrders();
+  const s = useDealer();
+  const orders = useDealerOrders(s.c.id, s.company);
   const [f, setF] = React.useState<Filter>("open");
-  const open = orders.filter(isOpen);
-  const done = orders.filter((o) => !isOpen(o));
-  const shown = f === "open" ? open : f === "done" ? done : orders;
+  const canOrder = pagesFor(s).has("order");
+  const open = orders.filter((o) => o.open);
+  const done = orders.filter((o) => !o.open);
+  const forShops = orders.filter((o) => o.forShop);
+  const shown = f === "open" ? open : f === "done" ? done : f === "shops" ? forShops : orders;
   return (
-    <DealerShell page="orders">
+    <>
       <PageHead
         title="Your orders"
-        sub="Tap an order to see where it is, what it cost and its bills."
+        sub="Every order you or your sales rep placed. Tap one to see where it is."
         actions={
-          <Link to={dpPath("order")} className={LIME}>
-            New order
-          </Link>
+          canOrder && (
+            <Link to={dpPath("order")} className={LIME}>
+              New order
+            </Link>
+          )
         }
       />
-      <Pills<Filter>
-        value={f}
-        onChange={setF}
-        options={[
-          { value: "open", label: "Open", count: open.length },
-          { value: "done", label: "Delivered or closed", count: done.length },
-          { value: "all", label: "All", count: orders.length },
-        ]}
-      />
+      {orders.length > 0 && (
+        <Pills<Filter>
+          value={f}
+          onChange={setF}
+          options={[
+            { value: "open", label: "Open", count: open.length },
+            { value: "done", label: "Delivered or closed", count: done.length },
+            { value: "all", label: "All", count: orders.length },
+            ...(forShops.length > 0 || f === "shops" ? [{ value: "shops" as const, label: "For my shops", count: forShops.length }] : []),
+          ]}
+        />
+      )}
       <div className="mt-6">
         {shown.length === 0 ? (
           <EmptyNote
             action={
-              <Link to={dpPath("order")} className={SOFT}>
-                Place an order
-              </Link>
+              canOrder && (
+                <Link to={dpPath("order")} className={SOFT}>
+                  Place an order
+                </Link>
+              )
             }
           >
-            No open orders right now.
+            {orders.length === 0 ? "Your orders show here once you place one." : f === "open" ? "No open orders right now." : f === "shops" ? "No orders for your shops yet." : "Nothing here yet."}
           </EmptyNote>
         ) : (
           <ul className="m-0 list-none divide-y divide-bz-line-soft border-y border-bz-line-soft p-0">
@@ -71,26 +92,29 @@ function OrdersList() {
           </ul>
         )}
       </div>
-    </DealerShell>
+    </>
   );
 }
 
 function OrderRow({ o }: { o: DealerOrder }) {
-  const st = orderState(o);
-  const ev = snapshotOf(o.id, o.lines, o.at);
+  const ev = snapshotOf(o.hub);
+  const items = boughtLines(o.lines).length;
   return (
     <li>
       <Link to={dpPath(`orders/${o.id}`)} className="grid min-h-[64px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 px-1 py-3 hover:bg-bz-paper-warm/60 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_120px]">
         <span className="min-w-0">
           <span className="block text-[12.5px] font-medium text-bz-text">{o.id}</span>
           <span className={cn("block truncate text-[11px] text-bz-text-soft", NUM)}>
-            {dayTime(o.at)} · {o.lines.length} items · by {o.byName.split(" ")[0]}
+            {dayTime(o.at)} · {items} {items === 1 ? "item" : "items"}
+            {!o.forShop && ` · by ${o.byName.split(" ")[0]}`}
+            {o.hub.estimateId && ` · from ${o.hub.estimateId}`}
           </span>
+          <ShopMark o={o} className="mt-0.5" />
         </span>
         <span className="col-start-1 row-start-2 flex items-center gap-2.5 md:col-start-2 md:row-start-1">
-          <Dot tone={st.tone}>{st.label}</Dot>
+          <Dot tone={o.tone}>{o.label}</Dot>
           <span className="hidden sm:inline-flex">
-            <MiniTrack stage={o.stage} declined={o.declined} />
+            <MiniTrack steps={o.steps.length} reached={o.reached} declined={o.declined} />
           </span>
         </span>
         <span className="col-start-2 row-span-2 row-start-1 text-right md:col-start-3 md:row-span-1">
@@ -103,95 +127,125 @@ function OrderRow({ o }: { o: DealerOrder }) {
 
 function OrderDetail({ id }: { id: string }) {
   const navigate = useNavigate();
-  const orders = useDealerOrders();
+  const s = useDealer();
+  const pages = pagesFor(s);
+  const orders = useDealerOrders(s.c.id, s.company);
+  const ledger = useStore(ledgerStore);
+  const [paying, setPaying] = React.useState(false);
+  const [choosing, setChoosing] = React.useState<{ receiptNo: string; from: string | null } | null>(null);
   const o = orders.find((x) => x.id === id);
   if (!o)
     return (
-      <DealerShell page="orders">
-        <EmptyNote
-          action={
-            <Link to={dpPath("orders")} className={SOFT}>
-              All orders
-            </Link>
-          }
-        >
-          We can't find order {id}.
-        </EmptyNote>
-      </DealerShell>
+      <EmptyNote
+        action={
+          <Link to={dpPath("orders")} className={SOFT}>
+            All orders
+          </Link>
+        }
+      >
+        We can't find order {id} on your account.
+      </EmptyNote>
     );
 
-  const ev = snapshotOf(o.id, o.lines, o.at);
-  const st = orderState(o);
-  const paid = ev.lines.filter((l) => !l.free);
+  const ev = snapshotOf(o.hub);
+  // "CHG:" lines are charges agreed on the estimate (freight, loading…), not products.
+  const charges = ev.lines.filter((l) => isCharge(l.product.id));
+  const chargeTotal = charges.reduce((sum, l) => sum + l.net, 0);
+  const paid = ev.lines.filter((l) => !l.free && !isCharge(l.product.id));
   const free = ev.lines.filter((l) => l.free);
-  const history = [
-    { when: o.at, who: o.byName, what: `placed the order in the portal${o.soNo ? ` — sales order ${o.soNo}` : ""}` },
-    ...(o.declined ? [{ when: o.at, who: COMPANY, what: `did not accept it${o.reason ? ` — ${o.reason}` : ""}` }] : []),
-    ...(o.steps[1] ? [{ when: o.steps[1], who: COMPANY, what: "approved it" }] : []),
-    ...(o.steps[2] ? [{ when: o.steps[2], who: `${COMPANY} warehouse`, what: "packed it" }] : []),
-    ...(o.steps[3] ? [{ when: o.steps[3], who: COMPANY, what: `sent it${o.vehicle ? ` on ${o.vehicle}` : ""}${o.invoiceNo ? ` with invoice ${o.invoiceNo}` : ""}` }] : []),
-    ...(o.steps[4] ? [{ when: o.steps[4], who: "Driver", what: "delivered it and took a signature" }] : []),
-  ];
+  const est = o.hub.estimateId ?? null;
+  const terms = o.hub.terms ?? null;
+  // What was paid for this order: payments that name it, on its bill or not yet (decision #33).
+  const money = paidFor(s.c.id, o.id, ledger);
+  const toPay = orderTargets(s.c.id).find((t) => t.orderNo === o.id)?.need ?? 0;
+  // Not accepted with a payment for it: that payment needs another order.
+  const stuck = o.declined ? unapplied(s.c.id).filter((u) => u.use.tags.some((t) => t.orderNo === o.id && t.state === "dead")) : [];
   const docs = [
-    { label: "Sales order", no: o.soNo, pending: "Once approved" },
-    { label: "Delivery note", no: o.deliveryNo, pending: "When it leaves our warehouse" },
-    { label: "Invoice", no: o.invoiceNo, pending: "When it leaves our warehouse" },
+    { label: "Delivery note", no: o.deliveries.map((x) => x.no).join(", ") || null, pending: "When it leaves the warehouse" },
+    { label: "Invoice", no: o.invoices.map((x) => x.no).join(", ") || null, pending: "When it is billed" },
+    { label: "Payment", no: money.paid + money.waiting > 0 ? `${[money.paid > 0 && `NPR ${npr(money.paid)} paid`, money.waiting > 0 && `NPR ${npr(money.waiting)} waiting to be confirmed`].filter(Boolean).join(" · ")} · ${money.receipts.join(", ")}` : null, pending: "Not paid yet" },
   ];
 
   return (
-    <DealerShell page="orders">
+    <>
       <Link to={dpPath("orders")} className="-ml-1 mb-4 inline-flex h-10 items-center gap-1.5 px-1 text-[12px] text-bz-text-muted hover:text-bz-text">
         <ArrowLeft size={14} /> All orders
       </Link>
       <PageHead
         title={
           <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            Order {o.id} <Dot tone={st.tone}>{st.label}</Dot>
+            Order {o.id} <Dot tone={o.tone}>{o.label}</Dot>
           </span>
         }
-        sub={`Placed ${dayTime(o.at)} by ${o.byName}${o.deliverBy ? ` · wanted by ${day(o.deliverBy)}` : ""}`}
+        sub={
+          <>
+            <ShopMark o={o} className="mb-0.5 text-[12px]" />
+            {est && (
+              <span className="mb-0.5 block">
+                From estimate{" "}
+                <Link to={dpPath(`requests/${est}`)} className="font-medium text-bz-text underline underline-offset-2 hover:opacity-75">
+                  {est}
+                </Link>
+                {o.hub.estimateVersion ? ` version ${o.hub.estimateVersion}` : ""}
+              </span>
+            )}
+            {`Placed ${dayTime(o.at)}${o.forShop ? "" : ` by ${o.byName}`}${o.deliverBy ? ` · wanted by ${day(o.deliverBy)}` : ""}`}
+          </>
+        }
         actions={
           <>
-            {o.stage >= 3 && (
+            {o.reached >= 2 && pages.has("claims") && (
               <button type="button" onClick={() => navigate(`${dpPath("claims")}?order=${o.id}`)} className={SOFT}>
-                Raise a claim or return
+                Raise a claim
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => {
-                addToCart(o.lines);
-                navigate(dpPath("order"));
-              }}
-              className={LIME}
-            >
-              Reorder
-            </button>
+            {pages.has("order") && (
+              <button
+                type="button"
+                onClick={() => {
+                  addToCart(s.c.id, boughtLines(o.lines));
+                  navigate(dpPath("order"));
+                }}
+                className={toPay > 0 && s.settings.can.pay ? SOFT : LIME}
+              >
+                Reorder
+              </button>
+            )}
+            {toPay > 0 && s.settings.can.pay && (
+              <button type="button" onClick={() => setPaying(true)} className={LIME}>
+                Pay NPR {npr(toPay)}
+              </button>
+            )}
           </>
         }
       />
 
+      {o.forShop && (
+        <p className="m-0 mb-6 text-[12px] leading-relaxed text-bz-text-muted">
+          Our rep took this order at {o.forShop.name} for you to supply. You are billed for it and you deliver it to {o.forShop.name}.
+        </p>
+      )}
       {o.declined && (
         <p className="m-0 mb-6 flex flex-wrap items-center gap-2 text-[12px] text-bz-text-muted">
-          <Flag>Not accepted</Flag> {o.reason ?? `${COMPANY} could not take this order.`} Call your sales rep if this looks wrong.
+          <Flag>Not accepted</Flag> {o.hub.rejectReason ?? `${cap(s.company)} could not take this order.`} Call your sales rep if this looks wrong.
         </p>
       )}
-      {!o.declined && o.stage === 0 && (
+      {stuck.length > 0 && s.settings.can.pay && (
+        <p className="m-0 mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-bz-text-muted">
+          You paid for this order with {stuck.map((u) => u.no).join(", ")}.
+          <button type="button" onClick={() => setChoosing({ receiptNo: stuck[0].no, from: o.id })} className="font-semibold text-bz-text underline underline-offset-2 hover:opacity-75">
+            Choose another order
+          </button>
+        </p>
+      )}
+      {!o.declined && o.reached === 0 && (
         <p className="m-0 mb-6 text-[12px] text-bz-text-muted">
-          {o.hubStatus === "review" ? `${COMPANY} is checking your credit before approving. Paying overdue invoices speeds this up.` : `${COMPANY} is checking stock and prices. Most orders are approved within the hour.`}
+          {o.waiting ? `${cap(s.company)} approves this order first because of your credit. Paying what is overdue speeds it up.` : `${cap(s.company)} is checking stock and prices before approving it.`}
         </p>
       )}
+      {!o.declined && o.reached === 1 && o.open && <p className="m-0 mb-6 text-[12px] text-bz-text-muted">{o.line}.</p>}
 
-      <Tracker stage={o.stage} steps={o.steps} declined={o.declined} waiting={o.stage === 0 && o.hubStatus === "review"} />
-
-      {o.stage === 3 && (
-        <div className="mt-8 flex flex-wrap items-start gap-x-10 gap-y-4 rounded-bz-lg bg-bz-paper-warm px-5 py-4">
-          <Truck size={18} className="mt-1 text-bz-text-muted" />
-          <Fact label="Arrives">{o.eta ?? onTheWayLine(o)}</Fact>
-          {o.vehicle && <Fact label="Vehicle">{o.vehicle}</Fact>}
-          {o.driver && <Fact label="Driver">{o.driver}</Fact>}
-        </div>
-      )}
+      <Tracker steps={o.steps} reached={o.reached} declined={o.declined} waiting={o.waiting} />
 
       <div className="mt-12 grid gap-12 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <Section title="What you ordered" count={paid.length}>
@@ -202,7 +256,7 @@ function OrderDetail({ id }: { id: string }) {
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[12.5px] font-medium text-bz-text">{l.product.name}</span>
                   <span className={cn("block text-[11px] text-bz-text-soft", NUM)}>
-                    {l.qty} {l.product.unit}s × NPR {npr(l.price)}
+                    {l.qty} {l.product.unit || "unit"}s × NPR {npr(l.price)}
                     {l.discount > 0 && <span className="text-bz-pos-deep"> · −{npr(l.discount)}</span>}
                   </span>
                 </span>
@@ -223,7 +277,13 @@ function OrderDetail({ id }: { id: string }) {
           </ul>
           <dl className={cn("m-0 mt-4 grid grid-cols-[1fr_auto] gap-x-4 gap-y-1.5 text-[12px] md:ml-auto md:max-w-[280px]", NUM)}>
             <dt className="text-bz-text-muted">Items</dt>
-            <dd className="m-0 text-right text-bz-text">{npr(ev.gross)}</dd>
+            <dd className="m-0 text-right text-bz-text">{npr(ev.gross - chargeTotal)}</dd>
+            {charges.map((c, i) => (
+              <React.Fragment key={`c${i}`}>
+                <dt className="text-bz-text-muted">{c.product.name}</dt>
+                <dd className="m-0 text-right text-bz-text">{npr(c.net)}</dd>
+              </React.Fragment>
+            ))}
             {ev.discount > 0 && (
               <>
                 <dt className="text-bz-text-muted">Offer discounts</dt>
@@ -240,9 +300,25 @@ function OrderDetail({ id }: { id: string }) {
         </Section>
 
         <div>
+          {est && (
+            <Section title="Agreed on the estimate">
+              {terms ? (
+                <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                  <Fact label="Payment">{terms.payment || "Not set"}</Fact>
+                  <Fact label="Delivery">{[terms.delivery, terms.deliverBy ? `by ${day(terms.deliverBy)}` : ""].filter(Boolean).join(", ") || "Not set"}</Fact>
+                </div>
+              ) : (
+                <p className="m-0 text-[12px] text-bz-text-muted">The prices are the ones you accepted.</p>
+              )}
+              <Link to={dpPath(`requests/${est}`)} className="mt-3 inline-flex min-h-[32px] items-center text-[11.5px] font-semibold text-bz-text underline underline-offset-2 hover:opacity-75">
+                See estimate {est}
+              </Link>
+            </Section>
+          )}
+
           <Section title="Offers you got">
             {ev.applied.length === 0 ? (
-              <p className="m-0 text-[12px] text-bz-text-muted">No offer applied to this order.</p>
+              <p className="m-0 text-[12px] text-bz-text-muted">{est ? "The prices are as agreed on the estimate. No offer on top." : "No offer applied to this order."}</p>
             ) : (
               <ul className="m-0 flex list-none flex-col gap-3 p-0">
                 {ev.applied.map((a) => (
@@ -261,32 +337,29 @@ function OrderDetail({ id }: { id: string }) {
 
           <Section title="Documents">
             <ul className="m-0 list-none divide-y divide-bz-line-soft border-y border-bz-line-soft p-0">
-              {docs.map((d) => (
-                <li key={d.label} className="flex min-h-[48px] items-center gap-3 py-2">
-                  <FileText size={14} className={d.no ? "text-bz-text-muted" : "text-bz-line"} />
+              {docs.map((x) => (
+                <li key={x.label} className="flex min-h-[48px] items-center gap-3 py-2">
+                  <FileText size={14} className={x.no ? "text-bz-text-muted" : "text-bz-line"} />
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[12px] text-bz-text">{d.label}</span>
-                    <span className="block text-[11px] text-bz-text-soft">{d.no ?? d.pending}</span>
+                    <span className="block text-[12px] text-bz-text">{x.label}</span>
+                    <span className="block truncate text-[11px] text-bz-text-soft">{x.no ?? x.pending}</span>
                   </span>
-                  {d.no && (
-                    <button type="button" disabled title="PDFs come with the app" className="text-[11.5px] font-medium text-bz-text-soft disabled:cursor-not-allowed">
-                      PDF
-                    </button>
-                  )}
                 </li>
               ))}
             </ul>
           </Section>
 
-          {o.note && (
-            <Section title="Your note">
+          {o.note && !est && (
+            <Section title={o.hub.source === "portal" ? "Your note" : "Note"}>
               <p className="m-0 text-[12px] leading-relaxed text-bz-text-muted">{o.note}</p>
             </Section>
           )}
         </div>
       </div>
 
-      <RecordFoot recordId={o.id} history={history} />
-    </DealerShell>
+      <RecordFoot recordId={o.id} audience="portal" author={s.userName} className="mt-12" />
+      <PayDialog open={paying} preselect={[o.id]} onClose={() => setPaying(false)} />
+      <ChooseOrderDialog pick={choosing} onClose={() => setChoosing(null)} />
+    </>
   );
 }

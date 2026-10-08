@@ -106,6 +106,8 @@ import { PartiesDesk as SfmPartiesDesk } from "./components/sfm/PartiesDesk";
 import { VisitsDesk as SfmVisitsDesk } from "./components/sfm/VisitsDesk";
 import { PerformancePage as SfmPerformancePage } from "./components/sfm/PerformancePage";
 import { HomePage as SfHomePage } from "./components/salesforce/HomePage";
+import { InboxPage as SfInboxPage } from "./components/salesforce/InboxPage";
+import { ROUTES_ROUTES as SF_ROUTES_ROUTES } from "./components/salesforce/RoutesPage";
 import { ORDERS_ROUTES as SF_ORDERS_ROUTES } from "./components/salesforce/OrdersPage";
 import { SCHEMES_ROUTES as SF_SCHEMES_ROUTES } from "./components/salesforce/SchemesPage";
 import { CLAIMS_ROUTES as SF_CLAIMS_ROUTES } from "./components/salesforce/ClaimsPage";
@@ -113,12 +115,16 @@ import { CAMPAIGNS_ROUTES as SF_CAMPAIGNS_ROUTES } from "./components/salesforce
 import { BRANDING_ROUTES as SF_BRANDING_ROUTES } from "./components/salesforce/BrandingPage";
 import { EVENTS_ROUTES as SF_EVENTS_ROUTES } from "./components/salesforce/EventsPage";
 import { CUSTOMERS_ROUTES as SF_CUSTOMERS_ROUTES } from "./components/salesforce/CustomersPage";
-import { TERRITORIES_ROUTES as SF_TERRITORIES_ROUTES } from "./components/salesforce/TerritoriesPage";
 import { SETUP_ROUTES as SF_SETUP_ROUTES } from "./components/salesforce/SetupPage";
 import { FIELD_ROUTES as SF_FIELD_ROUTES } from "./components/salesforce/FieldPages";
 import { TEAM_ROUTES as SF_TEAM_ROUTES } from "./components/salesforce/TeamPages";
 import { INSIGHTS_ROUTES as SF_INSIGHTS_ROUTES } from "./components/salesforce/InsightsPage";
 import { DEALER_ROUTES } from "./components/dealer/routes";
+import { REP_ROUTES } from "./components/rep/routes";
+import { PRODUCTS_ROUTES as SF_PRODUCTS_ROUTES } from "./components/salesforce/ProductsPage";
+import { PAYMENTS_ROUTES as SF_PAYMENTS_ROUTES } from "./components/salesforce/PaymentsPage";
+import { OPPORTUNITIES_ROUTES as SF_OPPORTUNITIES_ROUTES } from "./components/salesforce/OpportunitiesPage";
+import { Navigate } from "react-router";
 import { ScheduledJobsDesignPage } from "./components/scheduler/ScheduledJobsDesignPage";
 import { MastersKitPage } from "./components/masters/MastersKitPage";
 import { MastersHubPage } from "./components/masters/hub/MastersHubPage";
@@ -1674,6 +1680,7 @@ export const router = createBrowserRouter([
       { path: "design/sfm/performance",             Component: SfmPerformancePage                },
       // Sales force v2 — the generic SFM (company side) and the Dealer Sales Portal.
       { path: "design/salesforce",                  Component: SfHomePage                        },
+      { path: "design/salesforce/inbox",            Component: SfInboxPage                       },
       ...SF_ORDERS_ROUTES,
       ...SF_SCHEMES_ROUTES,
       ...SF_CLAIMS_ROUTES,
@@ -1681,12 +1688,20 @@ export const router = createBrowserRouter([
       ...SF_BRANDING_ROUTES,
       ...SF_EVENTS_ROUTES,
       ...SF_CUSTOMERS_ROUTES,
-      ...SF_TERRITORIES_ROUTES,
+      ...SF_ROUTES_ROUTES,
       ...SF_SETUP_ROUTES,
       ...SF_FIELD_ROUTES,
       ...SF_TEAM_ROUTES,
       ...SF_INSIGHTS_ROUTES,
       ...DEALER_ROUTES,
+      ...REP_ROUTES,
+      ...SF_PRODUCTS_ROUTES,
+      ...SF_PAYMENTS_ROUTES,
+      // The estimate is the sales desk's (decision #32): old Sales force estimate links are redirected by these routes.
+      ...SF_OPPORTUNITIES_ROUTES,
+      // Quotations became Opportunities + Estimates (decision #27); old links land on Opportunities.
+      { path: "design/salesforce/quotations", element: <Navigate to="/design/salesforce/opportunities" replace /> },
+      { path: "design/salesforce/quotations/:id", element: <Navigate to="/design/salesforce/opportunities" replace /> },
       { path: "design/scheduled-jobs",              Component: ScheduledJobsDesignPage           },
       // Masters kit bench (masters spec §9.4 WP0). Declared before any `design/masters/:kind` route.
       { path: "design/masters/kit",                 Component: MastersKitPage                    },

@@ -1,21 +1,31 @@
 import * as React from "react";
+import { TriangleAlert } from "lucide-react";
 import { cn } from "../ui/utils";
-import { Switch, ToastHost, useToast } from "../sales/bzw";
+import { INPUT, NUM, Switch, ToastHost, useToast } from "../sales/bzw";
 import { useStore } from "../sales/store";
 import type { ModuleKey } from "./data";
-import { modulesStore } from "./store";
-import { Dot, PageIntro } from "./ui";
-import { RecordActivity, RecordNoteFoot, logChange } from "./network-log";
-import { SetupFrame } from "./setup-frame";
+import { Panel, PillTabs } from "./fx";
+import { logEvent } from "./records";
+import { SfActivity, SfNoteFoot, SfShell } from "./sf";
+import { fieldSettingsStore, modulesStore } from "./store";
+import { SettingRow } from "./setup-frame";
+import type { Toast } from "./setup-frame";
 
 // ════════════════════════════════════════════════════════════════════════════
 // SETUP · MODULES — switch parts of Sales force on and off for this tenant
 //
-// The switch is real: the shell reads modulesStore, so a module switched off
-// takes its pages out of the nav at once. Dependencies are stated, not
+// The switch is real: the top-bar areas read modulesStore, so a module switched
+// off takes its places out of the module at once. Dependencies are stated, not
 // enforced — switching the Orders hub off while the portal is on is allowed,
-// and both rows say what that means.
+// and the row says what is missing. The field setting that belongs to the
+// module as a whole (the check-in radius) sits beside the field modules.
 // ════════════════════════════════════════════════════════════════════════════
+
+/** Setup has no record of its own; its history is filed under this id. */
+const RECORD = "setup:modules";
+
+type Row = { id: ModuleKey; name: string; blurb: string; on: boolean };
+type Show = "all" | "on" | "off";
 
 const GROUPS: { label: string; keys: ModuleKey[] }[] = [
   { label: "Field and orders", keys: ["field", "orders"] },
@@ -23,17 +33,19 @@ const GROUPS: { label: string; keys: ModuleKey[] }[] = [
   { label: "Growth", keys: ["schemes", "campaigns", "branding", "events"] },
   { label: "Money and team", keys: ["claims", "targets", "expenses"] },
 ];
+/** The page is two columns from 1024px: these groups lead the first, the rest the second. */
+const FIRST_COLUMN = ["Field and orders", "Growth"];
 
-/** The pages a module owns in the Sales force menu (shell.tsx NAV). */
-const PAGES: Partial<Record<ModuleKey, string>> = {
-  field: "Today, Plan and Visits",
-  orders: "Orders",
-  schemes: "Schemes",
-  campaigns: "Campaigns",
-  branding: "Branding",
-  events: "Events",
-  claims: "Claims",
-  targets: "Targets",
+/** The places a module owns in the top bar (sf.tsx SF_SECTIONS). */
+const PAGES: Partial<Record<ModuleKey, string[]>> = {
+  field: ["Live", "Plan", "Visits"],
+  orders: ["Orders"],
+  schemes: ["Schemes"],
+  campaigns: ["Campaigns"],
+  branding: ["Branding"],
+  events: ["Events"],
+  claims: ["Claims"],
+  targets: ["Targets"],
 };
 
 /** Hard needs: without them the module has nowhere to put its work. */
@@ -52,86 +64,190 @@ const USES: Partial<Record<ModuleKey, { keys: ModuleKey[]; why: string }>> = {
   branding: { keys: ["field"], why: "Reps check branding on their visits." },
 };
 
-export function ModulesTab() {
-  const modules = useStore(modulesStore);
+/** A column of panels; its last one takes up the slack, so both columns end on one line. */
+const COLUMN = "flex min-w-0 flex-col gap-3 [&>section:last-child]:flex-1";
+
+const and = (names: string[]) => (names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0]);
+
+/** The geofence radius the rep app's check-in measures against (fieldSettingsStore). Saved when the field is left. */
+function RadiusRow({ show }: { show: Toast }) {
+  const settings = useStore(fieldSettingsStore);
+  const [text, setText] = React.useState(String(settings.geofenceMetres));
+  const [error, setError] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    setText(String(settings.geofenceMetres));
+    setError(null);
+  }, [settings.geofenceMetres]);
+
+  const commit = () => {
+    const n = text.trim() === "" ? NaN : Math.round(Number(text));
+    if (!Number.isFinite(n) || n < 10 || n > 5000) return setError("Use 10 to 5,000 metres.");
+    setError(null);
+    setText(String(n));
+    const was = settings.geofenceMetres;
+    if (n === was) return;
+    fieldSettingsStore.set((x) => ({ ...x, geofenceMetres: n }));
+    logEvent(RECORD, `set the check-in radius to ${n} m (was ${was} m)`);
+    show("success", `Check-in radius is ${n} m.`);
+  };
+
+  return (
+    <SettingRow
+      label="Check-in radius"
+      title="A rep counts as at the shop within this distance of its saved location"
+      sub={
+        error ? (
+          <span role="alert" className="text-bz-red">
+            {error}
+          </span>
+        ) : undefined
+      }
+    >
+      <label className="relative block w-[136px]">
+        <input
+          inputMode="numeric"
+          aria-label="Check-in radius, in metres"
+          aria-invalid={!!error}
+          value={text}
+          onFocus={(e) => e.currentTarget.select()}
+          onChange={(e) => (setText(e.target.value.replace(/[^\d]/g, "")), setError(null))}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.currentTarget.blur();
+            else if (e.key === "Escape") (setText(String(settings.geofenceMetres)), setError(null));
+          }}
+          className={cn(INPUT, "pr-[58px] text-right", NUM, error && "border-bz-red-mark hover:border-bz-red-mark focus:border-bz-red-mark")}
+        />
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11.5px] text-bz-text-soft">metres</span>
+      </label>
+    </SettingRow>
+  );
+}
+
+export function ModulesPlace() {
   const { toast, show, dismiss } = useToast();
+  const modules = useStore(modulesStore);
+  const [pick, setPick] = React.useState<Show>("all");
   const on = (k: ModuleKey) => modules.find((m) => m.key === k)?.on ?? false;
   const nameOf = (k: ModuleKey) => modules.find((m) => m.key === k)?.name ?? k;
-  const list = (ks: ModuleKey[]) => {
-    const names = ks.map(nameOf);
-    return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0];
-  };
+  const list = (ks: ModuleKey[]) => and(ks.map(nameOf));
 
   const set = (k: ModuleKey, v: boolean) => {
     modulesStore.set((ms) => ms.map((m) => (m.key === k ? { ...m, on: v } : m)));
-    logChange("setup:modules", `switched ${v ? "on" : "off"} ${nameOf(k)}`);
+    logEvent(RECORD, `switched ${v ? "on" : "off"} ${nameOf(k)}`);
     const missing = v ? (NEEDS[k]?.keys ?? []).filter((d) => !on(d)) : [];
     const users = !v ? (Object.keys(NEEDS) as ModuleKey[]).filter((m) => on(m) && NEEDS[m]!.keys.includes(k)) : [];
+    const tabs = PAGES[k];
     if (missing.length) {
       show("info", `${nameOf(k)} needs ${list(missing)}.`, {
         label: `Switch ${missing.length > 1 ? "them" : "it"} on`,
         run: () => {
           modulesStore.set((ms) => ms.map((m) => (missing.includes(m.key) ? { ...m, on: true } : m)));
-          missing.forEach((d) => logChange("setup:modules", `switched on ${nameOf(d)}`));
+          missing.forEach((d) => logEvent(RECORD, `switched on ${nameOf(d)}`));
         },
       });
     } else if (users.length) {
-      show("info", `${nameOf(k)} is off. ${list(users)} ${users.length > 1 ? "rely" : "relies"} on it.`, { label: "Undo", run: () => modulesStore.set((ms) => ms.map((m) => (m.key === k ? { ...m, on: true } : m))) });
+      show("info", `${nameOf(k)} is off. ${list(users)} ${users.length > 1 ? "rely" : "relies"} on it.`, {
+        label: "Undo",
+        run: () => {
+          modulesStore.set((ms) => ms.map((m) => (m.key === k ? { ...m, on: true } : m)));
+          logEvent(RECORD, `switched on ${nameOf(k)}`);
+        },
+      });
     } else {
-      show("success", PAGES[k] ? `${nameOf(k)} is ${v ? "on and back in" : "off and out of"} the menu.` : `${nameOf(k)} is ${v ? "on" : "off"}.`);
+      show("success", tabs ? `${nameOf(k)} is ${v ? "on" : "off"}. ${and(tabs)} ${tabs.length > 1 ? "are" : "is"} ${v ? "back" : "hidden"}.` : `${nameOf(k)} is ${v ? "on" : "off"}.`);
     }
   };
 
-  const onCount = modules.filter((m) => m.on).length;
+  const rows: Row[] = modules.map((m) => ({ id: m.key, name: m.name, blurb: m.blurb, on: m.on }));
+  const onCount = rows.filter((r) => r.on).length;
+  const offCount = rows.length - onCount;
+  // A view with nothing in it stands down: the last module switched off leaves "On" empty.
+  const filter: Show = (pick === "on" && onCount === 0) || (pick === "off" && offCount === 0) ? "all" : pick;
+  const shown = rows.filter((r) => filter === "all" || (filter === "on") === r.on);
+  /** The modules this one needs that are off — only while it is on itself. */
+  const broken = (m: Row) => (m.on ? (NEEDS[m.id]?.keys ?? []).filter((d) => !on(d)) : []);
+  /** The row's tooltip: what the module is, what it needs, what it works with, which places it owns. */
+  const tip = (m: Row) => {
+    const need = NEEDS[m.id];
+    const use = USES[m.id];
+    const tabs = PAGES[m.id];
+    return [m.blurb, need && `Needs ${list(need.keys)}`, use && `Works with ${list(use.keys)}`, tabs && `Off hides ${and(tabs)}`].filter(Boolean).join(". ") + ".";
+  };
+
+  const group = (g: (typeof GROUPS)[number]) => {
+    const items = g.keys.map((k) => shown.find((r) => r.id === k)).filter((r): r is Row => !!r);
+    if (!items.length) return null;
+    return (
+      <Panel key={g.label} title={g.label} flush right={<span className={cn("mr-1.5 text-[11px] text-bz-text-soft", NUM)}>{`${g.keys.filter(on).length} of ${g.keys.length} on`}</span>}>
+        {items.map((m) => {
+          const off = broken(m);
+          const need = NEEDS[m.id];
+          return (
+            <SettingRow
+              key={m.id}
+              label={m.name}
+              quiet={!m.on}
+              title={tip(m)}
+              sub={
+                off.length > 0 ? (
+                  <span className="inline-flex max-w-full items-start gap-1.5 text-bz-amber-ink" title={need?.why}>
+                    <TriangleAlert size={12} className="mt-[2px] shrink-0" />
+                    <span className="min-w-0">
+                      Needs {list(off)} — {off.length > 1 ? "they are" : "it is"} off
+                    </span>
+                  </span>
+                ) : need ? (
+                  <span title={need.why}>Needs {list(need.keys)}</span>
+                ) : undefined
+              }
+            >
+              <Switch on={m.on} onChange={(v) => set(m.id, v)} label={`${m.name} ${m.on ? "on" : "off"}`} />
+            </SettingRow>
+          );
+        })}
+      </Panel>
+    );
+  };
+
+  const field = (
+    <Panel key="field" title="Field" flush>
+      <RadiusRow show={show} />
+    </Panel>
+  );
+  const first = GROUPS.filter((g) => FIRST_COLUMN.includes(g.label));
+  const second = GROUPS.filter((g) => !FIRST_COLUMN.includes(g.label));
 
   return (
-    <SetupFrame tab="modules" width="narrow">
-      <PageIntro>
-        Switch on only what your team uses. A module that is off leaves the menu, the rep app and the portal. {onCount} of {modules.length} are on.
-      </PageIntro>
-
-      {GROUPS.map((g) => (
-        <section key={g.label} className="mt-10 first-of-type:mt-0">
-          <p className="m-0 mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">{g.label}</p>
-          <ul className="m-0 list-none divide-y divide-bz-line-soft border-y border-bz-line-soft p-0">
-            {g.keys.map((k) => {
-              const m = modules.find((x) => x.key === k);
-              if (!m) return null;
-              const need = NEEDS[k];
-              const use = USES[k];
-              const broken = m.on && need ? need.keys.filter((d) => !on(d)) : [];
-              return (
-                <li key={k} className="flex items-start gap-4 px-1 py-4">
-                  <div className="min-w-0 flex-1">
-                    <p className={cn("m-0 text-[12.5px] font-medium", m.on ? "text-bz-text" : "text-bz-text-muted")}>{m.name}</p>
-                    <p className="m-0 mt-0.5 text-[11px] text-bz-text-soft">{m.blurb}</p>
-                    {broken.length > 0 ? (
-                      <Dot tone="warn" className="mt-1.5 whitespace-normal text-[11px]">
-                        {list(broken)} {broken.length > 1 ? "are" : "is"} off — {need!.why.charAt(0).toLowerCase() + need!.why.slice(1)}
-                      </Dot>
-                    ) : (
-                      (need || use || PAGES[k]) && (
-                        <p className="m-0 mt-1.5 text-[10.5px] leading-relaxed text-bz-text-soft">
-                          {need && <>Needs {list(need.keys)}. </>}
-                          {use && <>Works with {list(use.keys)}. </>}
-                          {PAGES[k] && <>Off hides {PAGES[k]}.</>}
-                        </p>
-                      )
-                    )}
-                  </div>
-                  <span className="pt-0.5">
-                    <Switch on={m.on} onChange={(v) => set(k, v)} label={`${m.name} ${m.on ? "on" : "off"}`} />
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ))}
-
-      <RecordActivity subject="setup:modules" className="mt-12" />
-      <RecordNoteFoot subject="setup:modules" inline />
+    <SfShell current="setup:modules">
+      <div className="h-full overflow-y-auto px-4 pb-8 [scrollbar-width:thin] md:px-6">
+        <div className="flex max-w-[1120px] flex-col gap-3">
+          <PillTabs<Show>
+            className="self-start"
+            value={filter}
+            onChange={setPick}
+            options={[
+              { value: "all", label: "All" },
+              { value: "on", label: "On", count: onCount },
+              { value: "off", label: "Off", count: offCount },
+            ]}
+          />
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+            {/* The radius belongs with the field modules, so it follows their group. */}
+            <div className={COLUMN}>
+              {group(first[0])}
+              {field}
+              {first.slice(1).map((g) => group(g))}
+            </div>
+            <div className={COLUMN}>{second.map((g) => group(g))}</div>
+            <Panel flush className="lg:col-span-2">
+              <SfActivity ids={[RECORD]} />
+              <SfNoteFoot id={RECORD} />
+            </Panel>
+          </div>
+        </div>
+      </div>
       <ToastHost toast={toast} onDismiss={dismiss} />
-    </SetupFrame>
+    </SfShell>
   );
 }

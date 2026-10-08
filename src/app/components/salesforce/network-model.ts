@@ -1,44 +1,36 @@
-import { createStore } from "../sales/store";
-import { REPS, TERRITORIES } from "./data";
-import type { Customer, CustomerType, HubOrder, Level, Playbook, Portal, Scheme, SchemeMechanic, Territory } from "./data";
+import { SF_TODAY } from "./data";
+import type { Customer, CustomerType, HubOrder, Level, Playbook, Portal, Product, Rep, Scheme, SchemeMechanic } from "./data";
 import { eligible, evaluate, npr } from "./engine";
 
 // ════════════════════════════════════════════════════════════════════════════
-// NETWORK · derivations shared by Customers, Territories and Setup
+// NETWORK · derivations shared by Customers, Products and Setup
 //
-// Types are read from `typesStore` (Setup edits them), never from the static
-// CUSTOMER_TYPES, so a type renamed or re-priced in Setup reads the same on
-// every network page. Two seed gaps are filled here, locally:
-//   • the seed links no distributor to the super-stockist, so the trade tree
-//     would have an empty top. `supplyStore` supplies that one link until a
-//     user changes "served by" (then the customer's own parentId wins);
-//   • REPS is a constant, so rep ↔ territory assignments live in `repAreasStore`.
+// Everything here reads what it is given (or the live store) — never sample
+// data. "Served by" is `customer.parentId` and nothing else. Every helper
+// survives a missing record (a deleted type, rep or parent).
 // ════════════════════════════════════════════════════════════════════════════
 
-export const supplyStore = createStore<Record<string, string>>({ "C-5002": "C-5010", "C-5004": "C-5010" });
-export const repAreasStore = createStore<Record<string, string[]>>(Object.fromEntries(REPS.map((r) => [r.id, [...r.territoryIds]])));
+// ── The trade tree ──────────────────────────────────────────────────────────
 
-export const parentOf = (c: Customer, supply: Record<string, string>) => c.parentId ?? supply[c.id] ?? null;
-export const childrenOf = (id: string, customers: Customer[], supply: Record<string, string>) => customers.filter((c) => parentOf(c, supply) === id);
+export const childrenOf = (id: string, customers: Customer[]) => customers.filter((c) => c.parentId === id);
 
 /** Every customer under `id`, at any depth (a super-stockist's distributors and their retailers). */
-export function descendantsOf(id: string, customers: Customer[], supply: Record<string, string>): Customer[] {
+export function descendantsOf(id: string, customers: Customer[]): Customer[] {
   const out: Customer[] = [];
-  const walk = (pid: string, guard: number) => {
-    if (guard > 6) return;
-    for (const k of childrenOf(pid, customers, supply)) {
+  const seen = new Set<string>([id]);
+  const walk = (pid: string) => {
+    for (const k of childrenOf(pid, customers)) {
+      if (seen.has(k.id)) continue;
+      seen.add(k.id);
       out.push(k);
-      walk(k.id, guard + 1);
+      walk(k.id);
     }
   };
-  walk(id, 0);
+  walk(id);
   return out;
 }
 
 // ── Types ───────────────────────────────────────────────────────────────────
-
-const UNKNOWN: CustomerType = { id: "?", name: "No type", plural: "No type", level: "direct", priceOff: 0, creditDays: 0, creditStop: "soft", portal: "none", ownCustomers: false, playbookId: null, visitsPer4w: 0, color: 8, blurb: "" };
-export const typeIn = (types: CustomerType[], id: string | undefined) => types.find((t) => t.id === id) ?? UNKNOWN;
 
 export const LEVEL_LABEL: Record<Level, string> = { primary: "Primary", secondary: "Secondary", direct: "Direct" };
 export const LEVEL_HINT: Record<Level, string> = {
@@ -48,45 +40,34 @@ export const LEVEL_HINT: Record<Level, string> = {
 };
 export const PORTAL_LABEL: Record<Portal, string> = { dealer: "Dealer portal", retailer: "Retailer app", none: "No portal" };
 
+/** The next identity colour for a new type (1–8). */
+export const nextColor = (types: CustomerType[]) => (types.length % 8) + 1;
+
 /** "What a <type> gets", as one sentence — the whole policy a type carries. */
 export function getsSentence(t: CustomerType, playbooks: Playbook[]) {
   const pb = playbooks.find((p) => p.id === t.playbookId);
   const parts = [
     t.priceOff ? `buys at ${t.priceOff}% off the list price` : "buys at the list price",
-    `gets ${t.creditDays} days' credit (over the limit, the order is ${t.creditStop === "hard" ? "blocked" : "sent to review"})`,
-    t.portal === "dealer" ? "orders and pays on the dealer portal" : t.portal === "retailer" ? "orders from its distributor on the retailer app" : "has no portal",
+    `gets ${t.creditDays} days' credit — an order over the limit, or with a bill more than ${t.graceDays} days overdue, ${t.creditStop === "hard" ? "is blocked" : "gets a warning"}`,
+    t.portal === "dealer" ? "can order and pay on the dealer portal" : t.portal === "retailer" ? "orders from its distributor on the retailer app" : "has no portal",
   ];
-  if (t.ownCustomers) parts.push("reports its sales to its own customers");
-  parts.push(t.visitsPer4w ? `is visited ${t.visitsPer4w === 1 ? "once" : `${t.visitsPer4w} times`} every 4 weeks${pb ? ` on the ${pb.name} playbook` : ", with no playbook"}` : "is not visited by reps");
+  if (t.ownCustomers) parts.push("sells to customers of its own");
+  parts.push(t.visitsPer4w ? `is visited ${t.visitsPer4w === 1 ? "once" : `${t.visitsPer4w} times`} every 4 weeks${pb ? ` on the ${pb.name} playbook` : ""}` : "is not visited by reps");
   const last = parts.pop();
-  return `A ${t.name.toLowerCase()} ${parts.join(", ")} and ${last}.`;
+  return `A ${(t.name || "customer").toLowerCase()} ${parts.join(", ")} and ${last}.`;
 }
 
-// ── Territories ─────────────────────────────────────────────────────────────
+// ── Reps ────────────────────────────────────────────────────────────────────
 
-export const terrById = (id: string | null | undefined) => TERRITORIES.find((t) => t.id === id);
-export const terrChildren = (id: string | null) => TERRITORIES.filter((t) => t.parentId === id);
-/** The territory-level ids at or under a node. */
-export function leafTerrIds(id: string): string[] {
-  const t = terrById(id);
-  if (!t) return [];
-  if (t.level === "territory") return [id];
-  return terrChildren(id).flatMap((k) => leafTerrIds(k.id));
-}
-/** The node and its ancestors, root first. */
-export function terrPath(id: string) {
-  const out: Territory[] = [];
-  let t = terrById(id);
-  while (t) {
-    out.unshift(t);
-    t = terrById(t.parentId);
-  }
-  return out;
-}
-export const LEAF_TERRITORIES = TERRITORIES.filter((t) => t.level === "territory");
-
-export const repsOn = (terrIds: string[], areas: Record<string, string[]>) => REPS.filter((r) => (areas[r.id] ?? []).some((t) => terrIds.includes(t)));
-export const repById = (id: string | null | undefined) => REPS.find((r) => r.id === id);
+export const repById = (id: string | null | undefined, reps: Rep[]) => (id ? reps.find((r) => r.id === id) : undefined);
+export const initialsOf = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
 // ── Schemes ─────────────────────────────────────────────────────────────────
 
@@ -111,22 +92,72 @@ export function mechanicText(m: SchemeMechanic) {
   }
 }
 
-/** The engine's eligibility, plus territory (the engine does not read it yet) and a type check that survives a type made in Setup. */
-export function eligibleNow(s: Scheme, c: Customer, date?: string): string | null {
-  if (s.typeIds.length && !s.typeIds.includes(c.typeId)) return "Not for this type";
-  if (s.territoryIds.length && !terrPath(c.territoryId).some((t) => s.territoryIds.includes(t.id))) return "Not in this territory";
-  return eligible(s, c, date);
+/** The product ids a scheme names; null = it works on the whole order, whatever is in it. */
+export function schemeProductIds(m: SchemeMechanic): string[] | null {
+  switch (m.kind) {
+    case "free-goods":
+      return [...m.buyItemIds, ...(m.getItemId === "same" ? [] : [m.getItemId])];
+    case "slab":
+      return m.itemIds;
+    case "combo":
+      return [...m.needs.flatMap((n) => n.itemIds), m.getItemId];
+    default:
+      return null;
+  }
 }
 
-// ── Money ───────────────────────────────────────────────────────────────────
+/** The schemes a customer gets today: live, and it qualifies (the engine's own rule). */
+export const schemesNow = (c: Customer, schemes: Scheme[]) => schemes.filter((s) => s.status === "live" && eligible(s, c) === null);
 
-export const MONTH_START = "2026-09-01";
+// ── Money and status ────────────────────────────────────────────────────────
+
 /** This month's hub orders that are not rejected, valued by the one engine. */
 export function monthValue(orders: HubOrder[], customerIds: Set<string>, schemes: Scheme[]) {
+  const month = SF_TODAY.slice(0, 7);
   return orders
-    .filter((o) => o.at >= MONTH_START && o.status !== "rejected" && customerIds.has(o.customerId))
+    .filter((o) => o.at.slice(0, 7) === month && o.status !== "rejected" && customerIds.has(o.customerId))
     .reduce((s, o) => s + evaluate(o.customerId, o.lines, schemes).total, 0);
 }
 
 export const STATUS_TONE: Record<Customer["status"], "good" | "warn" | "danger"> = { active: "good", onboarding: "warn", "on hold": "danger" };
 export const STATUS_LABEL: Record<Customer["status"], string> = { active: "Active", onboarding: "Onboarding", "on hold": "On hold" };
+
+/** "No check", "Cash only" or the amount — how a credit limit reads (owner decision #2). */
+export const limitText = (limit: number | null) => (limit === null ? "No credit check" : limit === 0 ? "Cash only" : `NPR ${npr(limit)}`);
+
+/** A stand-in customer of one type — how the engine prices a product "for a distributor". */
+export const customerOfType = (typeId: string): Customer => ({
+  id: "",
+  code: "",
+  name: "",
+  typeId,
+  parentId: null,
+  tier: "B",
+  repId: null,
+  city: "",
+  phone: "",
+  creditLimit: null,
+  since: SF_TODAY,
+  portalUsers: [],
+  status: "active",
+});
+
+// ── Products ────────────────────────────────────────────────────────────────
+
+/** Products grouped by brand, brands A–Z, products by name. */
+export function byBrand(products: Product[]) {
+  const map = new Map<string, Product[]>();
+  for (const p of products) {
+    const b = p.brand.trim() || "No brand";
+    map.set(b, [...(map.get(b) ?? []), p]);
+  }
+  return [...map.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([brand, items]) => ({ brand, items: [...items].sort((x, y) => x.name.localeCompare(y.name)) }));
+}
+
+/** A brand keeps one colour: an existing brand's tone, else the next one. */
+export function toneForBrand(brand: string, products: Product[]) {
+  const same = products.find((p) => p.brand.trim().toLowerCase() === brand.trim().toLowerCase());
+  if (same) return same.tone;
+  const brands = new Set(products.map((p) => p.brand.trim().toLowerCase()));
+  return (brands.size % 8) + 1;
+}

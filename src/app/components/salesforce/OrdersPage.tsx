@@ -1,528 +1,540 @@
 import * as React from "react";
-import { Link, useNavigate, useParams } from "react-router";
-import { ArrowRight, ChevronDown, Gift, X } from "lucide-react";
+import { Navigate, useNavigate, useParams, useSearchParams } from "react-router";
+import { Ban, Check, CircleCheck, Clock3, ListTree, Pencil, Radio, ShieldAlert, ShieldCheck, Table2, UserRound } from "lucide-react";
 import { cn } from "../ui/utils";
-import { BTN, DANGER_BTN, Dialog, Field, GHOST, GHOST_SM, MenuItem, NUM, NumberField, PLAIN_BTN, Popover, SearchField, TEXTAREA } from "../sales/bzw";
-import { useStore } from "../sales/store";
-import { REPS } from "./data";
-import type { HubOrder, HubStatus, Source } from "./data";
-import { customerById, dayTime, evaluate, npr, priceFor, productById, typeOf } from "./engine";
-import { hubStore, schemesStore } from "./store";
-import { SfShell, sfPath } from "./shell";
-import { Dot, EmptyNote, Fact, List, Money, Page, PageIntro, ProductThumb, Progress, Row, SidePanel, TextTabs, TypeMark, idColor } from "./ui";
-import { Block, HistoryAndNotes, SOURCE_NAME, STATUS_META, TotalRow, approveHubOrder, creditStops, reasonsFor, rejectHubOrder, saveQuantities, schemesOnLine, soOnDesk } from "./orders-parts";
+import { BTN, Chip, DocLink, GHOST_SM, MenuItem, MenuSep, NUM, NumberField, Stat, Statline } from "../sales/bzw";
+import type { Tone } from "../sales/bzw";
+import type { PanelCtx } from "../sales/DocDesk";
+import { Amount } from "../sales/orders";
+import { Cell, CellGrid, ReasonDialog, RelatedSection, Section } from "../sales/parts";
+import { Block, CustomerTitle, MoneyList, RecordShell, StepCard } from "../sales/record";
+import { estimatesStore } from "../sales/flow";
+import { ordersStore, useStore } from "../sales/store";
+import { SF_NOW, SF_TODAY } from "./data";
+import type { Customer, HubOrder, HubStatus, Source } from "./data";
+import { customerById, day, dayTime, isCharge, npr, productById, typeOf } from "./engine";
+import type { Evaluation } from "./engine";
+import { FxDesk } from "./fx-desk";
+import type { FxStatus } from "./fx-desk";
+import { estimatePath } from "./estimates";
+import { customersStore, hubStore, ledgerStore, opportunitiesStore, repsStore, schemesStore } from "./store";
+import { SfActivity, SfLines, SfNoteFoot, Who, sfPath } from "./sf";
+import type { SfLine } from "./sf";
+import { SOURCE_NAME, STATUS_META, approveHubOrder, creditStops, estimateRef, estimateVersionOf, evaluateHub, forShopId, forShopName, forText, newSalesOrderPath, reasonsFor, rejectHubOrder, saveQuantities, schemesOnLine, soOnDesk } from "./orders-parts";
+import type { Reason } from "./orders-parts";
+import { paidFor, unapplied } from "./receipts";
 
 // ════════════════════════════════════════════════════════════════════════════
-// ORDERS HUB — every channel's orders in one queue (blueprint §4.3)
+// TRADE · ORDERS — the sales orders of every channel, in one list
 //
-// A rep's order, a dealer's portal order, a WhatsApp order typed in by the
-// office and a retailer-app order all wait here, priced by the one engine.
-// What needs a person comes first; what passes every check is one click (or
-// one bulk click) from being an ordinary sales order on the sales desk.
+// A rep's order, a dealer's portal order and one the office made are all sales
+// orders (owner decision #31): this page is the sales order list seen with its
+// channel and its review reasons, priced by the one engine. An order's number
+// is its sales order's; approving one here approves that sales order and bills
+// it. The page is the module's list (`FxDesk`): this file says what an order
+// row is and what its record (`OrderPanel`) is. The office's own orders are made on the sales desk's form.
 // ════════════════════════════════════════════════════════════════════════════
 
-type Tab = HubStatus | "all";
-const TABS: { value: Tab; label: string }[] = [
-  { value: "review", label: "Needs review" },
-  { value: "ready", label: "Ready" },
-  { value: "approved", label: "Approved" },
-  { value: "rejected", label: "Rejected" },
-  { value: "all", label: "All" },
-];
-const SOURCES = Object.keys(SOURCE_NAME) as Source[];
+type Row = { o: HubOrder; ev: Evaluation; c: Customer | undefined; reasons: Reason[] };
 
-type Notice = { text: string; link?: { to: string; label: string } };
+/** The record's chip. */
+const STATUS: Record<HubStatus, { label: string; tone: Tone }> = {
+  review: { label: "Needs review", tone: "danger" },
+  ready: { label: "Ready", tone: "partial" },
+  approved: { label: "Approved", tone: "positive" },
+  rejected: { label: "Rejected", tone: "neutral" },
+};
+/** The list's pill; its words are `STATUS_META`'s. */
+const PILL: Record<HubStatus, Omit<FxStatus, "label">> = {
+  review: { tone: "bad", icon: ShieldAlert },
+  ready: { tone: "warn", icon: Clock3 },
+  approved: { tone: "good", icon: CircleCheck },
+  rejected: { tone: "idle", icon: Ban },
+};
+const SOURCES = Object.keys(SOURCE_NAME) as Source[];
+const sum = (rs: Row[]) => rs.reduce((s, r) => s + r.ev.total, 0);
+const linesOf = (r: Row) => r.ev.lines.filter((l) => !l.free && !isCharge(l.product.id)).length;
+/** Someone has to look before this can go through: it failed a check, or it is ready but stopped on credit. */
+const needsLook = (r: Row) => r.o.status === "review" || (r.o.status === "ready" && creditStops(r.ev));
+
+/** "25 min" or "2 h" for an order placed today; its day otherwise. */
+function placed(at: string) {
+  const [d, t] = at.split(" ");
+  if (d !== SF_TODAY || !t) return day(at);
+  const [h, m] = t.split(":").map(Number);
+  const [nh, nm] = SF_NOW.split(":").map(Number);
+  const mins = Math.max(0, nh * 60 + nm - (h * 60 + m));
+  return mins < 60 ? `${mins} min` : `${Math.floor(mins / 60)} h`;
+}
+
+/**
+ * `orders/new` (and `orders/new?customer=<id>`, which a customer's "New order" links to): the office's order is made on
+ * the sales desk's own form, with that customer already chosen.
+ */
+function ToSalesOrderForm() {
+  const [search] = useSearchParams();
+  return <Navigate to={newSalesOrderPath(customerById(search.get("customer") ?? "")?.id)} replace />;
+}
 
 export function OrdersPage() {
-  const { id } = useParams();
+  const { no } = useParams();
+  return no === "new" ? <ToSalesOrderForm /> : <OrdersDesk />;
+}
+
+function OrdersDesk() {
   const navigate = useNavigate();
   const hub = useStore(hubStore);
   const schemes = useStore(schemesStore);
-  const [tab, setTab] = React.useState<Tab>(() => (hub.some((o) => o.status === "review") ? "review" : "all"));
-  const [q, setQ] = React.useState("");
-  const [source, setSource] = React.useState<Source | "all">("all");
-  const [srcOpen, setSrcOpen] = React.useState(false);
-  const srcRef = React.useRef<HTMLButtonElement>(null);
-  const [notice, setNotice] = React.useState<Notice | null>(null);
+  const customers = useStore(customersStore);
+  const reps = useStore(repsStore);
+  // The credit check reads the ledger and an estimate's lines read its version, so both re-price the list.
+  const ledger = useStore(ledgerStore);
+  const estimates = useStore(estimatesStore);
 
-  const rows = React.useMemo(
+  const rows = React.useMemo<Row[]>(
     () =>
-      hub
+      [...hub]
+        .sort((a, b) => b.at.localeCompare(a.at))
         .map((o) => {
-          const ev = evaluate(o.customerId, o.lines, schemes);
-          const c = customerById(o.customerId);
-          return { o, ev, c, t: typeOf(c), reasons: reasonsFor(o, ev, hub) };
-        })
-        .sort((a, b) => b.o.at.localeCompare(a.o.at)),
-    [hub, schemes],
+          const ev = evaluateHub(o, schemes);
+          return { o, ev, c: customerById(o.customerId), reasons: reasonsFor(o, ev, hub) };
+        }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [hub, schemes, customers, ledger, estimates],
   );
-
-  const needle = q.trim().toLowerCase();
-  const filtered = rows.filter(
-    (r) => (source === "all" || r.o.source === source) && (!needle || `${r.c?.name ?? ""} ${r.o.id} ${r.o.byName} ${r.c?.city ?? ""} ${r.o.soNo ?? ""}`.toLowerCase().includes(needle)),
-  );
-  const count = (s: HubStatus) => filtered.filter((r) => r.o.status === s).length;
-  const shown = filtered.filter((r) => tab === "all" || r.o.status === tab);
-  const review = rows.filter((r) => r.o.status === "review");
-  const waiting = rows.filter((r) => r.o.status === "review" || r.o.status === "ready").reduce((s, r) => s + r.ev.total, 0);
-  const readyShown = shown.filter((r) => r.o.status === "ready");
-
-  const open = id ? hub.find((o) => o.id === id) : undefined;
-  const go = (orderId: string | null) => navigate(sfPath(orderId ? `orders/${orderId}` : "orders"));
-
-  const quickApprove = (o: HubOrder) => {
-    if (creditStops(evaluate(o.customerId, o.lines, schemes))) return go(o.id);
-    const no = approveHubOrder(o);
-    setNotice({ text: `${o.id} approved as ${no}.`, link: { to: `/design/sales/orders/${no}`, label: "Open sales order" } });
-  };
-
-  const approveAllReady = () => {
-    const pass = readyShown.filter((r) => !creditStops(r.ev));
-    const held = readyShown.length - pass.length;
-    const nos = pass.map((r) => approveHubOrder(r.o));
-    if (!nos.length) return setNotice({ text: "None approved — every ready order is over credit. Open each to decide." });
-    setNotice({
-      text: `${nos.length} ${nos.length === 1 ? "order" : "orders"} approved as ${nos.length === 1 ? nos[0] : `${nos[0]} to ${nos[nos.length - 1]}`}.${held ? ` ${held} left — over credit.` : ""}`,
-      link: { to: nos.length === 1 ? `/design/sales/orders/${nos[0]}` : "/design/sales/orders", label: nos.length === 1 ? "Open sales order" : "Open sales orders" },
-    });
-  };
+  const is = (s: HubStatus) => (r: Row) => r.o.status === s;
+  const open = (r: Row) => r.o.status === "review" || r.o.status === "ready";
+  const today = (r: Row) => r.o.at.startsWith(SF_TODAY);
+  const total = (rs: Row[]) => (rs.length ? <Amount value={sum(rs)} currency="NPR" /> : undefined);
+  const repName = (r: Row) => reps.find((p) => p.id === r.o.repId)?.name;
 
   return (
-    <SfShell page="orders" panel={open ? <HubPanel key={open.id} order={open} onClose={() => go(null)} /> : null}>
-      <Page width="full">
-        <PageIntro>
-          {review.length ? `${review.length} ${review.length === 1 ? "order needs" : "orders need"} you` : "Nothing needs review"} · NPR {npr(waiting)} waiting
-        </PageIntro>
-
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-          <TextTabs<Tab>
-            value={tab}
-            onChange={setTab}
-            options={TABS.map((t) => ({ ...t, count: t.value === "all" ? filtered.length : count(t.value), danger: t.value === "review" }))}
-          />
-          <div className="flex w-full items-center gap-2 sm:ml-auto sm:w-auto">
-            <SearchField value={q} onChange={setQ} placeholder="Search orders" className="min-w-0 flex-1 sm:w-[220px] sm:flex-none" />
-            <button ref={srcRef} type="button" onClick={() => setSrcOpen(true)} className={cn(GHOST_SM, "shrink-0", source !== "all" && "border-bz-text-soft")} aria-haspopup="menu">
-              {source === "all" ? "All sources" : SOURCE_NAME[source]} <ChevronDown size={12} className="text-bz-text-soft" />
-            </button>
-            <Popover open={srcOpen} anchor={srcRef.current} onClose={() => setSrcOpen(false)} align="right" width={220} className="p-1.5">
-              {(["all", ...SOURCES] as const).map((s) => (
-                <MenuItem key={s} active={source === s} onClick={() => (setSource(s), setSrcOpen(false))}>
-                  {s === "all" ? "All sources" : SOURCE_NAME[s]}
-                  <span className={cn("ml-1.5 text-[11px] text-bz-text-soft", NUM)}>{s === "all" ? rows.length : rows.filter((r) => r.o.source === s).length}</span>
-                </MenuItem>
-              ))}
-            </Popover>
-          </div>
-        </div>
-
-        {notice && (
-          <p className="m-0 mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-bz-text-muted" role="status">
-            <Dot tone="good">{notice.text}</Dot>
-            {notice.link && (
-              <Link to={notice.link.to} className="inline-flex items-center gap-1 font-medium text-bz-text underline-offset-2 hover:underline">
-                {notice.link.label} <ArrowRight size={12} />
-              </Link>
-            )}
-            <button type="button" onClick={() => setNotice(null)} className={cn(PLAIN_BTN, "ml-auto")} aria-label="Dismiss">
-              <X size={12} />
-            </button>
-          </p>
-        )}
-
-        {tab === "ready" && readyShown.length > 0 && (
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <span className="text-[11.5px] text-bz-text-soft">
-              {readyShown.length} {readyShown.length === 1 ? "order passes" : "orders pass"} every check · NPR {npr(readyShown.reduce((s, r) => s + r.ev.total, 0))}
-            </span>
-            <button type="button" onClick={approveAllReady} className={cn(GHOST_SM, "ml-auto")}>
-              Approve all ready
-            </button>
-          </div>
-        )}
-
-        <div className="mt-5">
-          {shown.length === 0 ? (
-            needle || source !== "all" ? (
-              <EmptyNote
-                action={
-                  <button type="button" className={GHOST_SM} onClick={() => (setQ(""), setSource("all"))}>
-                    Clear search
-                  </button>
-                }
-              >
-                No orders match.
-              </EmptyNote>
+    <FxDesk<Row>
+      place="orders"
+      section="salesforce/orders"
+      noun={["order", "orders"]}
+      numberLabel="Order"
+      rows={rows}
+      noOf={(r) => r.o.id}
+      dateOf={(r) => r.o.at.slice(0, 10)}
+      searchText={(r) => `${r.o.id} ${r.c?.name ?? ""} ${forShopName(r.o) ?? ""} ${r.o.byName} ${r.ev.lines.map((l) => l.product.name).join(" ")}`}
+      searchPlaceholder="Order, customer or product"
+      stats={[
+        { label: "Open", value: rows.filter(open).length },
+        { label: "Open value", value: <Amount value={sum(rows.filter(open))} currency="NPR" /> },
+      ]}
+      picks={[
+        { key: "review", label: "To review", value: rows.filter(is("review")).length, test: is("review"), danger: true },
+        { key: "ready", label: "Ready", value: rows.filter(is("ready")).length, test: is("ready") },
+        { key: "approved", label: "Approved", value: rows.filter(is("approved")).length, test: is("approved") },
+        { key: "rejected", label: "Rejected", value: rows.filter(is("rejected")).length, test: is("rejected") },
+      ]}
+      views={[
+        {
+          key: "queue",
+          label: "Queue",
+          icon: ListTree,
+          groups: (rs) => [
+            { key: "review", label: "Needs review", rows: rs.filter(is("review")), right: total(rs.filter(is("review"))) },
+            { key: "ready", label: "Ready to approve", rows: rs.filter(is("ready")), right: total(rs.filter(is("ready"))) },
+            { key: "today", label: "Approved today", rows: rs.filter((r) => is("approved")(r) && today(r)), right: total(rs.filter((r) => is("approved")(r) && today(r))) },
+            { key: "earlier", label: "Approved earlier", collapsed: true, rows: rs.filter((r) => is("approved")(r) && !today(r)) },
+            { key: "rejected", label: "Rejected", collapsed: true, rows: rs.filter(is("rejected")) },
+          ],
+        },
+        {
+          key: "channel",
+          label: "By channel",
+          icon: Radio,
+          groups: (rs) => SOURCES.map((s) => ({ key: s, label: SOURCE_NAME[s], rows: rs.filter((r) => r.o.source === s), right: total(rs.filter((r) => r.o.source === s)) })).filter((g) => g.rows.length),
+        },
+        { key: "register", label: "Register", icon: Table2, groups: (rs) => [{ key: "all", label: "", rows: rs }] },
+      ]}
+      filters={[
+        ...SOURCES.map((s) => ({ value: `src:${s}`, label: SOURCE_NAME[s], group: "Channel", test: (r: Row) => r.o.source === s })),
+        ...reps.map((p) => ({ value: `rep:${p.id}`, label: p.name, group: "Rep", test: (r: Row) => r.o.repId === p.id })),
+        // The earlier desk's ?pick=shop / ?pick=est land on these two.
+        { value: "shop", label: "For a shop", group: "Order", hint: "Billed to the distributor that serves it", test: (r: Row) => !!forShopId(r.o) },
+        { value: "est", label: "From an estimate", group: "Order", test: (r: Row) => !!r.o.estimateId },
+        ...customers.map((c) => ({ value: `cus:${c.id}`, label: c.name, hint: c.code, group: "Customer", test: (r: Row) => r.o.customerId === c.id || r.o.forCustomerId === c.id })),
+      ]}
+      sorts={[
+        { key: "new", label: "Newest", by: (r) => r.o.at + r.o.id, desc: true },
+        { key: "old", label: "Oldest", by: (r) => r.o.at + r.o.id },
+        { key: "val", label: "Value", by: (r) => r.ev.total, desc: true },
+        { key: "cus", label: "Customer", by: (r) => r.c?.name ?? "" },
+      ]}
+      columns={[
+        { key: "channel", label: "Channel", width: "100px", render: (r) => SOURCE_NAME[r.o.source] },
+        {
+          key: "rep",
+          label: "Rep",
+          width: "96px",
+          render: (r) => {
+            const name = repName(r);
+            return name ? (
+              <span className="flex min-w-0 items-center gap-2">
+                <Who name={name} size={20} />
+                <span className="min-w-0 truncate">{name.split(" ")[0]}</span>
+              </span>
             ) : (
-              <EmptyNote>{tab === "review" ? "Nothing needs review." : tab === "ready" ? "No orders waiting to be approved." : `No ${tab === "all" ? "" : `${STATUS_META[tab].label.toLowerCase()} `}orders.`}</EmptyNote>
-            )
-          ) : (
-            <List>
-              {shown.map(({ o, ev, c, t, reasons }) => {
-                const meta = STATUS_META[o.status];
-                return (
-                  <Row
-                    key={o.id}
-                    active={o.id === id}
-                    onClick={() => go(o.id)}
-                    lead={<span className="block size-2 rounded-[3px]" style={{ background: idColor(t?.color ?? 1) }} aria-hidden />}
-                    title={c?.name ?? o.customerId}
-                    sub={
-                      <>
-                        {o.status === "review" && reasons.length > 0 && <span className="text-bz-red">{reasons.map((r) => r.short).join(", ")} · </span>}
-                        {o.status === "rejected" && o.rejectReason && <span>{o.rejectReason} · </span>}
-                        {t?.name} · {SOURCE_NAME[o.source]} · {dayTime(o.at)}
-                      </>
-                    }
-                    meta={[
-                      <span key="id" className={cn("text-bz-text-soft", NUM)}>
-                        {o.soNo ?? o.id}
-                      </span>,
-                      <Dot key="st" tone={meta.tone} className="w-[96px]">
-                        {meta.label}
-                      </Dot>,
-                    ]}
-                    trail={
-                      <>
-                        <Money value={ev.total} className="block" />
-                        <Dot tone={meta.tone} className="mt-0.5 md:hidden">
-                          {meta.label}
-                        </Dot>
-                      </>
-                    }
-                    action={
-                      o.status === "ready" ? (
-                        <button type="button" className={GHOST_SM} onClick={() => quickApprove(o)}>
-                          Approve
-                        </button>
-                      ) : undefined
-                    }
-                  />
-                );
-              })}
-            </List>
-          )}
-        </div>
-      </Page>
-    </SfShell>
+              <span className="text-bz-text-soft">—</span>
+            );
+          },
+        },
+        { key: "placed", label: "Placed", width: "76px", render: (r) => <span title={dayTime(r.o.at)}>{placed(r.o.at)}</span> },
+      ]}
+      primary={(r) => ({ title: r.c?.name ?? "Removed customer", sub: [forText(r.o), typeOf(r.c).name, `${linesOf(r)} line${linesOf(r) === 1 ? "" : "s"}`].filter(Boolean).join(" · "), subOnDesktop: true })}
+      status={(r) => ({ ...PILL[r.o.status], label: STATUS_META[r.o.status].label })}
+      amount={(r) => ({ value: <Amount value={r.ev.total} />, sub: needsLook(r) && r.reasons[0] ? <span className="text-bz-red">{r.reasons[0].short}</span> : undefined })}
+      rowVerb={(r) => (needsLook(r) ? { label: "Review", icon: ShieldCheck, run: () => navigate(sfPath(`orders/${r.o.id}`)) } : r.o.status === "ready" ? { label: "Approve", icon: Check, run: () => void approveHubOrder(r.o) } : null)}
+      bulk={[
+        {
+          label: "Approve",
+          icon: Check,
+          enabled: (rs) => rs.some((r) => r.o.status === "ready" && !creditStops(r.ev)),
+          run: (rs) => {
+            const skipped: string[] = [];
+            let done = 0;
+            rs.forEach((r) => {
+              if (r.o.status === "ready" && !creditStops(r.ev)) {
+                approveHubOrder(r.o);
+                done++;
+              } else skipped.push(`${r.o.id} ${r.o.status === "review" || r.o.status === "ready" ? "needs review" : `is ${STATUS[r.o.status].label.toLowerCase()}`}`);
+            });
+            return { done, skipped, verb: "approved" };
+          },
+        },
+      ]}
+      newLabel="New order"
+      onNew={() => navigate(newSalesOrderPath())}
+      renderPanel={(r, ctx) => <OrderPanel key={r.o.id} r={r} ctx={ctx} />}
+    />
   );
 }
 
-// ── The record: one hub order ───────────────────────────────────────────────
+// ── The record ──────────────────────────────────────────────────────────────
 
-function HubPanel({ order, onClose }: { order: HubOrder; onClose: () => void }) {
+function OrderPanel({ r, ctx }: { r: Row; ctx: PanelCtx }) {
+  const navigate = useNavigate();
   const schemes = useStore(schemesStore);
   const hub = useStore(hubStore);
+  const reps = useStore(repsStore);
+  const ledger = useStore(ledgerStore);
+  const opportunities = useStore(opportunitiesStore);
+  const estimates = useStore(estimatesStore);
+  // The way to the sales desk shows as soon as the order's sales order is on this tab's desk (bridge.ts).
+  useStore(ordersStore);
+  const { o, c } = r;
   const [draft, setDraft] = React.useState<{ productId: string; qty: number }[] | null>(null);
   const [ask, setAsk] = React.useState<null | "reject" | "over">(null);
-  const [reason, setReason] = React.useState("");
 
-  const lines = draft ?? order.lines;
-  const ev = evaluate(order.customerId, lines, schemes);
-  const c = customerById(order.customerId);
-  const t = typeOf(c);
-  const parent = customerById(c?.parentId);
-  const rep = REPS.find((r) => r.id === order.repId);
-  const reasons = reasonsFor({ ...order, lines }, ev, hub);
+  const ev = draft ? evaluateHub({ ...o, lines: draft }, schemes) : r.ev;
+  const reasons = draft ? reasonsFor({ ...o, lines: draft }, ev, hub) : r.reasons;
   const stops = creditStops(ev);
-  const pending = order.status === "review" || order.status === "ready";
-  const meta = STATUS_META[order.status];
-  const paid = ev.lines.filter((l) => !l.free);
-  const free = ev.lines.filter((l) => l.free);
-  const freeSchemes = new Set(free.map((l) => l.schemeId));
+  const pending = o.status === "review" || o.status === "ready";
+  const t = typeOf(c);
+  const rep = reps.find((p) => p.id === o.repId);
+  const shop = customerById(forShopId(o));
+  const ref = estimateRef(o);
+  const version = estimateVersionOf(o);
+  // The sales desk's estimate, for this customer: the desk's own seed may use the same number for another.
+  const estimate = estimates.find((e) => e.no === o.estimateId && e.customerId === o.customerId);
+  const opportunity = opportunities.find((x) => x.id === estimate?.opportunity && x.customerId === o.customerId);
+  const invoice = ledger.find((x) => x.kind === "Invoice" && x.doc === o.id);
+  // What the customer has paid for this order: applied to its invoice, or tagged to it and still advance (decision #33).
+  const paid = paidFor(o.customerId, o.id);
+  // Rejected with a payment tagged to it: that receipt needs another order.
+  const stuck = o.status === "rejected" ? unapplied(o.customerId).filter((u) => u.use.tags.some((t) => t.orderNo === o.id && t.state === "dead")) : [];
+  const onDesk = soOnDesk(o.id, o.customerId);
   const cr = ev.credit;
-  const usedPct = cr.limit ? ((cr.outstanding + ev.total) / cr.limit) * 100 : 100;
 
-  const closeAsk = () => (setAsk(null), setReason(""));
-  const approve = () => (stops ? setAsk("over") : approveHubOrder(order));
-  const confirm = () => {
-    if (!reason.trim()) return;
-    if (ask === "reject") rejectHubOrder(order, reason.trim());
-    else approveHubOrder(order, reason.trim());
-    closeAsk();
-  };
-  const setQty = (productId: string, qty: number) => setDraft((d) => (d ?? order.lines).map((l) => (l.productId === productId ? { ...l, qty } : l)));
-  const saveDraft = () => {
-    if (draft) saveQuantities(order, draft, (pid) => productById(pid).name);
-    setDraft(null);
+  const approve = () => {
+    if (stops) return setAsk("over");
+    approveHubOrder(o);
+    ctx.show("success", `${o.id} approved`);
   };
 
-  const creditLine = !cr.ok
-    ? stops
-      ? `${t?.plural ?? "This type"} are on a hard stop, so this order can only go through as “Approve over credit”, with a reason.`
-      : "Soft stop: the order came to review. You can still approve it."
-    : "Within the limit, nothing overdue.";
-
-  const foot = draft ? (
-    <div className="flex flex-wrap items-center justify-end gap-2">
-      <span className="mr-auto text-[11px] text-bz-text-soft">Prices and schemes update as you type.</span>
-      <button type="button" className={GHOST} onClick={() => setDraft(null)}>
-        Cancel
-      </button>
-      <button type="button" className={BTN} onClick={saveDraft}>
-        Save quantities
-      </button>
-    </div>
-  ) : pending ? (
-    <div className="flex flex-wrap items-center justify-end gap-2">
-      <button type="button" className={cn(GHOST, "mr-auto")} onClick={() => setAsk("reject")}>
-        Reject
-      </button>
-      {order.soNo && <span className="text-[11.5px] text-bz-text-soft">{order.soNo} waits on the sales desk</span>}
-      <button type="button" className={GHOST} onClick={() => setDraft(order.lines.map((l) => ({ ...l })))}>
-        Edit quantities
-      </button>
-      <button type="button" className={BTN} onClick={approve}>
-        {stops ? "Approve over credit…" : "Approve"}
-      </button>
-    </div>
-  ) : order.status === "approved" ? (
-    <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-bz-text-muted" role="status">
-      <Dot tone="good">Approved as {order.soNo} — it is now a sales order.</Dot>
-      {soOnDesk(order.soNo, order.customerId) && (
-        <Link to={`/design/sales/orders/${order.soNo}`} className="inline-flex items-center gap-1 font-medium text-bz-text underline-offset-2 hover:underline">
-          Open sales order <ArrowRight size={12} />
-        </Link>
-      )}
-    </p>
-  ) : (
-    <p className="m-0 text-[12px] text-bz-text-muted">
-      <Dot tone="off">Rejected{order.rejectReason ? ` — ${order.rejectReason}` : ""}</Dot>
-    </p>
-  );
-
-  return (
-    <SidePanel
-      open
-      onClose={onClose}
-      width={600}
-      eyebrow={`${order.id} · ${SOURCE_NAME[order.source]} · ${dayTime(order.at)}`}
-      title={c?.name ?? order.customerId}
-      meta={
+  const lines: SfLine[] = ev.lines.map((l, i) => {
+    const charge = isCharge(l.product.id);
+    const names = schemesOnLine(l, ev, schemes);
+    const note = version?.lines.find((x) => x.itemId === l.product.id && !x.freeOf)?.note?.trim();
+    const editing = draft && !l.free && !charge;
+    return {
+      key: `${l.product.id}-${i}`,
+      name: l.product.name,
+      sub: charge ? "Charge" : l.free ? (l.fixed ? `Free · agreed on ${ref}` : `Free · ${names.join(", ")}`) : [l.product.code, ref && l.fixed ? "agreed price" : "", note, names.join(", ")].filter(Boolean).join(" · "),
+      qty: editing ? (
+        <NumberField value={draft.find((x) => x.productId === l.product.id)?.qty ?? l.qty} onChange={(q) => setDraft((d) => (d ?? []).map((x) => (x.productId === l.product.id ? { ...x, qty: q } : x)))} ariaLabel={`Quantity of ${l.product.name}`} />
+      ) : charge ? (
+        ""
+      ) : (
         <>
-          {t && <TypeMark name={t.name} color={t.color} />}
-          <span>{parent ? `Served by ${parent.name}` : "Billed by you"}</span>
-          {c && <span>Tier {c.tier} · {c.city}</span>}
-          <Dot tone={meta.tone}>{meta.label}</Dot>
+          {l.qty} <span className="text-bz-text-soft">{l.product.unit}</span>
+        </>
+      ),
+      rate: charge || l.free ? "" : <Amount value={l.price} />,
+      disc: l.discount > 0 ? <Amount value={l.discount} /> : undefined,
+      net: l.free ? <span className="font-normal text-bz-text-soft">Free</span> : <Amount value={l.net} />,
+    };
+  });
+
+  const charges = ev.lines.filter((l) => isCharge(l.product.id)).reduce((s, l) => s + l.net, 0);
+  const money = [
+    { label: "Subtotal", value: <Amount value={ev.gross - charges} /> },
+    ...(ev.discount > 0 ? [{ label: "Offer discounts", value: <Amount value={-ev.discount} /> }] : []),
+    ...(charges > 0 ? [{ label: "Charges", value: <Amount value={charges} /> }] : []),
+    { label: "VAT 13%", value: <Amount value={ev.tax} /> },
+    { label: "Total", value: <Amount value={ev.total} currency="NPR" />, strong: true },
+    ...(ev.freeValue > 0 ? [{ label: "Free goods worth", value: <Amount value={ev.freeValue} />, soft: true }] : []),
+  ];
+
+  const step = draft ? (
+    <StepCard
+      icon={<Pencil size={15} />}
+      title="Editing quantities"
+      sub="Prices, offers and credit follow as you type."
+      actions={
+        <>
+          <button type="button" className={GHOST_SM} onClick={() => setDraft(null)}>
+            Cancel
+          </button>
+          <button type="button" className={cn(BTN, "h-8")} onClick={() => (saveQuantities(o, draft, (id) => productById(id).name), setDraft(null), ctx.show("success", "Quantities saved"))}>
+            Save
+          </button>
         </>
       }
-      foot={foot}
-    >
-      <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
-        <Fact label="Credit limit">
-          <Money value={cr.limit} />
-        </Fact>
-        <Fact label="Outstanding">
-          <Money value={cr.outstanding} />
-        </Fact>
-        <Fact label="Overdue">
-          <Money value={cr.overdue} className={cr.overdue > 0 ? "text-bz-red" : undefined} />
-        </Fact>
-        <Fact label="Available">
-          <Money value={cr.available} />
-        </Fact>
-      </div>
-      <p className="m-0 mt-4 text-[11.5px] text-bz-text-soft">
-        Placed by {order.byName} through {SOURCE_NAME[order.source].toLowerCase()}
-        {rep ? ` · ${rep.name} owns this customer` : ""}
-      </p>
+    />
+  ) : o.status === "review" || (o.status === "ready" && stops) ? (
+    <StepCard
+      tone="danger"
+      icon={<ShieldAlert size={15} />}
+      title={reasons[0]?.long ?? cr.reason ?? "Needs review"}
+      sub={
+        reasons
+          .slice(1)
+          .map((x) => x.long)
+          .join(" · ") || undefined
+      }
+      actions={
+        <>
+          <button type="button" className={GHOST_SM} onClick={() => setAsk("reject")}>
+            Reject
+          </button>
+          <button type="button" className={cn(BTN, "h-8")} onClick={approve}>
+            <Check size={13} /> {stops ? "Approve over credit…" : "Approve"}
+          </button>
+        </>
+      }
+    />
+  ) : o.status === "ready" ? (
+    <StepCard
+      icon={<ShieldCheck size={15} />}
+      title="Ready to approve"
+      sub="Passes the credit check."
+      actions={
+        <button type="button" className={cn(BTN, "h-8")} onClick={approve}>
+          <Check size={13} /> Approve
+        </button>
+      }
+    />
+  ) : o.status === "approved" ? (
+    <StepCard
+      tone="done"
+      icon={<CircleCheck size={15} />}
+      title="Approved"
+      sub={invoice ? `Billed NPR ${npr(invoice.debit)}${invoice.due ? ` · due ${day(invoice.due)}` : ""}` : undefined}
+      actions={
+        onDesk ? (
+          <button type="button" className={GHOST_SM} onClick={() => navigate(`/design/sales/orders/${o.id}`)}>
+            Open sales order
+          </button>
+        ) : undefined
+      }
+    />
+  ) : (
+    <StepCard
+      tone="quiet"
+      icon={<Ban size={15} />}
+      title="Rejected"
+      sub={o.rejectReason}
+      actions={
+        stuck.length > 0 ? (
+          <button type="button" className={GHOST_SM} onClick={() => navigate(sfPath(`payments/${stuck[0].no}`))}>
+            {stuck[0].no} was paid for it
+          </button>
+        ) : undefined
+      }
+    />
+  );
 
-      {pending && reasons.length > 0 && (
-        <ul className="m-0 mt-5 flex list-none flex-col gap-1.5 rounded-bz-md bg-bz-red-soft/60 p-3">
-          {reasons.map((r) => (
-            <li key={r.key}>
-              <Dot tone="danger" className="whitespace-normal">
-                {r.long}
-              </Dot>
-            </li>
-          ))}
-        </ul>
+  // The first row is this same record on the sales desk, where it is delivered and invoiced — not a second document.
+  const related = [
+    ...(onDesk ? [{ no: o.id, kind: "Sales order", date: o.at.slice(0, 10), party: c?.name ?? "", status: o.status === "approved" ? "Approved" : o.status === "rejected" ? "Rejected" : "Pending", tone: (o.status === "approved" ? "positive" : o.status === "rejected" ? "neutral" : "pending") as Tone }] : []),
+    ...(estimate ? [{ no: estimate.no, kind: "Estimate", date: estimate.date, party: c?.name ?? "", status: o.estimateVersion ? `Version ${o.estimateVersion} accepted` : "Accepted", tone: "positive" as Tone }] : []),
+    ...(opportunity ? [{ no: opportunity.id, kind: "Opportunity", date: opportunity.createdAt.slice(0, 10), party: c?.name ?? "", status: "Won", tone: "positive" as Tone }] : []),
+  ];
+  const openRelated = (no: string) => navigate(no.startsWith("SO-") ? `/design/sales/orders/${no}` : no.startsWith("EST-") ? estimatePath(no) : sfPath(`opportunities/${no}`));
+
+  return (
+    <RecordShell
+      ctx={ctx}
+      no={o.id}
+      chips={<Chip tone={STATUS[o.status].tone}>{STATUS[o.status].label}</Chip>}
+      title={<CustomerTitle name={c?.name ?? "Removed customer"} onOpen={() => navigate(sfPath(`customers/${o.customerId}`))} />}
+      amount={<Amount value={ev.total} currency="NPR" />}
+      meta={[
+        <span key="d" className={NUM}>
+          {day(o.at)}
+        </span>,
+        <span key="s">{SOURCE_NAME[o.source]}</span>,
+        ...(rep
+          ? [
+              <span key="r" className="inline-flex items-center gap-1.5">
+                <Who name={rep.name} size={16} /> {rep.name}
+              </span>,
+            ]
+          : []),
+        ...(shop ? [<span key="f">for {shop.name}</span>] : []),
+        ...(ref ? [<DocLink key="e" no={`From ${ref}`} onClick={estimate ? () => navigate(estimatePath(estimate.no)) : undefined} />] : []),
+      ]}
+      menu={(close) => (
+        <>
+          <MenuItem icon={Pencil} disabled={!pending || !!o.estimateId} hint={o.estimateId ? "Agreed on the estimate" : !pending ? "Already decided" : undefined} onClick={() => (close(), setDraft(o.lines.map((l) => ({ productId: l.productId, qty: l.qty }))))}>
+            Edit quantities
+          </MenuItem>
+          <MenuItem icon={UserRound} onClick={() => (close(), navigate(sfPath(`customers/${o.customerId}`)))}>
+            Open customer
+          </MenuItem>
+          <MenuSep />
+          <MenuItem icon={Ban} danger disabled={!pending} onClick={() => (close(), setAsk("reject"))}>
+            Reject order…
+          </MenuItem>
+        </>
       )}
+      foot={<SfNoteFoot id={o.id} />}
+    >
+      {step}
 
-      <Block title="Lines" aside={draft ? "Editing quantities" : `${paid.length} ${paid.length === 1 ? "line" : "lines"}${free.length ? ` · ${free.length} free` : ""}`}>
-        <ul className="m-0 list-none divide-y divide-bz-line-soft p-0">
-          {(draft ?? paid.map((l) => ({ productId: l.product.id, qty: l.qty }))).map((d) => {
-            const p = productById(d.productId);
-            const l = paid.find((x) => x.product.id === d.productId);
-            const price = l?.price ?? priceFor(p, c);
-            const names = l ? schemesOnLine(l, ev, schemes) : [];
-            return (
-              <li key={d.productId} className={cn("flex items-center gap-3 py-2.5", d.qty === 0 && "opacity-50")}>
-                {/* On a phone the stepper needs the thumbnail's room. */}
-                <span className={cn("shrink-0", draft && "hidden sm:block")}>
-                  <ProductThumb product={p} size={32} />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="m-0 truncate text-[12.5px] font-medium text-bz-text">{p.name}</p>
-                  <p className="m-0 mt-0.5 truncate text-[11px] text-bz-text-soft">
-                    <span className={NUM}>
-                      {draft ? "" : `${d.qty} ${p.unit} × `}NPR {npr(price)}
-                      {draft ? ` / ${p.unit}` : ""}
-                    </span>
-                    {d.qty === 0 && " · removed"}
-                    {names.length > 0 && (
-                      <span className="text-bz-text-muted">
-                        {" "}
-                        · <Gift size={10} className="-mt-px inline" /> {names.join(", ")}
-                      </span>
-                    )}
-                  </p>
-                </div>
-                {draft && <NumberField value={d.qty} onChange={(v) => setQty(d.productId, v)} className="w-[88px] shrink-0" ariaLabel={`Quantity of ${p.name}`} />}
-                <span className={cn("w-[76px] shrink-0 text-right text-[12.5px] font-medium text-bz-text", NUM)}>
-                  {npr(l?.net ?? 0)}
-                  {l && l.discount > 0 && <span className="block text-[10.5px] font-normal text-bz-text-soft line-through">{npr(l.gross)}</span>}
-                </span>
-              </li>
-            );
-          })}
-          {free.map((l, i) => (
-            <li key={`free-${i}`} className="flex items-center gap-3 py-2.5">
-              <span className={cn("shrink-0", draft && "hidden sm:block")}>
-                <ProductThumb product={l.product} size={32} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="m-0 truncate text-[12.5px] font-medium text-bz-text">{l.product.name}</p>
-                <p className="m-0 mt-0.5 truncate text-[11px] text-bz-text-soft">
-                  <span className={NUM}>
-                    {l.qty} {l.product.unit}
-                  </span>{" "}
-                  free · <Gift size={10} className="-mt-px inline" /> {schemesOnLine(l, ev, schemes).join(", ")}
-                </p>
-              </div>
-              {draft && <span className="w-[88px] shrink-0" />}
-              <span className={cn("w-[76px] shrink-0 text-right text-[12.5px] font-medium text-bz-text", NUM)}>0</span>
-            </li>
-          ))}
-        </ul>
+      <div className="border-b border-bz-line-soft px-5 pb-3 pt-1">
+        <Statline className="pt-3">
+          <Stat label="Credit limit" value={cr.limit === null ? "No check" : cr.limit === 0 ? "Cash only" : <Amount value={cr.limit} />} />
+          <Stat label="Owes" value={<Amount value={cr.outstanding} />} />
+          {cr.overdue > 0 && <Stat label="Overdue" value={<Amount value={cr.overdue} />} danger />}
+          {cr.available !== null && <Stat label="Available" value={<Amount value={cr.available} />} />}
+          {pending && cr.after !== null && <Stat label="After this order" value={<Amount value={cr.after} />} danger={cr.after < 0} />}
+          {paid.paid + paid.waiting > 0 && <Stat label={paid.paid > 0 ? "Paid" : "Paid · to confirm"} value={<Amount value={paid.paid || paid.waiting} />} title={paid.receipts.join(", ")} />}
+        </Statline>
+      </div>
+
+      <Block title="Lines" count={ev.lines.filter((l) => !isCharge(l.product.id)).length}>
+        <SfLines rows={lines} />
+        <MoneyList rows={money} />
       </Block>
 
-      <Block title="Schemes applied" aside={ev.applied.length ? String(ev.applied.length) : undefined}>
-        {ev.applied.length === 0 ? (
-          <p className="m-0 text-[12px] text-bz-text-muted">No scheme applies to this order.</p>
-        ) : (
-          <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+      {(ev.applied.length > 0 || (pending && ev.hints.length > 0)) && (
+        <Block title="Offers" count={ev.applied.length}>
+          <ul className="m-0 flex list-none flex-col gap-1.5 p-0 text-[12px]">
             {ev.applied.map((a) => (
               <li key={a.schemeId} className="flex items-baseline gap-3">
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[12.5px] font-medium text-bz-text">{a.name}</span>
-                  <span className="block text-[11px] text-bz-text-soft">{a.text}</span>
-                </span>
-                <span className="shrink-0 text-right text-[12px] text-bz-text">
-                  {freeSchemes.has(a.schemeId) ? (
-                    <span className="text-[11px] text-bz-text-soft">
-                      worth <Money value={a.benefit} code={false} />
-                    </span>
-                  ) : (
-                    <Money value={-a.benefit} />
-                  )}
-                </span>
+                <button type="button" onClick={() => navigate(sfPath(`schemes/${a.schemeId}`))} className="min-w-0 truncate text-left text-bz-text hover:underline">
+                  {a.name}
+                </button>
+                <span className="min-w-0 flex-1 truncate text-bz-text-soft">{a.text}</span>
+                <Amount value={a.benefit} className="shrink-0 text-bz-text-muted" />
               </li>
             ))}
-          </ul>
-        )}
-
-        {pending && ev.hints.length > 0 && (
-          <div className="mt-5">
-            <p className="m-0 mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">Almost there</p>
-            <ul className="m-0 flex list-none flex-col gap-3 p-0">
-              {ev.hints.map((h) => (
-                <li key={h.schemeId}>
-                  <span className="flex items-baseline gap-2 text-[12px]">
-                    <span className="min-w-0 flex-1 text-bz-text">{h.text}</span>
-                    <span className="shrink-0 text-[11px] text-bz-text-soft">{h.name}</span>
-                  </span>
-                  <Progress pct={h.progress * 100} tone="warn" className="mt-1.5" />
+            {pending &&
+              ev.hints.map((h) => (
+                <li key={h.schemeId} className="flex items-baseline gap-3 text-bz-text-soft">
+                  <span className="min-w-0 truncate">{h.name}</span>
+                  <span className="min-w-0 flex-1 truncate">{h.text}</span>
                 </li>
               ))}
-            </ul>
-          </div>
-        )}
+          </ul>
+        </Block>
+      )}
 
-        {ev.skipped.length > 0 && (
-          <div className="mt-5">
-            <p className="m-0 mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft">Not applied</p>
-            <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+      <Block title="Details">
+        <CellGrid>
+          <Cell label="Customer">
+            {c?.name ?? "Removed customer"}
+            <span className="block text-[10.5px] text-bz-text-soft">{[t.name, c ? `Tier ${c.tier}` : "", c?.city].filter(Boolean).join(" · ")}</span>
+          </Cell>
+          <Cell label={shop ? "Deliver for" : "Placed by"}>
+            {shop ? shop.name : o.byName}
+            <span className="block text-[10.5px] text-bz-text-soft">{shop ? `placed by ${o.byName}` : SOURCE_NAME[o.source]}</span>
+          </Cell>
+          <Cell label="Payment">{o.terms?.payment || (t.creditDays > 0 ? `Net ${t.creditDays} days` : "Cash on delivery")}</Cell>
+          <Cell label="Delivery">
+            {o.terms?.delivery || <span className="text-bz-text-soft">—</span>}
+            {o.terms?.deliverBy && <span className="block text-[10.5px] text-bz-text-soft">by {day(o.terms.deliverBy)}</span>}
+          </Cell>
+          {o.note && !o.estimateId && (
+            <Cell label="Note" wide>
+              {o.note}
+            </Cell>
+          )}
+        </CellGrid>
+      </Block>
+
+      <div className="border-b border-bz-line-soft">
+        {related.length > 0 && <RelatedSection rows={related} onOpen={openRelated} />}
+        {pending && ev.skipped.length > 0 && (
+          <Section title="Offers not applied" count={ev.skipped.length} summary={ev.skipped.map((s) => s.name).join(" · ")}>
+            <ul className="m-0 flex list-none flex-col gap-1 p-0 text-[11.5px]">
               {ev.skipped.map((s) => (
-                <li key={s.schemeId} className="flex items-baseline gap-3 text-[11.5px]">
-                  <span className="min-w-0 flex-1 truncate text-bz-text-muted">{s.name}</span>
+                <li key={s.schemeId} className="flex gap-3">
+                  <span className="min-w-0 flex-1 truncate text-bz-text">{s.name}</span>
                   <span className="shrink-0 text-bz-text-soft">{s.reason}</span>
                 </li>
               ))}
             </ul>
-          </div>
+          </Section>
         )}
-      </Block>
+      </div>
 
-      <Block title="Totals">
-        <TotalRow label="Gross">{npr(ev.gross)}</TotalRow>
-        {ev.discount > 0 && <TotalRow label="Scheme discount">−{npr(ev.discount)}</TotalRow>}
-        <TotalRow label="VAT 13%">{npr(ev.tax)}</TotalRow>
-        <TotalRow label="Total" strong>
-          <Money value={ev.total} />
-        </TotalRow>
-        {ev.freeValue > 0 && <TotalRow label="Free goods, not charged" soft>worth {npr(ev.freeValue)}</TotalRow>}
-      </Block>
+      <SfActivity ids={[o.id]} />
 
-      <Block title="Credit check" aside={<Dot tone={cr.ok ? "good" : stops ? "danger" : "warn"}>{cr.ok ? "Passes" : stops ? "Stopped" : "Warning"}</Dot>}>
-        <div className="flex items-end gap-3">
-          <Fact label="Available now">
-            <Money value={cr.available} />
-          </Fact>
-          <ArrowRight size={13} className="mb-1 shrink-0 text-bz-text-soft" />
-          <Fact label="After this order">
-            <Money value={cr.after} className={cr.after < 0 ? "text-bz-red" : undefined} />
-          </Fact>
-        </div>
-        <Progress pct={usedPct} tone={cr.after < 0 ? "danger" : usedPct > 85 ? "warn" : "good"} className="mt-3" />
-        <p className="m-0 mt-2.5 text-[11.5px] leading-relaxed text-bz-text-muted">
-          {cr.overdue > 0 && `NPR ${npr(cr.overdue)} is overdue. `}
-          {cr.after < 0 && `This order goes NPR ${npr(-cr.after)} over the limit. `}
-          {creditLine}
-        </p>
-      </Block>
-
-      <HistoryAndNotes order={order} />
-
-      <Dialog
+      <ReasonDialog
         open={ask !== null}
-        size="sm"
-        eyebrow={order.id}
-        title={ask === "reject" ? "Reject this order" : "Approve over credit"}
-        onClose={closeAsk}
-        foot={
-          <>
-            <button type="button" className={GHOST} onClick={closeAsk}>
-              Cancel
-            </button>
-            <button type="button" className={ask === "reject" ? DANGER_BTN : BTN} disabled={!reason.trim()} onClick={confirm}>
-              {ask === "reject" ? "Reject order" : "Approve over credit"}
-            </button>
-          </>
-        }
-      >
-        {ask === "over" && (
-          <p className="m-0 mb-3">
-            {cr.after < 0 ? `It goes NPR ${npr(-cr.after)} over ${c?.name ?? "the customer"}'s limit` : `${c?.name ?? "The customer"} has NPR ${npr(cr.overdue)} overdue`}. The reason is kept on the sales order.
-          </p>
-        )}
-        {ask === "reject" && <p className="m-0 mb-3">{order.byName} sees this reason.</p>}
-        <Field label="Reason" required>
-          <textarea
-            autoFocus
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            rows={3}
-            placeholder={ask === "reject" ? "e.g. Duplicate of ORD-2194" : "e.g. Payment of NPR 2 lakh promised on Monday"}
-            className={TEXTAREA}
-          />
-        </Field>
-      </Dialog>
-    </SidePanel>
+        eyebrow={o.id}
+        title={ask === "over" ? "Approve over credit" : "Reject order"}
+        body={ask === "over" ? cr.reason : undefined}
+        confirm={ask === "over" ? "Approve over credit" : "Reject order"}
+        danger={ask === "reject"}
+        onClose={() => setAsk(null)}
+        onConfirm={(reason) => {
+          if (ask === "reject") {
+            rejectHubOrder(o, reason);
+            ctx.show("info", `${o.id} rejected`);
+          } else {
+            approveHubOrder(o, reason);
+            ctx.show("success", `${o.id} approved`);
+          }
+          setAsk(null);
+        }}
+      />
+    </RecordShell>
   );
+}
+
+// ── For a host that is not this page (the Today queue) ──────────────────────
+
+/** One order's record, by id. */
+export function OrderPeek({ id, ctx }: { id: string; ctx: PanelCtx }) {
+  const hub = useStore(hubStore);
+  const schemes = useStore(schemesStore);
+  useStore(customersStore);
+  useStore(ledgerStore);
+  useStore(estimatesStore);
+  const o = hub.find((x) => x.id === id);
+  if (!o) return null;
+  const ev = evaluateHub(o, schemes);
+  return <OrderPanel key={o.id} r={{ o, ev, c: customerById(o.customerId), reasons: reasonsFor(o, ev, hub) }} ctx={ctx} />;
 }
 
 export const ORDERS_ROUTES = [
   { path: "design/salesforce/orders", Component: OrdersPage },
-  { path: "design/salesforce/orders/:id", Component: OrdersPage },
+  { path: "design/salesforce/orders/:no", Component: OrdersPage },
 ];

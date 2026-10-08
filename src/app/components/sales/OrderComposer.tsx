@@ -96,7 +96,18 @@ type Draft = {
   invoiced: number;
   /** Set only in billing mode: what this order line allows on this invoice. */
   bill?: BillLine;
+  /** The seed line this row came from, and what it carries that the composer has no control for — kept as they are. */
+  srcId?: string;
+  note?: string;
+  freeOf?: string;
 };
+
+/**
+ * What a line should be read against while it is edited: the values the customer last saw (`sent`) and what the
+ * customer asked for instead (`asked`). The row marks a number that differs from `sent` and names both under it, so
+ * an edit made to answer a customer shows what it answers. `mark` is a word for the line itself ("Free", "New").
+ */
+export type LineHint = { mark?: string; markAsked?: boolean; sent?: { qty?: number; rate?: number; discountPct?: number }; asked?: { qty?: number; rate?: number; discountPct?: number } };
 
 /** An order line offered to an invoice: what is delivered, billed, and billable now. */
 export type BillLine = { line: OrderLine; qty: number; ready: number; all: number; delivered: number; billed: number };
@@ -119,6 +130,9 @@ const fromLine = (l: OrderLine, keepProgress: boolean): Draft => ({
   custom: { ...(l.custom ?? {}) },
   delivered: keepProgress ? l.delivered : 0,
   invoiced: keepProgress ? l.invoiced : 0,
+  srcId: l.id,
+  note: l.note,
+  freeOf: l.freeOf,
 });
 const asMath = (l: Draft) => ({ qty: l.qty, rate: l.rate, discountPct: l.discMode === "pct" ? l.discountPct : 0, discountAmt: l.discMode === "amt" ? l.discountAmt : 0, tax: l.tax });
 
@@ -239,6 +253,8 @@ export function OrderComposer({
   onSave,
   today,
   itemSeed,
+  lineHints,
+  notice,
 }: {
   noun: ComposerNoun;
   title: string;
@@ -263,6 +279,10 @@ export function OrderComposer({
   today?: string;
   /** A new document started from an item (B-F1). */
   itemSeed?: ItemSeed | null;
+  /** Per seed line (by its id): what the line is read against — see `LineHint`. */
+  lineHints?: Record<string, LineHint>;
+  /** Shown above the lines: what this edit is answering. */
+  notice?: React.ReactNode;
 }) {
   const clock = today ?? TODAY;
   // Seeded from an item: the customer's defaults, as picking the customer would set them.
@@ -537,7 +557,8 @@ export function OrderComposer({
   if (foreign && !(rate > 0)) missing.push({ label: "an exchange rate", focus: () => fxRef.current?.focus() });
   filled.forEach((l, i) => {
     if (!(l.qty >= 0.00001)) missing.push({ label: `a quantity on line ${i + 1}`, focus: () => qtyRefs.current[l.key]?.focus() });
-    if (!(l.rate > 0)) missing.push({ label: `a rate on line ${i + 1}`, focus: () => qtyRefs.current[l.key]?.focus() });
+    // Free goods ride as a zero-rate line tied to the paid line they come with: no rate is what they are.
+    if (!(l.rate > 0) && !l.freeOf) missing.push({ label: `a rate on line ${i + 1}`, focus: () => qtyRefs.current[l.key]?.focus() });
     if (!billing && l.qty < l.delivered) missing.push({ label: `line ${i + 1} can't go below the ${fmtQty(l.delivered)} delivered`, focus: () => qtyRefs.current[l.key]?.focus() });
   });
   HEADER_FIELDS.filter((f) => f.required && !custom[f.key]).forEach((f) => missing.push({ label: f.label.toLowerCase(), focus: () => (setMoreOpen(true), window.setTimeout(() => moreRef.current?.scrollIntoView({ block: "center" }), 0)) }));
@@ -563,6 +584,9 @@ export function OrderComposer({
     }
     // The server's own words for a posting date in a closed period.
     if (date < "2026-07-17") return setRefusal(`Asar 2083 is a closed period. Choose a date on or after 1 Shrawan 2083 (Jul 17, 2026).`);
+    // A copied or converted line gets a new id, so a free line's tie is re-pointed at its paid line's new one.
+    const lineIds = filled.map((l, i) => l.lineId ?? `LN-N${Date.now()}-${i}`);
+    const idOfSeed = new Map(filled.flatMap((l, i) => (l.srcId ? [[l.srcId, lineIds[i]] as const] : [])));
     onSave({
       subsidiaryId,
       customerId: customer!.id,
@@ -583,7 +607,7 @@ export function OrderComposer({
       dims,
       custom,
       lines: filled.map((l, i) => ({
-        id: l.lineId ?? `LN-N${Date.now()}-${i}`,
+        id: lineIds[i],
         itemId: l.itemId!,
         qty: l.qty,
         unit: l.unit,
@@ -594,6 +618,8 @@ export function OrderComposer({
         tax: l.tax,
         description: l.description || undefined,
         custom: l.custom,
+        note: l.note,
+        freeOf: l.freeOf ? idOfSeed.get(l.freeOf) ?? l.freeOf : undefined,
         delivered: l.delivered,
         invoiced: l.invoiced,
       })),
@@ -832,7 +858,8 @@ export function OrderComposer({
 
           {/* ── 3 · Lines ────────────────────────────────────────────── */}
           <div className="mt-5">
-            <div className="hidden grid-cols-[24px_minmax(0,1fr)_132px_104px_92px_104px_112px_52px] items-center gap-2 px-2 pb-1.5 md:grid">
+            {notice && <div className="mb-3">{notice}</div>}
+            <div className="hidden grid-cols-[24px_minmax(0,1fr)_132px_104px_92px_104px_112px_52px] items-center gap-2 px-2 pb-1.5 lg:grid">
               <span className={LABEL}>#</span>
               <span className={LABEL}>Item</span>
               <span className={cn(LABEL, "text-right")}>Qty · Unit</span>
@@ -861,6 +888,7 @@ export function OrderComposer({
                   lineKey={l.key}
                   jump={jumpFlags.none || !l.itemId ? undefined : (el) => openItemJump(l.key, el)}
                   archived={!!(l.itemId && getItem(l.itemId)?.archived)}
+                  hint={l.srcId ? lineHints?.[l.srcId] : undefined}
                   offer={
                     offers[l.key]
                       ? { ...offerWords(l, offers[l.key].parts, sellOf(l.itemId)), onUse: () => acceptOffer(l.key), onKeep: () => dropOffer(l.key) }
@@ -1457,6 +1485,7 @@ function LineRow({
   lineKey,
   jump,
   archived,
+  hint,
   offer,
   onCreate,
 }: {
@@ -1478,6 +1507,7 @@ function LineRow({
   jump?: (anchor: HTMLElement | null) => void;
   /** The item was archived after the line took it: the line keeps it. */
   archived?: boolean;
+  hint?: LineHint;
   offer?: { text: string; use: string; keep: string; onUse: () => void; onKeep: () => void };
   onCreate?: (name: string) => void;
 }) {
@@ -1492,10 +1522,24 @@ function LineRow({
   const onHand = it ? it.onHand[locationId] : undefined;
   const short = it && onHand !== undefined && Object.keys(it.onHand).length > 0 && (line.qty - line.delivered) * factor > onHand;
   const hasExtra = !!(line.description || line.priceLevel || Object.values(line.custom).some(Boolean));
+  // Read against what the customer last saw: a number that moved is marked, and named under itself.
+  const sent = hint?.sent;
+  const qtyMoved = sent?.qty !== undefined && sent.qty !== line.qty;
+  const rateMoved = sent?.rate !== undefined && sent.rate !== line.rate;
+  const discMoved = sent?.discountPct !== undefined && (line.discMode === "pct" ? sent.discountPct !== line.discountPct : line.discountAmt > 0 || sent.discountPct > 0);
+  const moved = "bg-bz-fire/20 font-semibold";
+  const hinted = !!hint && (!!hint.mark || qtyMoved || rateMoved || discMoved || hint.asked?.qty !== undefined || hint.asked?.rate !== undefined || hint.asked?.discountPct !== undefined);
+  const under = (was: React.ReactNode, asked: React.ReactNode) => (
+    <>
+      {was !== null && <s className="text-bz-text-soft">{was}</s>}
+      {was !== null && asked !== null && " "}
+      {asked !== null && <span className="font-medium text-bz-amber">asked {asked}</span>}
+    </>
+  );
 
   return (
     <div className={cn("group border-b border-bz-line-soft last:border-0", isGhost ? "bg-bz-paper" : "bg-bz-surface")}>
-      <div className="grid grid-cols-[24px_minmax(0,1fr)] items-center gap-2 px-2 py-1.5 md:grid-cols-[24px_minmax(0,1fr)_132px_104px_92px_104px_112px_52px]">
+      <div className="grid grid-cols-[24px_minmax(0,1fr)_auto_auto] items-center gap-2 px-2 py-1.5 lg:grid-cols-[24px_minmax(0,1fr)_132px_104px_92px_104px_112px_52px]">
         <span className={cn("text-center text-[11px] text-bz-text-soft", NUM)}>{isGhost ? <Plus size={12} className="mx-auto" /> : n}</span>
 
         <span className="flex min-w-0 items-center gap-0.5">
@@ -1518,7 +1562,7 @@ function LineRow({
 
         {!isGhost && it && (
           <>
-            <span className="col-span-2 grid grid-cols-[1.2fr_1fr_0.9fr_1fr] gap-2 pl-[32px] md:contents">
+            <span className="order-last col-span-4 grid grid-cols-[1.2fr_1fr_0.9fr_1fr] gap-2 pl-[32px] lg:order-none lg:contents">
               <span className="flex items-center">
                 <input
                   ref={qtyRef}
@@ -1528,7 +1572,7 @@ function LineRow({
                   value={line.qty || ""}
                   onChange={(e) => onPatch({ qty: Number(e.target.value.replace(/[^\d.]/g, "")) || 0 })}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onNext())}
-                  className={cn(cell, "min-w-0 flex-1 text-right", NUM, (over || (flagged && (!(line.qty >= 0.00001) || (!bill && line.qty < line.delivered)))) && "border-bz-red-mark")}
+                  className={cn(cell, "min-w-0 flex-1 text-right", NUM, qtyMoved && moved, (over || (flagged && (!(line.qty >= 0.00001) || (!bill && line.qty < line.delivered)))) && "border-bz-red-mark")}
                 />
                 <Select
                   trigger="plain"
@@ -1559,7 +1603,7 @@ function LineRow({
                 title={line.priceLevel ? `${line.priceLevel} price — typing a rate clears it` : undefined}
                 onChange={(e) => onPatch({ rate: Number(e.target.value.replace(/[^\d.]/g, "")) || 0, priceLevel: undefined })}
                 onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onNext())}
-                className={cn(cell, "text-right", NUM, flagged && !(line.rate > 0) && "border-bz-red-mark")}
+                className={cn(cell, "text-right", NUM, rateMoved && moved, flagged && !(line.rate > 0) && !line.freeOf && "border-bz-red-mark")}
               />
               )}
               {bill ? (
@@ -1581,7 +1625,7 @@ function LineRow({
                     else onPatch({ discountAmt: v >= line.qty * line.rate ? 0 : v, discountPct: 0 });
                   }}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onNext())}
-                  className={cn(cell, "min-w-0 flex-1 px-1.5 text-right placeholder:text-bz-text-soft", NUM)}
+                  className={cn(cell, "min-w-0 flex-1 px-1.5 text-right placeholder:text-bz-text-soft", NUM, discMoved && moved)}
                 />
                 <button
                   type="button"
@@ -1603,11 +1647,11 @@ function LineRow({
               </Select>
               )}
             </span>
-            <span className="hidden text-right text-[12.5px] font-semibold text-bz-text md:block">
+            <span className="text-right text-[12.5px] font-semibold text-bz-text">
               <Amount value={lineNet(math)} />
             </span>
-            <span className="hidden items-center justify-end gap-0.5 md:flex">
-              <button type="button" onClick={() => setExpanded((v) => !v)} className={cn("flex size-6 items-center justify-center rounded-bz-sm hover:bg-bz-paper-warm hover:text-bz-text", hasExtra || expanded ? "text-bz-text-muted" : "text-bz-text-soft opacity-0 group-hover:opacity-100")} title="Line details">
+            <span className="flex items-center justify-end gap-0.5">
+              <button type="button" onClick={() => setExpanded((v) => !v)} className={cn("flex size-6 items-center justify-center rounded-bz-sm hover:bg-bz-paper-warm hover:text-bz-text", hasExtra || expanded ? "text-bz-text-muted" : "text-bz-text-soft lg:opacity-0 lg:group-hover:opacity-100")} title="Line details">
                 <ChevronDown size={12} className={cn("transition-transform", expanded && "rotate-180")} />
               </button>
               {locked ? (
@@ -1615,7 +1659,7 @@ function LineRow({
                   <Lock size={11} />
                 </span>
               ) : (
-                <button type="button" onClick={onRemove} className="flex size-6 items-center justify-center rounded-bz-sm text-bz-text-soft opacity-0 hover:bg-bz-paper-warm hover:text-bz-text group-hover:opacity-100" title="Remove line">
+                <button type="button" onClick={onRemove} className="flex size-6 items-center justify-center rounded-bz-sm text-bz-text-soft hover:bg-bz-paper-warm hover:text-bz-text lg:opacity-0 lg:group-hover:opacity-100" title="Remove line">
                   <X size={12} />
                 </button>
               )}
@@ -1623,6 +1667,15 @@ function LineRow({
           </>
         )}
       </div>
+      {!isGhost && it && hinted && hint && (
+        <div className={cn("grid grid-cols-[24px_minmax(0,1fr)] gap-x-2 gap-y-0.5 px-2 pb-1.5 text-[10.5px] text-bz-text-soft lg:grid-cols-[24px_minmax(0,1fr)_132px_104px_92px_104px_112px_52px]", NUM)}>
+          <span />
+          <span className={cn("pl-2", hint.markAsked ? "font-medium text-bz-amber" : "text-bz-text-muted")}>{hint.mark}</span>
+          <span className="col-span-2 pl-[32px] empty:hidden lg:col-span-1 lg:pl-0 lg:pr-8 lg:text-right lg:empty:block">{under(qtyMoved ? fmtQty(sent!.qty!) : null, hint.asked?.qty !== undefined ? fmtQty(hint.asked.qty) : null)}</span>
+          <span className="col-span-2 pl-[32px] empty:hidden lg:col-span-1 lg:pl-0 lg:pr-2 lg:text-right lg:empty:block">{under(rateMoved ? fmtQty(sent!.rate!) : null, hint.asked?.rate !== undefined ? fmtQty(hint.asked.rate) : null)}</span>
+          <span className="col-span-2 pl-[32px] empty:hidden lg:col-span-1 lg:pl-0 lg:pr-6 lg:text-right lg:empty:block">{under(discMoved ? `${sent!.discountPct}%` : null, hint.asked?.discountPct !== undefined ? `${hint.asked.discountPct}%` : null)}</span>
+        </div>
+      )}
       {!isGhost && it && (short || locked || line.priceLevel || line.discMode === "amt" || archived) && !expanded && (
         <p className={cn("m-0 px-2 pb-1.5 pl-[42px] text-[10.5px]", over ? "text-bz-red" : "text-bz-text-soft", NUM)}>
           {[

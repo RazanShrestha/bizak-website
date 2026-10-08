@@ -1,416 +1,385 @@
 import * as React from "react";
-import { useNavigate, useParams } from "react-router";
-import { Camera, Phone } from "lucide-react";
+import { Link, useNavigate } from "react-router";
+import { Ban, CalendarDays, CircleCheck, CircleSlash, MapPin, ReceiptText, Smartphone, Table2, UserRound, Users } from "lucide-react";
 import { cn } from "../ui/utils";
-import { GHOST_SM, NUM, Select } from "../sales/bzw";
-import { useStore } from "../sales/store";
-import { ACTIVITIES, PLAYBOOKS, REPS, SF_TODAY } from "./data";
-import { day, dayTime } from "./engine";
-import { hubStore } from "./store";
-import { SfShell, sfPath } from "./shell";
-import { Dot, EmptyNote, Fact, Figures, Flag, List, Money, Page, PageIntro, Row, Section, SidePanel, TextTabs, TypeMark } from "./ui";
-import { DAY_START_DUE, DAY_STATUS, SF_NOW_LABEL, VISITS, VISIT_DAYS, VISIT_STATE, ctype, custById, firstName, isVisited, repArea, repById, repDay, visitById, visitHistory, withOrder } from "./field-data";
-import type { HistoryItem, RepDay, Visit } from "./field-data";
-import { Block, DayPlot, HistoryNotes, Initials, Micro, Ticks, VisitMark, outcomeOf, shortDay } from "./field-kit";
+import { Chip, DocLink, GHOST, GHOST_SM, MenuItem, NUM, Stat, Statline } from "../sales/bzw";
+import type { PanelCtx } from "../sales/DocDesk";
+import { Amount } from "../sales/orders";
+import { RelatedSection } from "../sales/parts";
+import { Block, CustomerTitle, RecordShell, StepCard } from "../sales/record";
+import { SF_TODAY } from "./data";
+import type { Customer, HubOrder, LocationPing, Visit } from "./data";
+import { STATUS_META } from "./orders-parts";
+import { customerById, productById, typeOf } from "./engine";
+import { OUTLET_STATUS, activityName, addDays, billedToText, mondayOf, orderById, orderTotal, repById, repName, shortDay, strikeRate, visitOrderText } from "./field-data";
+import { VisitChip, useFieldStores } from "./field-kit";
+import { FENCE_LABEL, PING_KIND, coordsText, distanceMetres, fenceState, fenceText, fmtDistance, needsAudit, osmEmbedUrl, pingsOfVisit } from "./geo";
+import { MapEmbed, MapLink } from "./geo-kit";
 import { PlanPage } from "./FieldPlan";
+import { LivePage } from "./LivePage";
+import { FxDate, FxDesk, pillTone } from "./fx-desk";
+import { routeById, routeName, routeOfVisit } from "./routes";
+import { SfActivity, SfNoteFoot, TypeMark, Who, chipTone, sfPath } from "./sf";
 
 // ════════════════════════════════════════════════════════════════════════════
-// FIELD — Today and Visits
+// FIELD — Visits (company side), and the Field routes
 //
-// Today answers one question: is the field covered, and who needs me? One calm
-// row per person, exceptions first; the row opens that person's day as a
-// timeline of outlets with the playbook's ticks. Visits is the register of
-// every check-in — today and the days before — each opening its evidence:
-// check-in/out, geofence, what the playbook asked and what was done, the order.
+// Visits reads only what reps do in the rep app: the register of every
+// check-in as a desk, each opening its evidence (steps, geofence, the order it
+// took). Live — the field now, on a map — is `LivePage`; Plan is `FieldPlan`.
 // ════════════════════════════════════════════════════════════════════════════
 
-const STATUS_ORDER = { "not-started": 0, idle: 1, "on-beat": 2, done: 3 } as const;
+export const REP_APP = "/design/rep";
 
-function dayLine(d: RepDay) {
-  const where = `${d.checkedIn} of ${d.visits.length} outlets`;
-  if (d.status === "not-started") return `${where} · due at ${DAY_START_DUE}`;
-  if (d.status === "idle") return `${where} · idle since ${d.lastCheckOut}`;
-  if (d.status === "done") return `${where} · closed at ${d.endedAt}`;
-  return `${where} · last check-in ${d.lastCheckIn}`;
-}
-
-/** Visits with an order ÷ visits that happened (checked in, not skipped, finished). */
-export function strikeRate(visits: Visit[]) {
-  const calls = visits.filter((v) => v.state === "done");
-  return calls.length ? Math.round((calls.filter(withOrder).length / calls.length) * 100) : 0;
-}
-
-// ── Today ───────────────────────────────────────────────────────────────────
-
-export function TodayPage() {
-  const { repId } = useParams();
-  const navigate = useNavigate();
-  const days = React.useMemo(() => REPS.map((r) => repDay(r.id)).sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status] || a.rep.name.localeCompare(b.rep.name)), []);
-  const out = days.filter((d) => d.status === "on-beat" || d.status === "idle").length;
-  const all = days.flatMap((d) => d.visits);
-  const planned = all.length;
-  const visited = days.reduce((s, d) => s + d.checkedIn, 0);
-  const value = days.reduce((s, d) => s + d.orderValue, 0);
-  const orders = days.reduce((s, d) => s + d.orders, 0);
-  const late = days.filter((d) => d.status === "not-started");
-  const open = days.find((d) => d.rep.id === repId);
-
-  return (
-    <SfShell page="today" panel={open && <RepDayPanel key={open.rep.id} d={open} onClose={() => navigate(sfPath("today"))} />}>
-      <Page width="full">
-        <PageIntro>
-          {SF_NOW_LABEL}. {out} of {REPS.length} people are out on their beat.
-        </PageIntro>
-
-        <Figures
-          items={[
-            { label: "Out now", value: `${out} of ${REPS.length}`, sub: "on their beat" },
-            { label: "Outlets visited", value: `${visited} of ${planned}`, sub: "planned today" },
-            { label: "Orders from visits", value: <Money value={value} />, sub: `${orders} orders`, onClick: () => navigate(sfPath("visits")) },
-            { label: "Strike rate", value: `${strikeRate(all)}%`, sub: "visits with an order" },
-            { label: "Not started", value: late.length, sub: `due at ${DAY_START_DUE}`, tone: late.length ? "danger" : undefined, onClick: late[0] ? () => navigate(sfPath(`today/${late[0].rep.id}`)) : undefined },
-          ]}
-        />
-
-        <Section title="People" count={days.length} className="mt-12" hint="exceptions first">
-          <List>
-            {days.map((d) => {
-              const s = DAY_STATUS[d.status];
-              return (
-                <Row
-                  key={d.rep.id}
-                  active={d.rep.id === repId}
-                  onClick={() => navigate(sfPath(`today/${d.rep.id}`))}
-                  lead={<Initials rep={d.rep} />}
-                  title={d.rep.name}
-                  sub={`${repArea(d.rep)} · ${dayLine(d)}`}
-                  meta={[
-                    <Dot key="s" tone={s.tone}>
-                      {s.label}
-                    </Dot>,
-                  ]}
-                  trail={
-                    <span className="flex flex-col items-end gap-1">
-                      {d.orderValue > 0 ? <Money value={d.orderValue} /> : <span className="text-bz-text-soft">—</span>}
-                      <Dot tone={s.tone} className="md:hidden">
-                        {s.label}
-                      </Dot>
-                    </span>
-                  }
-                />
-              );
-            })}
-          </List>
-          <p className="m-0 mt-4 text-[11px] text-bz-text-soft">Idle means no check-in or check-out for 90 minutes. The day is due to start at {DAY_START_DUE}.</p>
-        </Section>
-      </Page>
-    </SfShell>
-  );
-}
-
-function RepDayPanel({ d, onClose }: { d: RepDay; onClose: () => void }) {
-  const navigate = useNavigate();
-  const s = DAY_STATUS[d.status];
-  const unplanned = d.visits.filter((v) => !v.planned).length;
-  const trail: HistoryItem[] = [
-    ...(d.startedAt ? [{ id: "start", who: d.rep.name, what: "started the day", when: `Today, ${d.startedAt}` }] : []),
-    ...d.visits.flatMap(visitHistory),
-    ...(d.status === "done" && d.endedAt ? [{ id: "end", who: d.rep.name, what: "closed the day", when: `Today, ${d.endedAt}` }] : []),
-  ];
-  return (
-    <SidePanel
-      open
-      onClose={onClose}
-      eyebrow={`Today · ${repArea(d.rep)}`}
-      title={d.rep.name}
-      meta={
-        <>
-          <Dot tone={s.tone}>{s.label}</Dot>
-          <span className={NUM}>
-            {d.checkedIn} of {d.visits.length} outlets
-          </span>
-          {d.startedAt && <span className={NUM}>started {d.startedAt}</span>}
-          {d.orderValue > 0 && <Money value={d.orderValue} />}
-        </>
-      }
-    >
-      {d.status === "not-started" && (
-        <div className="mb-5 flex flex-wrap items-center gap-3">
-          <Flag>Not started</Flag>
-          <span className="min-w-0 flex-1 text-[12px] text-bz-text-muted">
-            Due at {DAY_START_DUE} · {d.visits.length} outlets are waiting.
-          </span>
-          <a href={`tel:${d.rep.phone}`} className={GHOST_SM}>
-            <Phone size={12} /> Call {firstName(d.rep)}
-          </a>
-        </div>
-      )}
-
-      <DayPlot visits={d.visits} />
-
-      <Block title="Outlets" aside={`${d.visits.length - unplanned} planned${unplanned ? ` · ${unplanned} unplanned` : ""}`}>
-        <ol className="m-0 list-none p-0">
-          {d.visits.map((v, i) => {
-            const c = custById(v.customerId);
-            const t = ctype(c);
-            const openable = isVisited(v);
-            return (
-              <li key={v.id} className="relative flex gap-3 pb-5 last:pb-0">
-                <span className={cn("w-10 shrink-0 pt-px text-right text-[11px] text-bz-text-soft", NUM)}>{v.checkIn ?? "—"}</span>
-                <span className="relative flex w-3 shrink-0 justify-center pt-1">
-                  {i < d.visits.length - 1 && <span className="absolute left-1/2 top-4 -bottom-5 w-px -translate-x-1/2 bg-bz-line-soft" />}
-                  <VisitMark state={v.state} title={VISIT_STATE[v.state].label} />
-                </span>
-                <div className="min-w-0 flex-1">
-                  {openable ? (
-                    <button type="button" onClick={() => navigate(sfPath(`visits/${v.id}`))} className="block max-w-full truncate text-left text-[12.5px] font-medium text-bz-text hover:underline hover:underline-offset-2">
-                      {c.name}
-                    </button>
-                  ) : (
-                    <span className="block truncate text-[12.5px] font-medium text-bz-text">{c.name}</span>
-                  )}
-                  <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-bz-text-soft">
-                    <TypeMark name={t.name} color={t.color} className="text-[11px]" />
-                    {!v.planned && <span>· Unplanned</span>}
-                    <span className={cn(v.state === "missed" && "text-bz-red")}>· {outcomeOf(v)}</span>
-                  </span>
-                  <Ticks acts={v.acts} state={v.state} className="mt-1" />
-                </div>
-              </li>
-            );
-          })}
-        </ol>
-      </Block>
-
-      <HistoryNotes recordKey={`day:${d.rep.id}:${d.date}`} seed={trail} />
-    </SidePanel>
-  );
-}
+/** The hub's own status words, so an order reads the same here as in Orders. */
+const HUB_STATUS = STATUS_META;
 
 // ── Visits ──────────────────────────────────────────────────────────────────
 
-type VisitTab = "all" | "order" | "none" | "skipped";
-const inTab = (v: Visit, t: VisitTab) =>
-  t === "all" ? true : t === "order" ? withOrder(v) : t === "none" ? (v.state === "done" || v.state === "in-progress") && !withOrder(v) : v.state === "skipped" || v.state === "missed";
-
-export function VisitsPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [tab, setTab] = React.useState<VisitTab>("all");
-  const [when, setWhen] = React.useState<string>("all");
-  const [who, setWho] = React.useState<string>("all");
-  const register = React.useMemo(
-    () => VISITS.filter((v) => v.state !== "pending").sort((a, b) => b.date.localeCompare(a.date) || (b.checkIn ?? "").localeCompare(a.checkIn ?? "") || a.repId.localeCompare(b.repId)),
-    [],
-  );
-  const scoped = register.filter((v) => (when === "all" || v.date === when) && (who === "all" || v.repId === who));
-  const shown = scoped.filter((v) => inTab(v, tab));
-  const byDay = VISIT_DAYS.slice()
-    .reverse()
-    .map((d) => ({ date: d, rows: shown.filter((v) => v.date === d) }))
-    .filter((g) => g.rows.length);
-  const open = visitById(id);
-  const calls = scoped.filter((v) => v.state === "done");
-
+/** Readings in time order: when, what kind, where in shop terms, how sure, and the point on a map. */
+function PingList({ pings, where }: { pings: LocationPing[]; where: (p: LocationPing) => string }) {
   return (
-    <SfShell page="visits" panel={open && <VisitPanel key={open.id} v={open} onClose={() => navigate(sfPath("visits"))} />}>
-      <Page width="full">
-        <PageIntro
-          actions={
-            <>
-              <Select
-                value={when}
-                onChange={setWhen}
-                label={when === "all" ? "Last 3 days" : when === SF_TODAY ? "Today" : shortDay(when)}
-                applied={when !== "all"}
-                options={[{ value: "all", label: "Last 3 days" }, ...VISIT_DAYS.slice().reverse().map((d) => ({ value: d, label: d === SF_TODAY ? "Today" : shortDay(d) }))]}
-                align="right"
-                width={200}
-              />
-              <Select
-                value={who}
-                onChange={setWho}
-                label={who === "all" ? "Everyone" : repById(who)?.name}
-                applied={who !== "all"}
-                options={[{ value: "all", label: "Everyone" }, ...REPS.map((r) => ({ value: r.id, label: r.name, hint: r.role }))]}
-                align="right"
-                width={220}
-              />
-            </>
-          }
-        >
-          Every check-in from the field. {scoped.length} visits, {strikeRate(scoped)}% with an order{calls.length ? `, ${Math.round((calls.reduce((s, v) => s + v.minutes, 0) / calls.length) || 0)} min on average` : ""}.
-        </PageIntro>
-
-        <TextTabs<VisitTab>
-          value={tab}
-          onChange={setTab}
-          options={[
-            { value: "all", label: "All", count: scoped.length },
-            { value: "order", label: "With order", count: scoped.filter((v) => inTab(v, "order")).length },
-            { value: "none", label: "No order", count: scoped.filter((v) => inTab(v, "none")).length },
-            { value: "skipped", label: "Skipped", count: scoped.filter((v) => inTab(v, "skipped")).length },
-          ]}
-        />
-
-        <div className="mt-6">
-          {byDay.length === 0 && <EmptyNote>No visits match. Try another tab or day.</EmptyNote>}
-          {byDay.map((g) => (
-            <div key={g.date} className="mt-8 first:mt-0">
-              <Micro className="mb-2 px-1">
-                {g.date === SF_TODAY ? "Today" : shortDay(g.date)} · {g.rows.length}
-              </Micro>
-              <List>
-                {g.rows.map((v) => {
-                  const c = custById(v.customerId);
-                  const rep = repById(v.repId);
-                  const st = VISIT_STATE[v.state];
-                  return (
-                    <Row
-                      key={v.id}
-                      active={v.id === id}
-                      onClick={() => navigate(sfPath(`visits/${v.id}`))}
-                      lead={<VisitMark state={v.state} size={9} title={st.label} />}
-                      title={c.name}
-                      sub={`${rep?.name} · ${v.checkIn ? `${v.checkIn}${v.checkOut ? `–${v.checkOut}` : ", here now"}` : "no check-in"} · ${ctype(c).name}`}
-                      meta={[
-                        v.geofence && !v.geofence.ok ? <Flag key="g">Outside geofence</Flag> : null,
-                        <Dot key="s" tone={withOrder(v) ? "good" : st.tone === "good" ? "neutral" : st.tone}>
-                          {withOrder(v) ? "Order" : v.state === "done" ? "No order" : st.label}
-                        </Dot>,
-                      ].filter(Boolean)}
-                      trail={withOrder(v) ? <Money value={v.orderValue} /> : <span className="text-bz-text-soft">—</span>}
-                    />
-                  );
-                })}
-              </List>
-            </div>
-          ))}
-        </div>
-      </Page>
-    </SfShell>
+    <ol className="m-0 mt-3 flex list-none flex-col gap-2 p-0">
+      {pings.map((p) => (
+        <li key={p.id} className="flex items-baseline gap-3 text-[11.5px]">
+          <span className={cn("w-10 shrink-0 text-right text-bz-text-soft", NUM)}>{p.at.slice(11, 16)}</span>
+          <span className="min-w-0 flex-1">
+            <span className="text-bz-text">{PING_KIND[p.kind]}</span>
+            <span className="text-bz-text-muted"> · {where(p)}</span>
+            <span className={cn("text-bz-text-soft", NUM)}> · ± {p.accuracy} m</span>
+          </span>
+          <MapLink p={p} className="shrink-0">
+            Map
+          </MapLink>
+        </li>
+      ))}
+    </ol>
   );
 }
 
-function VisitPanel({ v, onClose }: { v: Visit; onClose: () => void }) {
-  const navigate = useNavigate();
-  const hub = useStore(hubStore);
-  const c = custById(v.customerId);
-  const t = ctype(c);
-  const rep = repById(v.repId);
-  const pb = PLAYBOOKS.find((p) => p.id === t.playbookId);
-  const hubOrder = hub.find((o) => o.id === v.orderId && o.source === "rep");
-  const st = VISIT_STATE[v.state];
+type VisitTab = "in-progress" | "order" | "none" | "skipped" | "audit";
+const inTab = (v: Visit, t: VisitTab) => (t === "in-progress" ? v.state === "in-progress" : t === "order" ? !!v.orderId : t === "none" ? v.state === "done" && !v.orderId : t === "audit" ? needsAudit(v) : v.state === "skipped");
+/** The small mark on a visit the manager should look at. */
+const auditMark = (v: Visit) => (needsAudit(v) ? (fenceState(v.geofence) === "away" ? "Away" : "No GPS") : null);
+type When = "today" | "week" | "month";
+const inWhen = (v: Visit, w: When) => (w === "today" ? v.date === SF_TODAY : w === "week" ? v.date >= mondayOf(SF_TODAY) && v.date <= addDays(mondayOf(SF_TODAY), 6) : v.date.startsWith(SF_TODAY.slice(0, 7)));
+/** The band a visit sits in on the By day view: the nearest window that holds it. */
+const dayBand = (v: Visit) => (inWhen(v, "today") ? "today" : inWhen(v, "week") ? "week" : inWhen(v, "month") ? "month" : "older");
+
+/** `routeId`: the route the visit was on — the one recorded on it (kept when that route was removed since), else the rep's planned route that day. */
+type VRow = { v: Visit; c: Customer | undefined; o: HubOrder | undefined; total: number | null; rep: string; routeId: string | null };
+
+export function VisitsPage() {
+  const s = useFieldStores();
+  const rows: VRow[] = s.visits.map((v) => {
+    const o = orderById(v.orderId);
+    return { v, c: customerById(v.customerId), o, total: o ? orderTotal(o) : null, rep: repName(v.repId), routeId: v.routeId ?? routeOfVisit(v)?.id ?? null };
+  });
+  const routesVisited = Array.from(new Set(rows.flatMap((r) => (r.routeId && routeById(r.routeId) ? [r.routeId] : [])))).sort((a, b) => routeName(a).localeCompare(routeName(b)));
+  const onRemovedRoute = (r: VRow) => !!r.routeId && !routeById(r.routeId);
+  const sum = (rs: VRow[]) => rs.reduce((n, r) => n + (r.total ?? 0), 0);
+  const total = (rs: VRow[]) => (sum(rs) > 0 ? <Amount value={sum(rs)} currency="NPR" /> : undefined);
+  const count = (t: VisitTab) => rows.filter((r) => inTab(r.v, t)).length;
+  const strike = strikeRate(s.visits);
+  const stamp = (r: VRow) => `${r.v.date} ${r.v.checkIn ?? ""} ${r.v.id}`;
+  const band = (rs: VRow[], b: ReturnType<typeof dayBand>) => rs.filter((r) => dayBand(r.v) === b);
+
   return (
-    <SidePanel
-      open
-      onClose={onClose}
-      eyebrow={`Visit · ${v.id}`}
-      title={c.name}
-      meta={
-        <>
-          <TypeMark name={t.name} color={t.color} />
-          <button type="button" onClick={() => navigate(sfPath(`team/${v.repId}`))} className="hover:text-bz-text hover:underline hover:underline-offset-2">
-            {rep?.name}
+    <FxDesk<VRow>
+      place="visits"
+      section="salesforce/visits"
+      noun={["visit", "visits"]}
+      rows={rows}
+      noOf={(r) => r.v.id}
+      dateOf={(r) => r.v.date}
+      searchText={(r) => `${r.v.id} ${r.c?.name ?? ""} ${r.rep} ${r.v.orderId ?? ""}`}
+      searchPlaceholder="Visit, customer or rep"
+      numberLabel="Visit"
+      amountLabel="Order"
+      stats={[
+        { label: "Visits", value: rows.length },
+        { label: "Strike rate", value: strike === null ? "—" : `${strike}%`, title: "Finished visits with an order" },
+      ]}
+      picks={[
+        { key: "in-progress", label: "In progress", value: count("in-progress"), test: (r) => inTab(r.v, "in-progress") },
+        { key: "order", label: "With an order", value: count("order"), test: (r) => inTab(r.v, "order") },
+        { key: "none", label: "No order", value: count("none"), test: (r) => inTab(r.v, "none"), title: "Finished without an order" },
+        { key: "skipped", label: "Skipped", value: count("skipped"), test: (r) => inTab(r.v, "skipped") },
+        { key: "audit", label: "Away or no GPS", value: count("audit"), test: (r) => inTab(r.v, "audit"), danger: count("audit") > 0, title: "Checked in away from the shop, or without GPS" },
+      ]}
+      views={[
+        {
+          key: "day",
+          label: "By day",
+          icon: CalendarDays,
+          groups: (rs) => [
+            { key: "today", label: "Today", rows: band(rs, "today"), right: total(band(rs, "today")), empty: "No visits today." },
+            { key: "week", label: "Earlier this week", rows: band(rs, "week"), right: total(band(rs, "week")) },
+            { key: "month", label: "Earlier this month", rows: band(rs, "month"), right: total(band(rs, "month")) },
+            { key: "older", label: "Older", collapsed: true, rows: band(rs, "older") },
+          ],
+        },
+        {
+          key: "rep",
+          label: "By rep",
+          icon: Users,
+          groups: (rs) =>
+            Array.from(new Set(rs.map((r) => r.v.repId)))
+              .map((id) => ({ key: id, label: repName(id), icon: <Who name={repById(id)?.name} size={16} />, rows: rs.filter((r) => r.v.repId === id), right: total(rs.filter((r) => r.v.repId === id)) }))
+              .sort((a, b) => a.label.localeCompare(b.label)),
+        },
+        { key: "register", label: "Register", icon: Table2, groups: (rs) => [{ key: "all", label: "", rows: rs }] },
+      ]}
+      filters={[
+        ...s.reps.map((p) => ({ value: `rep:${p.id}`, label: p.name, group: "Rep", test: (r: VRow) => r.v.repId === p.id })),
+        { value: "when:today", label: "Today", group: "When", test: (r: VRow) => inWhen(r.v, "today") },
+        { value: "when:week", label: "This week", group: "When", test: (r: VRow) => inWhen(r.v, "week") },
+        { value: "when:month", label: "This month", group: "When", test: (r: VRow) => inWhen(r.v, "month") },
+        { value: "plan:on", label: "On the beat", group: "Plan", test: (r: VRow) => r.v.planned },
+        { value: "plan:off", label: "Unplanned", group: "Plan", test: (r: VRow) => !r.v.planned },
+        ...routesVisited.map((id) => ({ value: `route:${id}`, label: routeName(id), group: "Route", test: (r: VRow) => r.routeId === id })),
+        ...(rows.some(onRemovedRoute) ? [{ value: "route:removed", label: "Removed route", group: "Route", test: onRemovedRoute }] : []),
+        { value: "route:none", label: "No route", group: "Route", test: (r: VRow) => !r.routeId },
+      ]}
+      sorts={[
+        { key: "new", label: "Newest", by: stamp, desc: true },
+        { key: "old", label: "Oldest", by: stamp },
+        { key: "cus", label: "Customer", by: (r) => r.c?.name ?? "" },
+        { key: "rep", label: "Rep", by: (r) => r.rep },
+        { key: "val", label: "Order value", by: (r) => r.total ?? 0, desc: true },
+      ]}
+      columns={[
+        { key: "date", label: "Date", width: "76px", render: (r) => <FxDate iso={r.v.date} /> },
+        { key: "rep", label: "Rep", width: "24px", render: (r) => <Who name={repById(r.v.repId)?.name} /> },
+      ]}
+      primary={(r) => ({ title: r.c?.name ?? "Removed customer", sub: [r.rep, r.v.checkIn, r.routeId ? routeName(r.routeId) : "", r.v.planned ? "" : "unplanned", r.o ? visitOrderText(r.v) : ""].filter(Boolean).join(" · "), subOnDesktop: true })}
+      status={(r) => ({ label: OUTLET_STATUS[r.v.state].label, tone: pillTone(OUTLET_STATUS[r.v.state].tone) })}
+      statusLabel="Outcome"
+      // The desk's own "When" filter is its date filter.
+      showPeriod={false}
+      amount={(r) => ({
+        value: r.total !== null ? <Amount value={r.total} /> : <span className="font-normal text-bz-text-soft">—</span>,
+        sub: auditMark(r.v) ? <span className="text-bz-amber-ink">{auditMark(r.v)}</span> : r.total === null && r.v.state === "done" ? "No order" : undefined,
+      })}
+      emptyAction={
+        <Link to={REP_APP} className={GHOST}>
+          <Smartphone size={13} /> Open the rep app
+        </Link>
+      }
+      renderPanel={(r, ctx) => <VisitPanel key={r.v.id} r={r} ctx={ctx} />}
+    />
+  );
+}
+
+function VisitPanel({ r, ctx }: { r: VRow; ctx: PanelCtx }) {
+  const navigate = useNavigate();
+  const s = useFieldStores();
+  const { v, c, o } = r;
+  const t = typeOf(c);
+  const counts = Object.entries(s.counts[v.id] ?? {}).filter(([, n]) => n > 0);
+  const rep = repById(v.repId);
+  const route = routeById(r.routeId);
+  const fs = fenceState(v.geofence);
+  const mark = auditMark(v);
+  const done = v.acts.filter((a) => a.done).length;
+  const openOrder = () => o && navigate(sfPath(`orders/${o.id}`));
+
+  const step =
+    v.state === "skipped" ? (
+      <StepCard tone="quiet" icon={<Ban size={15} />} title="Skipped" sub={v.skipReason ?? "No reason given."} />
+    ) : o ? (
+      <StepCard
+        tone={v.state === "done" ? "done" : "plain"}
+        icon={<CircleCheck size={15} />}
+        title={`Order ${o.id}`}
+        sub={[
+          HUB_STATUS[o.status].label,
+          billedToText(o),
+          `${o.lines.length} line${o.lines.length === 1 ? "" : "s"}`,
+          `${o.lines
+            .slice(0, 2)
+            .map((l) => productById(l.productId).name)
+            .join(", ")}${o.lines.length > 2 ? "…" : ""}`,
+        ]
+          .filter(Boolean)
+          .join(" · ")}
+        actions={
+          <button type="button" className={GHOST_SM} onClick={openOrder}>
+            Open order
           </button>
-          <span>{v.date === SF_TODAY ? "Today" : day(v.date)}</span>
-          <Dot tone={st.tone}>{st.label}</Dot>
+        }
+      />
+    ) : v.orderId ? (
+      <StepCard tone="quiet" icon={<CircleSlash size={15} />} title={`Order ${v.orderId} was removed`} />
+    ) : v.state === "in-progress" ? (
+      <StepCard icon={<MapPin size={15} />} title={`Here since ${v.checkIn ?? "—"}`} sub="No order yet." />
+    ) : (
+      <StepCard tone="quiet" icon={<CircleSlash size={15} />} title="No order" sub={v.noOrderReason ?? undefined} />
+    );
+
+  return (
+    <RecordShell
+      ctx={ctx}
+      no={v.id}
+      chips={
+        <>
+          <VisitChip status={v.state} />
+          {mark && (
+            <Chip tone={chipTone("warn")} dot={false} title={fenceText(v.geofence)}>
+              {mark}
+            </Chip>
+          )}
         </>
       }
-    >
-      <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
-        <Fact label="Check-in">{v.checkIn ?? "—"}</Fact>
-        <Fact label="Check-out">{v.checkOut ?? (v.state === "in-progress" ? "Still there" : "—")}</Fact>
-        <Fact label="Time spent">{v.checkIn ? `${v.minutes} min` : "—"}</Fact>
-        <Fact label="Geofence">
-          {v.geofence ? (
-            <Dot tone={v.geofence.ok ? "good" : "danger"}>
-              {v.geofence.ok ? "Inside" : "Outside"} · {v.geofence.metres} m
-            </Dot>
-          ) : (
-            "—"
+      title={c ? <CustomerTitle name={c.name} onOpen={() => navigate(sfPath(`customers/${c.id}`))} /> : "Removed customer"}
+      amount={r.total !== null ? <Amount value={r.total} currency="NPR" /> : undefined}
+      meta={[
+        <span key="d" className={NUM}>
+          {shortDay(v.date)}
+        </span>,
+        <span key="r" className="inline-flex items-center gap-1.5">
+          <Who name={rep?.name} size={16} /> {r.rep}
+        </span>,
+        ...(c ? [<TypeMark key="t" name={t.name} color={t.color} />] : []),
+        <span key="p">{v.planned ? "On the beat" : "Unplanned"}</span>,
+        ...(o ? [<DocLink key="o" no={o.id} kind="Order" onClick={openOrder} />] : []),
+      ]}
+      menu={(close) => (
+        <>
+          {c && (
+            <MenuItem icon={UserRound} onClick={() => (close(), navigate(sfPath(`customers/${c.id}`)))}>
+              Open customer
+            </MenuItem>
           )}
-        </Fact>
-      </div>
-      {!v.planned && <p className="m-0 mt-4 text-[11.5px] text-bz-text-soft">Not on {firstName(rep)}'s plan for the day — added in the field.</p>}
-      {v.state === "skipped" && <p className="m-0 mt-4 text-[12px] text-bz-text-muted">Skipped: {v.skipReason}.</p>}
-      {v.state === "missed" && <p className="m-0 mt-4 text-[12px] text-bz-red">Missed — planned for the day but never checked in.</p>}
+          {rep && (
+            <MenuItem icon={Users} onClick={() => (close(), navigate(sfPath(`team/${rep.id}`)))}>
+              Open rep
+            </MenuItem>
+          )}
+          {o && (
+            <MenuItem icon={ReceiptText} onClick={() => (close(), openOrder())}>
+              Open order
+            </MenuItem>
+          )}
+        </>
+      )}
+      foot={<SfNoteFoot id={v.id} />}
+    >
+      {step}
 
-      <Block title="Playbook" aside={pb?.name ?? "None for this type"}>
+      <div className="border-b border-bz-line-soft px-5 pb-3 pt-1">
+        <Statline className="pt-3">
+          <Stat
+            label="Route"
+            value={
+              route ? (
+                <Link to={sfPath(`routes/${route.id}`)} title={route.name} className="inline-block max-w-[220px] truncate align-bottom hover:underline hover:underline-offset-4">
+                  {route.name}
+                </Link>
+              ) : (
+                <span className="font-normal text-bz-text-soft">{r.routeId ? "Removed route" : "Not on a route"}</span>
+              )
+            }
+          />
+          <Stat label="Check in" value={v.checkIn ?? "—"} />
+          <Stat label="Check out" value={v.checkOut ?? "—"} />
+          <Stat label="Location" value={fs ? FENCE_LABEL[fs].label : "—"} sub={v.geofence?.metres != null ? fmtDistance(v.geofence.metres) : undefined} danger={needsAudit(v)} title={fenceText(v.geofence)} />
+          <Stat label="Steps" value={`${done} of ${v.acts.length}`} />
+          <Stat label="Photos" value={v.photos} />
+        </Statline>
+      </div>
+
+      <VisitLocation v={v} />
+
+      <Block title="Steps" count={v.acts.length}>
         {v.acts.length === 0 ? (
-          <p className="m-0 text-[11.5px] text-bz-text-soft">{t.plural} have no visit playbook.</p>
+          <p className="m-0 text-[11.5px] text-bz-text-soft">No steps on this visit.</p>
         ) : (
-          <ul className="m-0 flex list-none flex-col divide-y divide-bz-line-soft p-0">
-            {v.acts.map((a) => {
-              const act = ACTIVITIES.find((x) => x.id === a.activityId);
-              const open = v.state === "missed" || v.state === "skipped";
-              return (
-                <li key={a.activityId} className="flex items-start gap-3 py-2.5 first:pt-0 last:pb-0">
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[12.5px] text-bz-text">
-                      {act?.name}
-                      <span className="ml-2 text-[11px] text-bz-text-soft">{a.required ? "Required" : "Optional"}{a.geofence ? " · at the outlet" : ""}</span>
-                    </span>
-                    {a.result && <span className="mt-0.5 block text-[11px] text-bz-text-muted">{a.result}</span>}
+          <ul className="m-0 flex list-none flex-col gap-2 p-0">
+            {v.acts.map((a, i) => (
+              <li key={`${a.activityId}-${i}`} className="flex gap-2.5 text-[12px]">
+                <span className={cn("w-3 shrink-0 text-center", a.done ? "text-bz-pos-deep" : a.required ? "text-bz-red" : "text-bz-text-soft")} title={a.done ? "Done" : "Not done"}>
+                  {a.done ? "✓" : "–"}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="text-bz-text">{activityName(a.activityId)}</span>
+                  <span className="ml-1.5 text-[10.5px] text-bz-text-soft">
+                    {a.required ? "required" : "optional"}
+                    {a.geofence && " · at the shop"}
                   </span>
-                  {!open && (
-                    <Dot tone={a.done ? "good" : a.required ? "danger" : "off"} className="pt-0.5">
-                      {a.done ? "Done" : v.state === "in-progress" ? "Not yet" : a.required ? "Not done" : "Skipped"}
-                    </Dot>
-                  )}
-                </li>
-              );
-            })}
+                  {a.result && <span className="block text-[11.5px] text-bz-text-muted">{a.result}</span>}
+                </span>
+              </li>
+            ))}
           </ul>
         )}
       </Block>
 
-      <Block title="Order">
-        {hubOrder ? (
-          <button type="button" onClick={() => navigate(sfPath(`orders/${hubOrder.id}`))} className="flex w-full items-center gap-3 rounded-bz-md border border-bz-line-soft px-3 py-2.5 text-left hover:bg-bz-paper-warm">
-            <span className="min-w-0 flex-1">
-              <span className={cn("block text-[12.5px] font-medium text-bz-text", NUM)}>{hubOrder.id}</span>
-              <span className="block text-[11px] text-bz-text-soft">
-                {v.lines} lines · taken {dayTime(hubOrder.at)} · {hubOrder.soNo ? `sales order ${hubOrder.soNo}` : hubOrder.status === "review" ? "waiting for review" : hubOrder.status === "rejected" ? "rejected" : "ready to approve"}
-              </span>
-            </span>
-            <Money value={v.orderValue} />
-          </button>
-        ) : v.orderValue > 0 ? (
-          <p className="m-0 flex items-baseline justify-between text-[12.5px] text-bz-text">
-            <span>{v.lines} lines</span>
-            <Money value={v.orderValue} />
-          </p>
-        ) : (
-          <p className="m-0 text-[12px] text-bz-text-muted">{v.noOrderReason ? `No order — ${v.noOrderReason.toLowerCase()}.` : "No order on this visit."}</p>
-        )}
-      </Block>
-
-      <Block title="Photos" aside={v.photos ? `${v.photos}` : undefined}>
-        {v.photos ? (
-          <div className="flex flex-wrap gap-2">
-            {Array.from({ length: v.photos }).map((_, i) => (
-              <span key={i} className="flex size-16 items-center justify-center rounded-bz-md bg-bz-paper-warm text-bz-text-soft" title={`Photo ${i + 1} · geo-stamped`}>
-                <Camera size={14} />
-              </span>
+      {counts.length > 0 && (
+        <Block title="Stock on the shelf" count={counts.length}>
+          <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+            {counts.map(([pid, n]) => (
+              <li key={pid} className="flex items-baseline justify-between gap-3 text-[12px]">
+                <span className="min-w-0 truncate text-bz-text">{productById(pid).name}</span>
+                <span className={cn("shrink-0 text-bz-text-muted", NUM)}>
+                  {n} {productById(pid).unit}
+                </span>
+              </li>
             ))}
-          </div>
-        ) : (
-          <p className="m-0 text-[11.5px] text-bz-text-soft">No photos on this visit.</p>
-        )}
-      </Block>
+          </ul>
+        </Block>
+      )}
 
-      <HistoryNotes recordKey={`visit:${v.id}`} seed={visitHistory(v)} />
-    </SidePanel>
+      {o && (
+        <div className="border-b border-bz-line-soft">
+          <RelatedSection
+            rows={[{ no: o.id, kind: "Order", date: o.at.slice(0, 10), party: customerById(o.customerId)?.name ?? "", status: HUB_STATUS[o.status].label, tone: chipTone(HUB_STATUS[o.status].tone) }]}
+            onOpen={(no) => navigate(sfPath(`orders/${no}`))}
+          />
+        </div>
+      )}
+
+      <SfActivity ids={[v.id, ...(v.orderId ? [v.orderId] : [])]} />
+    </RecordShell>
+  );
+}
+
+/** Where the rep was: the check-in fix against the shop, its accuracy, and every reading taken on the visit. */
+function VisitLocation({ v }: { v: Visit }) {
+  const g = v.geofence;
+  const fs = fenceState(g);
+  const c = customerById(v.customerId);
+  const fix = g?.lat != null && g?.lng != null ? { lat: g.lat, lng: g.lng } : null;
+  const pings = pingsOfVisit(v.id);
+  let line: React.ReactNode;
+  if (!fs || !g) line = "Not checked in.";
+  else if (fs === "at") line = g.metres ? `At the shop, ${fmtDistance(g.metres)} from its saved location.` : fix ? "At the shop. Its location was saved from this check-in." : "At the shop.";
+  else if (fs === "away") line = <span className="text-bz-amber-ink">Away, {fmtDistance(g.metres ?? 0)} from the shop's saved location.</span>;
+  else if (fs === "unmeasured") line = c?.location && fix ? `The shop had no saved location then. It is ${fmtDistance(distanceMetres(fix, c.location))} from the location saved since.` : "The shop had no saved location to measure from.";
+  else if (fs === "manual") line = <span className="text-bz-amber-ink">No GPS. The rep said they were there.</span>;
+  else line = <span className="text-bz-amber-ink">No GPS fix, and the rep did not say they were at the shop.</span>;
+  return (
+    <Block title="Location" right={fix ? <MapLink p={fix} /> : undefined}>
+      <p className="m-0 text-[12px] text-bz-text">{line}</p>
+      {fix && (
+        <p className={cn("m-0 mt-1 text-[10.5px] text-bz-text-soft", NUM)}>
+          Checked in at {coordsText(fix)}
+          {g?.accuracy != null && ` · GPS ± ${g.accuracy} m`}
+        </p>
+      )}
+      {fix && <MapEmbed src={osmEmbedUrl(fix.lat, fix.lng)} title={`Map: where ${v.id} was checked in`} className="mt-3" />}
+      {pings.length > 0 && <PingList pings={pings} where={(p) => (c?.location ? `${fmtDistance(distanceMetres(p, c.location))} from the shop` : "shop has no location")} />}
+    </Block>
   );
 }
 
 // ── Routes ──────────────────────────────────────────────────────────────────
 
 export const FIELD_ROUTES = [
-  { path: "design/salesforce/today", Component: TodayPage },
-  { path: "design/salesforce/today/:repId", Component: TodayPage },
+  { path: "design/salesforce/today", Component: LivePage },
+  { path: "design/salesforce/today/:repId", Component: LivePage },
   { path: "design/salesforce/plan", Component: PlanPage },
+  { path: "design/salesforce/plan/:repId", Component: PlanPage },
   { path: "design/salesforce/visits", Component: VisitsPage },
-  { path: "design/salesforce/visits/:id", Component: VisitsPage },
+  { path: "design/salesforce/visits/:no", Component: VisitsPage },
 ];

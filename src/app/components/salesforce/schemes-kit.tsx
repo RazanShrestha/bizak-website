@@ -1,21 +1,19 @@
 import * as React from "react";
-import { cn } from "../ui/utils";
-import { NUM } from "../sales/bzw";
-import { createStore, useStore } from "../sales/store";
-import { ActivityList } from "../sales/record";
-import { NoteFoot } from "../sales/parts";
-import type { Comment, HistoryEvent } from "../sales/orders";
-import { CUSTOMER_TYPES, PRODUCTS, SF_NOW, SF_TODAY, TERRITORIES } from "./data";
-import type { Customer, Scheme, SchemeMechanic, SchemeStatus } from "./data";
+import { Block } from "../sales/record";
+import { SF_TODAY } from "./data";
+import type { Scheme, SchemeMechanic, SchemeStatus } from "./data";
 import { day, npr, productById } from "./engine";
 import type { CartLine } from "./engine";
+import { persistentStore } from "./persist";
+import { productsStore, typesStore } from "./store";
 
 // ════════════════════════════════════════════════════════════════════════════
-// SCHEMES · CLAIMS — shared words and the record foot
+// SCHEMES · CLAIMS — shared words
 //
 // A scheme is read as ONE plain sentence everywhere (list row, panel, builder,
-// claim check), so the sentence is written once, here. History + Notes is the
-// repo-wide record rule, drawn with the sales desk's own ActivityList/NoteFoot.
+// claim check), so the sentence is written once, here. Every name comes from
+// the live stores — a product or type the user created, renamed or deleted
+// shows as it is now.
 // ════════════════════════════════════════════════════════════════════════════
 
 export type MechanicKind = SchemeMechanic["kind"];
@@ -30,7 +28,7 @@ export const MECHANICS: { kind: MechanicKind; label: string; example: string; ap
   { kind: "display", label: "Display", example: "NPR 1,500 a month for a chiller display", applies: "claim" },
   { kind: "early-payment", label: "Early payment", example: "2% off when paid within 7 days", applies: "payment" },
 ];
-export const mechanicLabel = (k: MechanicKind) => MECHANICS.find((m) => m.kind === k)!.label;
+export const mechanicLabel = (k: MechanicKind) => MECHANICS.find((m) => m.kind === k)?.label ?? k;
 
 export const APPLIES_TEXT: Record<Scheme["applies"], string> = {
   order: "Applied on the order by the engine",
@@ -39,20 +37,23 @@ export const APPLIES_TEXT: Record<Scheme["applies"], string> = {
   payment: "Given when the invoice is paid",
 };
 
+/** A fresh rule of this kind, filled with the tenant's own first products (none yet = empty, the builder asks). */
 export function defaultMechanic(kind: MechanicKind): SchemeMechanic {
+  const ids = productsStore.get().map((p) => p.id);
+  const first = ids.slice(0, 1);
   switch (kind) {
     case "free-goods":
-      return { kind, buyItemIds: ["P-101"], buyQty: 10, getItemId: "same", getQty: 1 };
+      return { kind, buyItemIds: first, buyQty: 10, getItemId: "same", getQty: 1 };
     case "slab":
-      return { kind, itemIds: ["P-111", "P-112", "P-113"], slabs: [{ minQty: 50, pct: 3 }, { minQty: 100, pct: 5 }] };
+      return { kind, itemIds: first, slabs: [{ minQty: 50, pct: 3 }, { minQty: 100, pct: 5 }] };
     case "combo":
-      return { kind, needs: [{ itemIds: ["P-101"], qty: 5 }, { itemIds: ["P-111"], qty: 5 }], getItemId: "P-132", getQty: 1 };
+      return { kind, needs: [{ itemIds: first, qty: 5 }, { itemIds: ids.slice(1, 2), qty: 5 }], getItemId: ids[2] ?? ids[0] ?? "", getQty: 1 };
     case "invoice-value":
       return { kind, minValue: 100_000, pct: 2 };
     case "first-order":
       return { kind, pct: 5 };
     case "target-rebate":
-      return { kind, target: 3_000_000, pct: 3, period: "Oct – Dec 2026" };
+      return { kind, target: 3_000_000, pct: 3, period: "This quarter" };
     case "display":
       return { kind, amount: 1_500, per: "month" };
     case "early-payment":
@@ -62,24 +63,25 @@ export function defaultMechanic(kind: MechanicKind): SchemeMechanic {
 
 // ── Words ───────────────────────────────────────────────────────────────────
 
-const unitWord = (unit: string, n: number) => (unit === "case" && n !== 1 ? "cases" : unit);
+const unitWord = (unit: string, n: number) => (!unit ? (n === 1 ? "unit" : "units") : unit === "case" && n !== 1 ? "cases" : unit);
 
 /** "Himal Fresh Mango 1L", "any Crunchy", "Chau Chau Chicken 70g or Chau Chau Veg 70g", "3 products". */
 export function itemsText(ids: string[]): string {
   if (!ids.length) return "no product yet";
+  const products = productsStore.get();
   const set = new Set(ids);
-  const same = (list: string[]) => list.length === set.size && list.every((id) => set.has(id));
-  const brands = [...new Set(PRODUCTS.map((p) => p.brand))];
-  for (const b of brands) if (same(PRODUCTS.filter((p) => p.brand === b).map((p) => p.id))) return `any ${b}`;
-  const cats = [...new Set(PRODUCTS.map((p) => p.category))];
-  for (const c of cats) if (same(PRODUCTS.filter((p) => p.category === c).map((p) => p.id))) return `any ${c.toLowerCase()}`;
+  const same = (list: string[]) => list.length > 1 && list.length === set.size && list.every((id) => set.has(id));
+  const brands = [...new Set(products.map((p) => p.brand).filter(Boolean))];
+  for (const b of brands) if (same(products.filter((p) => p.brand === b).map((p) => p.id))) return `any ${b}`;
+  const cats = [...new Set(products.map((p) => p.category).filter(Boolean))];
+  for (const c of cats) if (same(products.filter((p) => p.category === c).map((p) => p.id))) return `any ${c.toLowerCase()}`;
   if (ids.length <= 2) return ids.map((id) => productById(id).name).join(" or ");
   const ps = ids.map(productById);
-  const oneBrand = ps.every((p) => p.brand === ps[0].brand);
+  const oneBrand = !!ps[0].brand && ps.every((p) => p.brand === ps[0].brand);
   return oneBrand ? `${ids.length} ${ps[0].brand} products` : `${ids.length} products`;
 }
 
-const unitOf = (ids: string[]) => (ids.length ? productById(ids[0]).unit : "unit");
+const unitOf = (ids: string[]) => (ids.length ? productById(ids[0]).unit : "");
 
 /** The scheme as one sentence a shop owner would understand. */
 export function ruleText(m: SchemeMechanic): string {
@@ -96,8 +98,8 @@ export function ruleText(m: SchemeMechanic): string {
     }
     case "combo": {
       const needs = m.needs.map((n) => `${n.qty} of ${itemsText(n.itemIds)}`).join(" and ");
-      const p = productById(m.getItemId);
-      return `Buy ${needs}, get ${m.getQty} ${unitWord(p.unit, m.getQty)} of ${p.name} free`;
+      const p = m.getItemId ? productById(m.getItemId) : null;
+      return `Buy ${needs}, get ${m.getQty} ${p ? `${unitWord(p.unit, m.getQty)} of ${p.name}` : "of a product"} free`;
     }
     case "invoice-value":
       return `${m.pct}% off any order over NPR ${npr(m.minValue)}`;
@@ -112,28 +114,15 @@ export function ruleText(m: SchemeMechanic): string {
   }
 }
 
-const typeName = (id: string) => CUSTOMER_TYPES.find((t) => t.id === id)?.plural ?? id;
-export const territoryName = (id: string) => TERRITORIES.find((t) => t.id === id)?.name ?? id;
+export const typeName = (id: string) => typesStore.get().find((t) => t.id === id)?.plural ?? "Deleted type";
 
-/** Who it's for, short: "Retailers, wholesalers · tier A · Pokhara". */
-export function audienceText(s: Pick<Scheme, "typeIds" | "tiers" | "territoryIds">): string {
+/** Who it's for, short: "Retailers, wholesalers · tier A". */
+export function audienceText(s: Pick<Scheme, "typeIds" | "tiers">): string {
   const parts: string[] = [];
   const types = s.typeIds.map(typeName);
   parts.push(!types.length ? "Every customer" : types.length > 2 ? `${types.slice(0, 2).join(", ")} +${types.length - 2}` : types.join(", "));
   if (s.tiers.length) parts.push(`tier ${s.tiers.join("/")}`);
-  if (s.territoryIds.length) parts.push(s.territoryIds.length > 2 ? `${s.territoryIds.length} territories` : s.territoryIds.map(territoryName).join(", "));
   return parts.join(" · ");
-}
-
-/** Is the customer inside one of the scheme's territories (or any of their parents)? The engine does not check this yet. */
-export function inTerritory(s: Pick<Scheme, "territoryIds">, c: Customer | undefined): boolean {
-  if (!s.territoryIds.length || !c) return true;
-  let t: string | null = c.territoryId;
-  while (t) {
-    if (s.territoryIds.includes(t)) return true;
-    t = TERRITORIES.find((x) => x.id === t)?.parentId ?? null;
-  }
-  return false;
 }
 
 /** The smallest cart that earns the scheme once — the simulator's starting cart and the claim check's "one qualifying order". */
@@ -166,70 +155,19 @@ export const periodText = (from: string, to: string) => {
 };
 
 /** Extras the Scheme type has no field for yet (see the report's proposed diff). */
-export const schemeExtrasStore = createStore<Record<string, { maxPerCustomer: number | null }>>({});
+export const schemeExtrasStore = persistentStore<Record<string, { maxPerCustomer: number | null }>>("growth.schemeExtras", {});
 
-// ── History + Notes ─────────────────────────────────────────────────────────
-// The sales desk's own timeline and note line (ActivityList, NoteFoot); only the
-// rows live here, keyed by subject: `scheme:SCH-021`, `claim:CL-551`. "who" is a
-// PEOPLE id — ActivityList names people by it.
-
-export const ME_ID = "EMP-101";
-const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-/** ActivityList sorts on "Sep 4, 14:10" — every stamp keeps that shape. */
-export function stamp(iso: string, time = "09:00") {
-  const [, m, d] = iso.slice(0, 10).split("-").map(Number);
-  return `${MON[m - 1]} ${d}, ${time}`;
-}
-export const nowStamp = () => stamp(SF_TODAY, SF_NOW);
 export const addDaysIso = (iso: string, n: number) => {
   const t = new Date(`${iso}T00:00:00Z`);
   t.setUTCDate(t.getUTCDate() + n);
   return t.toISOString().slice(0, 10);
 };
 
-type Note = Comment & { subject: string };
-type Change = HistoryEvent & { subject: string };
-export const growthNotesStore = createStore<Note[]>([
-  { id: "gn-1", subject: "scheme:SCH-021", authorId: "EMP-118", when: "Sep 2, 11:30", body: "Budget is in cases, not value. Top-up only after the Dashain review." },
-  { id: "gn-2", subject: "claim:CL-551", authorId: "EMP-101", when: "Sep 3, 09:15", body: "Asked Ramesh for the retailer-wise list — 42 looks high for Butwal." },
-]);
-export const growthChangesStore = createStore<Change[]>([]);
-
-let seq = 1;
-export function logEvent(subject: string, what: string) {
-  growthChangesStore.set((cs) => [...cs, { id: `gc-${seq++}`, subject, whoId: ME_ID, when: nowStamp(), what }]);
-}
-
-/** History (seeded from the record, then every change made here) and notes, interleaved. Sits in a SidePanel body. */
-export function RecordActivity({ subject, seed }: { subject: string; seed: HistoryEvent[] }) {
-  const notes = useStore(growthNotesStore);
-  const changes = useStore(growthChangesStore);
-  return (
-    <div className="-mx-6 mt-8 border-t border-bz-line-soft px-1">
-      <ActivityList comments={notes.filter((n) => n.subject === subject)} history={[...seed, ...changes.filter((c) => c.subject === subject)]} />
-    </div>
-  );
-}
-
-/** The note line — a SidePanel `foot`. */
-export function RecordNoteFoot({ subject }: { subject: string }) {
-  return (
-    <div className="-mx-6 -my-3 [&>div]:border-t-0">
-      <NoteFoot onSend={(n) => growthNotesStore.set((ns) => [...ns, { id: `gn-${Date.now().toString(36)}-${seq++}`, subject, authorId: ME_ID, when: nowStamp(), body: n.body, title: n.title, direction: n.direction }])} />
-    </div>
-  );
-}
-
-/** A section inside a panel: 13px title, content, space — no box. */
+/** A band inside a record panel — the bzw `Block` under the name the claims panel already imports. */
 export function PanelSection({ title, count, children, action }: { title: string; count?: number; children: React.ReactNode; action?: React.ReactNode }) {
   return (
-    <section className="mt-8 border-t border-bz-line-soft pt-5">
-      <div className="mb-3 flex items-baseline gap-2">
-        <h3 className="m-0 text-[13px] font-semibold text-bz-text">{title}</h3>
-        {count !== undefined && <span className={cn("text-[11.5px] text-bz-text-soft", NUM)}>{count}</span>}
-        {action && <div className="ml-auto">{action}</div>}
-      </div>
+    <Block title={title} count={count} right={action}>
       {children}
-    </section>
+    </Block>
   );
 }

@@ -1,11 +1,13 @@
 import * as React from "react";
-import { Check, Search, X } from "lucide-react";
+import { Check, Search, Store, X } from "lucide-react";
+import { Link } from "react-router";
 import { cn } from "../ui/utils";
-import { BTN, GHOST, INPUT, LABEL, NUM, PLAIN_BTN, Portal, TEXTAREA } from "../sales/bzw";
+import { BTN, GHOST, INPUT, LABEL, NUM, PLAIN_BTN, Portal } from "../sales/bzw";
 import { dayTime } from "../salesforce/engine";
-import { useStore } from "../sales/store";
-import { STEPS, addNote, notesStore } from "./portal";
-import type { Stage } from "./portal";
+import type { Evaluation } from "../salesforce/engine";
+import { Money, Progress } from "../salesforce/ui";
+import { dpPath, forShopMark, useDealer } from "./portal";
+import type { DealerOrder, Step } from "./portal";
 
 // ════════════════════════════════════════════════════════════════════════════
 // DEALER PORTAL · KIT — the portal's own pieces, built on the bzw tokens
@@ -16,8 +18,8 @@ import type { Stage } from "./portal";
 // the company side does not — a qty stepper, a bottom sheet, an order tracker.
 // ════════════════════════════════════════════════════════════════════════════
 
-/** The one commit on a surface — lime in both themes (the portal is the tenant's brand, not the ERP). */
-export const LIME = cn(BTN, "h-10 bg-bz-fire px-4 text-[12.5px] text-bz-olive hover:opacity-90");
+/** The one commit on a surface — bzw's primary (dark on light, lime on dark) at the portal's touch height. */
+export const LIME = cn(BTN, "h-10 px-4 text-[12.5px]");
 export const LIME_LG = cn(LIME, "h-11 px-5 text-[13px]");
 export const SOFT = cn(GHOST, "h-10 px-3.5 text-[12.5px]");
 
@@ -64,7 +66,8 @@ export function QtyStepper({ value, onChange, unit, compact }: { value: number; 
 /** Pill filters at touch size. */
 export function Pills<T extends string>({ value, onChange, options }: { value: T; onChange: (v: T) => void; options: { value: T; label: string; count?: number }[] }) {
   return (
-    <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:px-0" role="tablist">
+    <div className="-mx-4 overflow-x-auto px-4 pb-1 [scrollbar-width:none] md:mx-0 md:px-0">
+      <div className="inline-flex items-center gap-0.5 rounded-[11px] border border-bz-line-soft bg-bz-paper p-[3px]" role="tablist">
       {options.map((o) => {
         const on = o.value === value;
         return (
@@ -74,13 +77,14 @@ export function Pills<T extends string>({ value, onChange, options }: { value: T
             role="tab"
             aria-selected={on}
             onClick={() => onChange(o.value)}
-            className={cn("inline-flex h-10 shrink-0 items-center gap-1.5 rounded-bz-pill px-4 text-[12.5px] transition-colors md:h-9", on ? "bg-bz-text font-semibold text-bz-surface" : "border border-bz-line-soft text-bz-text-muted hover:bg-bz-paper-warm hover:text-bz-text")}
+            className={cn("inline-flex h-9 shrink-0 items-center gap-1.5 rounded-[8px] px-3.5 text-[12.5px] transition-colors md:h-8", on ? "bg-bz-paper-warm font-semibold text-bz-text" : "font-medium text-bz-text-muted hover:text-bz-text")}
           >
             {o.label}
-            {o.count !== undefined && o.count > 0 && <span className={cn("text-[11px]", NUM, on ? "opacity-70" : "text-bz-text-soft")}>{o.count}</span>}
+            {o.count !== undefined && o.count > 0 && <span className={cn("text-[11px]", NUM, on ? "text-bz-text-muted" : "text-bz-text-soft")}>{o.count}</span>}
           </button>
         );
       })}
+      </div>
     </div>
   );
 }
@@ -139,17 +143,16 @@ export function Drawer({ open, onClose, eyebrow, title, children, foot }: { open
   );
 }
 
-/** Placed → Approved → Packed → On the way → Delivered. Across on a wide screen, down on a phone. */
-export function Tracker({ stage, steps, declined, waiting }: { stage: Stage; steps: (string | null)[]; declined?: boolean; waiting?: boolean }) {
+/** Placed → Approved → Delivered. Across on a wide screen, down on a phone. */
+export function Tracker({ steps, reached, declined, waiting }: { steps: Step[]; reached: number; declined?: boolean; waiting?: boolean }) {
   return (
     <ol className="m-0 flex list-none flex-col gap-0 p-0 md:flex-row">
-      {STEPS.map((label, i) => {
-        const done = !declined && i <= stage;
-        const current = !declined && i === stage;
-        const at = steps[i];
+      {steps.map((s, i) => {
+        const done = !declined && i <= reached;
+        const current = !declined && i === reached;
         return (
-          <li key={label} className="relative flex gap-3 pb-5 last:pb-0 md:flex-1 md:flex-col md:gap-2 md:pb-0">
-            {i < STEPS.length - 1 && <span aria-hidden className={cn("absolute left-[11px] top-6 h-[calc(100%-24px)] w-px md:left-6 md:top-[11px] md:h-px md:w-[calc(100%-24px)]", !declined && i < stage ? "bg-bz-pos-deep" : "bg-bz-line")} />}
+          <li key={s.label} className="relative flex gap-3 pb-5 last:pb-0 md:flex-1 md:flex-col md:gap-2 md:pb-0">
+            {i < steps.length - 1 && <span aria-hidden className={cn("absolute left-[11px] top-6 h-[calc(100%-24px)] w-px md:left-6 md:top-[11px] md:h-px md:w-[calc(100%-24px)]", !declined && i < reached ? "bg-bz-pos-deep" : "bg-bz-line")} />}
             <span
               className={cn(
                 "relative z-[1] flex size-6 shrink-0 items-center justify-center rounded-bz-pill border text-[10px] font-semibold",
@@ -161,8 +164,8 @@ export function Tracker({ stage, steps, declined, waiting }: { stage: Stage; ste
               {done && !current ? <Check size={12} strokeWidth={3} /> : i + 1}
             </span>
             <span className="min-w-0 md:pr-3">
-              <span className={cn("block text-[12.5px]", done ? "font-semibold text-bz-text" : "text-bz-text-muted")}>{current && waiting ? "Waiting for approval" : label}</span>
-              <span className={cn("block text-[11px] text-bz-text-soft", NUM)}>{at && done ? dayTime(at) : " "}</span>
+              <span className={cn("block text-[12.5px]", done ? "font-semibold text-bz-text" : "text-bz-text-muted")}>{current && waiting ? "Waiting for approval" : s.label}</span>
+              <span className={cn("block text-[11px] text-bz-text-soft", NUM)}>{s.at && done ? dayTime(s.at) : " "}</span>
             </span>
           </li>
         );
@@ -172,68 +175,61 @@ export function Tracker({ stage, steps, declined, waiting }: { stage: Stage; ste
 }
 
 /** A thin stepped line for a list row: how far along an order is. */
-export function MiniTrack({ stage, declined }: { stage: Stage; declined?: boolean }) {
+export function MiniTrack({ steps, reached, declined }: { steps: number; reached: number; declined?: boolean }) {
   return (
     <span className="inline-flex items-center gap-0.5" aria-hidden>
-      {STEPS.map((s, i) => (
-        <span key={s} className={cn("h-1 w-3.5 rounded-bz-pill", declined ? "bg-bz-red-mark/60" : i <= stage ? "bg-bz-pos-deep" : "bg-bz-line")} />
+      {Array.from({ length: steps }).map((_, i) => (
+        <span key={i} className={cn("h-1 w-3.5 rounded-bz-pill", declined ? "bg-bz-red-mark/60" : i <= reached ? "bg-bz-pos-deep" : "bg-bz-line")} />
       ))}
     </span>
   );
 }
 
-/**
- * History and Notes at the foot of every record. The app's shared reader (`<bzw-record-history>`) is keyed to
- * employees; a portal user is not one, so this is the dealer's quiet local copy of the same idea.
- */
-export function RecordFoot({ recordId, history, stacked }: { recordId: string; history: { when: string; who: string; what: string }[]; /** One column — inside a sheet. */ stacked?: boolean }) {
-  const notes = useStore(notesStore)[recordId] ?? [];
-  const [draft, setDraft] = React.useState("");
-  const sorted = [...history].sort((a, b) => b.when.localeCompare(a.when));
+/** "For Laxmi Store · ordered by your rep Pooja Gurung" on an order our rep took at a shop the dealer serves. */
+export function ShopMark({ o, className }: { o: DealerOrder; className?: string }) {
+  const text = forShopMark(o);
+  if (!text) return null;
   return (
-    <div className={cn("grid gap-10 border-t border-bz-line-soft", stacked ? "mt-8 pt-6" : "mt-12 pt-8 md:grid-cols-2")}>
-      <section>
-        <h2 className="m-0 mb-3 text-[13px] font-semibold text-bz-text">History</h2>
-        <ol className="m-0 flex list-none flex-col gap-3 p-0">
-          {sorted.map((h, i) => (
-            <li key={i} className="flex gap-2.5 text-[11.5px]">
-              <span className="mt-1.5 size-1.5 shrink-0 rounded-bz-pill bg-bz-line" />
-              <span className="min-w-0 flex-1 text-bz-text-muted">
-                <span className="font-medium text-bz-text">{h.who}</span> {h.what}
-                <span className={cn("block text-[10.5px] text-bz-text-soft", NUM)}>{dayTime(h.when)}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-      </section>
-      <section>
-        <h2 className="m-0 mb-3 text-[13px] font-semibold text-bz-text">
-          Notes {notes.length > 0 && <span className={cn("ml-1 text-[11.5px] font-normal text-bz-text-soft", NUM)}>{notes.length}</span>}
-        </h2>
-        {notes.length === 0 && <p className="m-0 mb-3 text-[11.5px] text-bz-text-soft">No notes yet. Bizak Nepal sees what you write here.</p>}
-        <ol className="m-0 mb-3 flex list-none flex-col gap-3 p-0">
-          {notes.map((n) => (
-            <li key={n.id} className="text-[12px]">
-              <span className="text-[11px] text-bz-text-soft">
-                <span className="font-semibold text-bz-text">{n.who}</span> · {dayTime(n.when)}
-              </span>
-              <p className="m-0 mt-0.5 whitespace-pre-wrap leading-relaxed text-bz-text">{n.body}</p>
-            </li>
-          ))}
-        </ol>
-        <textarea value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Write a note for Bizak Nepal" className={cn(TEXTAREA, "min-h-[64px] bg-bz-surface")} aria-label="New note" />
-        <button
-          type="button"
-          disabled={!draft.trim()}
-          onClick={() => {
-            addNote(recordId, draft.trim());
-            setDraft("");
-          }}
-          className={cn(SOFT, "mt-2")}
-        >
-          Add note
-        </button>
-      </section>
+    <span className={cn("flex min-w-0 items-center gap-1.5 text-[11px] font-medium text-bz-text-muted", className)}>
+      <Store size={12} className="shrink-0 text-bz-text-soft" aria-hidden />
+      <span className="truncate">{text}</span>
+    </span>
+  );
+}
+
+/** "You can spend … / left after this order …" — the engine's credit check for a cart or an estimate, in words. */
+export function CreditLine({ ev }: { ev: Evaluation }) {
+  const { company } = useDealer();
+  const c = ev.credit;
+  if (c.limit === null) return <p className="m-0 text-[11.5px] text-bz-text-muted">No credit limit on your account.</p>;
+  if (c.limit === 0) return <p className="m-0 text-[11.5px] text-bz-text-muted">Your account is cash only — {company} approves each order.</p>;
+  const available = c.available ?? 0;
+  const after = c.after ?? 0;
+  const used = available > 0 ? (ev.total / available) * 100 : 100;
+  return (
+    <div>
+      <div className={cn("mb-1.5 flex items-baseline justify-between text-[11.5px]", NUM)}>
+        <span className="text-bz-text-muted">You can spend</span>
+        <Money value={available} className="text-bz-text" />
+      </div>
+      <Progress pct={used} tone={after < 0 ? "danger" : used > 80 ? "warn" : "good"} />
+      <div className={cn("mt-1.5 flex items-baseline justify-between text-[11.5px]", NUM)}>
+        <span className="text-bz-text-muted">Left after this order</span>
+        <Money value={after} className={after < 0 ? "font-semibold text-bz-red" : "text-bz-text"} />
+      </div>
+    </div>
+  );
+}
+
+/** A page this dealer's settings switch off — reached by an old link. */
+export function Unavailable({ what }: { what: string }) {
+  return (
+    <div className="mx-auto max-w-[520px] py-16 text-center">
+      <p className="m-0 text-[13px] font-semibold text-bz-text">{what} is not open for your account.</p>
+      <p className="m-0 mt-1 text-[12px] text-bz-text-muted">Ask your sales rep if you need it.</p>
+      <Link to={dpPath()} className={cn(SOFT, "mt-5")}>
+        Back to home
+      </Link>
     </div>
   );
 }

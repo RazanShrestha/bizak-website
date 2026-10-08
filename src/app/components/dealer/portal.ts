@@ -1,185 +1,310 @@
-import { createStore, useStore } from "../sales/store";
+import * as React from "react";
+import { createStore, ordersStore, useStore } from "../sales/store";
 import type { ToastMsg } from "../sales/bzw";
-import { DEALER_ID, DEALER_LEDGER, SF_NOW, SF_TODAY } from "../salesforce/data";
-import type { Customer, HubOrder, HubStatus, LedgerRow, Scheme } from "../salesforce/data";
-import { customerById, day, daysUntil, eligible, evaluate, npr, productById } from "../salesforce/engine";
+import { latestVersion, offerExpired, offerOf } from "../sales/estimate-offer";
+import { estimatesStore } from "../sales/flow";
+import type { Estimate } from "../sales/flow";
+import { progressOf } from "../sales/orders";
+import type { ChildDoc, Order } from "../sales/orders";
+import { SF_NOW, SF_TODAY } from "../salesforce/data";
+import type { Customer, CustomerType, HubOrder, HubStatus, LedgerEntry, LogRow, Opportunity, PayMethod, PortalSettings, Rep, Scheme } from "../salesforce/data";
+import { accountOf, creditCheck, day, eligible, evaluate, isCharge, npr, productById, typeOf } from "../salesforce/engine";
 import type { CartLine, Evaluation } from "../salesforce/engine";
-import { cartStore, customersStore, hubStore, schemesStore } from "../salesforce/store";
-import { approveHubOrder, openPendingSalesOrder } from "../salesforce/orders-parts";
+import { persistentStore } from "../salesforce/persist";
+import { LEGACY_ORDER_IDS, cartsStore, customersStore, historyStore, hubStore, ledgerStore, opportunitiesStore, portalSessionStore, portalSettingsStore, repsStore, schemesStore, typesStore } from "../salesforce/store";
+import { logEvent } from "../salesforce/records";
+import { takeReceipt } from "../salesforce/receipts";
+import type { Line } from "../salesforce/receipts";
+import { approveHubOrder, placeHubOrder } from "../salesforce/orders-parts";
+import { estimateOpen, estimatesOf, sentTo } from "../salesforce/estimates";
 
 // ════════════════════════════════════════════════════════════════════════════
-// DEALER PORTAL · STATE — what only the portal keeps
+// DEALER PORTAL · STATE
 //
-// Orders, claims, branding and RSVPs go to the SHARED stores (salesforce/store)
-// so the company sees them. What stays here is the dealer's side of things the
-// seed does not carry: its older, already-delivered orders, payments it has
-// recorded, quotation requests, notes, and the price snapshot each order got.
+// The portal owns almost nothing: orders, price requests, claims and payments all
+// go to the SHARED stores (salesforce/store), so the company sees them the moment
+// they are sent. What is kept here is the dealer's own side — the cart draft, the
+// price snapshot each order got, its event RSVPs, its stock notebook — each a
+// persistentStore under "portal.*", keyed by the dealer where it is per dealer.
 // ════════════════════════════════════════════════════════════════════════════
 
-export const COMPANY = "Bizak Nepal";
 export const dpPath = (p = "") => `/design/dealer${p ? `/${p}` : ""}`;
-export const dealer = () => customerById(DEALER_ID)!;
+export const CUSTOMERS_SETUP_PATH = "/design/salesforce/customers";
 
-// ── Who is signed in ────────────────────────────────────────────────────────
+export const addDays = (iso: string, n: number) => new Date(Date.parse(`${iso.slice(0, 10)}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+export const daysBetween = (from: string, to: string) => Math.round((Date.parse(to.slice(0, 10)) - Date.parse(from.slice(0, 10))) / 86_400_000);
+export const stamp = () => `${SF_TODAY} ${SF_NOW}`;
+export const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-export const sessionStore = createStore<{ userIndex: number }>({ userIndex: 0 });
+// ── Brand ───────────────────────────────────────────────────────────────────
 
-export function usePortalUser() {
-  const { userIndex } = useStore(sessionStore);
-  useStore(customersStore);
-  const users = dealer().portalUsers;
-  const u = users[userIndex] ?? users[0];
-  return { ...u, first: u.name.split(" ")[0], initials: initialsOf(u.name), index: userIndex, all: users };
+/** "Bizak Nepal · Dealer portal" → "Bizak Nepal". A brand that is only "Dealer portal" names no company. */
+export function companyOf(brand: string) {
+  const first = brand.split("·")[0].trim();
+  return !first || first.toLowerCase() === "dealer portal" ? "the company" : first;
+}
+/** The top bar's two lines: the tenant's name, then what this is. */
+export function brandParts(brand: string) {
+  const [name, ...rest] = brand.split("·").map((x) => x.trim());
+  const plain = !name || name.toLowerCase() === "dealer portal";
+  return { name: plain ? "Dealer portal" : name, sub: rest.join(" · ") || (plain ? "" : "Dealer portal") };
 }
 export const initialsOf = (name: string) =>
   name
-    .split(" ")
-    .filter(Boolean)
+    .split(/\s+/)
+    .filter((w) => /^[A-Za-z0-9]/.test(w))
     .map((w) => w[0])
     .join("")
     .slice(0, 2)
-    .toUpperCase();
-export const portalUserName = () => {
-  const users = dealer().portalUsers;
-  return (users[sessionStore.get().userIndex] ?? users[0]).name;
+    .toUpperCase() || "DP";
+
+// ── Who is signed in ────────────────────────────────────────────────────────
+
+export type PortalUser = Customer["portalUsers"][number];
+export type DealerSession = {
+  c: Customer;
+  type: CustomerType;
+  user: PortalUser;
+  userName: string;
+  first: string;
+  settings: PortalSettings;
+  /** The tenant's name for copy: "Bizak Nepal will deliver". */
+  company: string;
 };
+
+/** A customer can use the portal when its type opens the dealer portal and someone has been invited. */
+export const qualifies = (c: Customer, types: CustomerType[]) => types.find((t) => t.id === c.typeId)?.portal === "dealer" && c.portalUsers.length > 0;
+
+/** The signed-in dealer, or null when nobody is signed in or the customer, its type or the user is gone. */
+export function useSessionOrNull(): DealerSession | null {
+  const s = useStore(portalSessionStore);
+  const customers = useStore(customersStore);
+  const types = useStore(typesStore);
+  const settings = useStore(portalSettingsStore);
+  return React.useMemo(() => {
+    const c = customers.find((x) => x.id === s.customerId);
+    if (!c || !qualifies(c, types)) return null;
+    const user = c.portalUsers.find((u) => u.name === s.userName);
+    if (!user) return null;
+    return { c, type: typeOf(c), user, userName: user.name, first: user.name.split(" ")[0], settings, company: companyOf(settings.brand) };
+  }, [s, customers, types, settings]);
+}
+
+export const DealerContext = React.createContext<DealerSession | null>(null);
+
+/** Only pages rendered inside DealerShell call this — the shell shows the sign-in screen when there is no session. */
+export function useDealer(): DealerSession {
+  const s = React.useContext(DealerContext);
+  if (!s) throw new Error("useDealer() outside DealerShell");
+  return s;
+}
+
+export function signIn(customerId: string, userName: string) {
+  customersStore.set((cs) => cs.map((c) => (c.id === customerId ? { ...c, portalUsers: c.portalUsers.map((u) => (u.name === userName ? { ...u, lastSeen: SF_TODAY } : u)) } : c)));
+  portalSessionStore.set(() => ({ customerId, userName }));
+}
+export const signOut = () => portalSessionStore.set(() => ({ customerId: null, userName: null }));
 
 // ── Toast (the shell shows it, so it survives a navigation) ─────────────────
 
 export const toastStore = createStore<ToastMsg | null>(null);
 export const notify = (text: string, kind: ToastMsg["kind"] = "success") => toastStore.set(() => ({ id: Date.now(), kind, text }));
 
-// ── Numbering ───────────────────────────────────────────────────────────────
+// ── Cart and order draft, per dealer ────────────────────────────────────────
 
-export function nextNo(ids: (string | null | undefined)[], prefix: string, pad = 0) {
-  const n = Math.max(0, ...ids.filter((i): i is string => !!i && i.startsWith(prefix)).map((i) => Number(i.slice(prefix.length)) || 0)) + 1;
-  return prefix + String(n).padStart(pad, "0");
+const NO_LINES: CartLine[] = [];
+export function useCart(customerId: string): CartLine[] {
+  return useStore(cartsStore)[customerId] ?? NO_LINES;
+}
+const writeCart = (customerId: string, fn: (lines: CartLine[]) => CartLine[]) => cartsStore.set((cs) => ({ ...cs, [customerId]: fn(cs[customerId] ?? []) }));
+
+export function setQty(customerId: string, productId: string, qty: number) {
+  writeCart(customerId, (c) => {
+    const q = Math.max(0, Math.round(qty));
+    if (q === 0) return c.filter((l) => l.productId !== productId);
+    return c.some((l) => l.productId === productId) ? c.map((l) => (l.productId === productId ? { ...l, qty: q } : l)) : [...c, { productId, qty: q }];
+  });
+}
+export function addToCart(customerId: string, lines: { productId: string; qty: number }[]) {
+  writeCart(customerId, (c) => {
+    const next = c.map((l) => ({ ...l }));
+    for (const l of lines.filter((x) => x.qty > 0)) {
+      const hit = next.find((x) => x.productId === l.productId);
+      if (hit) hit.qty += l.qty;
+      else next.push({ productId: l.productId, qty: l.qty });
+    }
+    return next;
+  });
 }
 
-export const addDays = (iso: string, n: number) => new Date(Date.parse(`${iso}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+// A cart line never carries a price of its own: an agreed price reaches an order only through an accepted estimate
+// (decision #27). Carts saved while "accept a quotation" still filled the cart go back to the dealer's usual price.
+(function dropCartPrices() {
+  if (!Object.values(cartsStore.get()).some((ls) => ls.some((l) => l.price != null))) return;
+  cartsStore.set((cs) => Object.fromEntries(Object.entries(cs).map(([id, ls]) => [id, ls.map((l) => ({ productId: l.productId, qty: l.qty }))])));
+})();
 
-// ── The dealer's older orders (already sales orders — delivered or on the way) ─
+/** The products an order is for — not its charges, nor the free goods agreed on its estimate (a fixed line at 0). */
+export const boughtLines = (lines: CartLine[]) => lines.filter((l) => l.qty > 0 && !isCharge(l.productId) && !(l.fixed && l.price === 0)).map((l) => ({ productId: l.productId, qty: l.qty }));
 
-export type Stage = 0 | 1 | 2 | 3 | 4;
-export const STEPS = ["Placed", "Approved", "Packed", "On the way", "Delivered"] as const;
+export type Draft = { deliverBy: string; note: string };
+const draftsStore = persistentStore<Record<string, Draft>>("portal.drafts", {});
+const freshDraft = (): Draft => ({ deliverBy: addDays(SF_TODAY, 3), note: "" });
+export function useDraft(customerId: string): Draft {
+  const d = useStore(draftsStore)[customerId];
+  if (!d) return freshDraft();
+  // A draft saved days ago may ask for a date that has passed.
+  return d.deliverBy > SF_TODAY ? d : { ...d, deliverBy: addDays(SF_TODAY, 3) };
+}
+export const setDraft = (customerId: string, patch: Partial<Draft>) => draftsStore.set((ds) => ({ ...ds, [customerId]: { ...(ds[customerId] ?? freshDraft()), ...patch } }));
 
-type PastOrder = {
-  id: string;
-  at: string;
-  byName: string;
-  soNo: string;
-  lines: CartLine[];
-  stage: Stage;
-  /** When each step happened — index = STEPS index. */
-  steps: (string | null)[];
-  invoiceNo: string | null;
-  deliveryNo: string | null;
-  deliverBy: string;
-  vehicle?: string;
-  driver?: string;
-  eta?: string;
-  note: string;
+// ── Orders: the hub orders of this dealer, and where each one is ────────────
+
+/** What the portal keeps about an order it sent: the date asked for and the price snapshot it got. */
+type OrderMeta = { deliverBy: string | null; snapshot: Evaluation };
+const orderMetaStore = persistentStore<Record<string, OrderMeta>>("portal.orders", {});
+// An order saved before decision #31 was kept under a number of its own; it took its sales order's on load (store.ts).
+if (Object.keys(orderMetaStore.get()).some((id) => LEGACY_ORDER_IDS[id])) orderMetaStore.set((m) => Object.fromEntries(Object.entries(m).map(([id, meta]) => [LEGACY_ORDER_IDS[id] ?? id, meta])));
+
+const samePaidLines = (ev: Evaluation, lines: CartLine[]) => {
+  const paid = ev.lines.filter((l) => !l.free);
+  return paid.length === lines.filter((l) => l.qty > 0).length && paid.every((l) => lines.some((x) => x.productId === l.product.id && x.qty === l.qty));
 };
-
-const PAST: PastOrder[] = [
-  { id: "ORD-2196", at: "2026-09-03 10:12", byName: "Kiran Thapa", soNo: "SO-1084", lines: [{ productId: "P-141", qty: 150 }, { productId: "P-142", qty: 60 }, { productId: "P-151", qty: 40 }], stage: 2, steps: ["2026-09-03 10:12", "2026-09-03 11:40", "2026-09-04 09:15", null, null], invoiceNo: null, deliveryNo: null, deliverBy: "2026-09-06", note: "" },
-  { id: "ORD-2186", at: "2026-08-31 16:05", byName: "Kiran Thapa", soNo: "SO-1079", lines: [{ productId: "P-101", qty: 50 }, { productId: "P-111", qty: 60 }, { productId: "P-121", qty: 20 }, { productId: "P-131", qty: 4 }], stage: 3, steps: ["2026-08-31 16:05", "2026-09-01 09:30", "2026-09-02 15:10", "2026-09-03 08:30", null], invoiceNo: "INV-8831", deliveryNo: "DN-0412", deliverBy: "2026-09-05", vehicle: "Lu 1 Kha 4521", driver: "Hari B.K. · 9847012345", eta: "5 Sep, before noon", note: "Unload at the back gate." },
-  { id: "ORD-2171", at: "2026-08-18 12:20", byName: "Ramesh Adhikari", soNo: "SO-1071", lines: [{ productId: "P-101", qty: 40 }, { productId: "P-102", qty: 20 }, { productId: "P-111", qty: 50 }, { productId: "P-141", qty: 120 }], stage: 4, steps: ["2026-08-18 12:20", "2026-08-18 15:05", "2026-08-19 11:00", "2026-08-20 07:45", "2026-08-21 13:20"], invoiceNo: "INV-8790", deliveryNo: "DN-0377", deliverBy: "2026-08-22", note: "" },
-  { id: "ORD-2148", at: "2026-08-05 15:40", byName: "Kiran Thapa", soNo: "SO-1062", lines: [{ productId: "P-101", qty: 60 }, { productId: "P-111", qty: 80 }, { productId: "P-121", qty: 30 }, { productId: "P-131", qty: 6 }, { productId: "P-151", qty: 40 }], stage: 4, steps: ["2026-08-05 15:40", "2026-08-05 17:10", "2026-08-06 10:30", "2026-08-07 08:00", "2026-08-08 12:45"], invoiceNo: "INV-8744", deliveryNo: "DN-0331", deliverBy: "2026-08-09", note: "" },
-  { id: "ORD-2117", at: "2026-07-21 11:05", byName: "Ramesh Adhikari", soNo: "SO-1058", lines: [{ productId: "P-101", qty: 45 }, { productId: "P-112", qty: 30 }, { productId: "P-121", qty: 25 }, { productId: "P-141", qty: 100 }], stage: 4, steps: ["2026-07-21 11:05", "2026-07-21 14:30", "2026-07-22 10:00", "2026-07-23 07:30", "2026-07-24 11:15"], invoiceNo: "INV-8702", deliveryNo: "DN-0298", deliverBy: "2026-07-25", note: "" },
-];
-
-/** What the portal keeps about an order it sent: the delivery date asked for and the price snapshot it got. */
-type OrderMeta = { deliverBy: string | null; quoteId: string | null; snapshot: Evaluation };
-export const orderMetaStore = createStore<Record<string, OrderMeta>>({});
-
-// A document keeps the schemes it got (blueprint §2 "snapshot, never recompute") — a seeded order with no
-// snapshot is priced once, at its own date, and then held.
 const heldSnapshots = new Map<string, Evaluation>();
-export function snapshotOf(id: string, lines: CartLine[], at: string): Evaluation {
-  const kept = orderMetaStore.get()[id]?.snapshot ?? heldSnapshots.get(id);
-  if (kept) return kept;
-  const ev = evaluate(DEALER_ID, lines, schemesStore.get(), { date: at.slice(0, 10) });
-  heldSnapshots.set(id, ev);
+/**
+ * A document keeps the prices and schemes it got (blueprint §2 "snapshot, never recompute"). An order sent from
+ * the portal carries its snapshot; any other order — or one whose quantities the company changed — is priced
+ * once at its own date and held.
+ */
+export function snapshotOf(o: HubOrder): Evaluation {
+  const kept = orderMetaStore.get()[o.id]?.snapshot;
+  if (kept && samePaidLines(kept, o.lines)) return kept;
+  const key = `${o.id}|${JSON.stringify(o.lines)}`;
+  const held = heldSnapshots.get(key);
+  if (held) return held;
+  const ev = evaluate(o.customerId, o.lines, schemesStore.get(), { date: o.at.slice(0, 10) });
+  heldSnapshots.set(key, ev);
   return ev;
 }
 
+export type Tone = "good" | "warn" | "danger" | "neutral" | "info" | "off";
+export type Step = { label: string; at: string | null };
 export type DealerOrder = {
+  hub: HubOrder;
   id: string;
   at: string;
   byName: string;
   lines: CartLine[];
   note: string;
-  hubStatus: HubStatus | null;
-  stage: Stage;
+  status: HubStatus;
+  /** The order as the sales desk holds it — the same record, under the same number — once approved. */
+  so: Order | null;
+  label: string;
+  tone: Tone;
+  /** One line on where it is. */
+  line: string;
+  steps: Step[];
+  /** Index of the step reached (−1 when not accepted). */
+  reached: number;
+  waiting: boolean;
   declined: boolean;
-  reason: string | null;
-  soNo: string | null;
-  invoiceNo: string | null;
-  deliveryNo: string | null;
-  steps: (string | null)[];
+  delivered: boolean;
+  open: boolean;
+  deliveries: ChildDoc[];
+  invoices: ChildDoc[];
   deliverBy: string | null;
-  quoteId: string | null;
-  vehicle?: string;
-  driver?: string;
-  eta?: string;
+  /**
+   * The shop our rep took this order at, when it is billed to this dealer to supply (owner decision #26). It is
+   * still the dealer's own purchase; the name falls back when the shop was deleted.
+   */
+  forShop: { id: string; name: string } | null;
+  /** Who placed it: the rep's current name, else the name stamped on the order. */
+  repName: string;
 };
 
-function fromHub(o: HubOrder, meta: OrderMeta | undefined): DealerOrder {
-  // The hub knows placed / approved / rejected. Packing and dispatch happen later on the sales desk, so a
-  // fresh portal order stops at Approved until the warehouse moves it.
-  const stage: Stage = o.status === "approved" ? 1 : 0;
+/** "For Laxmi Store · ordered by your rep Pooja Gurung" — null for the dealer's own orders. */
+export const forShopMark = (o: DealerOrder) => (o.forShop ? `For ${o.forShop.name} · ordered by your rep ${o.repName}` : null);
+
+function toDealerOrder(o: HubOrder, meta: OrderMeta | undefined, sales: Order[], history: Record<string, LogRow[]>, company: string, customers: Customer[], reps: Rep[]): DealerOrder {
+  const found = sales.find((x) => x.no === o.id && x.customerId === o.customerId);
+  const so = o.status === "approved" && found && found.approval.state !== "pending" && found.approval.state !== "rejected" ? found : null;
+  const live = (d: ChildDoc) => d.state === "approved" && !d.cancelled;
+  const deliveries = so ? so.docs.filter((d) => d.kind === "delivery" && live(d)) : [];
+  const invoices = so ? so.docs.filter((d) => d.kind === "invoice" && live(d)) : [];
+  const p = so ? progressOf(so) : null;
+  const delivered = !!p && p.deliveredPct >= 100;
+  const partly = !!p && p.deliveredPct > 0 && !delivered;
+  const approvedAt = [...(history[o.id] ?? [])].reverse().find((h) => /^approved/.test(h.what))?.when ?? (so && so.approval.state === "approved" ? so.approval.on : null);
+  const lastDelivery = deliveries.map((d) => d.date).sort().pop() ?? null;
+  const declined = o.status === "rejected";
+  const stopped = !!so && (!!so.cancelled || so.closed);
+
+  let label: string;
+  let tone: Tone;
+  let line: string;
+  if (declined) [label, tone, line] = ["Not accepted", "danger", o.rejectReason ? `Not accepted — ${o.rejectReason}` : "Not accepted"];
+  else if (o.status === "review") [label, tone, line] = ["Waiting for approval", "warn", `Waiting for ${company} to approve it`];
+  else if (o.status === "ready") [label, tone, line] = ["Placed", "neutral", `Placed · ${company} is checking it`];
+  else if (so?.cancelled) [label, tone, line] = ["Cancelled", "off", `Cancelled — ${so.cancelled.reason}`];
+  else if (delivered) [label, tone, line] = ["Delivered", "good", `Delivered${lastDelivery ? ` ${lastDelivery.slice(0, 10) === SF_TODAY ? "today" : `on ${day(lastDelivery)}`}` : ""}${invoices.length ? " · billed" : ""}`];
+  else if (so?.closed) [label, tone, line] = ["Closed", "off", "Closed by the company"];
+  else if (partly) [label, tone, line] = ["Part delivered", "info", `${p!.deliveredPct}% delivered · the rest is coming`];
+  else [label, tone, line] = ["Approved", "info", `Approved — ${company} will deliver`];
+
+  const steps: Step[] = [
+    { label: "Placed", at: o.at },
+    { label: "Approved", at: o.status === "approved" ? approvedAt : null },
+    { label: partly ? "Part delivered" : "Delivered", at: delivered || partly ? lastDelivery : null },
+  ];
+  const reached = declined ? -1 : o.status !== "approved" ? 0 : delivered || partly ? 2 : 1;
   return {
+    hub: o,
     id: o.id,
     at: o.at,
     byName: o.byName,
     lines: o.lines,
     note: o.note,
-    hubStatus: o.status,
-    stage,
-    declined: o.status === "rejected",
-    reason: o.rejectReason ?? null,
-    soNo: o.soNo,
-    invoiceNo: null,
-    deliveryNo: null,
-    steps: [o.at, o.status === "approved" ? o.at : null, null, null, null],
-    deliverBy: meta?.deliverBy ?? null,
-    quoteId: meta?.quoteId ?? null,
+    status: o.status,
+    so,
+    label,
+    tone,
+    line,
+    steps,
+    reached,
+    waiting: o.status === "review",
+    declined,
+    delivered,
+    open: !declined && !delivered && !stopped,
+    deliveries,
+    invoices,
+    deliverBy: meta?.deliverBy ?? o.terms?.deliverBy ?? null,
+    forShop: o.forCustomerId ? { id: o.forCustomerId, name: customers.find((c) => c.id === o.forCustomerId)?.name ?? "a shop you serve" } : null,
+    repName: reps.find((r) => r.id === o.repId)?.name ?? o.byName,
   };
 }
 
-export function useDealerOrders(): DealerOrder[] {
+export function useDealerOrders(customerId: string, company: string): DealerOrder[] {
   const hub = useStore(hubStore);
   const meta = useStore(orderMetaStore);
-  const live = hub.filter((o) => o.customerId === DEALER_ID).map((o) => fromHub(o, meta[o.id]));
-  const past: DealerOrder[] = PAST.map((p) => ({ ...p, hubStatus: null, declined: false, reason: null, quoteId: null }));
-  return [...live, ...past].sort((a, b) => b.at.localeCompare(a.at));
+  const sales = useStore(ordersStore);
+  const history = useStore(historyStore);
+  const customers = useStore(customersStore);
+  const reps = useStore(repsStore);
+  return React.useMemo(
+    () =>
+      hub
+        .filter((o) => o.customerId === customerId)
+        .map((o) => toDealerOrder(o, meta[o.id], sales, history, company, customers, reps))
+        .sort((a, b) => b.at.localeCompare(a.at)),
+    [hub, meta, sales, history, customerId, company, customers, reps],
+  );
 }
-
-export type OrderState = { label: string; tone: "good" | "warn" | "danger" | "neutral" | "info" };
-export function orderState(o: DealerOrder): OrderState {
-  if (o.declined) return { label: "Not accepted", tone: "danger" };
-  if (o.stage === 0) return o.hubStatus === "review" ? { label: "Waiting for approval", tone: "warn" } : { label: "Placed", tone: "neutral" };
-  if (o.stage === 1) return { label: "Approved", tone: "info" };
-  if (o.stage === 2) return { label: "Packed", tone: "info" };
-  if (o.stage === 3) return { label: "On the way", tone: "info" };
-  return { label: "Delivered", tone: "good" };
-}
-/** One line on where an open order is. */
-export function onTheWayLine(o: DealerOrder) {
-  if (o.declined) return o.reason ?? "Not accepted";
-  if (o.stage === 3) return `On the way${o.eta ? ` · arrives ${o.eta}` : ""}`;
-  if (o.stage === 2) return `Packed${o.deliverBy ? ` · due ${day(o.deliverBy)}` : ""}`;
-  if (o.stage === 1) return `Approved${o.soNo ? ` as ${o.soNo}` : ""} · being packed next`;
-  return o.hubStatus === "review" ? "Waiting for approval" : "Placed · being checked";
-}
-export const isOpen = (o: DealerOrder) => !o.declined && o.stage < 4;
 
 /** The products this dealer buys most often, at the quantity it bought last. */
 export function usualItems(orders: DealerOrder[]) {
   const seen = new Map<string, { productId: string; times: number; lastQty: number }>();
   for (const o of orders.filter((x) => !x.declined)) {
-    for (const l of o.lines) {
+    for (const l of boughtLines(o.lines)) {
       const s = seen.get(l.productId);
       if (s) s.times++;
       else seen.set(l.productId, { productId: l.productId, times: 1, lastQty: l.qty });
@@ -188,176 +313,135 @@ export function usualItems(orders: DealerOrder[]) {
   return [...seen.values()].filter((s) => s.times >= 2).sort((a, b) => b.times - a.times);
 }
 
-// ── Cart helpers ────────────────────────────────────────────────────────────
+/** First order = nothing earlier that was not turned down (the first-order scheme). */
+export const isFirstOrder = (customerId: string, hub: HubOrder[] = hubStore.get()) => !hub.some((o) => o.customerId === customerId && o.status !== "rejected");
 
-export function setQty(productId: string, qty: number) {
-  cartStore.set((c) => {
-    const q = Math.max(0, Math.round(qty));
-    if (q === 0) return c.filter((l) => l.productId !== productId);
-    return c.some((l) => l.productId === productId) ? c.map((l) => (l.productId === productId ? { ...l, qty: q } : l)) : [...c, { productId, qty: q }];
-  });
-}
-export function addToCart(lines: CartLine[]) {
-  cartStore.set((c) => {
-    const next = c.map((l) => ({ ...l }));
-    for (const l of lines) {
-      const hit = next.find((x) => x.productId === l.productId);
-      if (hit) {
-        hit.qty += l.qty;
-        if (l.price != null) hit.price = l.price;
-      } else next.push({ ...l });
-    }
-    return next;
-  });
-}
-
-export const draftStore = createStore<{ deliverBy: string; note: string; quoteId: string | null }>({ deliverBy: addDays(SF_TODAY, 3), note: "", quoteId: null });
-
-/** Orders this size or smaller, from a customer with no overdue and room in its credit, are approved on arrival. */
-export const AUTO_APPROVE_UPTO = 200_000;
-
-export function submitOrder(ev: Evaluation, lines: CartLine[]): HubOrder {
-  const d = draftStore.get();
-  const hub = hubStore.get();
-  const id = nextNo(hub.map((o) => o.id), "ORD-");
-  const autoApprove = ev.credit.ok && ev.total <= AUTO_APPROVE_UPTO;
-  const status: HubStatus = ev.credit.ok ? "ready" : "review";
-  const quote = d.quoteId ? quotesStore.get().find((q) => q.id === d.quoteId) : null;
-  const note = [d.note.trim(), d.deliverBy ? `Deliver by ${day(d.deliverBy)}.` : "", quote ? `Quotation ${quote.id}${quote.estimateNo ? ` (${quote.estimateNo})` : ""} accepted — priced as quoted.` : ""].filter(Boolean).join(" ");
-  const order: HubOrder = {
-    id,
-    customerId: DEALER_ID,
+/**
+ * Send the cart: the order (source "portal") is a sales order from the moment it is sent — pending, under the number
+ * the dealer sees (owner decisions #5 and #31). Within credit and at most the Setup amount (decision #4) it is
+ * approved on arrival by the same call Orders makes, which bills it; otherwise it waits — "review" when the credit
+ * check fails, "ready" when it passes.
+ */
+export function submitOrder(s: DealerSession, ev: Evaluation, lines: CartLine[], draft: Draft): HubOrder {
+  const autoApprove = ev.credit.ok && ev.total <= s.settings.autoApproveUpTo;
+  const note = [draft.note.trim(), draft.deliverBy ? `Deliver by ${draft.deliverBy}.` : ""].filter(Boolean).join(" ");
+  const order = placeHubOrder({
+    customerId: s.c.id,
     source: "portal",
-    byName: portalUserName(),
-    repId: dealer().repId,
-    at: `${SF_TODAY} ${SF_NOW}`,
-    lines: lines.filter((l) => l.qty > 0).map((l) => ({ ...l })),
+    byName: s.userName,
+    repId: s.c.repId,
+    at: stamp(),
+    lines: lines.filter((l) => l.qty > 0).map((l) => ({ productId: l.productId, qty: l.qty })),
     note,
-    status,
-    soNo: null,
-  };
-  hubStore.set((h) => [order, ...h]);
-  // A pending sales order from the moment of submit (owner decision #5); an auto-approved one is then approved in place
-  // by the same call the Orders hub makes, which also spends the scheme budgets.
-  const soNo = openPendingSalesOrder(order);
-  if (autoApprove) approveHubOrder({ ...order, soNo });
-  orderMetaStore.set((m) => ({ ...m, [id]: { deliverBy: d.deliverBy || null, quoteId: d.quoteId, snapshot: ev } }));
-  if (quote) quotesStore.set((qs) => qs.map((q) => (q.id === quote.id ? { ...q, orderId: id } : q)));
-  cartStore.set(() => []);
-  draftStore.set(() => ({ deliverBy: addDays(SF_TODAY, 3), note: "", quoteId: null }));
+    status: ev.credit.ok ? "ready" : "review",
+  });
+  const id = order.id;
+  orderMetaStore.set((m) => ({ ...m, [id]: { deliverBy: draft.deliverBy || null, snapshot: ev } }));
+  logEvent(id, ev.credit.ok ? "placed it in the dealer portal" : `placed it in the dealer portal — ${ev.credit.reason ?? "the credit check failed"}`, s.userName);
+  if (autoApprove) approveHubOrder(order, undefined, "Auto-approved (within credit)");
+  cartsStore.set((cs) => ({ ...cs, [s.c.id]: [] }));
+  draftsStore.set((ds) => ({ ...ds, [s.c.id]: freshDraft() }));
   return hubStore.get().find((o) => o.id === id) ?? order;
 }
 
-// ── Account: the statement, open invoices, ageing ───────────────────────────
+// ── Account: the statement and the payments a dealer sends ──────────────────
 
-export type PayMethod = "bank" | "wallet" | "cheque";
-export const METHOD_LABEL: Record<PayMethod, string> = { bank: "Bank transfer", wallet: "eSewa / Khalti", cheque: "Cheque" };
+export const METHOD_LABEL: Record<PayMethod, string> = { bank: "Bank transfer", cheque: "Cheque", cash: "Cash", wallet: "eSewa / Khalti" };
 
-export type StatementRow = LedgerRow & { id: string; pending?: boolean; method?: PayMethod; reference?: string; by?: string; applies?: { doc: string; amount: number }[] };
-export const ledgerAddsStore = createStore<StatementRow[]>([]);
-
-export type OpenInvoice = { doc: string; date: string; due: string | null; amount: number; open: number; late: number; /** Sent by the dealer, not yet confirmed. */ waiting: number };
-
-export function computeAccount(adds: StatementRow[], c: Customer) {
-  const rows: StatementRow[] = [...DEALER_LEDGER.map((r, i) => ({ ...r, id: `L-${i}` })), ...adds].sort((a, b) => a.date.localeCompare(b.date));
+export type StatementRow = LedgerEntry & { balance: number };
+/** This customer's ledger, oldest first, with a running balance. Pending rows count for nothing until confirmed. */
+export function statementOf(customerId: string, ledger: LedgerEntry[]): StatementRow[] {
   let bal = 0;
-  const statement = rows.map((r) => {
-    if (!r.pending) bal += r.debit - r.credit;
-    return { ...r, balance: bal };
-  });
-
-  // Receipts recorded here name the invoices they pay; the seed's receipts do not, so they settle the
-  // oldest debt first.
-  const debits: OpenInvoice[] = rows.filter((r) => r.debit > 0).map((r) => ({ doc: r.doc, date: r.date, due: r.due, amount: r.debit, open: r.debit, late: r.due ? -daysUntil(r.due) : 0, waiting: rows.filter((x) => x.pending).flatMap((x) => x.applies ?? []).filter((a) => a.doc === r.doc).reduce((s, a) => s + a.amount, 0) }));
-  let pool = 0;
-  for (const r of rows.filter((x) => x.credit > 0 && !x.pending)) {
-    if (!r.applies) {
-      pool += r.credit;
-      continue;
-    }
-    for (const a of r.applies) {
-      const d = debits.find((x) => x.doc === a.doc);
-      const take = d ? Math.min(d.open, a.amount) : 0;
-      if (d) d.open -= take;
-      pool += a.amount - take;
-    }
-  }
-  for (const d of debits) {
-    const take = Math.min(d.open, pool);
-    d.open -= take;
-    pool -= take;
-  }
-  const open = debits.filter((d) => d.open > 0);
-  const invoices = open.filter((d) => d.due);
-  const overdue = invoices.filter((d) => d.late > 0).reduce((s, d) => s + d.open, 0);
-  const ageing = [
-    { label: "Not due yet", amount: invoices.filter((d) => d.late <= 0).reduce((s, d) => s + d.open, 0) },
-    { label: "1–30 days late", amount: invoices.filter((d) => d.late > 0 && d.late <= 30).reduce((s, d) => s + d.open, 0) },
-    { label: "31–60 days late", amount: invoices.filter((d) => d.late > 30 && d.late <= 60).reduce((s, d) => s + d.open, 0) },
-    { label: "Over 60 days", amount: invoices.filter((d) => d.late > 60).reduce((s, d) => s + d.open, 0) + open.filter((d) => !d.due).reduce((s, d) => s + d.open, 0) },
-  ];
-  const nextDue = invoices.filter((d) => d.late <= 0).sort((a, b) => (a.due ?? "").localeCompare(b.due ?? ""))[0] ?? null;
-  const pending = adds.filter((r) => r.pending && r.kind === "Receipt");
-  return { statement, balance: bal, open: invoices, overdue, ageing, nextDue, limit: c.creditLimit, available: Math.max(0, c.creditLimit - bal), pending };
+  return ledger
+    .map((r, i) => ({ r, i }))
+    .filter(({ r }) => r.customerId === customerId)
+    .sort((a, b) => a.r.date.localeCompare(b.r.date) || a.i - b.i)
+    .map(({ r }) => {
+      if (!r.pending) bal += r.debit - r.credit;
+      return { ...r, balance: bal };
+    });
 }
 
-export function useAccount() {
-  const adds = useStore(ledgerAddsStore);
-  useStore(customersStore);
-  return computeAccount(adds, dealer());
+export function useAccount(c: Customer) {
+  const ledger = useStore(ledgerStore);
+  const types = useStore(typesStore);
+  return React.useMemo(() => {
+    const a = accountOf(c.id, ledger);
+    const credit = creditCheck(c, 0);
+    const notDue = a.invoices.filter((i) => i.late <= 0);
+    return {
+      ...a,
+      credit,
+      statement: statementOf(c.id, ledger),
+      pendingRows: ledger.filter((r) => r.customerId === c.id && r.pending),
+      nextDue: [...notDue].sort((x, y) => (x.due ?? x.date).localeCompare(y.due ?? y.date))[0] ?? null,
+      ageing: [
+        { label: "Not due yet", amount: notDue.reduce((s, i) => s + i.open, 0) },
+        { label: "1–30 days late", amount: a.invoices.filter((i) => i.late > 0 && i.late <= 30).reduce((s, i) => s + i.open, 0) },
+        { label: "31–60 days late", amount: a.invoices.filter((i) => i.late > 30 && i.late <= 60).reduce((s, i) => s + i.open, 0) },
+        { label: "Over 60 days", amount: a.invoices.filter((i) => i.late > 60).reduce((s, i) => s + i.open, 0) },
+      ],
+    };
+    // The engine reads the type from the store; `types` is here so a grace-day change recounts.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [c, ledger, types]);
 }
 
-export function recordPayment(p: { invoices: OpenInvoice[]; amount: number; method: PayMethod; reference: string; discounts: { doc: string; amount: number }[] }) {
-  const adds = ledgerAddsStore.get();
-  const all = [...DEALER_LEDGER.map((r) => r.doc), ...adds.map((r) => r.doc)];
-  const pending = p.method !== "wallet";
-  const discounted = new Map(p.discounts.map((d) => [d.doc, d.amount]));
-  let left = p.amount;
-  const applies = [...p.invoices]
-    .sort((a, b) => (a.due ?? "").localeCompare(b.due ?? ""))
-    .map((inv) => {
-      const take = Math.min(left, inv.open - (discounted.get(inv.doc) ?? 0));
-      left -= take;
-      return { doc: inv.doc, amount: take };
-    })
-    .filter((a) => a.amount > 0);
-  const rcp: StatementRow = { id: `A-${adds.length + 1}`, date: SF_TODAY, doc: nextNo(all, "RCP-", 4), kind: "Receipt", debit: 0, credit: p.amount, due: null, pending, method: p.method, reference: p.reference, by: portalUserName(), applies };
-  const rows: StatementRow[] = [rcp];
-  const disc = p.discounts.reduce((s, d) => s + d.amount, 0);
-  if (disc > 0) rows.push({ id: `A-${adds.length + 2}`, date: SF_TODAY, doc: nextNo([...all, rcp.doc], "CM-EP-", 3), kind: "Credit note", debit: 0, credit: disc, due: null, pending, by: "Early payment 2%", applies: p.discounts });
-  ledgerAddsStore.set((a) => [...a, ...rows]);
-
-  if (!pending) {
-    const c = dealer();
-    const after = computeAccount(ledgerAddsStore.get(), c);
-    customersStore.set((list) => list.map((x) => (x.id === c.id ? { ...x, outstanding: Math.max(0, c.outstanding - p.amount - disc), overdue: Math.min(c.overdue, after.overdue) } : x)));
-  }
+/**
+ * A payment the dealer sent IS a customer receipt on the sales desk (RCP-…, owner decision #31), waiting for accounts
+ * to approve it; its pending row on the dealer's account follows from the receipt (salesforce/receipts.ts). The
+ * receipt says which sales orders the money is for (decision #33) — a reference: nothing is applied, the company does
+ * that. An early-payment discount is not written here: it is the order's, given on its first invoice when the company
+ * applies the money (decision #34). Returns the receipt.
+ */
+export function recordPayment(s: DealerSession, p: { amount: number; method: PayMethod; reference: string; /** The sales orders it is for, each with its amount. */ tags: Line[]; /** Old bills with no order it was sent for, in words. */ note?: string }) {
+  const rcp = takeReceipt({ customerId: s.c.id, amount: p.amount, method: p.method, reference: p.reference, via: "portal", by: s.userName, pending: true, tags: p.tags, note: p.note });
+  logEvent(rcp.no, `sent NPR ${npr(p.amount)} by ${METHOD_LABEL[p.method].toLowerCase()}${p.reference ? ` (${p.reference})` : ""}`, s.userName);
   return rcp;
 }
+
+/**
+ * The shop an invoice was billed to this dealer for (owner decision #26), or null for its own orders. The ledger
+ * row's note is read first ("For Laxmi Store"); failing that, the order it bills — the invoice's doc is the order's
+ * number.
+ */
+export function shopOfInvoice(row: Pick<LedgerEntry, "kind" | "doc" | "note" | "customerId">, hub: HubOrder[], customers: Customer[]): string | null {
+  if (row.kind !== "Invoice") return null;
+  const said = row.note ? /\bfor\s+([^·;()]+?)\s*\.?\s*(?:[·;()]|$)/i.exec(row.note)?.[1]?.trim() : undefined;
+  if (said) return said;
+  const o = hub.find((h) => h.customerId === row.customerId && h.id === row.doc);
+  if (!o?.forCustomerId) return null;
+  return customers.find((c) => c.id === o.forCustomerId)?.name ?? "a shop you serve";
+}
+
+/** What the dealer was billed between two dates — a target rebate's progress. */
+export const billedBetween = (ledger: LedgerEntry[], customerId: string, from: string, to: string) =>
+  ledger.filter((r) => r.customerId === customerId && r.kind === "Invoice" && !r.pending && r.date >= from && r.date <= to).reduce((s, r) => s + r.debit, 0);
 
 // ── Schemes in plain words ──────────────────────────────────────────────────
 
 function itemsPhrase(ids: string[]) {
   const ps = ids.map(productById);
-  if (ps.length >= 3 && ps.every((p) => p.brand === ps[0].brand)) return `any ${ps[0].brand} ${ps[0].category.toLowerCase()}`;
+  if (!ps.length) return "the listed items";
+  if (ps.length >= 3 && ps.every((p) => p.brand && p.brand === ps[0].brand)) return `any ${ps[0].brand} ${ps[0].category.toLowerCase()}`;
   return ps.map((p) => p.name).join(" or ");
 }
+const unitOf = (id: string | undefined) => (id ? productById(id).unit : "") || "unit";
 
 export function schemeSentence(s: Scheme): string {
   const m = s.mechanic;
   switch (m.kind) {
     case "free-goods": {
-      const p = productById(m.buyItemIds[0]);
       const get = m.getItemId === "same" ? "free" : `${productById(m.getItemId).name} free`;
-      return `Buy ${m.buyQty} ${p.unit}s of ${itemsPhrase(m.buyItemIds)}, get ${m.getQty} ${get}.`;
+      return `Buy ${m.buyQty} ${unitOf(m.buyItemIds[0])}s of ${itemsPhrase(m.buyItemIds)}, get ${m.getQty} ${get}.`;
     }
     case "slab": {
-      const unit = productById(m.itemIds[0]).unit;
+      const unit = unitOf(m.itemIds[0]);
       return `Buy ${itemsPhrase(m.itemIds)} — all count together. ${m.slabs.map((x) => `${x.minQty}+ ${unit}s: ${x.pct}% off`).join(", ")}.`;
     }
     case "combo": {
       const g = productById(m.getItemId);
-      return `Buy ${m.needs.map((n) => `${n.qty} ${productById(n.itemIds[0]).unit}s of ${itemsPhrase(n.itemIds)}`).join(" and ")}, get ${m.getQty} ${g.unit} of ${g.name} free.`;
+      return `Buy ${m.needs.map((n) => `${n.qty} ${unitOf(n.itemIds[0])}s of ${itemsPhrase(n.itemIds)}`).join(" and ")}, get ${m.getQty} ${g.unit || "unit"} of ${g.name} free.`;
     }
     case "invoice-value":
       return `${m.pct}% off any order over NPR ${npr(m.minValue)}.`;
@@ -376,7 +460,7 @@ export function schemeSentence(s: Scheme): string {
 export function schemeTag(s: Scheme): string | null {
   const m = s.mechanic;
   if (m.kind === "free-goods") return `Buy ${m.buyQty} get ${m.getQty} free`;
-  if (m.kind === "slab") return m.slabs.length > 1 ? `${m.slabs[0].pct}–${m.slabs[m.slabs.length - 1].pct}% off from ${m.slabs[0].minQty}` : `${m.slabs[0].pct}% off from ${m.slabs[0].minQty}`;
+  if (m.kind === "slab" && m.slabs.length) return m.slabs.length > 1 ? `${m.slabs[0].pct}–${m.slabs[m.slabs.length - 1].pct}% off from ${m.slabs[0].minQty}` : `${m.slabs[0].pct}% off from ${m.slabs[0].minQty}`;
   if (m.kind === "combo") return "Combo offer";
   return null;
 }
@@ -390,41 +474,138 @@ export function schemeItemIds(s: Scheme): string[] {
 }
 
 /** Schemes this dealer gets today (engine.eligible returns null when a scheme applies). */
-export const liveForMe = (schemes: Scheme[]) => schemes.filter((s) => eligible(s, dealer()) === null);
+export const liveFor = (schemes: Scheme[], c: Customer) => schemes.filter((s) => eligible(s, c) === null);
 /** Schemes that will apply once they start. */
-export const soonForMe = (schemes: Scheme[]) => schemes.filter((s) => s.from > SF_TODAY && eligible(s, dealer()) !== null && eligible(s, dealer(), s.from) === null);
+export const soonFor = (schemes: Scheme[], c: Customer) => schemes.filter((s) => s.from > SF_TODAY && eligible(s, c) !== null && eligible(s, c, s.from) === null);
 
-// ── Quotations (RFQ → the company's estimate) ───────────────────────────────
+// ── Price requests and estimates (decisions #27, #32) ───────────────────────
+//
+// A price request is the tenant's opportunity; its answer is the sales desk's estimate, sent in versions. The rules —
+// who may do what, what happens on accept — live in sales/estimate-offer.ts and salesforce/estimates.ts. Here is only
+// how a dealer READS them: always a version that was sent, never the estimate's working lines.
 
-export type QuoteLine = { productId: string; qty: number; price: number | null };
-export type Quote = { id: string; at: string; byName: string; lines: QuoteLine[]; note: string; status: "requested" | "quoted" | "accepted"; estimateNo: string | null; validTill: string | null; reply: string | null; orderId: string | null; quotedOn: string | null; acceptedAt: string | null };
+export type RequestState = "waiting" | "received" | "changes-asked" | "new-version" | "accepted" | "declined" | "expired" | "closed";
+export type DealerRequest = {
+  /** The request, or what the company noted of the deal. null when it sent an estimate with no opportunity behind it. */
+  opp: Opportunity | null;
+  /** The estimate the dealer answers: the accepted one, else the one in play, else the newest. */
+  est: Estimate | null;
+  /** Other estimates on the same request (one that was declined before a fresh start), newest first. */
+  earlier: Estimate[];
+  /** What the link carries and the dealer reads: RFQ-0001, or EST-0001 when the company sent it unasked. */
+  key: string;
+  /** False when the company raised the estimate itself — its own note of the deal is not shown to the dealer. */
+  asked: boolean;
+  title: string;
+  at: string;
+  /** For the list's order: the last thing either side did. */
+  last: string;
+  state: RequestState;
+  label: string;
+  tone: Tone;
+  /** One sentence on where it is and what to do. */
+  line: string;
+  /** The dealer can accept, decline or ask for changes now. */
+  toAnswer: boolean;
+  open: boolean;
+};
 
-export const quotesStore = createStore<Quote[]>([
-  { id: "QR-015", at: "2026-09-03 17:40", byName: "Ramesh Adhikari", lines: [{ productId: "P-131", qty: 40, price: null }, { productId: "P-132", qty: 30, price: null }], note: "A hotel group in Butwal wants tea for Dashain. Can you do a better price on 40+ cartons?", status: "requested", estimateNo: null, validTill: null, reply: null, orderId: null, quotedOn: null, acceptedAt: null },
-  { id: "QR-013", at: "2026-08-29 11:15", byName: "Kiran Thapa", lines: [{ productId: "P-101", qty: 200, price: 1_420 }, { productId: "P-102", qty: 120, price: 1_420 }], note: "School canteen supply for the whole term.", status: "quoted", estimateNo: "EST-0418", validTill: "2026-09-12", reply: "Special term price, held until 12 Sep.", orderId: null, quotedOn: "2026-08-30", acceptedAt: null },
-  { id: "QR-010", at: "2026-08-12 09:50", byName: "Ramesh Adhikari", lines: [{ productId: "P-121", qty: 80, price: 1_740 }], note: "Bulk detergent for a cooperative.", status: "accepted", estimateNo: "EST-0391", validTill: "2026-08-25", reply: "Price for 80 cartons, one delivery.", orderId: null, quotedOn: "2026-08-13", acceptedAt: "2026-08-14 10:30" },
-]);
+/** `sent` = the estimates this dealer was sent for the request (an estimate still being written is the company's own business), newest first. */
+function toDealerRequest(o: Opportunity | null, sent: Estimate[], company: string): DealerRequest | null {
+  const asked = o?.source === "portal-rfq";
+  // What the tenant logged for itself is its own business until it sends this dealer an estimate.
+  if (!asked && !sent.length) return null;
+  const est = sent.find((e) => offerOf(e).status === "accepted") ?? sent.find(estimateOpen) ?? sent[0] ?? null;
+  const offer = est ? offerOf(est) : null;
+  const v = est ? latestVersion(est) : undefined;
+  const ended = !!est && offer?.status !== "accepted" && !estimateOpen(est);
+  // The dealer said no, as against the company giving the deal up.
+  const declinedByDealer = offer?.status === "declined" && offer.declined?.by === "customer";
 
-export function acceptQuote(q: Quote) {
-  quotesStore.set((qs) => qs.map((x) => (x.id === q.id ? { ...x, status: "accepted", acceptedAt: `${SF_TODAY} ${SF_NOW}` } : x)));
-  addToCart(q.lines.map((l) => ({ productId: l.productId, qty: l.qty, price: l.price ?? undefined })));
-  draftStore.set((d) => ({ ...d, quoteId: q.id }));
+  let state: RequestState;
+  if (offer?.status === "accepted" || o?.stage === "won") state = "accepted";
+  else if (o ? o.stage === "lost" : ended) state = declinedByDealer ? "declined" : "closed";
+  else if (!est || ended) state = "waiting";
+  else if (offerExpired(est)) state = "expired";
+  else if (offer?.status === "changes-requested") state = "changes-asked";
+  else state = (offer?.versions.length ?? 0) > 1 ? "new-version" : "received";
+
+  const orderId = offer?.accepted?.orderNo ?? o?.orderId;
+  const [label, tone, line]: [string, Tone, string] =
+    state === "waiting"
+      ? [asked ? "Sent — waiting for a price" : "Waiting for a new estimate", "neutral", `${cap(company)} will reply with an estimate.`]
+      : state === "received"
+        ? ["Estimate received", "warn", "Read it, then accept it, decline it or ask for changes."]
+        : state === "changes-asked"
+          ? ["You asked for changes", "info", `${cap(company)} will answer with a new version. You can still accept version ${v?.no ?? 1} as it is.`]
+          : state === "new-version"
+            ? ["New version received", "warn", `Version ${v?.no ?? 2} is here. See what changed, then accept it, decline it or ask again.`]
+            : state === "accepted"
+              ? [orderId ? `Accepted — order ${orderId}` : "Accepted", "good", orderId ? `You accepted ${offer?.accepted ? `version ${offer.accepted.version}` : "it"}. It is now order ${orderId}.` : "You accepted it."]
+              : state === "declined"
+                ? ["Declined", "off", `You declined this estimate${offer?.declined?.reason ? ` — “${offer.declined.reason}”` : ""}.`]
+                : state === "expired"
+                  ? ["Expired", "off", `This offer ran out on ${v ? day(v.validTill) : "its last day"}.`]
+                  : [`Closed by ${company}`, "off", `${cap(company)} closed this ${asked ? "request" : "estimate"}.`];
+
+  const firstSent = est ? offerOf(est).versions[0]?.at : undefined;
+  const begun = o?.createdAt ?? firstSent ?? "";
+  return {
+    opp: o,
+    est,
+    earlier: sent.filter((e) => e.no !== est?.no),
+    key: o?.rfqNo ?? est?.no ?? o?.id ?? "",
+    asked,
+    title: asked && o ? o.title : `Estimate from ${company}`,
+    at: asked && o ? (o.request?.at ?? o.createdAt) : (firstSent ?? begun),
+    last: [begun, ...sent.flatMap((e) => [...offerOf(e).versions.map((x) => x.at), ...offerOf(e).requests.map((x) => x.at)])].sort().pop() ?? begun,
+    state,
+    label,
+    tone,
+    line,
+    toAnswer: state === "received" || state === "new-version" || state === "changes-asked",
+    open: state === "waiting" || state === "received" || state === "new-version" || state === "changes-asked",
+  };
 }
 
-// ── Notes on any record (the portal's side of History + Notes) ──────────────
-
-export type Note = { id: string; who: string; when: string; body: string };
-export const notesStore = createStore<Record<string, Note[]>>({
-  "ORD-2186": [{ id: "n1", who: "Pooja Gurung (Bizak Nepal)", when: "2026-09-03 08:40", body: "Truck left the Bhairahawa depot. Hari will call 30 minutes before." }],
-  "CL-551": [{ id: "n2", who: "Sita Adhikari", when: "2026-09-02 16:20", body: "Retailer-wise list attached to the email as well." }],
-});
-export function addNote(recordId: string, body: string) {
-  notesStore.set((n) => ({ ...n, [recordId]: [...(n[recordId] ?? []), { id: `n${Date.now()}`, who: portalUserName(), when: `${SF_TODAY} ${SF_NOW}`, body }] }));
+/** This dealer's price requests, and the estimates the company sent it unasked — the latest activity first. */
+export function useDealerRequests(customerId: string, company: string): DealerRequest[] {
+  const opps = useStore(opportunitiesStore);
+  const ests = useStore(estimatesStore);
+  return React.useMemo(() => {
+    const sent = sentTo(customerId, ests);
+    const mine = opps.filter((o) => o.customerId === customerId);
+    const answering = new Set(mine.flatMap((o) => estimatesOf(o.id, sent).map((e) => e.no)));
+    return (
+      [
+        ...mine.map((o) => toDealerRequest(o, estimatesOf(o.id, sent), company)),
+        // An estimate made on the sales desk with no opportunity behind it is read on its own.
+        ...sent.filter((e) => !answering.has(e.no)).map((e) => toDealerRequest(null, [e], company)),
+      ]
+        .filter((r): r is DealerRequest => !!r)
+        // The stores keep the newest first; a stable sort keeps that order among requests touched in the same minute.
+        .sort((a, b) => b.last.localeCompare(a.last))
+    );
+  }, [opps, ests, customerId, company]);
 }
 
-// ── RSVPs ───────────────────────────────────────────────────────────────────
+/** A request by anything a link may carry: its RFQ number, an estimate's number (also an earlier one), its own id. */
+export const findRequest = (all: DealerRequest[], key: string | null | undefined) =>
+  key ? all.find((r) => r.key === key || r.opp?.rfqNo === key || r.est?.no === key || r.opp?.id === key || r.earlier.some((e) => e.no === key)) : undefined;
 
-export const rsvpStore = createStore<Record<string, boolean>>({ "EV-41": true });
+// ── My business: the dealer's own notebook ─────────────────────────────────
 
-/** What the dealer bought (invoiced) between two dates — a target rebate's progress. */
-export const purchasedBetween = (from: string, to: string) => DEALER_LEDGER.filter((r) => r.kind === "Invoice" && r.date >= from && r.date <= to).reduce((s, r) => s + r.debit, 0);
+/**
+ * A stock count the dealer typed in — one row per product, the latest count wins. The notebook is the dealer's
+ * alone (owner decision #26): nothing here is derived from, or feeds, the company's orders, stock or books.
+ */
+export type StockCount = { id: string; productId: string; qty: number; countedOn: string };
+export const stockCountsStore = persistentStore<Record<string, StockCount[]>>("portal.stock", {});
+
+// ── Events: who is going, per dealer ────────────────────────────────────────
+
+export const rsvpStore = persistentStore<Record<string, Record<string, boolean>>>("portal.rsvp", {});
+
+// ── Theme: a per-viewer convenience ─────────────────────────────────────────
+
+export const themeStore = persistentStore<"light" | "dark">("portal.theme", "light");

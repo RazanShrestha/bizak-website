@@ -208,7 +208,7 @@ export function StepCard({
         >
           {icon}
         </span>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 basis-[200px]">
           <p className={cn("m-0 text-[12.5px] font-semibold", tone === "danger" ? "text-bz-red" : "text-bz-text")}>{title}</p>
           {sub && <p className="m-0 mt-0.5 text-[11.5px] leading-relaxed text-bz-text-muted">{sub}</p>}
         </div>
@@ -234,6 +234,17 @@ export function Block({ title, count, right, children }: { title: string; count?
 
 // ── Lines ───────────────────────────────────────────────────────────────────
 
+/** A value that moved: the earlier one struck out, the new one marked. */
+export function Moved({ was, children }: { was?: React.ReactNode; children: React.ReactNode }) {
+  if (was === undefined) return <>{children}</>;
+  return (
+    <>
+      <s className="mr-1 text-[10.5px] font-normal text-bz-text-soft">{was}</s>
+      <span className="rounded-[4px] bg-bz-fire/25 px-1 font-semibold text-bz-text">{children}</span>
+    </>
+  );
+}
+
 /**
  * Lines of any document. The row carries what is scanned — item, quantity in
  * its unit, rate, discount, net; a click opens the rest of the line (price
@@ -244,7 +255,12 @@ export function LinesTable({
   rows,
   qtyLabel = "Qty",
 }: {
-  rows: { line: OrderLine; qty: number; sub?: React.ReactNode; detail?: React.ReactNode }[];
+  /**
+   * `name` replaces the item's name (a charge reads as what it is for); `mark` sits beside it ("Free").
+   * `was` = the earlier value of a cell that moved: it is struck out beside the new one, so a change is found where
+   * the number is. `asked` = what the customer wants there instead. `gone` = a line that was taken off.
+   */
+  rows: { line: OrderLine; qty: number; sub?: React.ReactNode; detail?: React.ReactNode; name?: React.ReactNode; mark?: React.ReactNode; was?: { qty?: number; rate?: number; disc?: string }; asked?: { qty?: number; rate?: number; disc?: string }; gone?: boolean }[];
   qtyLabel?: string;
 }) {
   const [open, setOpen] = React.useState<number | null>(null);
@@ -258,7 +274,7 @@ export function LinesTable({
         <span className="text-right">Disc</span>
         <span className="text-right">Net</span>
       </div>
-      {rows.map(({ line, qty, sub, detail }, i) => {
+      {rows.map(({ line, qty, sub, detail, name, mark, was, asked, gone }, i) => {
         const it = itemById(line.itemId)!;
         const scaled = { ...line, qty, discountAmt: line.discountAmt ? (line.discountAmt * qty) / line.qty : undefined };
         const isOpen = open === i;
@@ -269,7 +285,8 @@ export function LinesTable({
               <span className="min-w-0">
                 <span className="flex items-center gap-1.5">
                   <ChevronRight size={11} className={cn("shrink-0 text-bz-text-soft transition-transform", isOpen && "rotate-90")} />
-                  <span className="truncate text-[12.5px] text-bz-text">{it.name}</span>
+                  <span className={cn("truncate text-[12.5px]", gone ? "text-bz-text-soft line-through" : "text-bz-text")}>{name ?? it.name}</span>
+                  {mark}
                 </span>
                 <span className={cn("ml-[17px] block truncate text-[10.5px] text-bz-text-soft", NUM)}>
                   {it.code}
@@ -277,16 +294,25 @@ export function LinesTable({
                   {sub && <> · {sub}</>}
                 </span>
               </span>
-              <span className={cn("hidden text-right text-[12.5px] text-bz-text sm:block", NUM)}>
-                {fmtQty(qty)} <span className="text-[10.5px] text-bz-text-soft">{unit}</span>
+              <span className={cn("hidden text-right text-[12.5px] sm:block", NUM, gone ? "text-bz-text-soft" : "text-bz-text")}>
+                <Moved was={was?.qty !== undefined ? fmtQty(was.qty) : undefined}>{fmtQty(qty)}</Moved> <span className="text-[10.5px] text-bz-text-soft">{unit}</span>
+                {asked?.qty !== undefined && <span className="block text-[10.5px] font-medium text-bz-amber">asked {fmtQty(asked.qty)}</span>}
               </span>
-              <span className="hidden text-right text-[12.5px] text-bz-text sm:block">
-                <Amount value={line.rate} />
+              <span className={cn("hidden text-right text-[12.5px] sm:block", gone ? "text-bz-text-soft" : "text-bz-text")}>
+                <Moved was={was?.rate !== undefined ? <Amount value={was.rate} /> : undefined}>
+                  <Amount value={line.rate} />
+                </Moved>
+                {asked?.rate !== undefined && (
+                  <span className="block text-[10.5px] font-medium text-bz-amber">
+                    asked <Amount value={asked.rate} className="text-bz-amber" />
+                  </span>
+                )}
               </span>
-              <span className={cn("hidden text-right text-[12px] sm:block", NUM, lineDiscount(scaled) ? "text-bz-text" : "text-bz-text-soft")}>
-                {line.discountAmt ? <Amount value={lineDiscount(scaled)} /> : line.discountPct ? `${line.discountPct}%` : "—"}
+              <span className={cn("hidden text-right text-[12px] sm:block", NUM, lineDiscount(scaled) && !gone ? "text-bz-text" : "text-bz-text-soft")}>
+                <Moved was={was?.disc}>{line.discountAmt ? <Amount value={lineDiscount(scaled)} /> : line.discountPct ? `${line.discountPct}%` : "—"}</Moved>
+                {asked?.disc && <span className="block text-[10.5px] font-medium text-bz-amber">asked {asked.disc}</span>}
               </span>
-              <span className="text-right text-[12.5px] font-semibold text-bz-text">
+              <span className={cn("text-right text-[12.5px] font-semibold", gone ? "text-bz-text-soft line-through" : "text-bz-text")}>
                 <Amount value={lineGross(scaled)} />
                 <span className={cn("block text-[10.5px] font-normal text-bz-text-soft sm:hidden", NUM)}>
                   {fmtQty(qty)} {unit} × <Amount value={line.rate} className="text-bz-text-soft" />
@@ -452,7 +478,7 @@ export function RecordSections({
   const related = React.useMemo(() => relatedFor(no, data), [no, data]);
   return (
     <div className="border-b border-bz-line-soft">
-      <RelatedSection rows={related} onOpen={(n) => (n.startsWith("OPP-") ? onToast(`${n} opens in CRM`) : navigate(hrefFor(n)))} />
+      <RelatedSection rows={related} onOpen={(n) => navigate(n.startsWith("OPP-") ? `/design/salesforce/opportunities/${n}` : hrefFor(n))} />
       <FilesSection files={files} onAdd={onAttach} onToast={onToast} />
       {gl && <GLSection rows={gl} />}
       <SystemSection created={created} history={history} audit={audit} />
@@ -519,7 +545,9 @@ export function ActivityList({ comments, history }: { comments: Comment[]; histo
             <li key={x.key} className="flex items-center gap-2.5 pl-[7px] text-[11.5px] text-bz-text-muted">
               <span className="size-2 shrink-0 rounded-bz-pill border border-bz-line bg-bz-surface" />
               <span className="min-w-0 flex-1">
-                <span className="font-medium text-bz-text">{personById(x.who)?.name}</span> {x.body}
+                {/* A customer's act is filed under no person: its sentence names who did it. */}
+                {personById(x.who) && <span className="font-medium text-bz-text">{personById(x.who)!.name} </span>}
+                {x.body}
               </span>
               <span className={cn("shrink-0 text-[10.5px] text-bz-text-soft", NUM)}>{x.when}</span>
             </li>

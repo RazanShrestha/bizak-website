@@ -1,340 +1,225 @@
 import * as React from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
-import { ChevronRight } from "lucide-react";
-import { cn } from "../ui/utils";
-import { NUM, SearchField, Segmented, Select } from "../sales/bzw";
+import { CirclePause, CirclePlay, Network, Plus, Shapes, Table2, UserRound } from "lucide-react";
+import { Amount, useMedia } from "../sales/orders";
 import { useStore } from "../sales/store";
-import { TERRITORIES } from "./data";
-import type { Customer, CustomerType } from "./data";
-import { npr } from "./engine";
-import { customersStore, typesStore } from "./store";
-import { SfShell, sfPath } from "./shell";
-import { Dot, EmptyNote, Figures, List, Money, Page, PageIntro, Row, TextTabs, TypeMark } from "./ui";
-import { CustomerPanel } from "./customer-panel";
-import { STATUS_LABEL, STATUS_TONE, childrenOf, leafTerrIds, parentOf, repById, supplyStore, terrById, typeIn } from "./network-model";
+import type { Customer, CustomerType, Rep, Route } from "./data";
+import { accountOf, creditCheck, typeOf } from "./engine";
+import type { Account, Evaluation } from "./engine";
+import { STATUS_LABEL, repById } from "./network-model";
+import { openQuickAdd } from "./quickadd";
+import { logEvent } from "./records";
+import { FxDesk } from "./fx-desk";
+import { TypeMark, Who, sfPath } from "./sf";
+import { customersStore, ledgerStore, repsStore, routesStore, typesStore } from "./store";
+import { CustomerPanel, holdCustomer, releaseCustomer } from "./customer-panel";
+import { NotAvailable, wasRemoved } from "./customers-kit";
 
 // ════════════════════════════════════════════════════════════════════════════
-// CUSTOMERS — the trade network
+// CUSTOMERS — everyone you sell to
 //
-// Every customer with its type, who serves it and what it owes. Two views of the
-// same rows: a list (filter by type, territory, search) and the network — super-
-// stockist → distributors → retailers as an indented list, never a graph.
-// `?type=` is honoured (Home links that way); a customer opens at /customers/:id.
+// One desk, three groupings of the same rows: the register, the network (who
+// serves whom — "served by" is the customer's own parentId) and by type. What a
+// customer owes is COUNTED from the ledger (engine.accountOf), never read from
+// the customer. A link may arrive with `?type=`; it lands as a filter chip.
+// A customer opens at /customers/:no (its id).
 // ════════════════════════════════════════════════════════════════════════════
+
+/** `routes` = the routes the customer is walked on (owner decision #28) — usually one. */
+type Row = { c: Customer; t: CustomerType; hasType: boolean; a: Account; credit: Evaluation["credit"]; parent: Customer | undefined; rep: Rep | undefined; kids: Customer[]; routes: Route[] };
+
+const STATUSES: Customer["status"][] = ["active", "onboarding", "on hold"];
 
 export function CustomersPage() {
-  const { id } = useParams();
-  const [search, setSearch] = useSearchParams();
+  const { no } = useParams();
+  const [search] = useSearchParams();
   const navigate = useNavigate();
   const customers = useStore(customersStore);
   const types = useStore(typesStore);
-  const supply = useStore(supplyStore);
-  const [q, setQ] = React.useState("");
+  const reps = useStore(repsStore);
+  const ledger = useStore(ledgerStore);
+  const routes = useStore(routesStore);
+  // The name column never collapses: below 1024px the type and status leave the grid and the type joins the sub line.
+  const roomy = useMedia("(min-width: 1024px)");
 
-  const type = search.get("type") ?? "all";
-  const terr = search.get("terr") ?? "all";
-  const view: "list" | "network" = search.get("view") === "network" ? "network" : "list";
-  const qs = search.toString();
-
-  const setParam = (k: string, v: string | null) => {
-    const next = new URLSearchParams(search);
-    if (v) next.set(k, v);
-    else next.delete(k);
-    setSearch(next, { replace: true });
-  };
-  const open = (cid: string) => navigate({ pathname: sfPath(`customers/${cid}`), search: qs ? `?${qs}` : "" });
-  const close = () => navigate({ pathname: sfPath("customers"), search: qs ? `?${qs}` : "" });
-
-  const terrIds = terr === "all" ? null : new Set(leafTerrIds(terr));
-  const needle = q.trim().toLowerCase();
-  const matches = (c: Customer) =>
-    (type === "all" || c.typeId === type) &&
-    (!terrIds || terrIds.has(c.territoryId)) &&
-    (!needle || `${c.name} ${c.code} ${c.city} ${c.phone}`.toLowerCase().includes(needle));
-
-  const order = (c: Customer) => {
-    const i = types.findIndex((t) => t.id === c.typeId);
-    return i < 0 ? 99 : i;
-  };
-  const shown = customers.filter(matches).sort((a, b) => order(a) - order(b) || a.name.localeCompare(b.name));
-  const baseForTabs = customers.filter((c) => (!terrIds || terrIds.has(c.territoryId)) && (!needle || `${c.name} ${c.code} ${c.city} ${c.phone}`.toLowerCase().includes(needle)));
-  const countOf = (tid: string) => baseForTabs.filter((c) => c.typeId === tid).length;
-  const outstanding = shown.reduce((s, c) => s + c.outstanding, 0);
-  const overdue = shown.filter((c) => c.overdue > 0);
-  const onPortal = shown.filter((c) => c.portalUsers.length > 0).length;
-  const filtered = type !== "all" || terr !== "all" || !!needle;
-
-  const terrOptions = [
-    { value: "all", label: "All territories" },
-    ...TERRITORIES.filter((t) => t.level !== "region").map((t) => ({
-      value: t.id,
-      label: t.name,
-      hint: t.level === "area" ? "Whole area" : undefined,
-      group: TERRITORIES.find((r) => r.id === (t.level === "area" ? t.parentId : terrById(t.parentId)?.parentId))?.name,
-    })),
-  ];
-
-  return (
-    <SfShell page="customers" panel={id ? <CustomerPanel id={id} onClose={close} onOpen={open} /> : null}>
-      <Page width="full" className="max-w-[1320px]">
-        <PageIntro
-          actions={
-            <Segmented
-              size="sm"
-              value={view}
-              onChange={(v) => setParam("view", v === "network" ? "network" : null)}
-              options={[
-                { value: "list", label: "List" },
-                { value: "network", label: "Network" },
-              ]}
-            />
-          }
-        >
-          Every customer, its type and who serves it.
-        </PageIntro>
-
-        <Figures
-          items={[
-            { label: filtered ? "Customers shown" : "Customers", value: shown.length, sub: `of ${customers.length}` },
-            { label: "Outstanding", value: <Money value={outstanding} /> },
-            { label: "Overdue", value: <Money value={overdue.reduce((s, c) => s + c.overdue, 0)} />, sub: `${overdue.length} customers`, tone: overdue.length ? "danger" : undefined },
-            { label: "On the portal", value: onPortal, sub: "with a user who can sign in" },
-          ]}
-        />
-
-        <div className="mt-10 flex flex-wrap items-center gap-2">
-          <div className="-mx-1 min-w-0 max-w-full overflow-x-auto px-1 [scrollbar-width:none]">
-            <TextTabs
-              className="flex-nowrap"
-              value={type}
-              onChange={(v) => setParam("type", v === "all" ? null : v)}
-              options={[
-                { value: "all", label: "All", count: baseForTabs.length },
-                ...types.filter((t) => countOf(t.id) > 0 || t.id === type).map((t) => ({ value: t.id, label: t.plural, count: countOf(t.id) })),
-              ]}
-            />
-          </div>
-        </div>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <SearchField value={q} onChange={setQ} placeholder="Search name, code, city or phone" className="w-full sm:w-[280px]" />
-          <Select
-            value={terr}
-            onChange={(v) => setParam("terr", v === "all" ? null : v)}
-            options={terrOptions}
-            label={terr === "all" ? "All territories" : terrById(terr)?.name}
-            applied={terr !== "all"}
-            width={260}
-          />
-        </div>
-
-        <div className="mt-5">
-          {view === "list" ? (
-            shown.length === 0 ? (
-              <EmptyNote
-                action={
-                  <button type="button" onClick={() => (setQ(""), setSearch(new URLSearchParams(), { replace: true }))} className="text-[12px] font-medium text-bz-text underline underline-offset-2">
-                    Clear filters
-                  </button>
-                }
-              >
-                No customer matches these filters.
-              </EmptyNote>
-            ) : (
-              <>
-                <div className="hidden items-center gap-3.5 px-1 pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-bz-text-soft md:flex">
-                  <span className="min-w-0 flex-1 pl-2">Customer</span>
-                  <span className="w-[130px]">Rep</span>
-                  <span className="w-[96px]">Status</span>
-                  <span className="w-[120px] pr-2 text-right">Outstanding</span>
-                </div>
-                <List>
-                  {shown.map((c) => (
-                    <CustomerRow key={c.id} c={c} types={types} customers={customers} supply={supply} active={c.id === id} onOpen={open} />
-                  ))}
-                </List>
-              </>
-            )
-          ) : (
-            <NetworkTree customers={customers} types={types} supply={supply} matches={matches} filtered={filtered} activeId={id} onOpen={open} />
-          )}
-        </div>
-      </Page>
-    </SfShell>
-  );
-}
-
-function CustomerRow({ c, types, customers, supply, active, onOpen }: { c: Customer; types: CustomerType[]; customers: Customer[]; supply: Record<string, string>; active: boolean; onOpen: (id: string) => void }) {
-  const t = typeIn(types, c.typeId);
-  const parent = customers.find((x) => x.id === parentOf(c, supply));
-  const rep = repById(c.repId);
-  return (
-    <Row
-      active={active}
-      onClick={() => onOpen(c.id)}
-      title={c.name}
-      sub={
-        <>
-          <TypeMark name={t.name} color={t.color} className="text-[11px] text-bz-text-soft" /> · {c.city} · {parent ? `served by ${parent.name}` : "billed direct"}
-        </>
-      }
-      meta={[
-        <span key="r" className="block w-[130px] truncate">
-          {rep?.name ?? "No rep"}
-        </span>,
-        <span key="s" className="block w-[96px]">
-          <Dot tone={STATUS_TONE[c.status]}>{STATUS_LABEL[c.status]}</Dot>
-        </span>,
-      ]}
-      trail={
-        <span className="flex w-[120px] flex-col items-end">
-          <Money value={c.outstanding} code={false} className={c.outstanding ? "" : "text-bz-text-soft"} />
-          {c.overdue > 0 && <span className={cn("text-[11px] font-normal text-bz-red", NUM)}>{npr(c.overdue)} overdue</span>}
-          {c.status !== "active" && (
-            <Dot tone={STATUS_TONE[c.status]} className="text-[10.5px] font-normal md:hidden">
-              {STATUS_LABEL[c.status]}
-            </Dot>
-          )}
-        </span>
-      }
-    />
-  );
-}
-
-// ── Network view ────────────────────────────────────────────────────────────
-
-function NetworkTree({
-  customers,
-  types,
-  supply,
-  matches,
-  filtered,
-  activeId,
-  onOpen,
-}: {
-  customers: Customer[];
-  types: CustomerType[];
-  supply: Record<string, string>;
-  matches: (c: Customer) => boolean;
-  filtered: boolean;
-  activeId: string | undefined;
-  onOpen: (id: string) => void;
-}) {
-  // Open the top tier (a node whose customers serve customers of their own); leave the long retailer lists folded.
-  const [openIds, setOpenIds] = React.useState<Set<string>>(
-    () =>
-      new Set(
-        customers
-          .filter((c) => {
-            const kids = childrenOf(c.id, customers, supply);
-            return !parentOf(c, supply) && kids.some((k) => childrenOf(k.id, customers, supply).length > 0);
-          })
-          .map((c) => c.id),
-      ),
-  );
-  const [directOpen, setDirectOpen] = React.useState(false);
-  const toggle = (id: string) =>
-    setOpenIds((s) => {
-      const n = new Set(s);
-      if (n.has(id)) n.delete(id);
-      else n.add(id);
-      return n;
-    });
+  const open = (id: string) => navigate(sfPath(`customers/${id}`));
+  const add = () => openQuickAdd("customer", { onCreated: open });
+  // `customers/new` is a link other desks may follow; a customer is made in the quick-add dialog.
+  React.useEffect(() => {
+    if (no !== "new") return;
+    navigate(sfPath("customers"), { replace: true });
+    add();
+  }, [no]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const rank = (c: Customer) => {
     const i = types.findIndex((t) => t.id === c.typeId);
     return i < 0 ? 99 : i;
   };
-  const sort = (xs: Customer[]) => [...xs].sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
-  const kidsOf = (id: string) => sort(childrenOf(id, customers, supply));
-  const memo = new Map<string, boolean>();
-  const visible = (c: Customer, depth = 0): boolean => {
-    if (memo.has(c.id)) return memo.get(c.id)!;
-    const v = matches(c) || (depth < 6 && kidsOf(c.id).some((k) => visible(k, depth + 1)));
-    memo.set(c.id, v);
-    return v;
-  };
+  // The type is read inside accountOf (grace days), so a type edit re-counts too.
+  const rows = React.useMemo<Row[]>(
+    () =>
+      customers.map((c) => ({
+        c,
+        t: typeOf(c),
+        hasType: types.some((t) => t.id === c.typeId),
+        a: accountOf(c.id, ledger),
+        credit: creditCheck(c, 0),
+        parent: c.parentId ? customers.find((x) => x.id === c.parentId) : undefined,
+        rep: repById(c.repId, reps),
+        kids: customers.filter((x) => x.parentId === c.id),
+        routes: routes.filter((r) => r.stops.some((s) => s.customerId === c.id)),
+      })),
+    [customers, types, reps, ledger, routes],
+  );
+  // A customer whose type asks for visits and that is on no route: nobody is due there.
+  const noRoute = (r: Row) => r.t.visitsPer4w > 0 && r.routes.length === 0;
+  const byId = new Map(rows.map((r) => [r.c.id, r]));
+  const order = (a: Customer, b: Customer) => rank(a) - rank(b) || a.name.localeCompare(b.name);
+  const overdue = rows.filter((r) => r.a.overdue > 0);
+  const atLimit = (r: Row) => r.credit.limit !== null && r.credit.limit > 0 && r.credit.available === 0;
 
-  const tops = customers.filter((c) => !parentOf(c, supply));
-  const roots = sort(tops.filter((c) => typeIn(types, c.typeId).ownCustomers || childrenOf(c.id, customers, supply).length > 0)).filter((c) => visible(c));
-  const direct = sort(tops.filter((c) => !typeIn(types, c.typeId).ownCustomers && childrenOf(c.id, customers, supply).length === 0)).filter(matches);
-  const orphans = sort(customers.filter((c) => {
-    const p = parentOf(c, supply);
-    return p && !customers.some((x) => x.id === p);
-  })).filter(matches);
-
-  const node = (c: Customer, depth: number): React.ReactNode => {
-    const t = typeIn(types, c.typeId);
-    const kids = kidsOf(c.id).filter((k) => visible(k));
-    const all = childrenOf(c.id, customers, supply).length;
-    const isOpen = filtered ? true : openIds.has(c.id);
-    return (
-      <li key={c.id}>
-        <div className={cn("group flex min-h-[48px] items-center gap-2 py-1.5 pr-1", activeId === c.id && "bg-bz-fire/10")}>
-          {kids.length > 0 ? (
-            <button
-              type="button"
-              onClick={() => toggle(c.id)}
-              aria-expanded={isOpen}
-              aria-label={isOpen ? `Collapse ${c.name}` : `Expand ${c.name}`}
-              className="flex size-6 shrink-0 items-center justify-center rounded-bz-sm text-bz-text-soft hover:bg-bz-paper-warm hover:text-bz-text"
-            >
-              <ChevronRight size={13} className={cn("transition-transform duration-150", isOpen && "rotate-90")} />
-            </button>
-          ) : (
-            <span className="w-6 shrink-0" />
-          )}
-          <button type="button" onClick={() => onOpen(c.id)} className="min-w-0 flex-1 text-left">
-            <span className={cn("block truncate text-bz-text group-hover:underline", depth === 0 ? "text-[13px] font-semibold" : "text-[12.5px] font-medium")}>{c.name}</span>
-            <span className="block truncate text-[11px] text-bz-text-soft">
-              <TypeMark name={t.name} color={t.color} className="text-[11px] text-bz-text-soft" /> · {c.city}
-              {all > 0 && ` · ${all} ${all === 1 ? "customer" : "customers"}`}
-            </span>
-          </button>
-          {c.overdue > 0 && <span className={cn("hidden shrink-0 text-[11px] text-bz-red sm:block", NUM)}>{npr(c.overdue)} overdue</span>}
-          <Money value={c.outstanding} code={false} className={cn("w-[88px] shrink-0 text-right text-[12px]", c.outstanding ? "text-bz-text" : "text-bz-text-soft")} />
-        </div>
-        {kids.length > 0 && isOpen && (
-          <ul className="m-0 ml-3 list-none border-l border-bz-line-soft p-0 pl-3">
-            {kids.map((k) => node(k, depth + 1))}
-          </ul>
-        )}
-      </li>
-    );
-  };
-
-  if (!roots.length && !direct.length && !orphans.length) return <EmptyNote>No customer matches these filters.</EmptyNote>;
+  const arrived = search.get("type") ? [`type:${search.get("type")}`] : [];
+  const gone = !!no && no !== "new" && !byId.has(no) && !wasRemoved(no);
 
   return (
-    <div>
-      <p className="m-0 mb-3 text-[11.5px] text-bz-text-soft">Who serves whom. Open a branch to see the customers under it; outstanding is what each one owes.</p>
-      {roots.length > 0 && (
-        <ul className="m-0 list-none divide-y divide-bz-line-soft border-y border-bz-line-soft p-0">
-          {roots.map((c) => node(c, 0))}
-        </ul>
-      )}
-      {direct.length > 0 && (
-        <div className="mt-8">
-          <button type="button" onClick={() => setDirectOpen((v) => !v)} aria-expanded={directOpen || filtered} className="flex items-center gap-2 text-left">
-            <ChevronRight size={13} className={cn("text-bz-text-soft transition-transform duration-150", (directOpen || filtered) && "rotate-90")} />
-            <span className="text-[13px] font-semibold text-bz-text">Billed by you directly</span>
-            <span className={cn("text-[11.5px] text-bz-text-soft", NUM)}>{direct.length}</span>
-            <span className="text-[11px] text-bz-text-soft">· dealers, modern trade, HoReCa and institutions with no distributor</span>
-          </button>
-          {(directOpen || filtered) && (
-            <ul className="m-0 mt-2 list-none divide-y divide-bz-line-soft border-y border-bz-line-soft p-0">
-              {direct.map((c) => node(c, 1))}
-            </ul>
-          )}
-        </div>
-      )}
-      {orphans.length > 0 && (
-        <p className="m-0 mt-6 text-[11.5px] text-bz-text-soft">{orphans.length} customers point to a distributor that is no longer in the list.</p>
-      )}
-    </div>
+    <FxDesk<Row>
+      place="customers"
+      section="salesforce/customers"
+      noun={["customer", "customers"]}
+      numberLabel="Code"
+      numberWidth="84px"
+      amountLabel="Owes"
+      showPeriod={false}
+      searchPlaceholder="Name, code, city or phone"
+      rows={rows}
+      noOf={(r) => r.c.id}
+      numberOf={(r) => r.c.code}
+      rowLabel={(r) => r.c.name}
+      searchText={(r) => `${r.c.name} ${r.c.code} ${r.c.city} ${r.c.phone}`}
+      initialFilters={arrived.length ? arrived : undefined}
+      stats={[{ label: "Outstanding", value: <Amount value={rows.reduce((s, r) => s + r.a.outstanding, 0)} currency="NPR" />, title: "What every customer owes, counted from the ledger" }]}
+      picks={[
+        { key: "overdue", label: "Overdue", value: <Amount value={overdue.reduce((s, r) => s + r.a.overdue, 0)} />, test: (r) => r.a.overdue > 0, danger: overdue.length > 0, title: `${overdue.length} ${overdue.length === 1 ? "customer has" : "customers have"} a bill past its due date` },
+        { key: "limit", label: "At limit", value: rows.filter(atLimit).length, test: atLimit, title: "Nothing left of the credit limit" },
+        { key: "norep", label: "No rep", value: rows.filter((r) => !r.rep).length, test: (r) => !r.rep },
+        { key: "noroute", label: "No route", value: rows.filter(noRoute).length, test: noRoute, title: "Its type asks for visits and it is on no route" },
+        { key: "portal", label: "On the portal", value: rows.filter((r) => r.c.portalUsers.length > 0).length, test: (r) => r.c.portalUsers.length > 0, title: "Has a user who can sign in" },
+      ]}
+      views={[
+        { key: "all", label: "All", icon: Table2, groups: (rs) => [{ key: "all", label: "", rows: rs }] },
+        {
+          key: "network",
+          label: "Network",
+          icon: Network,
+          // A customer whose "served by" was deleted sits with the ones billed direct, where it is found.
+          groups: (rs) => {
+            const suppliers = [...new Set(rs.filter((r) => r.parent).map((r) => r.parent!.id))].map((id) => byId.get(id)!.c).sort(order);
+            return [{ key: "direct", label: "Billed by you", rows: rs.filter((r) => !r.parent) }, ...suppliers.map((s) => ({ key: s.id, label: `Served by ${s.name}`, rows: rs.filter((r) => r.parent?.id === s.id) }))];
+          },
+        },
+        {
+          key: "type",
+          label: "By type",
+          icon: Shapes,
+          groups: (rs) => [...types.map((t) => ({ key: t.id, label: t.plural, rows: rs.filter((r) => r.c.typeId === t.id) })), { key: "none", label: "No type", rows: rs.filter((r) => !r.hasType) }],
+        },
+      ]}
+      filters={[
+        ...types.map((t) => ({ value: `type:${t.id}`, label: t.name, group: "Type", test: (r: Row) => r.c.typeId === t.id })),
+        { value: "type:none", label: "No type", group: "Type", test: (r: Row) => !r.hasType },
+        ...STATUSES.map((s) => ({ value: `st:${s}`, label: STATUS_LABEL[s], group: "Status", test: (r: Row) => r.c.status === s })),
+        ...reps.map((p) => ({ value: `rep:${p.id}`, label: p.name, hint: p.role, group: "Rep", test: (r: Row) => r.c.repId === p.id })),
+        ...routes.map((x) => ({ value: `route:${x.id}`, label: x.name, group: "Route", test: (r: Row) => r.routes.some((y) => y.id === x.id) })),
+        { value: "route:none", label: "No route", group: "Route", test: (r: Row) => r.routes.length === 0 },
+      ]}
+      sorts={[
+        { key: "type", label: "Type", by: (r) => `${String(rank(r.c)).padStart(2, "0")} ${r.c.name.toLowerCase()}` },
+        { key: "az", label: "Name", by: (r) => r.c.name.toLowerCase() },
+        { key: "owes", label: "Owes most", by: (r) => r.a.outstanding, desc: true },
+        { key: "overdue", label: "Overdue most", by: (r) => r.a.overdue, desc: true },
+      ]}
+      columns={[
+        ...(roomy ? [{ key: "type", label: "Type", width: "124px", render: (r: Row) => <TypeMark name={r.hasType ? r.t.name : "No type"} color={r.t.color} /> }] : []),
+        { key: "rep", label: "Rep", width: "24px", render: (r: Row) => <Who name={r.rep?.name} /> },
+      ]}
+      primary={(r) => ({
+        title: r.c.name,
+        // The route joins the line once the type has its own column: below that the line is already full.
+        sub: [
+          roomy ? "" : r.hasType ? r.t.name : "No type",
+          r.c.city,
+          r.parent ? `served by ${r.parent.name}` : r.c.parentId ? "served by a deleted customer" : "billed by you",
+          roomy && r.routes.length ? `route ${r.routes[0].name}${r.routes.length > 1 ? ` +${r.routes.length - 1}` : ""}` : "",
+        ]
+          .filter(Boolean)
+          .join(" · "),
+        subOnDesktop: true,
+      })}
+      status={(r) => ({ label: STATUS_LABEL[r.c.status], tone: r.c.status === "on hold" ? "bad" : r.c.status === "onboarding" ? "warn" : "good" })}
+      amount={(r) => ({
+        value: <Amount value={r.a.outstanding} className={r.a.outstanding ? undefined : "font-normal text-bz-text-soft"} />,
+        sub: r.a.overdue > 0 ? (
+          <span className="text-bz-red">
+            <Amount value={r.a.overdue} className="text-bz-red" /> overdue
+          </span>
+        ) : undefined,
+      })}
+      rowVerb={(r) => (r.c.status === "on hold" ? null : { label: "New order", icon: Plus, run: () => navigate(`${sfPath("orders/new")}?customer=${r.c.id}`) })}
+      bulk={[
+        {
+          label: "Assign rep",
+          icon: UserRound,
+          enabled: (rs) => rs.length > 0,
+          hidden: () => reps.length === 0,
+          choose: { options: reps.map((p) => ({ value: p.id, label: p.name, hint: p.role })), placeholder: "Rep" },
+          run: (rs, repId) => {
+            const rep = reps.find((p) => p.id === repId);
+            if (!rep) return { done: 0, skipped: [], verb: "assigned" };
+            const todo = rs.filter((r) => r.c.repId !== rep.id);
+            const ids = new Set(todo.map((r) => r.c.id));
+            customersStore.set((cs) => cs.map((x) => (ids.has(x.id) ? { ...x, repId: rep.id } : x)));
+            todo.forEach((r) => logEvent(r.c.id, `gave it to ${rep.name}`));
+            const skip = rs.filter((r) => r.c.repId === rep.id);
+            return { done: todo.length, skipped: skip.map((r) => `${r.c.name} is already with ${rep.name}`), skippedIds: skip.map((r) => r.c.id), verb: `given to ${rep.name}` };
+          },
+        },
+        {
+          label: "Put on hold",
+          icon: CirclePause,
+          enabled: (rs) => rs.some((r) => r.c.status !== "on hold"),
+          hidden: (rs) => rs.every((r) => r.c.status === "on hold"),
+          title: "New orders from every channel are blocked",
+          run: (rs) => {
+            const todo = rs.filter((r) => r.c.status !== "on hold");
+            const skip = rs.filter((r) => r.c.status === "on hold");
+            todo.forEach((r) => holdCustomer(r.c));
+            return { done: todo.length, skipped: skip.map((r) => `${r.c.name} is already on hold`), skippedIds: skip.map((r) => r.c.id), verb: "put on hold" };
+          },
+        },
+        {
+          label: "Release",
+          icon: CirclePlay,
+          enabled: (rs) => rs.some((r) => r.c.status === "on hold"),
+          hidden: (rs) => !rs.some((r) => r.c.status === "on hold"),
+          run: (rs) => {
+            const todo = rs.filter((r) => r.c.status === "on hold");
+            const skip = rs.filter((r) => r.c.status !== "on hold");
+            todo.forEach((r) => releaseCustomer(r.c));
+            return { done: todo.length, skipped: skip.map((r) => `${r.c.name} is not on hold`), skippedIds: skip.map((r) => r.c.id), verb: "released" };
+          },
+        },
+      ]}
+      // It has nothing to export, so the shared Export chip stands down.
+      exportMenu={<></>}
+      newLabel="New customer"
+      onNew={add}
+      renderPanel={(r, ctx) => <CustomerPanel key={r.c.id} c={r.c} ctx={ctx} />}
+      renderExtra={({ go }) => gone && <NotAvailable text="This customer isn't available." back="Back to customers" onBack={() => go(null)} />}
+    />
   );
 }
 
 export const CUSTOMERS_ROUTES = [
   { path: "design/salesforce/customers", Component: CustomersPage },
-  { path: "design/salesforce/customers/:id", Component: CustomersPage },
+  { path: "design/salesforce/customers/:no", Component: CustomersPage },
 ];

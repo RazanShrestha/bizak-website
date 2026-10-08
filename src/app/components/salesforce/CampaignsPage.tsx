@@ -1,254 +1,160 @@
 import * as React from "react";
-import { useNavigate, useParams } from "react-router";
-import { Megaphone, Plus } from "lucide-react";
+import { useNavigate } from "react-router";
+import { ListTree, Table2 } from "lucide-react";
 import { cn } from "../ui/utils";
-import { BTN, Dialog, Field, GHOST, INPUT, NUM, Select, TEXTAREA } from "../sales/bzw";
+import { Meter, NUM } from "../sales/bzw";
+import { Amount } from "../sales/orders";
 import { useStore } from "../sales/store";
-import { BRANDS, SF_TODAY } from "./data";
+import { SF_TODAY } from "./data";
 import type { Campaign } from "./data";
-import { day } from "./engine";
-import { brandingStore, campaignsStore, eventsStore, schemesStore } from "./store";
-import { SfShell, sfPath } from "./shell";
-import { Dot, EmptyNote, Figures, List, Money, Page, PageIntro, Progress, Row, Section } from "./ui";
-import { CAMPAIGN_LABEL, CAMPAIGN_TONE, ME_ID, campaignBrandStore, logChange, seasonOf } from "./activationKit";
-import { CampaignDetail, campaignSpend } from "./CampaignDetail";
+import { day, npr } from "./engine";
+import { brandingStore, campaignsStore, customersStore, eventsStore, hubStore, posmStore, productsStore, schemesStore } from "./store";
+import { FxDesk, pillTone } from "./fx-desk";
+import { sfPath } from "./sf";
+import { CAMPAIGN_LABEL, CAMPAIGN_TONE, campaignBrandStore, campaignOrders, campaignSpend, kpiActual, kpisStore, statusNow } from "./activationKit";
+import { CampaignPanel, NewCampaign } from "./CampaignDetail";
+import type { CampaignRow, Goal } from "./CampaignDetail";
 
 // ════════════════════════════════════════════════════════════════════════════
-// CAMPAIGNS — the season's containers
+// GROWTH · CAMPAIGNS — the season's containers
 //
-// A campaign is not a list of settings; it is the place a season's schemes,
-// branding and events meet a goal and a budget (research/C §4.3). The list is a
-// calm row per campaign with its main measure; the campaign itself is a page.
+// A campaign is the place a season's schemes, branding and events meet a goal
+// and a budget (research/C §4.3). Its spend rolls up from what it holds and its
+// goals are counted from approved orders and installs — nothing is typed in
+// but the targets. The desk is a `FxDesk`; the campaign is its record panel.
 // ════════════════════════════════════════════════════════════════════════════
 
+const STATUSES: Campaign["status"][] = ["live", "planned", "draft", "ended"];
 const ORDER: Record<Campaign["status"], number> = { live: 0, planned: 1, draft: 2, ended: 3 };
+const spentPct = (r: CampaignRow) => (r.money.spent / Math.max(1, r.c.budget)) * 100;
 
 export function CampaignsPage() {
-  const { id } = useParams();
-  if (id) return <CampaignDetail id={id} />;
-  return <CampaignList />;
-}
-
-function CampaignList() {
   const navigate = useNavigate();
   const campaigns = useStore(campaignsStore);
   const schemes = useStore(schemesStore);
   const branding = useStore(brandingStore);
   const events = useStore(eventsStore);
+  const hub = useStore(hubStore);
   const brands = useStore(campaignBrandStore);
-  const [creating, setCreating] = React.useState(false);
+  const kpis = useStore(kpisStore);
+  // What the rules read through the stores: the audience (customers), a goal's product, a job's cost.
+  const customers = useStore(customersStore);
+  const products = useStore(productsStore);
+  const posm = useStore(posmStore);
 
-  const rows = [...campaigns].sort((a, b) => ORDER[a.status] - ORDER[b.status] || a.from.localeCompare(b.from));
-  const running = campaigns.filter((c) => c.status === "live");
-  const season = campaigns.filter((c) => c.status !== "ended");
-  const spend = (c: Campaign) => campaignSpend(c, schemes, branding, events);
-  const seasonBudget = season.reduce((s, c) => s + c.budget, 0);
-  const seasonSpent = season.reduce((s, c) => s + spend(c).spent, 0);
-
-  return (
-    <SfShell page="campaigns">
-      <Page>
-        <PageIntro
-          actions={
-            <button type="button" className={BTN} onClick={() => setCreating(true)}>
-              <Plus size={13} /> New campaign
-            </button>
-          }
-        >
-          Each campaign groups a season's schemes, branding and events around one goal and one budget.
-        </PageIntro>
-
-        <Figures
-          items={[
-            { label: "Live now", value: running.length, sub: `${season.length - running.length} planned or draft` },
-            { label: "Budget this season", value: <Money value={seasonBudget} /> },
-            { label: "Spent so far", value: <Money value={seasonSpent} />, sub: seasonBudget ? `${Math.round((seasonSpent / seasonBudget) * 100)}% of budget` : undefined },
-          ]}
-        />
-
-        <Section title="Campaigns" count={rows.length} className="mt-12">
-          {rows.length === 0 ? (
-            <EmptyNote
-              action={
-                <button type="button" className={GHOST} onClick={() => setCreating(true)}>
-                  New campaign
-                </button>
-              }
-            >
-              No campaigns yet.
-            </EmptyNote>
-          ) : (
-            <List>
-              {rows.map((c) => {
-                const k = c.kpi[0];
-                const pct = k ? (k.actual / Math.max(1, k.target)) * 100 : 0;
-                return (
-                  <Row
-                    key={c.id}
-                    onClick={() => navigate(sfPath(`campaigns/${c.id}`))}
-                    lead={
-                      <span className="flex size-8 items-center justify-center rounded-bz-pill bg-bz-paper-warm text-bz-text-muted">
-                        <Megaphone size={14} />
-                      </span>
-                    }
-                    title={c.name}
-                    sub={
-                      <>
-                        {[brands[c.id], seasonOf(c.from)].filter(Boolean).join(" · ")}
-                        <span className="md:hidden">
-                          {" · "}
-                          {day(c.from)} – {day(c.to)}
-                          {k ? ` · ${Math.round(pct)}% ${k.label.toLowerCase()}` : ""}
-                        </span>
-                      </>
-                    }
-                    meta={[
-                      <span key="d" className={cn("inline-block w-[112px]", NUM)}>
-                        {day(c.from)} – {day(c.to)}
-                      </span>,
-                      <span key="k" className="inline-block w-[180px]">
-                        {k ? (
-                          <>
-                            <Progress pct={pct} tone={c.status === "ended" && pct < 100 ? "warn" : "good"} />
-                            <span className={cn("mt-1 block truncate text-[11px] text-bz-text-soft", NUM)}>
-                              {Math.round(pct)}% · {k.label.toLowerCase()}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="text-bz-text-soft">No target set</span>
-                        )}
-                      </span>,
-                    ]}
-                    trail={
-                      <span className="inline-block w-[70px] text-left">
-                        <Dot tone={CAMPAIGN_TONE[c.status]}>{CAMPAIGN_LABEL[c.status]}</Dot>
-                      </span>
-                    }
-                  />
-                );
-              })}
-            </List>
-          )}
-        </Section>
-      </Page>
-      <NewCampaignDialog open={creating} onClose={() => setCreating(false)} onCreated={(id) => navigate(sfPath(`campaigns/${id}`))} />
-    </SfShell>
+  const rows = React.useMemo<CampaignRow[]>(
+    () =>
+      campaigns
+        .map((c) => {
+          const mine = kpis[c.id] ?? [];
+          // Only a goal counted from orders needs the campaign's orders priced.
+          const orders = mine.some((k) => k.measure !== "branded") ? campaignOrders(c, hub) : [];
+          const goals: Goal[] = mine.map((k) => {
+            const actual = kpiActual(k, c, orders, branding);
+            return { k, actual, pct: (actual / Math.max(1, k.target)) * 100 };
+          });
+          return { c, st: statusNow(c, SF_TODAY), brand: brands[c.id] ?? "", money: campaignSpend(c, schemes, branding, events), goals };
+        })
+        .sort((a, b) => ORDER[a.st] - ORDER[b.st] || a.c.from.localeCompare(b.c.from)),
+    [campaigns, schemes, branding, events, hub, brands, kpis, customers, products, posm],
   );
-}
 
-// ── New campaign ────────────────────────────────────────────────────────────
-
-const UNITS = ["cases", "outlets", "ctn", "NPR"];
-
-function NewCampaignDialog({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: (id: string) => void }) {
-  const [name, setName] = React.useState("");
-  const [from, setFrom] = React.useState("2026-10-01");
-  const [to, setTo] = React.useState("2026-10-31");
-  const [brand, setBrand] = React.useState<string | null>(null);
-  const [budget, setBudget] = React.useState("");
-  const [goal, setGoal] = React.useState("");
-  const [target, setTarget] = React.useState("");
-  const [unit, setUnit] = React.useState("cases");
-  const [tried, setTried] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!open) return;
-    setName("");
-    setBrand(null);
-    setBudget("");
-    setGoal("");
-    setTarget("");
-    setTried(false);
-  }, [open]);
-
-  const budgetN = Number(budget.replace(/[^\d]/g, ""));
-  const targetN = Number(target.replace(/[^\d]/g, ""));
-  const datesBad = !from || !to || to < from;
-  const missing = !name.trim() || datesBad || !budgetN;
-
-  const create = () => {
-    setTried(true);
-    if (missing) return;
-    const taken = new Set(campaignsStore.get().map((c) => c.id));
-    let n = 9;
-    while (taken.has(`CMP-${String(n).padStart(2, "0")}`)) n++;
-    const id = `CMP-${String(n).padStart(2, "0")}`;
-    const c: Campaign = {
-      id,
-      name: name.trim(),
-      objective: goal.trim(),
-      status: from <= SF_TODAY && to >= SF_TODAY ? "live" : "draft",
-      from,
-      to,
-      audience: { typeIds: [], territoryIds: [], outlets: 0 },
-      budget: budgetN,
-      spent: 0,
-      schemeIds: [],
-      brandingIds: [],
-      eventIds: [],
-      tasks: [],
-      kpi: targetN ? [{ label: unit === "outlets" ? "Outlets" : unit === "NPR" ? "Sales" : "Volume", target: targetN, actual: 0, unit }] : [],
-      owner: ME_ID,
-    };
-    campaignsStore.set((cs) => [c, ...cs]);
-    if (brand) campaignBrandStore.set((b) => ({ ...b, [id]: brand }));
-    logChange(`campaign:${id}`, "created the campaign");
-    onClose();
-    onCreated(id);
-  };
+  const is = (s: Campaign["status"]) => (r: CampaignRow) => r.st === s;
+  const running = rows.filter((r) => r.st !== "ended");
+  const budget = running.reduce((s, r) => s + r.c.budget, 0);
+  const spent = running.reduce((s, r) => s + r.money.spent, 0);
+  const brandNames = [...new Set(rows.map((r) => r.brand).filter(Boolean))].sort();
 
   return (
-    <Dialog
-      open={open}
-      title="New campaign"
-      onClose={onClose}
-      foot={
-        <>
-          <button type="button" className={GHOST} onClick={onClose}>
-            Cancel
-          </button>
-          <button type="button" className={BTN} onClick={create}>
-            Create campaign
-          </button>
-        </>
+    <FxDesk<CampaignRow>
+      place="campaigns"
+      section="salesforce/campaigns"
+      noun={["campaign", "campaigns"]}
+      rows={rows}
+      noOf={(r) => r.c.id}
+      showPeriod={false}
+      searchText={(r) => `${r.c.id} ${r.c.name} ${r.brand} ${r.c.objective}`}
+      searchPlaceholder="Name or brand"
+      partyLabel="Campaign"
+      amountLabel="Spent"
+      stats={
+        rows.length
+          ? [
+              { label: "Budget", value: <Amount value={budget} currency="NPR" />, title: "Of campaigns that have not ended" },
+              { label: "Spent", value: <Amount value={spent} />, title: budget ? `${Math.round((spent / budget) * 100)}% of that budget` : undefined },
+            ]
+          : []
       }
-    >
-      <div className="flex flex-col gap-4">
-        <Field label="Name" required>
-          <input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Tihar with Crunchy" className={INPUT} />
-        </Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Starts" required>
-            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className={INPUT} />
-          </Field>
-          <Field label="Ends" required hint={tried && datesBad ? "The end date is before the start." : undefined}>
-            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className={INPUT} />
-          </Field>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Brand">
-            <Select trigger="ghost" className="h-9 w-full justify-between" value={brand} onChange={setBrand} placeholder="Brand" label={brand ?? "Pick a brand"} options={BRANDS.map((b) => ({ value: b, label: b }))} />
-          </Field>
-          <Field label="Budget (NPR)" required>
-            <input inputMode="numeric" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="500,000" className={cn(INPUT, NUM)} />
-          </Field>
-        </div>
-        <Field label="Goal" hint="One sentence the team can remember.">
-          <textarea value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="e.g. Place Crunchy Digestive in 200 new outlets before Tihar." className={TEXTAREA} />
-        </Field>
-        <Field label="Measure it by">
-          <div className="flex gap-2">
-            <input inputMode="numeric" value={target} onChange={(e) => setTarget(e.target.value)} placeholder="Target" className={cn(INPUT, NUM, "flex-1")} />
-            <Select trigger="ghost" className="h-9" value={unit} onChange={setUnit} label={unit} options={UNITS.map((u) => ({ value: u, label: u }))} width={160} />
-          </div>
-        </Field>
-        {tried && missing && <p className="m-0 text-[11.5px] text-bz-red">Add a name, valid dates and a budget.</p>}
-      </div>
-    </Dialog>
+      picks={rows.length ? [{ key: "live", label: "Live", value: rows.filter(is("live")).length, test: is("live"), title: "Running today" }] : []}
+      views={[
+        { key: "status", label: "By status", icon: ListTree, groups: (rs) => STATUSES.map((s) => ({ key: s, label: CAMPAIGN_LABEL[s], rows: rs.filter(is(s)), collapsed: s === "ended" })) },
+        { key: "register", label: "Register", icon: Table2, groups: (rs) => [{ key: "all", label: "", rows: rs }] },
+      ]}
+      filters={[
+        ...STATUSES.map((s) => ({ value: `st:${s}`, label: CAMPAIGN_LABEL[s], group: "Status", test: is(s) })),
+        ...brandNames.map((b) => ({ value: `brand:${b}`, label: b, group: "Brand", test: (r: CampaignRow) => r.brand === b })),
+      ]}
+      sorts={[
+        { key: "start", label: "Start date", by: (r) => r.c.from + r.c.id },
+        { key: "end", label: "End date", by: (r) => r.c.to + r.c.id },
+        { key: "budget", label: "Budget", by: (r) => r.c.budget, desc: true },
+        { key: "spent", label: "Spent", by: (r) => r.money.spent, desc: true },
+        { key: "name", label: "Name", by: (r) => r.c.name.toLowerCase() },
+      ]}
+      columns={[
+        { key: "goal", label: "Goal", width: "136px", render: (r) => (r.goals[0] ? <GoalCell g={r.goals[0]} /> : <span className="text-bz-text-soft">No goal</span>) },
+      ]}
+      primary={(r) => ({
+        title: r.c.name,
+        sub: (
+          <>
+            {day(r.c.from)} – {day(r.c.to)}
+            {r.brand ? ` · ${r.brand}` : ""}
+          </>
+        ),
+        subOnDesktop: true,
+      })}
+      status={(r) => ({ label: CAMPAIGN_LABEL[r.st], tone: pillTone(CAMPAIGN_TONE[r.st]) })}
+      amount={(r) => {
+        const over = r.money.spent > r.c.budget;
+        return {
+          value: <Amount value={r.money.spent} className={over ? "text-bz-red" : undefined} />,
+          sub: (
+            <>
+              <span className="my-1 block">
+                <Meter thin pct={spentPct(r)} danger={over} />
+              </span>
+              <span className={cn(NUM, over && "text-bz-red")}>
+                {Math.round(spentPct(r))}% of {npr(r.c.budget)}
+              </span>
+            </>
+          ),
+        };
+      }}
+      newLabel="New campaign"
+      onNew={() => navigate(sfPath("campaigns/new"))}
+      renderNew={(ctx) => <NewCampaign ctx={ctx} />}
+      renderPanel={(r, ctx) => <CampaignPanel key={r.c.id} r={r} ctx={ctx} />}
+    />
   );
 }
 
+/** The first goal's progress: a thin meter over "62% · Himal Fresh volume". */
+function GoalCell({ g }: { g: Goal }) {
+  return (
+    <span title={`${g.k.label} · ${npr(g.actual)} of ${npr(g.k.target)} ${g.k.unit}`}>
+      <span className="mb-1 block">
+        <Meter thin pct={g.pct} />
+      </span>
+      <span className={cn("block truncate text-[11px] text-bz-text-soft", NUM)}>
+        {Math.round(g.pct)}% · {g.k.label}
+      </span>
+    </span>
+  );
+}
+
+// The campaign used to be a page of its own at this same address; it is now the desk's record (⤢ gives it the page).
 export const CAMPAIGNS_ROUTES = [
   { path: "design/salesforce/campaigns", Component: CampaignsPage },
-  { path: "design/salesforce/campaigns/:id", Component: CampaignsPage },
+  { path: "design/salesforce/campaigns/:no", Component: CampaignsPage },
 ];
